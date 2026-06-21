@@ -1,0 +1,154 @@
+.footer {
+  background: var(--black-900);
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-4) var(--space-6);
+}
+
+.footer-brand {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.footer-logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
+  color: var(--black-950);
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+}
+
+.footer-logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.1em;
+}
+
+.footer-tagline {
+  color: var(--accent);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+}
+
+.footer-slogan {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-2);
+}
+
+.footer-manifesto {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  line-height: 1.7;
+  background: linear-gradient(135deg, #b8902f 0%, #d4a847 50%, #b8902f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border);
+}
+
+.footer-section {
+  text-align: center;
+}
+
+.footer-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+  letter-spacing: 0.1em;
+}
+
+.footer-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.footer-list a,
+.footer-list span {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
+
+.footer-list a:hover {
+  color: var(--accent);
+}
+
+.disabled-link {
+  color: var(--text-muted);
+}
+
+.disabled-link small {
+  font-size: 0.7rem;
+  margin-left: var(--space-1);
+  color: var(--text-muted);
+}
+
+.footer-bottom {
+  padding-top: var(--space-6);
+  text-align: center;
+}
+
+.copyright {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+@media (min-width: 768px) {
+  .footer-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--space-12);
+  }
+
+  .footer-brand {
+    text-align: left;
+    margin-bottom: 0;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-16);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .footer-section {
+    text-align: left;
+  }
+
+  .footer-bottom {
+    grid-column: 1 / -1;
+    padding-top: var(--space-6);
+  }
+}

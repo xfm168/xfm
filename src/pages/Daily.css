@@ -1,0 +1,544 @@
+/* ══════════════════════════════════════════
+   Daily.css — 今日卦运页面
+   ══════════════════════════════════════════ */
+
+.daily-page {
+  min-height: calc(100vh - 64px);
+  background: var(--bg-primary);
+}
+
+/* ── Page header ── */
+.daily-header {
+  padding: var(--space-10) 0 var(--space-8);
+  text-align: center;
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.daily-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgba(212, 175, 55, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.daily-date {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: var(--text-primary);
+  margin: var(--space-3) 0 var(--space-2);
+}
+
+.daily-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.2em;
+}
+
+/* ── Container ── */
+.daily-container {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-16);
+  max-width: 720px;
+}
+
+/* ── Skeleton ── */
+.daily-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+}
+
+.skel {
+  background: linear-gradient(90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-card) 50%,
+    var(--bg-secondary) 100%);
+  background-size: 200% 100%;
+  border-radius: var(--radius-md);
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.skel-badge  { height: 28px; width: 120px; border-radius: 100px; }
+.skel-title  { height: 40px; width: 60%; }
+.skel-symbol { height: 120px; width: 120px; border-radius: 50%; margin: 0 auto; }
+.skel-bar    { height: 16px; }
+
+/* ── Error ── */
+.daily-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-16) 0;
+  color: var(--error);
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 2rem;
+}
+
+/* ── Base card ── */
+.daily-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.card-title {
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+
+/* ── Core hexagram card ── */
+.hex-core-card {
+  background: linear-gradient(135deg,
+    rgba(36, 51, 71, 0.9) 0%,
+    rgba(30, 41, 59, 0.95) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10) var(--space-8);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+
+.hex-core-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(212,175,55,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hex-number-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-4);
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  margin-bottom: var(--space-6);
+}
+
+.hex-symbol-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: var(--space-4);
+}
+
+.hex-symbol {
+  display: block;
+  font-size: 7rem;
+  line-height: 1;
+  background: linear-gradient(135deg, #b8920a 0%, #d4af37 40%, #e8c96a 60%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.4));
+  animation: hexReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes hexReveal {
+  from { opacity: 0; transform: scale(0.7) rotate(-10deg); filter: drop-shadow(0 0 0px rgba(212,175,55,0)); }
+  to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.hex-symbol-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: glowPulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hex-name {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.hex-trigrams {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.trigram-dot {
+  color: rgba(212, 175, 55, 0.4);
+}
+
+.hex-description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+  font-style: italic;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── Six lines ── */
+.lines-card {
+  /* inherits .daily-card */
+}
+
+.hexagram-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.hex-line-row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 2rem;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.hex-line-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-align: right;
+}
+
+.hex-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 14px;
+}
+
+.hex-line-bar {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
+}
+
+.yang-bar {
+  width: 100%;
+  flex: 1;
+}
+
+.yin-bar {
+  flex: 1;
+}
+
+.hex-line-gap {
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.hex-line-type {
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+/* ── Score ring ── */
+.score-main-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.score-ring-svg {
+  width: 160px;
+  height: 160px;
+}
+
+.score-ring-bg {
+  fill: none;
+  stroke: rgba(212, 175, 55, 0.12);
+  stroke-width: 8;
+}
+
+.score-ring-fg {
+  fill: none;
+  stroke: url(#goldGrad);
+  stroke: var(--accent);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.8s ease;
+  filter: drop-shadow(0 0 4px rgba(212,175,55,0.5));
+}
+
+.score-ring-num {
+  fill: var(--accent);
+  font-size: 22px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-family: var(--font-serif);
+}
+
+.score-ring-label {
+  fill: var(--text-muted);
+  font-size: 9px;
+  text-anchor: middle;
+  letter-spacing: 0.3em;
+  font-family: var(--font-serif);
+}
+
+.score-fortune {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  text-align: center;
+  max-width: 480px;
+}
+
+/* ── Score bar ── */
+.score-bar-track {
+  height: 6px;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  border-radius: 3px;
+  transition: width 0.6s ease;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+/* ── Dimensions ── */
+.dimensions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.dimension-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dim-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.dim-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+
+.dim-score {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.dim-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-top: var(--space-1);
+}
+
+/* ── Analysis ── */
+.analysis-text {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.9;
+  letter-spacing: 0.03em;
+}
+
+/* ── Advice ── */
+.advice-card {
+  display: flex;
+  gap: 0;
+}
+
+.advice-col {
+  flex: 1;
+  padding: 0 var(--space-4);
+}
+
+.advice-col:first-child {
+  padding-left: 0;
+}
+
+.advice-col:last-child {
+  padding-right: 0;
+}
+
+.advice-divider {
+  width: 1px;
+  background: var(--border);
+  margin: 0 var(--space-2);
+}
+
+.advice-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  margin-bottom: var(--space-3);
+}
+
+.advice-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.do-dot   { background: var(--success); box-shadow: 0 0 6px var(--success); }
+.dont-dot { background: var(--error);   box-shadow: 0 0 6px var(--error); }
+
+.do-title   { color: var(--success); }
+.dont-title { color: var(--error); }
+
+.advice-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.advice-list li {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+}
+
+/* ── Lucky ── */
+.lucky-card {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.lucky-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+}
+
+.lucky-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+}
+
+.lucky-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+}
+
+.lucky-value {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.lucky-number {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lucky-color-chip {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  flex-shrink: 0;
+}
+
+/* Color chip colors */
+.lucky-color-chip[data-color='朱砂红']  { background: #c0392b; }
+.lucky-color-chip[data-color='琉璃蓝']  { background: #2980b9; }
+.lucky-color-chip[data-color='松石绿']  { background: #27ae60; }
+.lucky-color-chip[data-color='月白']    { background: #ecf0f1; }
+.lucky-color-chip[data-color='赤金']    { background: #d4af37; }
+.lucky-color-chip[data-color='黛紫']    { background: #6c3483; }
+.lucky-color-chip[data-color='霜白']    { background: #bdc3c7; }
+.lucky-color-chip[data-color='墨黑']    { background: #2c3e50; }
+.lucky-color-chip[data-color='藏青']    { background: #1a5276; }
+.lucky-color-chip[data-color='铜绿']    { background: #1abc9c; }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .hex-symbol { font-size: 5rem; }
+  .hex-name   { font-size: 1.6rem; }
+  .daily-date { font-size: 1.2rem; letter-spacing: 0.15em; }
+
+  .dimensions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .advice-card {
+    flex-direction: column;
+  }
+
+  .advice-divider {
+    width: 100%;
+    height: 1px;
+    margin: var(--space-4) 0;
+  }
+
+  .advice-col {
+    padding: 0;
+  }
+
+  .hex-core-card {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .lucky-card {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .lucky-divider {
+    width: 100%;
+    height: 1px;
+  }
+}

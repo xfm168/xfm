@@ -1,0 +1,100 @@
+.coming-soon-page {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.coming-soon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  padding: var(--space-12) var(--space-8);
+  background: var(--bg-card);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
+.cs-icon-wrap {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+}
+
+.cs-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.cs-icon {
+  font-size: 3rem;
+  line-height: 1;
+  background: linear-gradient(135deg, #d4af37 0%, #e8c96a 50%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  z-index: 1;
+}
+
+.cs-title {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--space-3);
+  color: var(--text-primary);
+}
+
+.cs-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-6);
+}
+
+.cs-divider {
+  color: rgba(212, 175, 55, 0.3);
+  font-size: 0.5rem;
+  margin-bottom: var(--space-4);
+  letter-spacing: 0.5em;
+}
+
+.cs-sub {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-8);
+}
+
+.cs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-8);
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: var(--accent);
+  font-size: 0.93rem;
+  border-radius: var(--radius-lg);
+  letter-spacing: 0.1em;
+  transition: all 0.25s ease;
+}
+
+.cs-btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.15);
+}

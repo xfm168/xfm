@@ -1,0 +1,746 @@
+/* ══════════════════════════════════════════════════
+   Divination.css  —  六爻解卦
+   ══════════════════════════════════════════════════ */
+
+/* ── Page shell ─────────────────────────────────── */
+.div-page {
+  min-height: calc(100vh - 64px);
+  background: var(--bg-primary);
+}
+
+.div-header {
+  padding: var(--space-10) 0 var(--space-8);
+  text-align: center;
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.div-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 0%,
+    rgba(212,175,55,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.div-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--text-primary);
+  margin: var(--space-3) 0 var(--space-2);
+}
+
+.div-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.2em;
+}
+
+.div-container {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-16);
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ══ Step bar ════════════════════════════════════ */
+.step-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+.sb-item.active { opacity: 1; }
+.sb-item.done   { opacity: 0.55; }
+.sb-num  { font-size: 0.85rem; color: var(--accent); }
+.sb-lbl  { font-size: 0.78rem; color: var(--text-secondary); letter-spacing: 0.08em; white-space: nowrap; }
+.sb-item.active .sb-lbl { color: var(--text-primary); }
+.sb-conn { display: block; width: 22px; height: 1px; background: var(--border); margin: 0 var(--space-2); flex-shrink: 0; }
+
+/* ══ Shared card ════════════════════════════════ */
+.step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ══ Stage wrapper ══════════════════════════════ */
+.stage-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.stage-caption {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.14em;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════════
+   BAGUA STAGE — core canvas
+   Layer order (z-index):
+     1  taiji (stage-center)
+     2  gold ring glow (taiji-gold-ring)
+     3  dashed orbit track + rotating ring
+     4  stage overlays (sixiang, hexlines)
+   ══════════════════════════════════════════════════ */
+
+.bagua-stage {
+  /* CSS variable controls orbit radius — responsive via media query */
+  --orbit-r: 116px;
+
+  position: relative;
+  width: 316px;
+  height: 316px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ── Layer 2: gold glowing circle around taiji ── */
+.taiji-gold-ring {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 172px; height: 172px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(212,175,55,0.35);
+  box-shadow:
+    0 0 22px rgba(212,175,55,0.25),
+    0 0  8px rgba(212,175,55,0.15),
+    inset 0 0 14px rgba(212,175,55,0.08);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Layer 3: dashed orbit track ── */
+.orbit-track-ring {
+  position: absolute;
+  left: 50%; top: 50%;
+  width:  calc(2 * (var(--orbit-r) + 26px));
+  height: calc(2 * (var(--orbit-r) + 26px));
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(212,175,55,0.0);
+  pointer-events: none;
+  transition: border-color 2s ease, opacity 2s ease;
+  opacity: 0;
+  z-index: 3;
+}
+.orbit-track-ring.vis {
+  opacity: 1;
+  border-color: rgba(212,175,55,0.22);
+}
+
+/* ── Layer 3: orbit ring wrapper ── */
+.orbit-wrapper {
+  position: absolute;
+  inset: 0;
+  transition: opacity 1.8s ease;
+  z-index: 3;
+}
+.orbit-wrapper.dim { opacity: 0.12; }
+
+/* ── Rotating ring container ── */
+.orbit-ring {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+  animation: ring-cw linear infinite;
+  /* animationDuration set via inline style */
+}
+
+@keyframes ring-cw  { to { transform: rotate( 360deg); } }
+@keyframes ring-ccw { to { transform: rotate(-360deg); } }
+
+/*
+  orbit-slot: positioned using CSS custom property --deg
+  transform: rotate(--deg) translateY(-orbit-r)
+  — rotates around parent center, then translates outward
+  transform-origin defaults to 50%/50% of the 40×40 element,
+  which equals the ring center because slot is centered via left/top/margin.
+*/
+.orbit-slot {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 52px; height: 52px;
+  margin: -26px 0 0 -26px;
+  transform: rotate(var(--deg)) translateY(calc(-1 * var(--orbit-r)));
+}
+
+/* Cancels the static rotation, leaving only the ring's dynamic rotation */
+.orbit-derotate {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cancels the ring's dynamic rotation → content stays upright */
+.orbit-inner {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  animation: ring-ccw linear infinite;
+  /* animationDuration set via inline style */
+}
+
+.orbit-sym { font-size: 1.35rem; line-height: 1; color: rgba(212,175,55,0.92); }
+.orbit-nm  { font-size: 0.72rem; color: rgba(212,175,55,0.6); letter-spacing: 0.06em; }
+
+/* ── Layer 1: center disc (taiji) ── */
+.stage-center {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 156px; height: 156px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(12,12,16,0.6) 0%, transparent 80%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  z-index: 4;
+  /* no overflow:hidden — overlays extend outward */
+  overflow: visible;
+  border: none;
+  padding: 0;
+  outline: none;
+  appearance: none;
+}
+
+.stage-center.clickable {
+  cursor: pointer;
+  transition: filter 0.3s ease;
+}
+.stage-center.clickable:hover {
+  filter: drop-shadow(0 0 16px rgba(212,175,55,0.45));
+}
+
+/* ══ Taiji SVG ══════════════════════════════════ */
+.taiji-svg {
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(212,175,55,0.25));
+  flex-shrink: 0;
+}
+
+/* Ceremony: taiji rotates almost imperceptibly — 30s/revolution */
+.taiji-spin {
+  animation: taiji-cw 30s linear infinite;
+}
+
+@keyframes taiji-cw { to { transform: rotate(360deg); } }
+
+/* ══ Prepare: center text ═══════════════════════ */
+.center-prepare-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  margin-top: 6px;
+}
+
+.ctr-main {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  color: rgba(212,175,55,0.88);
+  line-height: 1;
+}
+
+.ctr-sub {
+  font-size: 0.58rem;
+  color: rgba(212,175,55,0.45);
+  letter-spacing: 0.2em;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+/* ══ Stage 1: yin/yang labels on taiji ══════════ */
+.liangyi-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  pointer-events: none;
+}
+
+.ly-yang-lbl,
+.ly-yin-lbl {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  animation: ly-appear 1s cubic-bezier(.15,.85,.3,1) forwards;
+  opacity: 0;
+}
+
+.ly-yang-lbl {
+  color: rgba(212,175,55,0.85);
+  animation-delay: 0.3s;
+}
+
+.ly-yin-lbl {
+  color: rgba(200,205,220,0.7);
+  animation-delay: 0.6s;
+}
+
+@keyframes ly-appear {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ══ Stage 2: four phenomena (positioned in stage coords) ══ */
+.stage-sixiang {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Each sxq is positioned at ~85px from center using CSS transform */
+.sxq {
+  position: absolute;
+  left: 50%; top: 50%;
+  font-size: 0.62rem;
+  color: rgba(212,175,55,0.75);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  animation: sxq-expand 0.7s cubic-bezier(.15,.85,.3,1) forwards;
+}
+
+/* Translate to cardinal positions (~85px from center) */
+.sxq-n { transform: translate(-50%, calc(-85px - 50%)); animation-delay: 0.1s; }
+.sxq-e { transform: translate(calc( 85px - 50%), -50%); animation-delay: 0.3s; }
+.sxq-s { transform: translate(-50%, calc( 85px - 50%)); animation-delay: 0.5s; }
+.sxq-w { transform: translate(calc(-85px - 50%), -50%); animation-delay: 0.7s; }
+
+@keyframes sxq-expand {
+  from { opacity: 0; filter: blur(4px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+/* ══ Stage 4-6: hexagram lines overlay ══════════ */
+.stage-hexlines {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 156px; height: 156px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8,8,12,0.82);
+  z-index: 6;
+  transition: filter 1.5s ease, box-shadow 1.5s ease;
+}
+
+.stage-hexlines.hexlines-glow {
+  filter: drop-shadow(0 0 20px rgba(212,175,55,0.8));
+  box-shadow: 0 0 30px rgba(212,175,55,0.3), inset 0 0 20px rgba(212,175,55,0.08);
+}
+
+/* ── Coin flash ── */
+.coin-anim {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.coin-disc {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: radial-gradient(circle at 38% 38%,
+    rgba(212,175,55,0.45), rgba(212,175,55,0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--accent);
+  box-shadow: 0 0 16px rgba(212,175,55,0.5);
+  animation: coin-fall 0.4s cubic-bezier(.2,.85,.3,1) forwards;
+}
+
+@keyframes coin-fall {
+  0%   { opacity: 0; transform: scale(2.2) rotate(0deg)   translateY(-30px); }
+  44%  { opacity: 1; transform: scale(1.1) rotate(210deg) translateY(-3px);  }
+  100% { opacity: 0; transform: scale(0.5) rotate(390deg) translateY(0);     }
+}
+
+/* ── Hexagram name overlay (stage 6) ── */
+.cc-name-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(8,8,12,0.94) 48%, transparent 88%);
+}
+
+.ccn-num {
+  font-size: 0.55rem;
+  color: rgba(212,175,55,0.6);
+  letter-spacing: 0.22em;
+}
+
+.ccn-sym {
+  font-size: 1.8rem;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent), #e8c96a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.45));
+}
+
+.ccn-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.38em;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent), #e8c96a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ══ Hex lines (inside hexlines overlay) ═════════ */
+.hcl-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
+}
+
+.hcl-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 80px;
+  height: 10px;
+}
+
+.hcl-row.cast {
+  animation: line-pop 0.3s cubic-bezier(.18,.92,.3,1) both;
+}
+
+@keyframes line-pop {
+  from { opacity: 0; transform: scaleX(0.08); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
+
+.hcl-bar {
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  box-shadow: 0 0 5px rgba(212,175,55,0.3);
+}
+
+.hcl-full { width: 80px; }
+.hcl-half { width: 35px; }
+.hcl-gap  { width: 10px; flex-shrink: 0; }
+
+.hcl-bar.hcl-chg {
+  background: linear-gradient(90deg, #b45309, #f59e0b);
+  box-shadow: 0 0 7px rgba(245,158,11,0.6);
+}
+
+.hcl-row.uncast { visibility: hidden; }
+
+/* ══ Ceremony stage label ═══════════════════════ */
+.ceremony-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+  min-height: 40px;
+}
+
+.ceremony-text {
+  font-size: 0.88rem;
+  letter-spacing: 0.46em;
+  color: var(--accent);
+  text-shadow: 0 0 12px rgba(212,175,55,0.5);
+  line-height: 1.8;
+}
+
+/* ══ Phase containers ═══════════════════════════ */
+.phase-prepare {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.phase-ceremony {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.phase-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ══ Form ════════════════════════════════════════ */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field-label { font-size: 0.78rem; color: var(--text-secondary); letter-spacing: 0.12em; }
+
+.field-input {
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+.field-input:focus { border-color: rgba(212,175,55,0.5); }
+.field-input::placeholder { color: var(--text-muted); }
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.cat-btn {
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.cat-btn:hover { color: var(--text-secondary); border-color: rgba(212,175,55,0.3); }
+.cat-btn.active {
+  background: rgba(212,175,55,0.12);
+  border-color: rgba(212,175,55,0.4);
+  color: var(--accent);
+}
+
+/* ══ Result phase ════════════════════════════════ */
+.hx-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+.hx-row.with-changed { justify-content: space-between; }
+
+.hx-arrow {
+  font-size: 1.5rem;
+  color: rgba(212,175,55,0.4);
+  flex-shrink: 0;
+  margin-top: 70px;
+}
+
+.hxcard {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+  position: relative;
+}
+
+.hxcard-badge {
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-primary);
+  border: 1px solid rgba(212,175,55,0.32);
+  border-radius: 100px;
+  padding: 2px var(--space-3);
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+
+.hxcard-sym {
+  font-size: 3rem; line-height: 1; margin-top: var(--space-2);
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent), #e8c96a);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  filter: drop-shadow(0 0 5px rgba(212,175,55,0.22));
+}
+
+.hxcard-meta { display: flex; flex-direction: column; gap: 2px; }
+.hxcard-num  { font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.1em; }
+.hxcard-name { font-size: 1rem; font-weight: 600; color: var(--text-primary); letter-spacing: 0.2em; }
+.hxcard-tri  { font-size: 0.65rem; color: var(--text-muted); }
+
+.hxcard-lines { display: flex; flex-direction: column; gap: 5px; width: 100%; padding: var(--space-2) var(--space-4); }
+.hxl-row { display: flex; align-items: center; gap: var(--space-2); height: 6px; }
+.hxl-lbl { font-size: 0.55rem; color: var(--text-muted); width: 22px; text-align: right; flex-shrink: 0; }
+.hxl-bars { flex: 1; display: flex; align-items: center; gap: 4px; }
+.hxl-bar  { display: block; height: 5px; border-radius: 3px; background: linear-gradient(90deg, var(--accent-dark), var(--accent)); }
+.hxl-bar.hxl-chg { background: linear-gradient(90deg, #b45309, #f59e0b); box-shadow: 0 0 4px rgba(245,158,11,0.4); }
+.hxl-full { width: 100%; }
+.hxl-half { width: calc(50% - 4px); }
+.hxl-gap  { width: 8px; flex-shrink: 0; }
+.hxl-dot  { width: 5px; height: 5px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; box-shadow: 0 0 3px rgba(245,158,11,0.6); }
+.hxcard-desc { font-size: 0.67rem; color: var(--text-muted); letter-spacing: 0.05em; line-height: 1.6; padding: 0 var(--space-2); }
+
+.changing-note {
+  display: flex; align-items: center; gap: var(--space-2);
+  font-size: 0.78rem; color: #f59e0b; letter-spacing: 0.12em;
+  padding: var(--space-2) var(--space-4);
+  background: rgba(245,158,11,0.06);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: var(--radius-md);
+}
+.changing-note.no-chg { color: var(--text-muted); background: rgba(255,255,255,0.02); border-color: var(--border); }
+.chg-icon { font-size: 0.9rem; }
+
+.analysis-section { gap: var(--space-4); }
+.analysis-title { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.2em; color: var(--text-primary); }
+
+.analysis-q {
+  font-size: 0.85rem; color: var(--text-secondary); letter-spacing: 0.1em;
+  padding: var(--space-3) var(--space-4);
+  background: rgba(212,175,55,0.04);
+  border-left: 2px solid rgba(212,175,55,0.25);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+.analysis-cat { font-size: 0.72rem; color: var(--text-muted); margin-left: var(--space-2); }
+
+.analysis-body {
+  font-size: 0.88rem; color: var(--text-secondary); line-height: 2;
+  letter-spacing: 0.06em; padding: var(--space-4);
+  background: rgba(212,175,55,0.03);
+  border-left: 2px solid rgba(212,175,55,0.22);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.dim-rows { display: flex; flex-direction: column; gap: var(--space-3); padding-top: var(--space-2); border-top: 1px solid var(--border); }
+.score-row { display: flex; gap: var(--space-4); align-items: flex-start; }
+.score-row-label { font-size: 0.72rem; color: var(--accent); letter-spacing: 0.12em; width: 36px; flex-shrink: 0; padding-top: 2px; }
+.score-row-text  { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.7; letter-spacing: 0.04em; }
+
+.result-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+
+.save-btn {
+  flex: 1; min-width: 140px;
+  padding: var(--space-3) var(--space-5);
+  background: rgba(212,175,55,0.1);
+  border: 1px solid rgba(212,175,55,0.35);
+  border-radius: var(--radius-lg);
+  color: var(--accent); font-size: 0.85rem; letter-spacing: 0.15em;
+  cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease;
+}
+.save-btn:hover:not(:disabled) { background: rgba(212,175,55,0.18); border-color: rgba(212,175,55,0.55); }
+.save-btn.saving { opacity: 0.6; cursor: default; }
+.save-done { flex: 1; font-size: 0.82rem; color: var(--success); letter-spacing: 0.1em; text-align: center; }
+.save-err  { flex: 1; font-size: 0.82rem; color: var(--error);   letter-spacing: 0.1em; text-align: center; }
+
+.reset-btn {
+  padding: var(--space-3) var(--space-5);
+  background: transparent; border: 1px solid var(--border);
+  border-radius: var(--radius-lg); color: var(--text-muted);
+  font-size: 0.85rem; letter-spacing: 0.15em; cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.reset-btn:hover { color: var(--text-secondary); border-color: rgba(255,255,255,0.14); }
+
+/* ══ Responsive ════════════════════════════════ */
+/* Mobile: shrink orbit radius via CSS variable — all positions scale automatically */
+@media (max-width: 430px) {
+  .bagua-stage {
+    --orbit-r: 92px;
+    width: 268px;
+    height: 268px;
+  }
+
+  .taiji-gold-ring {
+    width: 140px;
+    height: 140px;
+  }
+
+  .stage-center {
+    width: 126px;
+    height: 126px;
+  }
+
+  .stage-hexlines {
+    width: 126px;
+    height: 126px;
+  }
+
+  /* Four phenomena at smaller radius */
+  .sxq-n { transform: translate(-50%, calc(-66px - 50%)); }
+  .sxq-e { transform: translate(calc( 66px - 50%), -50%); }
+  .sxq-s { transform: translate(-50%, calc( 66px - 50%)); }
+  .sxq-w { transform: translate(calc(-66px - 50%), -50%); }
+
+  .orbit-sym { font-size: 1.1rem; }
+  .orbit-nm  { font-size: 0.6rem; }
+}
+
+@media (max-width: 560px) {
+  .sb-item { padding: var(--space-1) var(--space-2); }
+  .sb-conn  { width: 12px; }
+  .step-card { padding: var(--space-4); }
+  .hx-row, .hx-row.with-changed { flex-direction: column; }
+  .hx-arrow { transform: rotate(90deg); margin-top: 0; align-self: center; }
+  .result-actions { flex-direction: column; }
+  .save-btn, .reset-btn { width: 100%; }
+}
