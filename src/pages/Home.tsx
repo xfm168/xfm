@@ -21,10 +21,10 @@ const featureCards = [
     path: '/fengshui',
   },
   {
-    icon: 'chart',
-    name: '八字命理',
-    subtitle: '命盘推演 · 指点迷津',
-    path: '/daily',
+    icon: 'records',
+    name: '卦象记录',
+    subtitle: '7天 · 30天 · 全部',
+    path: '/records',
   },
 ]
 
@@ -335,26 +335,25 @@ function FeatureIcon({ type }: { type: string }) {
           <rect x="30" y="38" width="4" height="6" stroke="currentColor" strokeWidth="1" fill="currentColor" fillOpacity="0.12" />
         </svg>
       )
-    case 'chart':
+    case 'records':
       return (
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* 天干地支图 */}
-          <circle cx="32" cy="32" r="26" stroke="currentColor" strokeWidth="1.2" />
-          <circle cx="32" cy="32" r="18" stroke="currentColor" strokeWidth="0.8" opacity="0.5" />
-          {/* 中心点 */}
-          <circle cx="32" cy="32" r="3" fill="currentColor" />
-          {/* 放射线 */}
-          {[0, 60, 120, 180, 240, 300].map(deg => {
-            const rad = (deg * Math.PI) / 180
-            const x = 32 + Math.cos(rad) * 22
-            const y = 32 + Math.sin(rad) * 22
-            return <circle key={deg} cx={x} cy={y} r="2" fill="currentColor" opacity="0.6" />
-          })}
-          {/* 八字符号 */}
-          <text x="32" y="18" textAnchor="middle" fill="currentColor" fontSize="10" fontWeight="500">命</text>
-          <text x="46" y="36" textAnchor="middle" fill="currentColor" fontSize="10" fontWeight="500">运</text>
-          <text x="32" y="50" textAnchor="middle" fill="currentColor" fontSize="10" fontWeight="500">盘</text>
-          <text x="18" y="36" textAnchor="middle" fill="currentColor" fontSize="10" fontWeight="500">推</text>
+          {/* 卷轴/竹简 */}
+          <rect x="12" y="8" width="40" height="48" rx="3" stroke="currentColor" strokeWidth="1.2" fill="currentColor" fillOpacity="0.05" />
+          {/* 顶部卷轴 */}
+          <ellipse cx="32" cy="8" rx="20" ry="4" stroke="currentColor" strokeWidth="1.2" />
+          <ellipse cx="32" cy="8" rx="20" ry="4" fill="currentColor" fillOpacity="0.1" />
+          {/* 底部卷轴 */}
+          <ellipse cx="32" cy="56" rx="20" ry="4" stroke="currentColor" strokeWidth="1.2" />
+          <ellipse cx="32" cy="56" rx="20" ry="4" fill="currentColor" fillOpacity="0.1" />
+          {/* 文字行 */}
+          <line x1="20" y1="20" x2="44" y2="20" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+          <line x1="20" y1="26" x2="38" y2="26" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+          <line x1="20" y1="32" x2="44" y2="32" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+          <line x1="20" y1="38" x2="36" y2="38" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+          <line x1="20" y1="44" x2="44" y2="44" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+          {/* 日期标记 */}
+          <rect x="20" y="48" width="8" height="4" rx="1" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
         </svg>
       )
     default:
