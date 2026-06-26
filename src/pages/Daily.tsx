@@ -46,36 +46,6 @@ function DailySkeleton() {
   )
 }
 
-// ── Hexagram lines display ────────────────────────────
-
-function HexagramLines({ lines }: { lines: string[] }) {
-  // lines[0] = 初爻(底), lines[5] = 上爻(顶)；展示时从顶到底
-  const displayed = [...lines].reverse()
-  return (
-    <div className="hexagram-lines">
-      {displayed.map((line, i) => (
-        <div key={i} className="hex-line-row">
-          <span className="hex-line-label">
-            {['上爻', '五爻', '四爻', '三爻', '二爻', '初爻'][i]}
-          </span>
-          <div className={`hex-line ${line === '阳' ? 'yang' : 'yin'}`}>
-            {line === '阳' ? (
-              <span className="hex-line-bar yang-bar" />
-            ) : (
-              <>
-                <span className="hex-line-bar yin-bar" />
-                <span className="hex-line-gap" />
-                <span className="hex-line-bar yin-bar" />
-              </>
-            )}
-          </div>
-          <span className="hex-line-type">{line}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 // ── Date formatter ────────────────────────────────────
 
 function formatDate(dateStr: string): string {
@@ -128,12 +98,6 @@ export default function Daily() {
                 <span>下卦：{data.hexagram.lower_trigram}</span>
               </p>
               <p className="hex-description">「{data.hexagram.description}」</p>
-            </section>
-
-            {/* ── Six lines ── */}
-            <section className="daily-card lines-card">
-              <h3 className="card-title">六爻卦象</h3>
-              <HexagramLines lines={data.hexagram.lines} />
             </section>
 
             {/* ── Overall score ring ── */}
