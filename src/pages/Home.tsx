@@ -75,14 +75,14 @@ export default function Home() {
 
               {/* 阳鱼渐变（黑） */}
               <radialGradient id="yinFishGrad" cx="50%" cy="60%" r="60%">
-                <stop offset="0%"   stopColor="#1a2233" />
-                <stop offset="100%" stopColor="#0a1020" />
+                <stop offset="0%"   stopColor="#0a0f1a" />
+                <stop offset="100%" stopColor="#050810" />
               </radialGradient>
 
               {/* 阴鱼渐变（白） */}
               <radialGradient id="yangFishGrad" cx="50%" cy="40%" r="60%">
-                <stop offset="0%"   stopColor="#F5F1E8" />
-                <stop offset="100%" stopColor="#D4CFC0" />
+                <stop offset="0%"   stopColor="#FAF6EC" />
+                <stop offset="100%" stopColor="#E8E0CC" />
               </radialGradient>
 
               {/* 外环金辉 */}
@@ -196,13 +196,13 @@ export default function Home() {
                 fill="url(#yinFishGrad)"
               />
               {/* 白鱼眼（黑点） */}
-              <circle cx="250" cy="206" r="13" fill="url(#yinFishGrad)" />
-              <circle cx="250" cy="206" r="12" fill="url(#yinFishGrad)" />
-              <circle cx="249" cy="204" r="4" fill="rgba(255,255,255,0.15)" />
+              <circle cx="250" cy="206" r="13" fill="#0a0f1a" />
+              <circle cx="250" cy="206" r="12" fill="#050810" />
+              <circle cx="249" cy="204" r="4" fill="rgba(255,255,255,0.1)" />
               {/* 黑鱼眼（白点） */}
-              <circle cx="250" cy="294" r="13" fill="url(#yangFishGrad)" />
-              <circle cx="250" cy="294" r="12" fill="url(#yangFishGrad)" />
-              <circle cx="249" cy="292" r="4" fill="rgba(0,0,0,0.1)" />
+              <circle cx="250" cy="294" r="13" fill="#FAF6EC" />
+              <circle cx="250" cy="294" r="12" fill="#E8E0CC" />
+              <circle cx="249" cy="292" r="4" fill="rgba(255,255,255,0.6)" />
             </g>
 
             {/* 太极外圈高光 */}
