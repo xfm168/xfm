@@ -4,8 +4,8 @@ import {
   getVisitorId,
   generateDailyValues,
   todayString,
+  getHexagramByNumber,
   type DailyHexagramWithDetail,
-  type Hexagram,
 } from '../lib/hexagram'
 
 type Status = 'loading' | 'ready' | 'error'
@@ -28,6 +28,32 @@ export function useDailyHexagram(): UseDailyHexagramResult {
       try {
         const visitorId = getVisitorId()
         const today     = todayString()
+        const generated = generateDailyValues(visitorId, today)
+        const hexagram  = getHexagramByNumber(generated.hexagram_number)
+
+        if (!supabase) {
+          if (!cancelled) {
+            setData({
+              id: '',
+              visitor_id: visitorId,
+              date: today,
+              hexagram_id: hexagram.id,
+              hexagram_number: generated.hexagram_number,
+              score: generated.score,
+              career_score: generated.career_score,
+              wealth_score: generated.wealth_score,
+              love_score: generated.love_score,
+              health_score: generated.health_score,
+              lucky_color: generated.lucky_color,
+              lucky_number: generated.lucky_number,
+              analysis: generated.analysis,
+              created_at: new Date().toISOString(),
+              hexagram,
+            })
+            setStatus('ready')
+          }
+          return
+        }
 
         // 1. Check for existing record
         const { data: existing, error: fetchErr } = await supabase
@@ -45,21 +71,7 @@ export function useDailyHexagram(): UseDailyHexagramResult {
           return
         }
 
-        // 2. Generate values deterministically
-        const generated = generateDailyValues(visitorId, today)
-
-        // 3. Fetch the hexagram row for this number
-        const { data: hexRow, error: hexErr } = await supabase
-          .from('hexagrams')
-          .select('*')
-          .eq('number', generated.hexagram_number)
-          .single()
-
-        if (hexErr) throw hexErr
-
-        const hexagram = hexRow as Hexagram
-
-        // 4. Insert new record (ignore conflict — could race on double render)
+        // 2. Insert new record (ignore conflict — could race on double render)
         const { data: inserted, error: insertErr } = await supabase
           .from('daily_hexagrams')
           .insert({
@@ -80,7 +92,6 @@ export function useDailyHexagram(): UseDailyHexagramResult {
           .single()
 
         if (insertErr) {
-          // On unique conflict (double render), fetch again
           if (insertErr.code === '23505') {
             const { data: retry } = await supabase
               .from('daily_hexagrams')

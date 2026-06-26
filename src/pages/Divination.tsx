@@ -327,16 +327,26 @@ export default function Divination() {
       if (cn !== hexagramNumber) changedHexagramNumber = cn
     }
 
-    const [{ data: hexRow }, changedRow] = await Promise.all([
-      supabase.from('hexagrams').select('*').eq('number', hexagramNumber).single(),
-      changedHexagramNumber
-        ? supabase.from('hexagrams').select('*').eq('number', changedHexagramNumber).single()
-        : Promise.resolve({ data: null }),
-    ])
-    if (!hexRow) return
+    let hexagram
+    let changedHexagram: Hexagram | null = null
 
-    const hexagram        = hexRow as Hexagram
-    const changedHexagram = changedRow.data as Hexagram | null
+    if (!supabase) {
+      const { getHexagramByNumber } = await import('../lib/hexagram')
+      hexagram = getHexagramByNumber(hexagramNumber)
+      if (changedHexagramNumber) {
+        changedHexagram = getHexagramByNumber(changedHexagramNumber)
+      }
+    } else {
+      const [{ data: hexRow }, changedRow] = await Promise.all([
+        supabase.from('hexagrams').select('*').eq('number', hexagramNumber).single(),
+        changedHexagramNumber
+          ? supabase.from('hexagrams').select('*').eq('number', changedHexagramNumber).single()
+          : Promise.resolve({ data: null }),
+      ])
+      if (!hexRow) return
+      hexagram = hexRow as Hexagram
+      changedHexagram = changedRow.data as Hexagram | null
+    }
 
     setResult({
       id:                      '',
@@ -360,6 +370,10 @@ export default function Divination() {
   // ── Save record ────────────────────────────────
   async function saveRecord() {
     if (!result) return
+    if (!supabase) {
+      setSaveStatus('saved')
+      return
+    }
     setSaveStatus('saving')
     const { data: ins, error } = await supabase
       .from('divinations')

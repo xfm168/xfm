@@ -114,6 +114,7 @@ export default function Analysis() {
   }, [])
 
   async function saveReportToDB(rt: RoomType, res: AnalysisResult) {
+    if (!supabase) return
     const { data } = await supabase
       .from('fengshui_reports')
       .insert({

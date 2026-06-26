@@ -295,6 +295,7 @@ export default function PremiumReport() {
   }, [reportId])
 
   async function checkIfAlreadyPaid(id: string) {
+    if (!supabase) return
     const { data } = await supabase
       .from('fengshui_reports')
       .select('payment_status, premium_report')
@@ -315,7 +316,7 @@ export default function PremiumReport() {
       masterReading: getMasterReading(roomType, score),
     }
 
-    if (reportId) {
+    if (reportId && supabase) {
       await supabase
         .from('fengshui_reports')
         .update({ payment_status: 'premium', premium_report: generated, updated_at: new Date().toISOString() })

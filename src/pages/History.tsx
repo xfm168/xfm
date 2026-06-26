@@ -208,6 +208,14 @@ export default function History() {
       try {
         const visitorId = getVisitorId()
 
+        if (!supabase) {
+          if (!cancelled) {
+            setRecords([])
+            setStatus('ready')
+          }
+          return
+        }
+
         const { data, error: fetchErr } = await supabase
           .from('daily_hexagrams')
           .select(`*, hexagram:hexagrams(number, name, symbol, lines)`)
