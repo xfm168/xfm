@@ -24,8 +24,13 @@ export default function Header() {
     <header className="header">
       <div className="header-container">
         <Link to="/" className="logo" onClick={() => setMenuOpen(false)}>
-          <span className="logo-icon">玄</span>
-          <span className="logo-text">玄风门</span>
+          <span className="logo-icon">
+            <span className="logo-seal-text">玄</span>
+          </span>
+          <span className="logo-text-wrap">
+            <span className="logo-text">玄风门</span>
+            <span className="logo-subtext">XUAN FENG MEN</span>
+          </span>
         </Link>
 
         <button

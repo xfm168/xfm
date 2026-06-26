@@ -7,7 +7,9 @@ export default function Footer() {
       <div className="footer-container">
         <div className="footer-brand">
           <Link to="/" className="footer-logo">
-            <span className="footer-logo-icon">玄</span>
+            <span className="footer-logo-icon">
+              <span className="footer-seal-text">玄</span>
+            </span>
             <span className="footer-logo-text">玄风门</span>
           </Link>
           <p className="footer-slogan">遇事不决，可问玄风</p>
