@@ -76,10 +76,18 @@ export default function FengShui() {
     setError(null)
     setRetryInfo(null)
 
-    const RETRY_DELAYS = [2000, 5000, 10000]
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+    // 检查 Supabase 配置
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+
+    if (!supabaseUrl || !anonKey) {
+      setError('风水分析服务暂不可用（缺少数据库配置）')
+      setIsAnalyzing(false)
+      return
+    }
+
     const apiUrl = `${supabaseUrl}/functions/v1/analyze-room`
+    const RETRY_DELAYS = [2000, 5000, 10000]
 
     for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
       try {
