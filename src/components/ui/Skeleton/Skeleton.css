@@ -1,0 +1,48 @@
+.xui-skeleton {
+  background: linear-gradient(90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-card) 50%,
+    var(--bg-secondary) 100%);
+  background-size: 200% 100%;
+  animation: xui-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+.xui-skeleton--multi {
+  display: flex;
+  flex-direction: column;
+}
+
+.xui-skeleton__item {
+  background: linear-gradient(90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-card) 50%,
+    var(--bg-secondary) 100%);
+  background-size: 200% 100%;
+  animation: xui-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Variants ── */
+.xui-skeleton--text {
+  height: 16px;
+  border-radius: var(--radius-sm);
+}
+
+.xui-skeleton--circular {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.xui-skeleton--rectangular {
+  border-radius: var(--radius-md);
+}
+
+.xui-skeleton--card {
+  height: 120px;
+  border-radius: var(--radius-lg);
+}
+
+@keyframes xui-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

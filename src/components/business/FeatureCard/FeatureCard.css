@@ -1,0 +1,81 @@
+.xbiz-feature-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+  transition: all var(--duration-base) var(--ease-elegant);
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.xbiz-feature-card:hover {
+  border-color: var(--gold-500);
+  box-shadow: var(--shadow-gold-md);
+  transform: translateY(-2px);
+}
+
+.xbiz-feature-card:active {
+  transform: translateY(0);
+}
+
+.xbiz-feature-card__icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: var(--gold-500);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.xbiz-feature-card__icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.xbiz-feature-card__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.xbiz-feature-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+}
+
+.xbiz-feature-card__subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.xbiz-feature-card__arrow {
+  color: var(--gold-500);
+  font-size: 1.25rem;
+  opacity: 0.6;
+  transition: all var(--duration-base) var(--ease-standard);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.xbiz-feature-card:hover .xbiz-feature-card__arrow {
+  opacity: 1;
+  transform: translateX(2px);
+}

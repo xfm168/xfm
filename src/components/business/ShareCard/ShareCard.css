@@ -1,0 +1,130 @@
+.xbiz-share-card {
+  position: relative;
+  background: var(--bg-primary);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  aspect-ratio: 9 / 16;
+  max-width: 360px;
+}
+
+.xbiz-share-card__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 70%),
+    linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.xbiz-share-card__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-8) var(--space-6);
+  height: 100%;
+  gap: var(--space-5);
+  text-align: center;
+}
+
+.xbiz-share-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.xbiz-share-card__brand {
+  font-size: 0.875rem;
+  color: var(--gold-500);
+  letter-spacing: 0.3em;
+  font-weight: 600;
+}
+
+.xbiz-share-card__date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.xbiz-share-card__hex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.xbiz-share-card__symbol {
+  font-size: 5rem;
+  color: var(--gold-500);
+  line-height: 1;
+  filter: drop-shadow(0 0 20px var(--gold-glow));
+}
+
+.xbiz-share-card__hex-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.xbiz-share-card__num {
+  font-size: 0.75rem;
+  color: var(--gold-500);
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+.xbiz-share-card__name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.2em;
+}
+
+.xbiz-share-card__score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.xbiz-share-card__score-num {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--gold-500);
+  line-height: 1;
+  background: linear-gradient(180deg, var(--gold-300), var(--gold-700));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.xbiz-share-card__score-lbl {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  margin-top: 4px;
+}
+
+.xbiz-share-card__desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+}
+
+.xbiz-share-card__footer {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--border-light);
+  padding-top: var(--space-4);
+}
+
+.xbiz-share-card__slogan {
+  font-size: 0.75rem;
+  color: var(--gold-500);
+  letter-spacing: 0.25em;
+  opacity: 0.7;
+}

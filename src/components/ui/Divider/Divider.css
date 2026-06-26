@@ -1,0 +1,39 @@
+.xui-divider {
+  flex-shrink: 0;
+}
+
+.xui-divider--horizontal {
+  width: 100%;
+  height: 1px;
+}
+
+.xui-divider--vertical {
+  width: 1px;
+  height: 100%;
+  align-self: stretch;
+}
+
+/* ── Variants ── */
+.xui-divider--line {
+  background: var(--border);
+}
+
+.xui-divider--gradient.xui-divider--horizontal {
+  background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
+  opacity: 0.4;
+}
+
+.xui-divider--gradient.xui-divider--vertical {
+  background: linear-gradient(180deg, transparent, var(--gold-500), transparent);
+  opacity: 0.4;
+}
+
+.xui-divider--dotted {
+  background: none;
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 8px 1px;
+}
+
+.xui-divider--dotted.xui-divider--vertical {
+  background-size: 1px 8px;
+}

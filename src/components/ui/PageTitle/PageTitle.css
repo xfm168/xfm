@@ -1,0 +1,52 @@
+.xui-page-title {
+  position: relative;
+  text-align: center;
+  padding: var(--space-10) 0 var(--space-8);
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.xui-page-title__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 0%, var(--gold-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.xui-page-title__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.xui-page-title__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8rem;
+  color: var(--gold-500);
+  letter-spacing: 0.3em;
+}
+
+.xui-page-title__icon {
+  line-height: 1;
+}
+
+.xui-page-title__title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--text-primary);
+  margin: var(--space-1) 0;
+  font-family: var(--font-serif);
+}
+
+.xui-page-title__subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.2em;
+}

@@ -1,0 +1,45 @@
+.xbiz-score-ring {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.xbiz-score-ring__svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(0deg);
+}
+
+.xbiz-score-ring__bg {
+  fill: none;
+  stroke: var(--border);
+  opacity: 0.5;
+}
+
+.xbiz-score-ring__fg {
+  fill: none;
+  stroke: url(#xbiz-score-gradient);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px var(--gold-glow));
+}
+
+.xbiz-score-ring__svg defs {
+  /* just ensuring defs works */
+}
+
+.xbiz-score-ring__num {
+  font-size: 1.75rem;
+  font-weight: 700;
+  fill: var(--gold-500);
+  font-family: var(--font-serif);
+}
+
+.xbiz-score-ring__label {
+  font-size: 0.6875rem;
+  fill: var(--text-muted);
+  letter-spacing: 0.15em;
+}
+
+/* Add gradient via SVG defs pattern - we use CSS fallback */
+.xbiz-score-ring__fg {
+  stroke: var(--gold-500);
+}

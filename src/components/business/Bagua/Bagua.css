@@ -1,0 +1,40 @@
+.xbiz-bagua {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.xbiz-bagua--spin {
+  animation: xbiz-bagua-spin linear infinite;
+}
+
+@keyframes xbiz-bagua-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.xbiz-bagua__item {
+  position: absolute;
+}
+
+.xbiz-bagua__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.xbiz-bagua__symbol {
+  font-size: 1.5rem;
+  color: var(--gold-500);
+  line-height: 1;
+}
+
+.xbiz-bagua__name {
+  font-size: 0.8125rem;
+  color: var(--gold-500);
+  letter-spacing: 0.1em;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  white-space: nowrap;
+}

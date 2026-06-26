@@ -1,0 +1,43 @@
+.xui-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.xui-section__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.xui-section__icon {
+  font-size: 1.25rem;
+  color: var(--gold-500);
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.xui-section__titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.xui-section__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+}
+
+.xui-section__subtitle {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.xui-section__body {
+  width: 100%;
+}

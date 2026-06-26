@@ -1,0 +1,13 @@
+.xbiz-taiji {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.xbiz-taiji--spin {
+  animation: xbiz-taiji-spin linear infinite;
+}
+
+@keyframes xbiz-taiji-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

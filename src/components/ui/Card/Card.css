@@ -1,0 +1,64 @@
+.xui-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-base) var(--ease-standard);
+}
+
+.xui-card--clickable {
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+/* ── Variants ── */
+.xui-card--default {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.xui-card--highlight {
+  background: var(--bg-card);
+  border: 1px solid var(--gold-500);
+  box-shadow: var(--shadow-gold);
+}
+
+.xui-card--ghost {
+  background: transparent;
+  border: none;
+}
+
+.xui-card--feature {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Padding ── */
+.xui-card--p-sm {
+  padding: var(--space-3) var(--space-4);
+}
+
+.xui-card--p-md {
+  padding: var(--space-5) var(--space-6);
+}
+
+.xui-card--p-lg {
+  padding: var(--space-8);
+}
+
+/* ── Hover ── */
+.xui-card--hoverable:hover,
+.xui-card--clickable:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: var(--shadow-gold-md);
+  transform: translateY(-2px);
+}
+
+.xui-card--feature:hover {
+  border-color: var(--gold-500);
+  box-shadow: var(--shadow-gold-md);
+}

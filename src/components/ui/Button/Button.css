@@ -1,0 +1,130 @@
+.xui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  transition: all var(--duration-base) var(--ease-standard);
+  user-select: none;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.xui-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Sizes ── */
+.xui-btn--sm {
+  height: 32px;
+  padding: 0 var(--space-4);
+  font-size: 0.8125rem;
+  border-radius: var(--radius-md);
+}
+
+.xui-btn--md {
+  height: 44px;
+  padding: 0 var(--space-6);
+  font-size: 0.9375rem;
+  border-radius: var(--radius-lg);
+}
+
+.xui-btn--lg {
+  height: 52px;
+  padding: 0 var(--space-8);
+  font-size: 1rem;
+  border-radius: var(--radius-xl);
+}
+
+.xui-btn--full {
+  width: 100%;
+}
+
+/* ── Primary ── */
+.xui-btn--primary {
+  background: linear-gradient(180deg, var(--gold-300) 0%, var(--gold-500) 50%, var(--gold-700) 100%);
+  color: var(--bg-primary);
+  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.25);
+}
+
+.xui-btn--primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, var(--gold-100) 0%, var(--gold-300) 50%, var(--gold-500) 100%);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
+}
+
+.xui-btn--primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 6px rgba(212, 175, 55, 0.3);
+}
+
+/* ── Secondary ── */
+.xui-btn--secondary {
+  background: transparent;
+  color: var(--gold-500);
+  border: 1px solid var(--gold-500);
+}
+
+.xui-btn--secondary:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: var(--gold-300);
+  color: var(--gold-300);
+}
+
+.xui-btn--secondary:active:not(:disabled) {
+  background: rgba(212, 175, 55, 0.12);
+}
+
+/* ── Ghost ── */
+.xui-btn--ghost {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.xui-btn--ghost:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* ── Text ── */
+.xui-btn--text {
+  background: transparent;
+  color: var(--gold-500);
+  padding: 0 var(--space-2);
+  height: auto;
+  min-height: 32px;
+}
+
+.xui-btn--text:hover:not(:disabled) {
+  color: var(--gold-300);
+}
+
+/* ── Icons ── */
+.xui-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  line-height: 1;
+}
+
+/* ── Loading spinner ── */
+.xui-btn__spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: xui-btn-spin 0.8s linear infinite;
+}
+
+@keyframes xui-btn-spin {
+  to { transform: rotate(360deg); }
+}

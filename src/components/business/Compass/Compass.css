@@ -1,0 +1,57 @@
+.xbiz-compass {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xbiz-compass__glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    var(--gold-glow) 0%,
+    transparent 70%);
+  animation: xbiz-compass-breath 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.xbiz-compass__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  border: 1px solid var(--gold-500);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.xbiz-compass__ring--1 {
+  opacity: 0.5;
+}
+
+.xbiz-compass__ring--2 {
+  opacity: 0.3;
+}
+
+.xbiz-compass__ring--3 {
+  opacity: 0.2;
+}
+
+.xbiz-compass__bagua {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.xbiz-compass__taiji {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 20px var(--gold-glow));
+}
+
+@keyframes xbiz-compass-breath {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
