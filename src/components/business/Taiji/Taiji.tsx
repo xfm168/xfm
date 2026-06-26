@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react'
 import './Taiji.css'
 
 export interface TaijiProps {
@@ -36,7 +37,7 @@ export default function Taiji({
     className,
   ].filter(Boolean).join(' ')
 
-  const style: React.CSSProperties = {
+  const style: CSSProperties = {
     width: size,
     height: size,
     animationDuration: `${spinDuration}s`,

@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react'
 import './Skeleton.css'
 
 export type SkeletonVariant = 'text' | 'circular' | 'rectangular' | 'card'
@@ -21,11 +22,11 @@ export default function Skeleton({
 }: SkeletonProps) {
   const items = Array.from({ length: count }, (_, i) => i)
 
-  const style: React.CSSProperties = {}
+  const style: CSSProperties = {}
   if (width !== undefined) style.width = typeof width === 'number' ? `${width}px` : width
   if (height !== undefined) style.height = typeof height === 'number' ? `${height}px` : height
 
-  const containerStyle: React.CSSProperties = count > 1 ? { gap: `${gap}px` } : {}
+  const containerStyle: CSSProperties = count > 1 ? { gap: `${gap}px` } : {}
 
   const classes = [
     'xui-skeleton',

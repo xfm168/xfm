@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, DragEvent, ChangeEvent } from 'react'
 import './ImageUploader.css'
 
 export interface ImageUploaderProps {
@@ -44,19 +44,19 @@ export default function ImageUploader({
     reader.readAsDataURL(file)
   }, [maxSizeMB, onChange])
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback((e: DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
     const file = e.dataTransfer.files[0]
     if (file) handleFile(file)
   }, [handleFile])
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: DragEvent) => {
     e.preventDefault()
     setIsDragging(true)
   }, [])
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
+  const handleDragLeave = useCallback((e: DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
   }, [])
@@ -65,7 +65,7 @@ export default function ImageUploader({
     inputRef.current?.click()
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) handleFile(file)
     e.target.value = ''

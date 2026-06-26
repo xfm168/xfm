@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react'
 import './Bagua.css'
 
 export interface Trigram {
@@ -46,7 +47,7 @@ export default function Bagua({
     className,
   ].filter(Boolean).join(' ')
 
-  const style: React.CSSProperties = {
+  const style: CSSProperties = {
     width: size,
     height: size,
     animationDuration: `${spinDuration}s`,
