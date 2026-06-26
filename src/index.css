@@ -13,6 +13,17 @@
   --gold-dark:     #B8860B;   /* 古铜 */
   --gold-deep:     #8B6914;   /* 深古铜 */
   --gold-glow:     rgba(212, 175, 55, 0.12);
+  --gold-500:      #D4AF37;
+  --gold-600:      #B8860B;
+
+  /* 主色调（用于按钮、强调等） */
+  --accent:        #D4AF37;
+  --accent-hover:  #E8C56A;
+  --accent-dark:   #B8860B;
+  --accent-light:  #E8C56A;
+
+  /* 深色系 */
+  --black-950:     #0A0F1A;
 
   /* 文字系列 */
   --text-primary:   #F5F1E8;  /* 主文字：米白 */
