@@ -47,7 +47,7 @@ export default function Home() {
         {/* 太极八卦核心 */}
         <div className="taiji-wrap">
           <div className="taiji-glow"></div>
-          <Compass size={480} spinning={true} variant="premium" />
+          <Compass size={480} />
         </div>
 
         {/* 品牌标题 */}
