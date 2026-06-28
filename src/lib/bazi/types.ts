@@ -18,6 +18,24 @@ export type ShenShi =
   | '偏印'
   | '正印'
 
+export type NaYin = string
+
+export type ShiErChangSheng =
+  | '长生'
+  | '沐浴'
+  | '冠带'
+  | '临官'
+  | '帝旺'
+  | '衰'
+  | '病'
+  | '死'
+  | '墓'
+  | '绝'
+  | '胎'
+  | '养'
+
+export type WuXingWangShuai = '旺' | '相' | '休' | '囚' | '死'
+
 export interface BirthInfo {
   birthDate: string
   birthTime: string
@@ -31,6 +49,10 @@ export interface GanZhi {
   gan: HeavenlyStem
   zhi: EarthlyBranch
   element: FiveElement
+  yinYang: YinYang
+  naYin: NaYin
+  shenShi?: ShenShi
+  changSheng?: ShiErChangSheng
 }
 
 export interface SixLines {
@@ -59,6 +81,8 @@ export interface DayMasterAnalysis {
   dayGanElement: FiveElement
   dayGanYinYang: YinYang
   relatedShens: Record<HeavenlyStem, ShenShi>
+  wangShuai: WuXingWangShuai
+  strengthScore: number
 }
 
 export interface XiYongShen {
@@ -69,14 +93,14 @@ export interface XiYongShen {
 }
 
 export interface BaZiAnalysis {
-  overall: string       // 总体命格
-  personality: string   // 性格分析
-  career: string        // 事业分析
-  wealth: string        // 财运分析
-  relationship: string  // 婚姻感情
-  health: string        // 健康建议
-  wuxingAdvice: string  // 五行建议
-  summary: string       // 综合总结
+  overall: string
+  personality: string
+  career: string
+  wealth: string
+  relationship: string
+  health: string
+  wuxingAdvice: string
+  summary: string
 }
 
 export interface BaZiChart {
@@ -91,3 +115,11 @@ export interface BaZiChart {
   version: string
   createdAt: number
 }
+
+export type SolarTermName =
+  | '立春' | '雨水' | '惊蛰' | '春分'
+  | '清明' | '谷雨' | '立夏' | '小满'
+  | '芒种' | '夏至' | '小暑' | '大暑'
+  | '立秋' | '处暑' | '白露' | '秋分'
+  | '寒露' | '霜降' | '立冬' | '小雪'
+  | '大雪' | '冬至' | '小寒' | '大寒'
