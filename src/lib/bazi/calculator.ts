@@ -274,7 +274,14 @@ export function calculateBaZi(birthInfo: BirthInfo): BaZiChart {
   const strengthResult = calculateStrength(enrichedSixLines, dayGanZhi.gan, monthGanZhi.zhi)
 
   // 格局
-  const geJuResult = determineGeJu(enrichedSixLines, relatedShens)
+  const geJuResult = determineGeJu(
+    enrichedSixLines,
+    relatedShens,
+    strengthResult.strengthScore,
+    dayGanZhi.gan,
+    monthGanZhi.zhi,
+    fiveElementCount,
+  )
 
   // 日主分析
   const dayMaster: DayMasterAnalysis = {

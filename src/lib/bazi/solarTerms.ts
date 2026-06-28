@@ -164,27 +164,15 @@ export function getMonthZhiIndex(date: Date): number {
   let lastIndex = -1
   for (let i = 0; i < terms.length; i++) {
     const term = terms[i]
-    const termDate = new Date(term.date)
-    // 节气时间转换：UTC -> 本地时间比较
-    if (date > termDate || (date.getFullYear() === termDate.getFullYear() &&
-        date.getMonth() === termDate.getMonth() &&
-        date.getDate() === termDate.getDate() &&
-        date.getHours() * 60 + date.getMinutes() >= termDate.getHours() * 60 + termDate.getMinutes())) {
+    const termDate = term.date
+    if (date >= termDate) {
       lastIndex = i
     }
   }
 
-  // 如果1月份还没到小寒（1月6日左右），查上一年的冬至
+  // 如果1月份还没到小寒（1月6日左右），属于丑月
   if (lastIndex === -1) {
-    // 1月在小寒之前，属于丑月
     return 11
-  }
-
-  // 如果日期在今年的立春之前（1月），但 lastIndex 仍为上一年冬至
-  // 这发生在1月1日到小寒之间，此时属于丑月
-  if (lastIndex === 0 || lastIndex === 1) {
-    // 小寒或大寒期间，仍然属于丑月或子月
-    return TERM_TO_MONTH_ZHI[lastIndex]
   }
 
   return TERM_TO_MONTH_ZHI[lastIndex]

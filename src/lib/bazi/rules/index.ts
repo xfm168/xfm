@@ -3,35 +3,48 @@
  * 导出所有规则模块
  */
 
+// 引擎核心
+export { executeRules, createRule } from './engine'
+export type { BaseRule, RuleContext, RuleResult, RuleMatchResult, RuleEngineOptions } from './engine'
+
 // 格局规则
 export {
   GEJU_RULES,
-  applyGeJuRules,
-  calculateGeJuScore,
-  isPoGe,
+  determineGeJu,
+  buildGeJuContext,
   type GeJuContext,
-  type GeJuRule,
+  type GeJuResult,
+  type GeJuName,
+  type GeJuCategory,
 } from './gejuRules'
 
 // 喜用神规则
 export {
   XIYONG_RULES,
-  applyXiYongRules,
-  hasTiaoHouNeed,
-  hasBingYaoNeed,
+  determineXiYongShen,
   type XiYongContext,
-  type XiYongRule,
+  type XiYongResult,
 } from './xiyongRules'
+
+// 旺衰规则
+export {
+  WUXING_RULES,
+  calculateStrengthV2,
+  type WuXingContext,
+  type StrengthResult,
+  type StrengthBreakdown,
+} from './wuxingRules'
 
 // 十二长生规则
 export {
-  CHANG_SHENG_RULES,
-  CHANG_SHENG_ORDER,
-  CHANG_SHENG_START_CORRECTED,
-  calculateChangSheng,
-  applyChangShengRules,
+  CHANGSHENG_RULES,
+  CHANG_SHENG_NAMES,
+  calcChangShengByRules,
+  getChangShengStartZhi,
+  getChangShengNames,
   type ChangShengContext,
   type ChangShengRule,
+  type ChangShengRuleResult,
 } from './changshengRules'
 
 // 十神规则
@@ -57,11 +70,13 @@ export {
 // 大运规则
 export {
   DAYUN_RULES,
-  calculateDaYunStart,
-  generateDaYunSequence,
-  isShun,
-  applyDaYunRules,
-  type DaYunContext,
-  type DaYunResult,
+  calcDaYunStart,
+  generateDaYun,
+  getLiuNian,
+  getLiuYue,
+  type DaYunStep,
+  type QiYunResult,
+  type DaYunRuleContext,
+  type DaYunRuleResult,
   type DaYunRule,
 } from './dashunRules'
