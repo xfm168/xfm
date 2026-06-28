@@ -69,11 +69,14 @@ export interface XiYongShen {
 }
 
 export interface BaZiAnalysis {
-  personality: string
-  career: string
-  wealth: string
-  relationship: string
-  health: string
+  overall: string       // 总体命格
+  personality: string   // 性格分析
+  career: string        // 事业分析
+  wealth: string        // 财运分析
+  relationship: string  // 婚姻感情
+  health: string        // 健康建议
+  wuxingAdvice: string  // 五行建议
+  summary: string       // 综合总结
 }
 
 export interface BaZiChart {
