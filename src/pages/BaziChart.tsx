@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { PageTitle, Card, Badge, Button } from '../components/ui'
+import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { calculateBaZi, type FiveElement, type BirthInfo, type BaZiAnalysis } from '../lib/bazi'
 import { getAIService } from '../services/ai'
-import { Loading } from '../components/ui'
+import { safeParseAIJson } from '../utils/aiJson'
 import './BaziChart.css'
 
 type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'xiyong' | 'analysis'
@@ -47,8 +47,8 @@ export default function BaziChart() {
 
   const [saved, setSaved] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
-  const [aiContent, setAiContent] = useState<string | null>(null)
   const [aiError, setAiError] = useState<string | null>(null)
+  const [aiFetched, setAiFetched] = useState(false)
 
   useEffect(() => {
     if (!chart && charts.length > 0) {
@@ -56,7 +56,7 @@ export default function BaziChart() {
     }
   }, [charts])
 
-  // 默认解析文案
+  // 默认解析文案（降级用）
   const defaultAnalysis: BaZiAnalysis = {
     overall: '命格深厚，需结合大运综合分析',
     personality: '性格内敛含蓄，思考缜密，富有耐心与毅力。',
@@ -85,27 +85,36 @@ export default function BaziChart() {
         { birthDateTime, gender }
       )
 
-      const content = response.content || ''
-      setAiContent(content)
+      const json = safeParseAIJson<Partial<BaZiAnalysis>>(response.content || '')
 
-      // 直接 JSON.parse，无需解析自然语言
-      const parsed = JSON.parse(content)
+      // 统一字段补全，保证所有字段存在
       const newAnalysis: BaZiAnalysis = {
-        overall: parsed.overall || defaultAnalysis.overall,
-        personality: parsed.personality || defaultAnalysis.personality,
-        career: parsed.career || defaultAnalysis.career,
-        wealth: parsed.wealth || defaultAnalysis.wealth,
-        relationship: parsed.relationship || defaultAnalysis.relationship,
-        health: parsed.health || defaultAnalysis.health,
-        wuxingAdvice: parsed.wuxingAdvice || defaultAnalysis.wuxingAdvice,
-        summary: parsed.summary || defaultAnalysis.summary,
+        overall: '',
+        personality: '',
+        career: '',
+        wealth: '',
+        relationship: '',
+        health: '',
+        wuxingAdvice: '',
+        summary: '',
+        ...json,
       }
+
+      // 空字段用默认文案补全
+      for (const key of Object.keys(newAnalysis) as (keyof BaZiAnalysis)[]) {
+        if (!newAnalysis[key]) {
+          newAnalysis[key] = defaultAnalysis[key]
+        }
+      }
+
       setChart(prev => prev ? { ...prev, analysis: newAnalysis } : null)
+      setAiFetched(true)
     } catch (err) {
-      console.error('[AI] 八字解析失败:', err)
-      setAiError('AI解析服务暂时不可用，请稍后再试')
-      // 失败时使用默认文案
+      console.warn('[AI] 八字解析失败，使用默认文案')
+      setAiError('AI 暂时不可用，请稍后重试')
+      // 失败时使用默认文案，页面继续可用
       setChart(prev => prev ? { ...prev, analysis: defaultAnalysis } : null)
+      setAiFetched(true)
     } finally {
       setAiLoading(false)
     }
@@ -113,10 +122,10 @@ export default function BaziChart() {
 
   // 切换到解析 Tab 时自动调用 AI
   useEffect(() => {
-    if (activeTab === 'analysis' && !aiContent && !aiLoading) {
+    if (activeTab === 'analysis' && !aiFetched && !aiLoading) {
       fetchAIAnalysis()
     }
-  }, [activeTab, aiContent, aiLoading, fetchAIAnalysis])
+  }, [activeTab, aiFetched, aiLoading, fetchAIAnalysis])
 
   if (!chart) {
     return (

@@ -21,7 +21,7 @@ export const baziPrompts: Record<string, AIPrompt> = {
     userTemplate: `出生时间：{{birthDateTime}}
 性别：{{gender}}
 
-请严格返回以下 JSON 格式，不要输出 Markdown 或任何其他内容：
+请严格返回以下 JSON 格式：
 {
 "overall":"总体命格",
 "personality":"性格分析",
@@ -32,7 +32,15 @@ export const baziPrompts: Record<string, AIPrompt> = {
 "wuxingAdvice":"五行建议",
 "summary":"综合总结"
 }
-缺少字段必须返回空字符串。`,
+
+请严格返回 JSON。
+不要输出 Markdown。
+不要输出 \`\`\`json。
+不要输出解释文字。
+字段必须全部返回。
+缺少字段返回空字符串。
+不得返回 null。
+不得省略字段。`,
     defaultModel: 'gemini-2.0-pro',
     defaultTemperature: 0.6,
   },
