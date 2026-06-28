@@ -1,5 +1,7 @@
 import { useDailyHexagram } from '../hooks/useDailyHexagram'
 import { todayString } from '../lib/hexagram'
+import { PageTitle, Badge } from '../components/ui'
+import { ScoreRing } from '../components/business'
 import './Daily.css'
 
 // ── Helpers ──────────────────────────────────────────
@@ -9,25 +11,6 @@ function ScoreBar({ score }: { score: number }) {
     <div className="score-bar-track">
       <div className="score-bar-fill" style={{ width: `${score}%` }} />
     </div>
-  )
-}
-
-function ScoreRing({ score }: { score: number }) {
-  const r = 44
-  const circ = 2 * Math.PI * r
-  const dash = (score / 100) * circ
-  return (
-    <svg className="score-ring-svg" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r={r} className="score-ring-bg" />
-      <circle
-        cx="50" cy="50" r={r}
-        className="score-ring-fg"
-        strokeDasharray={`${dash} ${circ}`}
-        strokeDashoffset={circ * 0.25}
-      />
-      <text x="50" y="46" className="score-ring-num">{score}</text>
-      <text x="50" y="60" className="score-ring-label">玄风指数</text>
-    </svg>
   )
 }
 
@@ -63,13 +46,12 @@ export default function Daily() {
   return (
     <div className="daily-page">
       {/* Page header */}
-      <div className="daily-header">
-        <div className="container">
-          <span className="section-label">☯ 今日卦运</span>
-          <h1 className="daily-date">{formatDate(today)}</h1>
-          <p className="daily-sub">专属卦象 · 每日更新 · 同一天始终如一</p>
-        </div>
-      </div>
+      <PageTitle
+        icon="☯"
+        label="今日卦运"
+        title={formatDate(today)}
+        subtitle="专属卦象 · 每日更新 · 同一天始终如一"
+      />
 
       <div className="container daily-container">
         {status === 'loading' && <DailySkeleton />}
@@ -86,7 +68,7 @@ export default function Daily() {
 
             {/* ── Core: hexagram symbol + name ── */}
             <section className="hex-core-card">
-              <div className="hex-number-badge">第 {data.hexagram_number} 卦</div>
+              <Badge variant="gold" className="daily-hex-badge">第 {data.hexagram_number} 卦</Badge>
               <div className="hex-symbol-wrap">
                 <span className="hex-symbol">{data.hexagram.symbol}</span>
                 <div className="hex-symbol-glow" />
@@ -102,7 +84,7 @@ export default function Daily() {
 
             {/* ── Overall score ring ── */}
             <section className="daily-card score-main-card">
-              <ScoreRing score={data.score} />
+              <ScoreRing score={data.score} size={160} />
               <p className="score-fortune">{data.hexagram.fortune}</p>
             </section>
 
