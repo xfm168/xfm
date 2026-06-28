@@ -10,6 +10,7 @@ import History from './pages/History'
 import Divination from './pages/Divination'
 import BaziInput from './pages/BaziInput'
 import BaziChart from './pages/BaziChart'
+import BaziHistory from './pages/BaziHistory'
 import './App.css'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/daily" element={<Daily />} />
             <Route path="/bazi" element={<BaziInput />} />
             <Route path="/bazi/chart" element={<BaziChart />} />
+            <Route path="/bazi/history" element={<BaziHistory />} />
             <Route path="/liuyao" element={<Divination />} />
             <Route path="/records" element={<History />} />
           </Routes>

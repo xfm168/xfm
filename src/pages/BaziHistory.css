@@ -1,0 +1,119 @@
+.bazi-history-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding-bottom: var(--space-16);
+}
+
+.bazi-history-content {
+  padding: var(--space-6) var(--space-4);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.bazi-history-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+.bazi-history-empty p {
+  margin: 0 0 var(--space-6) 0;
+}
+
+.bazi-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-history-item {
+  margin-bottom: 0;
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.history-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-item-date {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+}
+
+.history-item-gender {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+.history-item-score {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.history-item-score .score-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-serif);
+}
+
+.history-item-score .score-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.history-item-pillars {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.pillar-tag {
+  flex: 1;
+  text-align: center;
+  padding: var(--space-2) 0;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-family: var(--font-serif);
+}
+
+.pillar-tag.day {
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.history-item-time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-3);
+}
+
+.history-item-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .pillar-tag {
+    font-size: 0.75rem;
+  }
+}

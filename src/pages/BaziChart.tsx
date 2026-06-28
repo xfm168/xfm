@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
+import { useAIAnalysis } from '../hooks/useAIAnalysis'
 import { calculateBaZi, type FiveElement, type BirthInfo, type BaZiAnalysis } from '../lib/bazi'
-import { getAIService } from '../services/ai'
-import { safeParseAIJson } from '../utils/aiJson'
+import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import './BaziChart.css'
 
 type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'xiyong' | 'analysis'
@@ -46,9 +46,6 @@ export default function BaziChart() {
   })
 
   const [saved, setSaved] = useState(false)
-  const [aiLoading, setAiLoading] = useState(false)
-  const [aiError, setAiError] = useState<string | null>(null)
-  const [aiFetched, setAiFetched] = useState(false)
 
   useEffect(() => {
     if (!chart && charts.length > 0) {
@@ -56,76 +53,27 @@ export default function BaziChart() {
     }
   }, [charts])
 
-  // 默认解析文案（降级用）
-  const defaultAnalysis: BaZiAnalysis = {
-    overall: '命格深厚，需结合大运综合分析',
-    personality: '性格内敛含蓄，思考缜密，富有耐心与毅力。',
-    career: '事业心强，善于规划，宜从事稳定型职业。',
-    wealth: '财运平稳，理财观念保守，积少成多。',
-    relationship: '感情细腻，重视家庭，婚恋缘分需耐心等待。',
-    health: '注意脾胃调理，平时多加锻炼即可。',
-    wuxingAdvice: '宜补木火，忌金水过旺。',
-    summary: '整体命局平衡，用神得力，中晚年运势渐入佳境。',
-  }
+  const birthDateTime = chart ? `${chart.birthInfo.birthDate} ${chart.birthInfo.birthTime}` : ''
+  const gender = chart ? (chart.birthInfo.gender === 'male' ? '男' : '女') : ''
 
-  // 调用 AI 解析
-  const fetchAIAnalysis = useCallback(async () => {
-    if (!chart) return
+  const {
+    data: analysis,
+    loading: aiLoading,
+    error: aiError,
+    retry: retryAnalysis,
+  } = useAIAnalysis<BaZiAnalysis>({
+    promptKey: 'bazi.basic',
+    variables: { birthDateTime, gender },
+    defaultValue: DEFAULT_BAZI_ANALYSIS,
+    autoFetch: activeTab === 'analysis' && !!chart,
+  })
 
-    setAiLoading(true)
-    setAiError(null)
-
-    try {
-      const aiService = getAIService()
-      const birthDateTime = `${chart.birthInfo.birthDate} ${chart.birthInfo.birthTime}`
-      const gender = chart.birthInfo.gender === 'male' ? '男' : '女'
-
-      const response = await aiService.generateWithPrompt(
-        'bazi.basic',
-        { birthDateTime, gender }
-      )
-
-      const json = safeParseAIJson<Partial<BaZiAnalysis>>(response.content || '')
-
-      // 统一字段补全，保证所有字段存在
-      const newAnalysis: BaZiAnalysis = {
-        overall: '',
-        personality: '',
-        career: '',
-        wealth: '',
-        relationship: '',
-        health: '',
-        wuxingAdvice: '',
-        summary: '',
-        ...json,
-      }
-
-      // 空字段用默认文案补全
-      for (const key of Object.keys(newAnalysis) as (keyof BaZiAnalysis)[]) {
-        if (!newAnalysis[key]) {
-          newAnalysis[key] = defaultAnalysis[key]
-        }
-      }
-
-      setChart(prev => prev ? { ...prev, analysis: newAnalysis } : null)
-      setAiFetched(true)
-    } catch (err) {
-      console.warn('[AI] 八字解析失败，使用默认文案')
-      setAiError('AI 暂时不可用，请稍后重试')
-      // 失败时使用默认文案，页面继续可用
-      setChart(prev => prev ? { ...prev, analysis: defaultAnalysis } : null)
-      setAiFetched(true)
-    } finally {
-      setAiLoading(false)
-    }
-  }, [chart])
-
-  // 切换到解析 Tab 时自动调用 AI
+  // 切换到解析 Tab 时触发 AI
   useEffect(() => {
-    if (activeTab === 'analysis' && !aiFetched && !aiLoading) {
-      fetchAIAnalysis()
+    if (activeTab === 'analysis' && chart && !aiLoading && !aiError) {
+      // autoFetch 已处理，此处仅用于 Tab 切换时的触发
     }
-  }, [activeTab, aiFetched, aiLoading, fetchAIAnalysis])
+  }, [activeTab, chart, aiLoading, aiError])
 
   if (!chart) {
     return (
@@ -146,11 +94,12 @@ export default function BaziChart() {
     )
   }
 
-  const { sixLines, fiveElementCount, dayMaster, xiYongShen, analysis, overallScore, birthInfo: chartBirth } = chart
+  const { sixLines, fiveElementCount, dayMaster, xiYongShen, overallScore, birthInfo: chartBirth } = chart
 
   function handleSave() {
     if (chart) {
-      saveChart(chart)
+      const chartWithAnalysis = { ...chart, analysis }
+      saveChart(chartWithAnalysis)
       setSaved(true)
     }
   }
@@ -316,13 +265,13 @@ export default function BaziChart() {
                 <Card className="analysis-card">
                   <h3 className="card-title">解析失败</h3>
                   <p className="analysis-text error">{aiError}</p>
-                  <Button variant="secondary" onClick={fetchAIAnalysis}>
-                    重试
+                  <Button variant="secondary" onClick={retryAnalysis}>
+                    重新生成
                   </Button>
                 </Card>
               )}
 
-              {!aiLoading && !aiError && (
+              {!aiLoading && (
                 <>
                   <Card className="analysis-card">
                     <h3 className="card-title">总体命格</h3>
