@@ -30,6 +30,7 @@ export type GeJuName =
   | '比肩格' | '劫财格'
   // 从格
   | '从官杀格' | '从财格' | '从儿格' | '从印格'
+  | '从势格' | '从强格' | '从旺格'
   | '弃命从财' | '弃命从官' | '弃命从杀' | '假从格'
   // 专旺格
   | '专旺格' | '曲直格' | '炎上格' | '稼穑格' | '从革格' | '润下格'
@@ -1512,6 +1513,431 @@ export const GEJU_RULES: BaseRule<GeJuContext, Partial<GeJuResult>>[] = [
     },
   },
 
+  // 官印相生格
+  {
+    id: 'guanyin-xiangsheng',
+    name: '官印相生',
+    category: '正格成格',
+    priority: 218,
+    weight: 88,
+    description: '正官配正印，官印相生，贵格',
+    reference: '《子平真诠》官印相生',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const hasGuan = stems.some(g => ctx.relatedShens[g] === '正官')
+      const hasYin = stems.some(g => ctx.relatedShens[g] === '正印')
+      return hasGuan && hasYin && ctx.monthGanShen === '正官'
+    },
+    result: {
+      name: '正官格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 92,
+      confidence: 85,
+      description: '官印相生，功名显达',
+      reasons: ['官星当令', '印星相随', '官印相生'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 官财相生格
+  {
+    id: 'guancai-xiangsheng',
+    name: '官财相生',
+    category: '正格成格',
+    priority: 216,
+    weight: 85,
+    description: '正官配正财，财生官旺',
+    reference: '《渊海子平》财官相生',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const hasGuan = stems.some(g => ctx.relatedShens[g] === '正官')
+      const hasCai = stems.some(g => ctx.relatedShens[g] === '正财' || ctx.relatedShens[g] === '偏财')
+      return hasGuan && hasCai && ctx.monthGanShen === '正官'
+    },
+    result: {
+      name: '正官格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 88,
+      confidence: 80,
+      description: '财生官旺，富贵双全',
+      reasons: ['官星当令', '财星生官', '官财相生'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 官星独清
+  {
+    id: 'guanxing-duqing',
+    name: '官星独清',
+    category: '正格成格',
+    priority: 214,
+    weight: 86,
+    description: '正官一位，清纯不杂',
+    reference: '《滴天髓》官星清纯',
+    condition: (ctx) => {
+      if (ctx.monthGanShen !== '正官') return false
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      let guanCount = 0
+      let shaCount = 0
+      for (const g of stems) {
+        if (ctx.relatedShens[g] === '正官') guanCount++
+        if (ctx.relatedShens[g] === '偏官') shaCount++
+      }
+      return guanCount === 1 && shaCount === 0
+    },
+    result: {
+      name: '正官格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 90,
+      confidence: 82,
+      description: '官星独清，贵而纯粹',
+      reasons: ['正官一位', '无杀混杂', '官星独清'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真官格
+  {
+    id: 'zhen-guan-ge',
+    name: '真官格',
+    category: '正格成格',
+    priority: 212,
+    weight: 90,
+    description: '月令正官，官旺身强，真官格',
+    reference: '《三命通会》真官格',
+    condition: (ctx) => {
+      return ctx.monthGanShen === '正官'
+        && ctx.isSeasonal === false
+        && ctx.monthElement === BE_OVERCOME[ctx.dayElement]
+        && ctx.strengthScore >= 40
+        && ctx.strengthScore <= 65
+        && ctx.tongGenCount >= 1
+    },
+    result: {
+      name: '正官格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 95,
+      confidence: 88,
+      description: '真官格，大贵之命',
+      reasons: ['月令正官', '身官两停', '真官大贵'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 官杀混杂格
+  {
+    id: 'guansha-hunza',
+    name: '官杀混杂',
+    category: '破格',
+    priority: 210,
+    weight: 85,
+    description: '正官七杀并见，官杀混杂',
+    reference: '《子平真诠》官杀混杂',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const hasGuan = stems.some(g => ctx.relatedShens[g] === '正官')
+      const hasSha = stems.some(g => ctx.relatedShens[g] === '偏官')
+      return hasGuan && hasSha
+    },
+    result: {
+      name: '正官格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 55,
+      confidence: 65,
+      description: '官杀混杂，格局不清',
+      reasons: ['官杀并见', '格局混杂'],
+      poGe: true,
+      poGeReason: '官杀混杂，格局不清',
+    },
+  },
+
+  // 官重身轻
+  {
+    id: 'guanzhong-shenqing',
+    name: '官重身轻',
+    category: '破格',
+    priority: 208,
+    weight: 80,
+    description: '官旺身弱，官重身轻',
+    reference: '《滴天髓》官重身轻',
+    condition: (ctx) => {
+      return ctx.monthGanShen === '正官' && ctx.strengthScore < 35
+    },
+    result: {
+      name: '正官格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 50,
+      confidence: 60,
+      description: '官重身轻，不堪官杀',
+      reasons: ['身弱官旺', '官重身轻'],
+      poGe: true,
+      poGeReason: '身弱不胜官，官重身轻',
+    },
+  },
+
+  // 官轻印重
+  {
+    id: 'guanqing-yinzhong',
+    name: '官轻印重',
+    category: '破格',
+    priority: 206,
+    weight: 78,
+    description: '官星弱而印星重，母多灭子',
+    reference: '《子平真诠》官轻印重',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const yinCount = stems.filter(g => ctx.relatedShens[g] === '正印' || ctx.relatedShens[g] === '偏印').length
+      return ctx.monthGanShen === '正官' && yinCount >= 2 && ctx.strengthScore > 60
+    },
+    result: {
+      name: '正官格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 60,
+      confidence: 65,
+      description: '官轻印重，印多不生',
+      reasons: ['印星太重', '官星被泄', '官轻印重'],
+      poGe: true,
+      poGeReason: '印多官泄，官轻印重',
+    },
+  },
+
+  // 真七杀格
+  {
+    id: 'zhen-qisha-ge',
+    name: '真七杀格',
+    category: '正格成格',
+    priority: 204,
+    weight: 90,
+    description: '月令七杀，杀旺有制，真杀格',
+    reference: '《三命通会》真七杀格',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const hasZhi = stems.some(g => ctx.relatedShens[g] === '正印' || ctx.relatedShens[g] === '偏印' || ctx.relatedShens[g] === '食神')
+      return ctx.monthGanShen === '偏官'
+        && hasZhi
+        && ctx.strengthScore >= 40
+        && ctx.strengthScore <= 65
+    },
+    result: {
+      name: '七杀格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 92,
+      confidence: 86,
+      description: '真七杀格，杀印相生或食神制杀，大贵',
+      reasons: ['月令七杀', '七杀有制', '真杀大贵'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 杀印相生格
+  {
+    id: 'shayin-xiangsheng',
+    name: '杀印相生',
+    category: '正格成格',
+    priority: 202,
+    weight: 88,
+    description: '七杀配印，杀印相生，武贵',
+    reference: '《子平真诠》杀印相生',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const hasSha = stems.some(g => ctx.relatedShens[g] === '偏官')
+      const hasYin = stems.some(g => ctx.relatedShens[g] === '正印' || ctx.relatedShens[g] === '偏印')
+      return hasSha && hasYin && ctx.monthGanShen === '偏官'
+    },
+    result: {
+      name: '七杀格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 90,
+      confidence: 84,
+      description: '杀印相生，兵权在握',
+      reasons: ['七杀当令', '印星化杀', '杀印相生'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真食神格
+  {
+    id: 'zhen-shishen-ge',
+    name: '真食神格',
+    category: '正格成格',
+    priority: 200,
+    weight: 88,
+    description: '月令食神，身强食旺，真食神格',
+    reference: '《三命通会》真食神格',
+    condition: (ctx) => {
+      return ctx.monthGanShen === '食神'
+        && ctx.strengthScore >= 50
+        && ctx.strengthScore <= 80
+        && ctx.tongGenCount >= 1
+    },
+    result: {
+      name: '食神格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 90,
+      confidence: 82,
+      description: '真食神格，福禄丰厚',
+      reasons: ['月令食神', '身强食旺', '真食神格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真伤官格
+  {
+    id: 'zhen-shangguan-ge',
+    name: '真伤官格',
+    category: '正格成格',
+    priority: 198,
+    weight: 86,
+    description: '月令伤官，身强伤旺，真伤官格',
+    reference: '《三命通会》真伤官格',
+    condition: (ctx) => {
+      return ctx.monthGanShen === '伤官'
+        && ctx.strengthScore >= 50
+        && ctx.strengthScore <= 80
+        && ctx.tongGenCount >= 1
+    },
+    result: {
+      name: '伤官格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 88,
+      confidence: 80,
+      description: '真伤官格，聪明多才',
+      reasons: ['月令伤官', '身强伤旺', '真伤官格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真财格
+  {
+    id: 'zhen-cai-ge',
+    name: '真财格',
+    category: '正格成格',
+    priority: 196,
+    weight: 88,
+    description: '月令财星，身旺财旺，真财格',
+    reference: '《三命通会》真财格',
+    condition: (ctx) => {
+      return (ctx.monthGanShen === '正财' || ctx.monthGanShen === '偏财')
+        && ctx.strengthScore >= 45
+        && ctx.strengthScore <= 75
+        && ctx.tongGenCount >= 1
+    },
+    result: {
+      name: '财格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 90,
+      confidence: 82,
+      description: '真财格，大富之命',
+      reasons: ['月令财星', '身旺财旺', '真财大富'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真正印格
+  {
+    id: 'zhen-zhengyin-ge',
+    name: '真正印格',
+    category: '正格成格',
+    priority: 194,
+    weight: 86,
+    description: '月令正印，身弱印旺，真印格',
+    reference: '《三命通会》真印格',
+    condition: (ctx) => {
+      return ctx.monthGanShen === '正印'
+        && ctx.strengthScore >= 25
+        && ctx.strengthScore <= 50
+        && ctx.tongGenCount >= 1
+    },
+    result: {
+      name: '正印格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 88,
+      confidence: 80,
+      description: '真印格，文贵之命',
+      reasons: ['月令正印', '印星生身', '真印文贵'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真偏印格
+  {
+    id: 'zhen-pianyin-ge',
+    name: '真偏印格',
+    category: '正格成格',
+    priority: 193,
+    weight: 84,
+    description: '月令偏印，身弱印旺，真偏印格',
+    reference: '《三命通会》真偏印格',
+    condition: (ctx) => {
+      return ctx.monthGanShen === '偏印'
+        && ctx.strengthScore >= 25
+        && ctx.strengthScore <= 50
+        && ctx.tongGenCount >= 1
+    },
+    result: {
+      name: '偏印格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 86,
+      confidence: 78,
+      description: '真偏印格，异路功名',
+      reasons: ['月令偏印', '枭印生身', '真偏印格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真比肩格
+  {
+    id: 'zhen-bijian-ge',
+    name: '真比肩格',
+    category: '正格成格',
+    priority: 192,
+    weight: 82,
+    description: '月令比肩，身旺有制，真比肩格',
+    reference: '《三命通会》真比肩格',
+    condition: (ctx) => {
+      return ctx.monthGanShen === '比肩'
+        && ctx.strengthScore >= 55
+        && ctx.strengthScore <= 80
+        && ctx.tongGenCount >= 1
+    },
+    result: {
+      name: '比肩格' as GeJuName,
+      category: '正格' as GeJuCategory,
+      isSpecial: false,
+      score: 82,
+      confidence: 75,
+      description: '真比肩格，朋友助力',
+      reasons: ['月令比肩', '身旺有制', '真比肩格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
   // ===== 格局层次判断（Priority 50-100） =====
 
   // 格局高低
@@ -2492,6 +2918,201 @@ export const GEJU_RULES: BaseRule<GeJuContext, Partial<GeJuResult>>[] = [
     },
   },
 
+  // 印赖杀生格
+  {
+    id: 'yinlai-shasheng',
+    name: '印赖杀生',
+    category: '特殊格',
+    priority: 104,
+    weight: 80,
+    description: '印星赖七杀以生身，杀印相生',
+    reference: '《滴天髓》印赖杀生',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const hasYin = stems.some(g => ctx.relatedShens[g] === '正印' || ctx.relatedShens[g] === '偏印')
+      const hasSha = stems.some(g => ctx.relatedShens[g] === '偏官')
+      return hasYin && hasSha && (ctx.monthGanShen === '正印' || ctx.monthGanShen === '偏印')
+    },
+    result: {
+      name: '正印格' as GeJuName,
+      category: '特殊格' as GeJuCategory,
+      isSpecial: true,
+      score: 84,
+      confidence: 76,
+      description: '印赖杀生，权柄贵重',
+      reasons: ['印星当令', '杀生印星', '印赖杀生'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 伤官见官（破格特殊格）
+  {
+    id: 'shangguan-jianguan',
+    name: '伤官见官',
+    category: '破格',
+    priority: 102,
+    weight: 75,
+    description: '伤官见官，为祸百端',
+    reference: '《渊海子平》伤官见官',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const hasShang = stems.some(g => ctx.relatedShens[g] === '伤官')
+      const hasGuan = stems.some(g => ctx.relatedShens[g] === '正官')
+      return hasShang && hasGuan
+    },
+    result: {
+      name: '伤官格' as GeJuName,
+      category: '破格' as GeJuCategory,
+      isSpecial: true,
+      score: 50,
+      confidence: 65,
+      description: '伤官见官，灾祸频生',
+      reasons: ['伤官见官', '格局破损'],
+      poGe: true,
+      poGeReason: '伤官见官，为祸百端',
+    },
+  },
+
+  // 枭神夺食
+  {
+    id: 'xiaoshen-duoshi',
+    name: '枭神夺食',
+    category: '破格',
+    priority: 100,
+    weight: 78,
+    description: '偏印夺食神，枭神夺食',
+    reference: '《子平真诠》枭神夺食',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const hasPianYin = stems.some(g => ctx.relatedShens[g] === '偏印')
+      const hasShi = stems.some(g => ctx.relatedShens[g] === '食神')
+      return hasPianYin && hasShi && ctx.monthGanShen === '食神'
+    },
+    result: {
+      name: '食神格' as GeJuName,
+      category: '破格' as GeJuCategory,
+      isSpecial: true,
+      score: 48,
+      confidence: 68,
+      description: '枭神夺食，灾病连绵',
+      reasons: ['偏印克食神', '枭神夺食'],
+      poGe: true,
+      poGeReason: '枭神夺食，破了食神',
+    },
+  },
+
+  // 天干一气格
+  {
+    id: 'tiangan-yiqi',
+    name: '天干一气',
+    category: '特殊格',
+    priority: 98,
+    weight: 82,
+    description: '四柱天干皆同，天干一气',
+    reference: '《三命通会》天干一气',
+    condition: (ctx) => {
+      const gan = ctx.dayGan
+      return ctx.sixLines.year.gan === gan && ctx.sixLines.month.gan === gan && ctx.sixLines.hour.gan === gan
+    },
+    result: {
+      name: '天元一气' as GeJuName,
+      category: '特殊格' as GeJuCategory,
+      isSpecial: true,
+      score: 85,
+      confidence: 78,
+      description: '天干一气，四干皆同',
+      reasons: ['四干相同', '天干一气'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 地支一气格
+  {
+    id: 'dizhi-yiqi',
+    name: '地支一气',
+    category: '特殊格',
+    priority: 96,
+    weight: 80,
+    description: '四柱地支皆同，地支一气',
+    reference: '《三命通会》地支一气',
+    condition: (ctx) => {
+      const zhi = ctx.sixLines.day.zhi
+      return ctx.sixLines.year.zhi === zhi && ctx.sixLines.month.zhi === zhi && ctx.sixLines.hour.zhi === zhi
+    },
+    result: {
+      name: '地元一气' as GeJuName,
+      category: '特殊格' as GeJuCategory,
+      isSpecial: true,
+      score: 82,
+      confidence: 75,
+      description: '地支一气，四支皆同',
+      reasons: ['四支相同', '地支一气'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 天地德合格
+  {
+    id: 'tiandi-dehe',
+    name: '天地德合',
+    category: '特殊格',
+    priority: 94,
+    weight: 78,
+    description: '日时天干五合、地支六合，天地德合',
+    reference: '《三命通会》天地德合',
+    condition: (ctx) => {
+      const dayGan = ctx.sixLines.day.gan
+      const hourGan = ctx.sixLines.hour.gan
+      const dayZhi = ctx.sixLines.day.zhi
+      const hourZhi = ctx.sixLines.hour.zhi
+      const ganHePairs: Record<string, string> = { '甲': '己', '己': '甲', '乙': '庚', '庚': '乙', '丙': '辛', '辛': '丙', '丁': '壬', '壬': '丁', '戊': '癸', '癸': '戊' }
+      const zhiHePairs: Record<string, string> = { '子': '丑', '丑': '子', '寅': '亥', '亥': '寅', '卯': '戌', '戌': '卯', '辰': '酉', '酉': '辰', '巳': '申', '申': '巳', '午': '未', '未': '午' }
+      return ganHePairs[dayGan] === hourGan && zhiHePairs[dayZhi] === hourZhi
+    },
+    result: {
+      name: '三奇贵人' as GeJuName,
+      category: '特殊格' as GeJuCategory,
+      isSpecial: true,
+      score: 80,
+      confidence: 72,
+      description: '天地德合，日时相合',
+      reasons: ['日时天干五合', '日时地支六合', '天地德合'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 福德秀气格
+  {
+    id: 'fude-xiuxiu',
+    name: '福德秀气',
+    category: '特殊格',
+    priority: 92,
+    weight: 75,
+    description: '食神生财，福德秀气',
+    reference: '《渊海子平》福德秀气',
+    condition: (ctx) => {
+      const stems = [ctx.sixLines.year.gan, ctx.sixLines.month.gan, ctx.sixLines.day.gan, ctx.sixLines.hour.gan]
+      const shiCount = stems.filter(g => ctx.relatedShens[g] === '食神').length
+      const caiCount = stems.filter(g => ctx.relatedShens[g] === '正财' || ctx.relatedShens[g] === '偏财').length
+      return shiCount >= 1 && caiCount >= 1 && ctx.monthGanShen === '食神' && ctx.strengthScore >= 50
+    },
+    result: {
+      name: '食神格' as GeJuName,
+      category: '特殊格' as GeJuCategory,
+      isSpecial: true,
+      score: 80,
+      confidence: 70,
+      description: '福德秀气，福禄双全',
+      reasons: ['食神生财', '福德秀气'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
   // ===== 从格真假判断（Priority 180-195） =====
 
   // 真从官杀格
@@ -2721,6 +3342,260 @@ export const GEJU_RULES: BaseRule<GeJuContext, Partial<GeJuResult>>[] = [
       reasons: ['有根气', '从而不从', '需细辨'],
       poGe: false,
       poGeReason: '',
+    },
+  },
+
+  // 真从势格
+  {
+    id: 'zhen-cong-shi',
+    name: '真从势格',
+    category: '从格',
+    priority: 158,
+    weight: 85,
+    description: '日主极弱无根，全局气势在一方，真从势',
+    reference: '《滴天髓》从势格',
+    condition: (ctx) => {
+      return ctx.strengthScore < 12
+        && !ctx.hasTongGen
+        && ctx.diffPartyCount >= 4
+    },
+    result: {
+      name: '从势格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: true,
+      score: 88,
+      confidence: 80,
+      description: '日主无根，全局气势专一，真从势格',
+      reasons: ['日主极弱无根', '全局气势专一', '真从势格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 假从势格
+  {
+    id: 'jia-cong-shi',
+    name: '假从势格',
+    category: '从格',
+    priority: 155,
+    weight: 75,
+    description: '日主有微根，全局气势在一方，假从势',
+    reference: '《滴天髓》从势格',
+    condition: (ctx) => {
+      return ctx.strengthScore >= 12
+        && ctx.strengthScore < 22
+        && ctx.tongGenCount <= 1
+        && ctx.diffPartyCount >= 3
+    },
+    result: {
+      name: '从势格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: true,
+      score: 72,
+      confidence: 68,
+      description: '日主有微根，全局气势专一，假从势格',
+      reasons: ['日主有微根', '全局气势专一', '假从势格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真从强格
+  {
+    id: 'zhen-cong-qiang',
+    name: '真从强格',
+    category: '从格',
+    priority: 153,
+    weight: 88,
+    description: '日主极强，全局皆比劫印星，真从强',
+    reference: '《滴天髓》从强格',
+    condition: (ctx) => {
+      return ctx.strengthScore >= 90
+        && ctx.tongGenCount >= 3
+        && ctx.diffPartyCount === 0
+    },
+    result: {
+      name: '从强格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: true,
+      score: 90,
+      confidence: 82,
+      description: '日主极旺，全局皆助，真从强格',
+      reasons: ['日主极旺', '全局皆助', '真从强格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 假从强格
+  {
+    id: 'jia-cong-qiang',
+    name: '假从强格',
+    category: '从格',
+    priority: 150,
+    weight: 78,
+    description: '日主甚旺，有微弱克泄，假从强',
+    reference: '《滴天髓》从强格',
+    condition: (ctx) => {
+      return ctx.strengthScore >= 80
+        && ctx.strengthScore < 90
+        && ctx.tongGenCount >= 2
+        && ctx.diffPartyCount <= 1
+    },
+    result: {
+      name: '从强格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: true,
+      score: 75,
+      confidence: 70,
+      description: '日主甚旺，有微克泄，假从强格',
+      reasons: ['日主甚旺', '有微克泄', '假从强格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 从旺格
+  {
+    id: 'cong-wang',
+    name: '从旺格',
+    category: '从格',
+    priority: 148,
+    weight: 80,
+    description: '日主极旺，印比成势，从旺',
+    reference: '《三命通会》从旺格',
+    condition: (ctx) => {
+      return ctx.strengthScore >= 85
+        && ctx.isSeasonal
+        && ctx.tongGenCount >= 2
+    },
+    result: {
+      name: '从旺格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: true,
+      score: 82,
+      confidence: 75,
+      description: '日主得令得地，从旺格',
+      reasons: ['日主得令', '比劫成势', '从旺格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真从印格
+  {
+    id: 'zhen-cong-yin',
+    name: '真从印格',
+    category: '从格',
+    priority: 146,
+    weight: 86,
+    description: '日主极弱，印星当令成势，真从印',
+    reference: '《滴天髓》从印格',
+    condition: (ctx) => {
+      const yinElement = BE_GENERATE[ctx.dayElement]
+      return ctx.monthElement === yinElement
+        && ctx.strengthScore < 18
+        && ctx.tongGenCount <= 1
+        && ctx.diffPartyCount >= 3
+    },
+    result: {
+      name: '从印格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: true,
+      score: 86,
+      confidence: 78,
+      description: '日主弱极，印星当令，真从印格',
+      reasons: ['日主弱极', '印星当令', '真从印格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 假从印格
+  {
+    id: 'jia-cong-yin',
+    name: '假从印格',
+    category: '从格',
+    priority: 144,
+    weight: 76,
+    description: '日主有微根，印星势大，假从印',
+    reference: '《滴天髓》从印格',
+    condition: (ctx) => {
+      const yinElement = BE_OVERCOME_INVERSE[ctx.dayElement]
+      return ctx.monthElement === yinElement
+        && ctx.strengthScore >= 18
+        && ctx.strengthScore < 28
+        && ctx.tongGenCount >= 1
+        && ctx.tongGenCount <= 2
+        && ctx.diffPartyCount >= 2
+    },
+    result: {
+      name: '从印格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: true,
+      score: 72,
+      confidence: 68,
+      description: '日主有微根，印星势大，假从印格',
+      reasons: ['日主有微根', '印星势大', '假从印格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 真从杀格
+  {
+    id: 'zhen-cong-sha',
+    name: '真从杀格',
+    category: '从格',
+    priority: 142,
+    weight: 90,
+    description: '日主极弱无根，七杀当令成势，真从杀',
+    reference: '《子平真诠》从杀格',
+    condition: (ctx) => {
+      const shaElement = BE_OVERCOME[ctx.dayElement]
+      return ctx.monthElement === shaElement
+        && ctx.strengthScore < 12
+        && !ctx.hasTongGen
+        && ctx.diffPartyCount >= 4
+    },
+    result: {
+      name: '从官杀格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: true,
+      score: 92,
+      confidence: 85,
+      description: '日主无根，杀星当令，真从杀格',
+      reasons: ['日主无根', '七杀当令', '真从杀格'],
+      poGe: false,
+      poGeReason: '',
+    },
+  },
+
+  // 从格破格
+  {
+    id: 'congge-poge',
+    name: '从格破格',
+    category: '破格',
+    priority: 140,
+    weight: 80,
+    description: '从格中见比劫印星助身，从而破格',
+    reference: '《滴天髓》从格破格',
+    condition: (ctx) => {
+      return ctx.strengthScore >= 25
+        && ctx.strengthScore < 45
+        && ctx.tongGenCount >= 2
+        && ctx.diffPartyCount >= 2
+    },
+    result: {
+      name: '假从格' as GeJuName,
+      category: '从格' as GeJuCategory,
+      isSpecial: false,
+      score: 55,
+      confidence: 60,
+      description: '从格见根气，从而破格',
+      reasons: ['从格见根', '破格之兆'],
+      poGe: true,
+      poGeReason: '从格有根，破了从格',
     },
   },
 
