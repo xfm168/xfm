@@ -134,19 +134,6 @@ function countBenGen(ctx: WuXingContext, element: FiveElement): number {
   return count
 }
 
-function hasLiuHe(ctx: WuXingContext): boolean {
-  const pillars = [ctx.sixLines.year, ctx.sixLines.month, ctx.sixLines.day, ctx.sixLines.hour]
-  const liuHeCombos: [EarthlyBranch, EarthlyBranch, FiveElement][] = [
-    ['子', '丑', '土'], ['寅', '亥', '木'], ['卯', '戌', '火'],
-    ['辰', '酉', '金'], ['巳', '申', '水'], ['午', '未', '土'],
-  ]
-  const zhiList = pillars.map(p => p.zhi)
-  for (const [a, b] of liuHeCombos) {
-    if (zhiList.includes(a) && zhiList.includes(b)) return true
-  }
-  return false
-}
-
 function hasSanHe(ctx: WuXingContext, element: FiveElement): boolean {
   const pillars = [ctx.sixLines.year, ctx.sixLines.month, ctx.sixLines.day, ctx.sixLines.hour]
   const sanHeCombos: Record<FiveElement, EarthlyBranch[]> = {

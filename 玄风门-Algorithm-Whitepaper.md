@@ -1,6 +1,6 @@
 # 玄风门 Algorithm Whitepaper（算法白皮书）
 
-> 版本：V1.0 | 日期：2026-06-29 | 规则版本：V6.9 | 规则总数：191
+> 版本：V1.0 | 日期：2026-06-29 | 规则版本：**V7.0** | 规则总数：**258**
 >
 > 本文档为玄风门最核心的知识资产，长期维护。
 > 每新增一个Rule、每修改一个算法、每提高一次准确率，都必须同步更新本文档。
@@ -1218,7 +1218,7 @@ confidence =
 
 | 模块 | 文件 | 规则数 | 完成度 |
 |------|------|--------|--------|
-| 格局规则 | `gejuRules.ts` | 30 | 60% |
+| **格局规则** | `gejuRules.ts` | **81** | **85%** ✅ |
 | 喜用神规则 | `xiyongRules.ts` | 26 | 55% |
 | 旺衰规则 | `wuxingRules.ts` | 29 | 85% |
 | 十神规则 | `shishenRules.ts` | 49 | 65% |
@@ -1226,7 +1226,7 @@ confidence =
 | 大运规则 | `dashunRules.ts` | 8 | 30% |
 | 六亲规则 | `liuqinRules.ts` | 23 | 40% |
 | 神煞 | `shensha/` | 10种 | 30% |
-| **合计** | - | **207** | **约62%** |
+| **合计** | - | **258** | **约65%** |
 
 ### B. 核心算法文件索引
 
@@ -1241,7 +1241,7 @@ confidence =
 | `changsheng.ts` | 十二长生 | ~50 |
 | `nayin.ts` | 纳音 | ~40 |
 | `rules/engine.ts` | 规则引擎核心 | ~120 |
-| `rules/gejuRules.ts` | 格局规则 | ~300+ |
+| `rules/gejuRules.ts` | 格局规则 | ~500+ |
 | `rules/xiyongRules.ts` | 喜用神规则 | ~250+ |
 | `rules/wuxingRules.ts` | 旺衰规则 | ~200+ |
 | `rules/shishenRules.ts` | 十神规则 | ~400+ |
