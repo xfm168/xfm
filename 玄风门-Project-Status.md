@@ -4,22 +4,37 @@
 
 ---
 
-## 📚 核心文档体系
+## 📚 十大核心文档体系
 
-玄风门六大核心文档（所有开发的唯一标准）：
+玄风门十大核心文档（所有开发的唯一标准）：
 
-| # | 文档 | 定位 | 状态 |
-|---|------|------|------|
-| ① | **Project Status**（本文） | 当前开发状态 | ✅ |
-| ② | [Architecture Constitution](./玄风门-架构宪章.md) | 最高开发原则（10大原则） | ✅ |
-| ③ | [Engineering Handbook](./玄风门-Engineering-Handbook.md) | 工程开发规范 | ✅ |
-| ④ | [Master PRD](./玄风门-Master-PRD.md) | 产品需求总文档 | ✅ |
-| ⑤ | Version Roadmap | 长期版本规划（见第13章） | ✅ |
-| ⑥ | [Algorithm Whitepaper](./玄风门-Algorithm-Whitepaper.md) | **核心知识资产** | ✅ |
+| # | 文档 | 定位 | 给谁看 | 状态 |
+|---|------|------|--------|------|
+| 01 | **Project Status**（本文） | 当前开发状态 | 全体 | ✅ |
+| 02 | [Architecture Constitution](./玄风门-架构宪章.md) | 最高开发原则（10大原则） | 全体 | ✅ |
+| 03 | [Engineering Handbook](./玄风门-Engineering-Handbook.md) | 工程开发规范 | 开发 | ✅ |
+| 04 | [Master PRD](./玄风门-Master-PRD.md) | 产品需求总文档 | 产品/开发 | ✅ |
+| 05 | Version Roadmap | 长期版本规划（见第13章） | 全体 | ✅ |
+| 06 | [Algorithm Whitepaper](./玄风门-Algorithm-Whitepaper.md) | 算法白皮书（核心知识资产） | 算法/产品 | ✅ 🏆 |
+| 07 | [Rule Specification](./玄风门-Rule-Specification.md) | 规则唯一来源 | 算法/开发 | ✅ |
+| 08 | [Data Dictionary](./玄风门-Data-Dictionary.md) | 数据库唯一标准 | 开发/DBA | ✅ |
+| 09 | [API Specification](./玄风门-API-Specification.md) | 接口唯一标准 | 前后端 | ✅ |
+| 10 | [Admin Handbook](./玄风门-Admin-Handbook.md) | 后台运营手册 | 运营 | ✅ |
 
 > ⚠️ 所有开发必须先读文档，再写代码。文档永远先于代码。
 >
 > 🏆 **Algorithm Whitepaper 为玄风门最高价值知识资产，长期维护。**
+>
+> 📖 **各角色速查：**
+> - 产品看 → Master PRD
+> - 开发看 → Engineering Handbook
+> - 算法看 → Algorithm Whitepaper + Rule Specification
+> - 数据库看 → Data Dictionary
+> - 接口看 → API Specification
+> - 运营看 → Admin Handbook
+> - 项目状态看 → Project Status
+> - 开发原则看 → Architecture Constitution
+> - 长期规划看 → Version Roadmap
 
 ---
 
