@@ -249,7 +249,7 @@ export interface ElementAnalysis {
 
 export type RuleHeritage = 'classical' | 'modern' | 'verified'
 export type RuleLayer = 'classical' | 'practical' | 'modern'
-export type FengShuiSchool = 'bzhai' | 'xuankong' | 'sanjiao' | 'zangfeng' | 'modern'
+export type FengShuiSchool = 'bazhai' | 'xuankong' | 'sanhe' | 'sanyuan' | 'zangfeng' | 'modern'
 
 export interface FengShuiRuleResult extends RuleResult {
   type: string

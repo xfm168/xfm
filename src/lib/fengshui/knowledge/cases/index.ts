@@ -4,7 +4,7 @@
  * 常见风水案例，用于AI匹配和参考
  */
 
-import type { FengShuiCase, KnowledgeCategory } from './types'
+import type { FengShuiCase, FengShuiSchool, KnowledgeCategory } from '../types'
 
 export const FENGSHUI_CASES: FengShuiCase[] = [
   // ===== 煞气类 =====
@@ -267,6 +267,172 @@ export const FENGSHUI_CASES: FengShuiCase[] = [
       '进门见床',
     ],
     confidence: 80,
+    verified: true,
+  },
+  {
+    id: 'case-fan-gong',
+    title: '反弓煞',
+    category: 'wealth',
+    type: 'sha',
+    description: '道路或河流呈弓形向外弯，如弓背对准住宅',
+    characteristics: [
+      '门前道路呈反弓形',
+      '河流弯弓向外',
+      '弧形道路弓背朝向住宅',
+    ],
+    effects: [
+      '财运反复，财来财去',
+      '易有口舌是非',
+      '家人容易离心离德',
+    ],
+    solutions: [
+      '种植绿植缓冲',
+      '设置围墙遮挡',
+      '悬挂八卦镜',
+      '摆放石敢当',
+    ],
+    references: [],
+    relatedRules: [],
+    severity: 'moderate',
+    visualFeatures: [
+      '道路呈弧形',
+      '弓背朝向住宅',
+    ],
+    confidence: 82,
+    verified: true,
+  },
+  {
+    id: 'case-qiang-sha',
+    title: '枪煞',
+    category: 'health',
+    type: 'sha',
+    description: '长直走廊或巷道直冲住宅，如枪杆对准',
+    characteristics: [
+      '长走廊直冲大门',
+      '巷道正对房门',
+      '长直通道直冲',
+    ],
+    effects: [
+      '易有意外血光之灾',
+      '健康受损，易生急症',
+      '财运大起大落',
+    ],
+    solutions: [
+      '设置屏风遮挡',
+      '安装门帘',
+      '摆放绿植缓冲',
+      '悬挂珠帘',
+    ],
+    references: [],
+    relatedRules: [],
+    severity: 'severe',
+    visualFeatures: [
+      '长直走廊',
+      '直冲大门',
+    ],
+    confidence: 85,
+    verified: true,
+  },
+  {
+    id: 'case-que-jiao',
+    title: '缺角',
+    category: 'wealth',
+    type: 'sha',
+    description: '户型某一方位有明显缺角，对应宫位受损',
+    characteristics: [
+      '户型不方正',
+      '某方位向内凹陷',
+      '缺角超过总面积1/9',
+    ],
+    effects: [
+      '对应方位家人运势受损',
+      '宅气不稳',
+      '事业有缺',
+    ],
+    solutions: [
+      '缺角处放置泰山石敢当',
+      '摆放高大绿植补角',
+      '安装镜子延伸视觉',
+      '用灯光照亮缺角区域',
+    ],
+    references: [
+      {
+        entryId: 'yzss-002',
+        bookId: 'yangzhai-shishu',
+        quote: '凡阳宅贵乎方正，缺则有损。',
+      },
+    ],
+    relatedRules: [],
+    severity: 'moderate',
+    visualFeatures: [
+      '户型缺角',
+      '房屋不方正',
+    ],
+    confidence: 88,
+    verified: true,
+  },
+  {
+    id: 'case-dianti-chong-men',
+    title: '电梯冲门',
+    category: 'wealth',
+    type: 'sha',
+    description: '电梯门正对住宅大门，一开一合形成冲煞',
+    characteristics: [
+      '大门正对电梯门',
+      '电梯门与家门相对',
+      '出门就是电梯',
+    ],
+    effects: [
+      '财运不稳，财来财去',
+      '家人健康起伏',
+      '隐私感差，心神不宁',
+    ],
+    solutions: [
+      '设置玄关屏风',
+      '安装门帘',
+      '门口摆放绿植',
+      '悬挂五帝钱',
+    ],
+    references: [],
+    relatedRules: [],
+    severity: 'moderate',
+    visualFeatures: [
+      '电梯正对大门',
+      '门对电梯',
+    ],
+    confidence: 80,
+    verified: true,
+  },
+  {
+    id: 'case-jingzi-dui-chuang',
+    title: '镜子对床',
+    category: 'health',
+    type: 'sha',
+    description: '镜子正对床铺，夜半容易惊吓',
+    characteristics: [
+      '床尾有镜子',
+      '镜子正对床头',
+      '半夜起夜能见镜中影',
+    ],
+    effects: [
+      '睡眠质量差，易做噩梦',
+      '精神恍惚，心神不宁',
+      '夫妻感情易生隔阂',
+    ],
+    solutions: [
+      '调整镜子位置',
+      '用布帘遮盖镜子',
+      '移除卧室镜子',
+      '把镜子装在衣柜门内',
+    ],
+    references: [],
+    relatedRules: [],
+    severity: 'mild',
+    visualFeatures: [
+      '镜子对着床',
+      '卧室有大镜子',
+    ],
+    confidence: 82,
     verified: true,
   },
   

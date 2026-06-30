@@ -2,11 +2,11 @@
  * 流派知识库
  */
 
-import type { SchoolInfo, FengShuiSchool } from './types'
+import type { SchoolInfo, FengShuiSchool } from '../types'
 
 export const FENGSHUI_SCHOOLS: SchoolInfo[] = [
   {
-    id: 'bzhai',
+    id: 'bazhai',
     name: '八宅派',
     fullName: '八宅明镜派',
     origin: '唐代',
@@ -76,7 +76,7 @@ export const FENGSHUI_SCHOOLS: SchoolInfo[] = [
     modernApplication: '常用于商业地产、办公楼、豪宅等高端项目的风水规划。',
   },
   {
-    id: 'sanjiao',
+    id: 'sanhe',
     name: '三合派',
     fullName: '三合长生派',
     origin: '明代',

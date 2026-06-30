@@ -14,7 +14,7 @@
 
 export type KnowledgeLanguage = 'original' | 'translation' | 'modern' | 'ai'
 export type KnowledgeCategory = 'direction' | 'layout' | 'room' | 'kitchen' | 'bedroom' | 'wealth' | 'health' | 'career' | 'relationship'
-export type FengShuiSchool = 'bzhai' | 'xuankong' | 'sanhe' | 'sanyuan' | 'xingfa' | 'zangfeng' | 'modern'
+export type FengShuiSchool = 'bazhai' | 'xuankong' | 'sanhe' | 'sanyuan' | 'xingfa' | 'zangfeng' | 'modern'
 
 // ============ 古籍知识条目 ============
 

@@ -29,7 +29,7 @@ export const CLASSICAL_RULES_V2: FengShuiRule[] = [
     source: ['黄帝宅经', '阳宅三要'],
     heritage: 'classical',
     layer: 'classical',
-    schools: ['bzhai', 'zangfeng'],
+    schools: ['bazhai', 'zangfeng'],
     
     priority: 100,
     weight: 95,
@@ -59,7 +59,7 @@ export const CLASSICAL_RULES_V2: FengShuiRule[] = [
     source: ['黄帝宅经', '葬经'],
     heritage: 'classical',
     layer: 'classical',
-    schools: ['zangfeng', 'sanjiao'],
+    schools: ['zangfeng', 'sanhe'],
     
     priority: 95,
     weight: 90,
@@ -90,7 +90,7 @@ export const CLASSICAL_RULES_V2: FengShuiRule[] = [
     source: ['阳宅三要', '阳宅十书'],
     heritage: 'classical',
     layer: 'classical',
-    schools: ['bzhai', 'zangfeng'],
+    schools: ['bazhai', 'zangfeng'],
     
     priority: 100,
     weight: 95,
@@ -128,7 +128,7 @@ export const PRACTICAL_RULES_V2: FengShuiRule[] = [
     source: ['阳宅大成', '王公阳宅断验'],
     heritage: 'verified',
     layer: 'practical',
-    schools: ['zangfeng', 'sanjiao'],
+    schools: ['zangfeng', 'sanhe'],
     
     priority: 90,
     weight: 85,
@@ -193,7 +193,7 @@ export const PRACTICAL_RULES_V2: FengShuiRule[] = [
     source: ['阳宅大成', '王公阳宅断验'],
     heritage: 'verified',
     layer: 'practical',
-    schools: ['zangfeng', 'bzhai'],
+    schools: ['zangfeng', 'bazhai'],
     
     priority: 88,
     weight: 82,

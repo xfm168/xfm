@@ -9,20 +9,25 @@
 
 import { 
   KNOWLEDGE_ENTRIES, 
+  CLASSIC_BOOKS,
   getEntryById, 
   getEntriesByBook,
   searchEntries,
-} from './classicIndex'
+} from './classic'
+import { 
+  MODERN_ENTRIES,
+  getModernEntryById,
+} from './modern'
 import { 
   FENGSHUI_CASES, 
   getCaseById, 
   searchCases,
   matchCasesByFeatures,
-} from './caseLibrary'
+} from './cases'
 import { 
   FENGSHUI_SCHOOLS, 
   getSchoolById,
-} from './schoolLibrary'
+} from './schools'
 import type { 
   KnowledgeEntry, 
   FengShuiCase, 
@@ -331,9 +336,10 @@ function extractChineseKeywords(query: string): string[] {
 }
 
 function searchEntriesByKeywords(keywords: string[]): { entry: KnowledgeEntry; score: number }[] {
+  const allEntries = [...KNOWLEDGE_ENTRIES, ...MODERN_ENTRIES]
   const results: { entry: KnowledgeEntry; score: number }[] = []
   
-  for (const entry of KNOWLEDGE_ENTRIES) {
+  for (const entry of allEntries) {
     let score = 0
     const text = [
       entry.topic,
@@ -341,7 +347,10 @@ function searchEntriesByKeywords(keywords: string[]): { entry: KnowledgeEntry; s
       entry.original || '',
       entry.translation || '',
       entry.modern || '',
+      entry.ai || '',
       entry.bookName,
+      entry.chapter || '',
+      entry.section || '',
     ].join(' ')
     
     for (const kw of keywords) {
@@ -414,8 +423,10 @@ function extractKeywords(rule: FengShuiRule): string[] {
 
 export function getKnowledgeStats() {
   return {
-    classicBooks: 6,
+    classicBooks: CLASSIC_BOOKS.length,
     classicEntries: KNOWLEDGE_ENTRIES.length,
+    modernEntries: MODERN_ENTRIES.length,
+    totalEntries: KNOWLEDGE_ENTRIES.length + MODERN_ENTRIES.length,
     cases: FENGSHUI_CASES.length,
     schools: FENGSHUI_SCHOOLS.length,
   }
@@ -426,6 +437,11 @@ export function getKnowledgeOverview() {
   return {
     ...stats,
     classicList: KNOWLEDGE_ENTRIES.slice(0, 5).map(e => ({
+      id: e.id,
+      book: e.bookName,
+      topic: e.topic,
+    })),
+    modernList: MODERN_ENTRIES.slice(0, 3).map(e => ({
       id: e.id,
       book: e.bookName,
       topic: e.topic,
