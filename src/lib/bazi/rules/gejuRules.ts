@@ -3482,30 +3482,32 @@ export const GEJU_RULES: BaseRule<GeJuContext, Partial<GeJuResult>>[] = [
     },
   },
 
-  // 真从印格
+  // 半从印格
   {
-    id: 'zhen-cong-yin',
-    name: '真从印格',
+    id: 'ban-cong-yin',
+    name: '半从印格',
     category: '从格',
     priority: 146,
-    weight: 86,
-    description: '日主极弱，印星当令成势，真从印',
+    weight: 78,
+    description: '日主有微根，印星势大，半从半不从',
     reference: '《滴天髓》从印格',
     condition: (ctx) => {
       const yinElement = BE_GENERATE[ctx.dayElement]
       return ctx.monthElement === yinElement
-        && ctx.strengthScore < 18
-        && ctx.tongGenCount <= 1
+        && ctx.strengthScore < 25
+        && ctx.strengthScore >= 18
+        && ctx.tongGenCount >= 1
+        && ctx.tongGenCount <= 2
         && ctx.diffPartyCount >= 3
     },
     result: {
       name: '从印格' as GeJuName,
       category: '从格' as GeJuCategory,
       isSpecial: true,
-      score: 86,
-      confidence: 78,
-      description: '日主弱极，印星当令，真从印格',
-      reasons: ['日主弱极', '印星当令', '真从印格'],
+      score: 76,
+      confidence: 68,
+      description: '日主有微根，印星势大，半从印格',
+      reasons: ['日主偏弱', '印星当令', '半从半不从'],
       poGe: false,
       poGeReason: '',
     },
