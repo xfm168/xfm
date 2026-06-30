@@ -1,0 +1,925 @@
+{
+  "duplicateIds": [
+    {
+      "id": "cong-yin-zhen",
+      "count": 2
+    }
+  ],
+  "duplicateConditions": [
+    {
+      "condition": "ctx=>{const stems=[ctx.sixLines.year.gan,ctx.sixLines.month.gan,ctx.sixLines.day.gan,ctx.sixLines.ho",
+      "rules": [
+        {
+          "id": "zhengguan-poge-qisya",
+          "name": "正官破格-七杀混杂",
+          "priority": 92,
+          "category": "破格"
+        },
+        {
+          "id": "zhengguan-poge-hunza",
+          "name": "正官破格-官杀混杂",
+          "priority": 95,
+          "category": "破格"
+        }
+      ]
+    },
+    {
+      "condition": "ctx=>{const stems=[ctx.sixLines.year.gan,ctx.sixLines.month.gan,ctx.sixLines.day.gan,ctx.sixLines.ho",
+      "rules": [
+        {
+          "id": "shishen-chengge-wuxie",
+          "name": "食神成格-食神无邪",
+          "priority": 220,
+          "category": "正格成格"
+        },
+        {
+          "id": "qingcun-shishen",
+          "name": "清纯-食神清",
+          "priority": 70,
+          "category": "清纯判断"
+        }
+      ]
+    },
+    {
+      "condition": "ctx=>{const stems=[ctx.sixLines.year.gan,ctx.sixLines.month.gan,ctx.sixLines.day.gan,ctx.sixLines.ho",
+      "rules": [
+        {
+          "id": "shayin-xiangsheng",
+          "name": "杀印相生",
+          "priority": 202,
+          "category": "正格成格"
+        },
+        {
+          "id": "shayin-shuangqing",
+          "name": "杀印双清",
+          "priority": 150,
+          "category": "特殊格"
+        }
+      ]
+    },
+    {
+      "condition": "ctx=>{const gan=ctx.dayGan;return ctx.sixLines.year.gan===gan&&ctx.sixLines.month.gan===gan&&ctx.six",
+      "rules": [
+        {
+          "id": "tianyuan-yiqi",
+          "name": "天元一气",
+          "priority": 175,
+          "category": "特殊格"
+        },
+        {
+          "id": "tiangan-yiqi",
+          "name": "天干一气",
+          "priority": 98,
+          "category": "特殊格"
+        }
+      ]
+    },
+    {
+      "condition": "ctx=>{const zhi=ctx.sixLines.day.zhi;return ctx.sixLines.year.zhi===zhi&&ctx.sixLines.month.zhi===zh",
+      "rules": [
+        {
+          "id": "diyuan-yiqi",
+          "name": "地元一气",
+          "priority": 172,
+          "category": "特殊格"
+        },
+        {
+          "id": "dizhi-yiqi",
+          "name": "地支一气",
+          "priority": 96,
+          "category": "特殊格"
+        }
+      ]
+    }
+  ],
+  "duplicateResults": [
+    {
+      "result": {
+        "name": "从财格",
+        "category": "从格",
+        "isSpecial": true,
+        "score": 90,
+        "confidence": 85,
+        "poGe": false
+      },
+      "rules": [
+        {
+          "id": "cong-cai-zhen",
+          "name": "从财格",
+          "priority": 190
+        },
+        {
+          "id": "zhen-cong-cai",
+          "name": "真从财格",
+          "priority": 195
+        }
+      ]
+    },
+    {
+      "result": {
+        "name": "正官格",
+        "category": "正格",
+        "isSpecial": false,
+        "score": 88,
+        "confidence": 80,
+        "poGe": false
+      },
+      "rules": [
+        {
+          "id": "guancai-xiangsheng",
+          "name": "官财相生",
+          "priority": 216
+        },
+        {
+          "id": "qingcun-zhenguan",
+          "name": "清纯-官星清",
+          "priority": 70
+        }
+      ]
+    },
+    {
+      "result": {
+        "name": "三奇贵人",
+        "category": "特殊格",
+        "isSpecial": true,
+        "score": 80,
+        "confidence": 72,
+        "poGe": false
+      },
+      "rules": [
+        {
+          "id": "sanqi-guiren",
+          "name": "三奇贵人",
+          "priority": 165
+        },
+        {
+          "id": "tiandi-dehe",
+          "name": "天地德合",
+          "priority": 94
+        }
+      ]
+    },
+    {
+      "result": {
+        "name": "化气格",
+        "category": "化气格",
+        "isSpecial": true,
+        "score": 88,
+        "confidence": 80,
+        "poGe": false
+      },
+      "rules": [
+        {
+          "id": "jiaji-huatu",
+          "name": "甲己化土格",
+          "priority": 192
+        },
+        {
+          "id": "yigeng-huajin",
+          "name": "乙庚化金格",
+          "priority": 192
+        },
+        {
+          "id": "bingxin-huashui",
+          "name": "丙辛化水格",
+          "priority": 192
+        },
+        {
+          "id": "dingren-huamu",
+          "name": "丁壬化木格",
+          "priority": 192
+        },
+        {
+          "id": "wugui-huahuo",
+          "name": "戊癸化火格",
+          "priority": 192
+        }
+      ]
+    },
+    {
+      "result": {
+        "name": "调候格",
+        "category": "调候格",
+        "isSpecial": true,
+        "score": 85,
+        "confidence": 78,
+        "poGe": false
+      },
+      "rules": [
+        {
+          "id": "hanming-tiaohou",
+          "name": "寒命调候格",
+          "priority": 175
+        },
+        {
+          "id": "nuanming-tiaohou",
+          "name": "暖命调候格",
+          "priority": 175
+        }
+      ]
+    }
+  ],
+  "priorityConflicts": [
+    {
+      "priority": 200,
+      "rules": [
+        {
+          "id": "quzhi-ge",
+          "name": "曲直格",
+          "result": "曲直格"
+        },
+        {
+          "id": "yanshang-ge",
+          "name": "炎上格",
+          "result": "炎上格"
+        },
+        {
+          "id": "jiase-ge",
+          "name": "稼穑格",
+          "result": "稼穑格"
+        },
+        {
+          "id": "congge-ge",
+          "name": "从革格",
+          "result": "从革格"
+        },
+        {
+          "id": "runxia-ge",
+          "name": "润下格",
+          "result": "润下格"
+        },
+        {
+          "id": "zhen-shishen-ge",
+          "name": "真食神格",
+          "result": "食神格"
+        }
+      ]
+    },
+    {
+      "priority": 190,
+      "rules": [
+        {
+          "id": "cong-guansha-zhen",
+          "name": "从官杀格",
+          "result": "从官杀格"
+        },
+        {
+          "id": "cong-cai-zhen",
+          "name": "从财格",
+          "result": "从财格"
+        },
+        {
+          "id": "cong-yin-zhen",
+          "name": "真从印格",
+          "result": "从印格"
+        }
+      ]
+    },
+    {
+      "priority": 185,
+      "rules": [
+        {
+          "id": "qiming-congsha",
+          "name": "弃命从杀",
+          "result": "弃命从杀"
+        },
+        {
+          "id": "qiming-congguan",
+          "name": "弃命从官",
+          "result": "弃命从官"
+        },
+        {
+          "id": "qiming-congcai",
+          "name": "弃命从财",
+          "result": "弃命从财"
+        },
+        {
+          "id": "cong-er-zhen",
+          "name": "从儿格",
+          "result": "从儿格"
+        }
+      ]
+    },
+    {
+      "priority": 180,
+      "rules": [
+        {
+          "id": "cong-yin-zhen",
+          "name": "从印格",
+          "result": "从印格"
+        },
+        {
+          "id": "feitian-luma",
+          "name": "飞天禄马",
+          "result": "飞天禄马"
+        }
+      ]
+    },
+    {
+      "priority": 170,
+      "rules": [
+        {
+          "id": "jia-cong",
+          "name": "假从格",
+          "result": "假从格"
+        },
+        {
+          "id": "jinshen-ge",
+          "name": "金神格",
+          "result": "金神格"
+        },
+        {
+          "id": "jinglan-cha",
+          "name": "井栏叉格",
+          "result": "井栏叉格"
+        },
+        {
+          "id": "daochong-ge",
+          "name": "倒冲格",
+          "result": "倒冲格"
+        }
+      ]
+    },
+    {
+      "priority": 160,
+      "rules": [
+        {
+          "id": "hua-qi-ge",
+          "name": "化气格",
+          "result": "化气格"
+        },
+        {
+          "id": "muhuo-tongming",
+          "name": "木火通明",
+          "result": "木火通明"
+        },
+        {
+          "id": "cong-er-bucong",
+          "name": "从而不从格",
+          "result": "假从格"
+        },
+        {
+          "id": "bingzhong-yaoqing",
+          "name": "病重药轻格",
+          "result": "病药格"
+        },
+        {
+          "id": "bingyao-xiangji",
+          "name": "病药相济格",
+          "result": "病药格"
+        }
+      ]
+    },
+    {
+      "priority": 150,
+      "rules": [
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "result": "调候格"
+        },
+        {
+          "id": "shayin-shuangqing",
+          "name": "杀印双清",
+          "result": "杀印双清"
+        },
+        {
+          "id": "jia-cong-qiang",
+          "name": "假从强格",
+          "result": "从强格"
+        }
+      ]
+    },
+    {
+      "priority": 140,
+      "rules": [
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "result": "病药格"
+        },
+        {
+          "id": "congge-poge",
+          "name": "从格破格",
+          "result": "假从格"
+        }
+      ]
+    },
+    {
+      "priority": 130,
+      "rules": [
+        {
+          "id": "fu-yi-ge",
+          "name": "扶抑格",
+          "result": "扶抑格"
+        },
+        {
+          "id": "fuyi-fushen",
+          "name": "扶抑格-扶身",
+          "result": "扶抑格"
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "result": "扶抑格"
+        }
+      ]
+    },
+    {
+      "priority": 120,
+      "rules": [
+        {
+          "id": "tong-guan-ge",
+          "name": "通关格",
+          "result": "通关格"
+        },
+        {
+          "id": "liuxiu-ri",
+          "name": "六秀日",
+          "result": "六秀日"
+        }
+      ]
+    },
+    {
+      "priority": 100,
+      "rules": [
+        {
+          "id": "zheng-guan-tou",
+          "name": "正官格",
+          "result": "正官格"
+        },
+        {
+          "id": "qi-sha-tou",
+          "name": "七杀格",
+          "result": "七杀格"
+        },
+        {
+          "id": "zheng-yin-tou",
+          "name": "正印格",
+          "result": "正印格"
+        },
+        {
+          "id": "pian-yin-tou",
+          "name": "偏印格",
+          "result": "偏印格"
+        },
+        {
+          "id": "shi-shen-tou",
+          "name": "食神格",
+          "result": "食神格"
+        },
+        {
+          "id": "shang-guan-tou",
+          "name": "伤官格",
+          "result": "伤官格"
+        },
+        {
+          "id": "zheng-cai-tou",
+          "name": "正财格",
+          "result": "正财格"
+        },
+        {
+          "id": "pian-cai-tou",
+          "name": "偏财格",
+          "result": "偏财格"
+        },
+        {
+          "id": "xiaoshen-duoshi",
+          "name": "枭神夺食",
+          "result": "食神格"
+        }
+      ]
+    },
+    {
+      "priority": 95,
+      "rules": [
+        {
+          "id": "bi-jian-tou",
+          "name": "比肩格",
+          "result": "比肩格"
+        },
+        {
+          "id": "jie-cai-tou",
+          "name": "劫财格",
+          "result": "劫财格"
+        },
+        {
+          "id": "zhengguan-poge-hunza",
+          "name": "正官破格-官杀混杂",
+          "result": "正官格"
+        }
+      ]
+    },
+    {
+      "priority": 99,
+      "rules": [
+        {
+          "id": "zhengguan-shangge",
+          "name": "正官上格",
+          "result": "正官格"
+        },
+        {
+          "id": "qisha-shangge",
+          "name": "七杀上格",
+          "result": "七杀格"
+        },
+        {
+          "id": "zhengyin-shangge",
+          "name": "正印上格",
+          "result": "正印格"
+        },
+        {
+          "id": "shishen-shangge",
+          "name": "食神上格",
+          "result": "食神格"
+        },
+        {
+          "id": "shangguan-shangge",
+          "name": "伤官上格",
+          "result": "伤官格"
+        },
+        {
+          "id": "zhengcai-shangge",
+          "name": "正财上格",
+          "result": "正财格"
+        },
+        {
+          "id": "piancai-shangge",
+          "name": "偏财上格",
+          "result": "偏财格"
+        }
+      ]
+    },
+    {
+      "priority": 98,
+      "rules": [
+        {
+          "id": "zhengguan-zhongge",
+          "name": "正官中格",
+          "result": "正官格"
+        },
+        {
+          "id": "qisha-zhongge",
+          "name": "七杀中格",
+          "result": "七杀格"
+        },
+        {
+          "id": "tiangan-yiqi",
+          "name": "天干一气",
+          "result": "天元一气"
+        }
+      ]
+    },
+    {
+      "priority": 92,
+      "rules": [
+        {
+          "id": "zhengguan-poge-guanke",
+          "name": "正官破格-官被克",
+          "result": "正官格"
+        },
+        {
+          "id": "zhengguan-poge-qisya",
+          "name": "正官破格-七杀混杂",
+          "result": "正官格"
+        },
+        {
+          "id": "qisha-poge-wuzhi",
+          "name": "七杀破格-无制",
+          "result": "七杀格"
+        },
+        {
+          "id": "shishen-poge-xiaoshen",
+          "name": "食神破格-枭神夺食",
+          "result": "食神格"
+        },
+        {
+          "id": "shishen-poge-shangguan",
+          "name": "食神破格-伤官见官",
+          "result": "食神格"
+        },
+        {
+          "id": "fude-xiuxiu",
+          "name": "福德秀气",
+          "result": "食神格"
+        }
+      ]
+    },
+    {
+      "priority": 88,
+      "rules": [
+        {
+          "id": "qisha-poge-yinshang",
+          "name": "七杀破格-印被财破",
+          "result": "七杀格"
+        },
+        {
+          "id": "cai-poge-jiecai",
+          "name": "财格破格-劫财分财",
+          "result": "财格"
+        },
+        {
+          "id": "yin-poge-caixin",
+          "name": "印格破格-财星破印",
+          "result": "印格"
+        },
+        {
+          "id": "shangguan-poge-guansha",
+          "name": "伤官破格-无财通关",
+          "result": "伤官格"
+        },
+        {
+          "id": "cai-poge-hunza",
+          "name": "财格破格-财星混杂",
+          "result": "财格"
+        },
+        {
+          "id": "yin-poge-hunza",
+          "name": "印格破格-印星混杂",
+          "result": "印格"
+        }
+      ]
+    },
+    {
+      "priority": 220,
+      "rules": [
+        {
+          "id": "zhengguan-chengge-wugen",
+          "name": "正官成格-官有根",
+          "result": "正官格"
+        },
+        {
+          "id": "qisha-chengge-youzhi",
+          "name": "七杀成格-杀有制",
+          "result": "七杀格"
+        },
+        {
+          "id": "shishen-chengge-wuxie",
+          "name": "食神成格-食神无邪",
+          "result": "食神格"
+        },
+        {
+          "id": "cai-chengge-caiyouli",
+          "name": "财格成格-财星有力",
+          "result": "财格"
+        }
+      ]
+    },
+    {
+      "priority": 192,
+      "rules": [
+        {
+          "id": "zhen-bijian-ge",
+          "name": "真比肩格",
+          "result": "比肩格"
+        },
+        {
+          "id": "jiaji-huatu",
+          "name": "甲己化土格",
+          "result": "化气格"
+        },
+        {
+          "id": "yigeng-huajin",
+          "name": "乙庚化金格",
+          "result": "化气格"
+        },
+        {
+          "id": "bingxin-huashui",
+          "name": "丙辛化水格",
+          "result": "化气格"
+        },
+        {
+          "id": "dingren-huamu",
+          "name": "丁壬化木格",
+          "result": "化气格"
+        },
+        {
+          "id": "wugui-huahuo",
+          "name": "戊癸化火格",
+          "result": "化气格"
+        }
+      ]
+    },
+    {
+      "priority": 80,
+      "rules": [
+        {
+          "id": "geju-gao-wanzheng",
+          "name": "格局高-完美成格",
+          "result": "普通格局"
+        },
+        {
+          "id": "geju-gao-tiaohou",
+          "name": "格局高-调候为急",
+          "result": "普通格局"
+        },
+        {
+          "id": "geju-shangdeng",
+          "name": "格局上等",
+          "result": "普通格局"
+        }
+      ]
+    },
+    {
+      "priority": 75,
+      "rules": [
+        {
+          "id": "geju-chenggong",
+          "name": "格局成-用神有力",
+          "result": "普通格局"
+        },
+        {
+          "id": "geju-bai",
+          "name": "格局败-偏枯太重",
+          "result": "普通格局"
+        }
+      ]
+    },
+    {
+      "priority": 70,
+      "rules": [
+        {
+          "id": "qingcun-zhenguan",
+          "name": "清纯-官星清",
+          "result": "正官格"
+        },
+        {
+          "id": "qingcun-shishen",
+          "name": "清纯-食神清",
+          "result": "食神格"
+        },
+        {
+          "id": "geju-zhongdeng",
+          "name": "格局中等",
+          "result": "普通格局"
+        },
+        {
+          "id": "qingcun-cai",
+          "name": "清纯-财星清",
+          "result": "财格"
+        }
+      ]
+    },
+    {
+      "priority": 175,
+      "rules": [
+        {
+          "id": "kuigang-ge",
+          "name": "魁罡格",
+          "result": "魁罡格"
+        },
+        {
+          "id": "liuyi-shugui",
+          "name": "六乙鼠贵格",
+          "result": "六乙鼠贵"
+        },
+        {
+          "id": "renqi-longbei",
+          "name": "壬骑龙背格",
+          "result": "壬骑龙背"
+        },
+        {
+          "id": "liuyin-chaoyang",
+          "name": "六阴朝阳格",
+          "result": "六阴朝阳"
+        },
+        {
+          "id": "liujia-quqian",
+          "name": "六甲趋乾格",
+          "result": "六甲趋乾"
+        },
+        {
+          "id": "tianyuan-yiqi",
+          "name": "天元一气",
+          "result": "天元一气"
+        },
+        {
+          "id": "hanming-tiaohou",
+          "name": "寒命调候格",
+          "result": "调候格"
+        },
+        {
+          "id": "nuanming-tiaohou",
+          "name": "暖命调候格",
+          "result": "调候格"
+        }
+      ]
+    },
+    {
+      "priority": 165,
+      "rules": [
+        {
+          "id": "sanqi-guiren",
+          "name": "三奇贵人",
+          "result": "三奇贵人"
+        },
+        {
+          "id": "ban-cong",
+          "name": "半从格",
+          "result": "假从格"
+        },
+        {
+          "id": "guansha-tongguan",
+          "name": "官杀通关格",
+          "result": "通关格"
+        },
+        {
+          "id": "bijie-tongguan",
+          "name": "比劫通关格",
+          "result": "通关格"
+        }
+      ]
+    },
+    {
+      "priority": 158,
+      "rules": [
+        {
+          "id": "shuihuo-jiji",
+          "name": "水火既济",
+          "result": "水火既济"
+        },
+        {
+          "id": "zhen-cong-shi",
+          "name": "真从势格",
+          "result": "从势格"
+        }
+      ]
+    },
+    {
+      "priority": 148,
+      "rules": [
+        {
+          "id": "shishen-zhisha",
+          "name": "食神制杀",
+          "result": "食神制杀"
+        },
+        {
+          "id": "cong-wang",
+          "name": "从旺格",
+          "result": "从旺格"
+        }
+      ]
+    },
+    {
+      "priority": 146,
+      "rules": [
+        {
+          "id": "shangguan-peiyin",
+          "name": "伤官佩印",
+          "result": "伤官佩印"
+        },
+        {
+          "id": "ban-cong-yin",
+          "name": "半从印格",
+          "result": "从印格"
+        }
+      ]
+    },
+    {
+      "priority": 195,
+      "rules": [
+        {
+          "id": "zhen-cong-guansha",
+          "name": "真从官杀格",
+          "result": "从官杀格"
+        },
+        {
+          "id": "zhen-cong-cai",
+          "name": "真从财格",
+          "result": "从财格"
+        },
+        {
+          "id": "zhen-cong-er",
+          "name": "真从儿格",
+          "result": "从儿格"
+        },
+        {
+          "id": "jia-zhuanwang",
+          "name": "假专旺格",
+          "result": "专旺格"
+        }
+      ]
+    },
+    {
+      "priority": 188,
+      "rules": [
+        {
+          "id": "jia-cong-guansha",
+          "name": "假从官杀格",
+          "result": "从官杀格"
+        },
+        {
+          "id": "jia-cong-cai",
+          "name": "假从财格",
+          "result": "从财格"
+        },
+        {
+          "id": "jia-cong-er",
+          "name": "假从儿格",
+          "result": "从儿格"
+        }
+      ]
+    }
+  ],
+  "duplicateNames": []
+}

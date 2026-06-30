@@ -1,0 +1,152 @@
+[
+  {
+    "ruleId": "zhen-cong-guansha",
+    "name": "真从官杀格",
+    "category": "从格",
+    "priority": 195,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "qiming-congsha",
+    "name": "弃命从杀",
+    "category": "从格",
+    "priority": 185,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "cong-yin-zhen",
+    "name": "从印格",
+    "category": "从格",
+    "priority": 180,
+    "executionCount": 16000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "feitian-luma",
+    "name": "飞天禄马",
+    "category": "特殊格局",
+    "priority": 180,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "hanming-tiaohou",
+    "name": "寒命调候格",
+    "category": "调候格",
+    "priority": 175,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "nuanming-tiaohou",
+    "name": "暖命调候格",
+    "category": "调候格",
+    "priority": 175,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "liangshen-chengxiang",
+    "name": "两神成象",
+    "category": "特殊格",
+    "priority": 168,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "jinbai-shuiqing",
+    "name": "金白水清",
+    "category": "特殊格",
+    "priority": 162,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "muhuo-tongming",
+    "name": "木火通明",
+    "category": "特殊格",
+    "priority": 160,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "shuihuo-jiji",
+    "name": "水火既济",
+    "category": "特殊格",
+    "priority": 158,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "zhen-cong-shi",
+    "name": "真从势格",
+    "category": "从格",
+    "priority": 158,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "huotu-chengci",
+    "name": "火土成慈",
+    "category": "特殊格",
+    "priority": 156,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "jinhan-shuiling",
+    "name": "金寒水冷",
+    "category": "特殊格",
+    "priority": 154,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "zhen-cong-sha",
+    "name": "真从杀格",
+    "category": "从格",
+    "priority": 142,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  },
+  {
+    "ruleId": "liangqi-chengxiang",
+    "name": "两气成象",
+    "category": "特殊格",
+    "priority": 112,
+    "executionCount": 8000,
+    "matchCount": 0,
+    "errorCount": 0,
+    "lastError": null
+  }
+]
