@@ -48,6 +48,45 @@ export const knowledgeBase = {
   getModernEntryById,
   getCaseById,
   getSchoolById,
+
+  /**
+   * 搜索知识库
+   */
+  search(query: string, limit = 5) {
+    const q = query.toLowerCase()
+    const results: any[] = []
+    
+    // 搜索古籍条目
+    for (const entry of KNOWLEDGE_ENTRIES) {
+      if (
+        entry.id.toLowerCase().includes(q) ||
+        entry.bookName.toLowerCase().includes(q) ||
+        entry.topic.toLowerCase().includes(q) ||
+        entry.original?.toLowerCase().includes(q) ||
+        entry.translation?.toLowerCase().includes(q) ||
+        entry.tags.some((t: string) => t.toLowerCase().includes(q))
+      ) {
+        results.push({ ...entry, type: 'classic', book: entry.bookName })
+      }
+      if (results.length >= limit) break
+    }
+    
+    // 搜索案例
+    if (results.length < limit) {
+      for (const c of FENGSHUI_CASES) {
+        if (
+          c.id.toLowerCase().includes(q) ||
+          c.title.toLowerCase().includes(q) ||
+          c.description.toLowerCase().includes(q)
+        ) {
+          results.push({ ...c, type: 'case', book: '案例库' })
+        }
+        if (results.length >= limit) break
+      }
+    }
+    
+    return results
+  },
 }
 
 export default knowledgeBase
