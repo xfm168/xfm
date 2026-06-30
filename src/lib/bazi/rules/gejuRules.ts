@@ -2835,6 +2835,11 @@ export const GEJU_RULES: BaseRule<GeJuContext, Partial<GeJuResult>>[] = [
     description: '天干地支各成一气，两气成象',
     reference: '《滴天髓》两气成象',
     condition: (ctx) => {
+      const ZHI_ELEMENT: Record<string, string> = {
+        '子': '水', '丑': '土', '寅': '木', '卯': '木',
+        '辰': '土', '巳': '火', '午': '火', '未': '土',
+        '申': '金', '酉': '金', '戌': '土', '亥': '水',
+      }
       const ganEls = new Set([
         getElement(ctx.sixLines.year.gan),
         getElement(ctx.sixLines.month.gan),
@@ -2842,10 +2847,10 @@ export const GEJU_RULES: BaseRule<GeJuContext, Partial<GeJuResult>>[] = [
         getElement(ctx.sixLines.hour.gan),
       ])
       const zhiEls = new Set([
-        BRANCH_ELEMENT[ctx.sixLines.year.zhi],
-        BRANCH_ELEMENT[ctx.sixLines.month.zhi],
-        BRANCH_ELEMENT[ctx.sixLines.day.zhi],
-        BRANCH_ELEMENT[ctx.sixLines.hour.zhi],
+        ZHI_ELEMENT[ctx.sixLines.year.zhi],
+        ZHI_ELEMENT[ctx.sixLines.month.zhi],
+        ZHI_ELEMENT[ctx.sixLines.day.zhi],
+        ZHI_ELEMENT[ctx.sixLines.hour.zhi],
       ])
       return ganEls.size === 1 && zhiEls.size === 1 && ganEls.values().next().value !== zhiEls.values().next().value
     },
@@ -3523,7 +3528,7 @@ export const GEJU_RULES: BaseRule<GeJuContext, Partial<GeJuResult>>[] = [
     description: '日主有微根，印星势大，假从印',
     reference: '《滴天髓》从印格',
     condition: (ctx) => {
-      const yinElement = BE_OVERCOME_INVERSE[ctx.dayElement]
+      const yinElement = BE_GENERATE[ctx.dayElement]
       return ctx.monthElement === yinElement
         && ctx.strengthScore >= 18
         && ctx.strengthScore < 28
