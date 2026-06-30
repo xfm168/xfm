@@ -138,6 +138,14 @@ export interface FengShuiContext {
     dayElement: FiveElement
     xiYongShen: FiveElement
   }
+  
+  // 扩展：图片识别结果（可选）
+  _vision?: {
+    detectedObjects?: any[]
+    detectedSha?: any[]
+    confidence?: number
+    rawAnalysis?: any
+  }
 }
 
 // ============ 分析结果类型 ============
