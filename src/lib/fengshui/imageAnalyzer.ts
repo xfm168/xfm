@@ -121,9 +121,12 @@ export interface FengShuiReport {
   report: {
     title: string
     sections: {
+      id?: string
       title: string
       content: string
-      type: 'summary' | 'analysis' | 'suggestion' | 'warning'
+      order?: number
+      type: 'summary' | 'info' | 'analysis' | 'risk' | 'evidence' | 'suggestion' | 'warning'
+      data?: any
     }[]
   }
   

@@ -1,0 +1,98 @@
+/**
+ * Dining Room Rules - 餐厅规则
+ * 
+ * 涵盖：餐桌位置、餐桌形状、灯光、聚气、动线、家庭关系
+ */
+
+import type { FengShuiRule, FengShuiContext } from '../../types'
+
+export const DINING_ROOM_RULES: FengShuiRule[] = [
+  {
+    id: 'dining-table-position',
+    name: '餐桌位置合理',
+    category: 'dining',
+    applicableTo: ['dining'],
+    source: ['阳宅三要', '现代风水'],
+    heritage: 'both',
+    priority: 75,
+    weight: 70,
+    confidence: 80,
+    referenceIds: ['yzsy-019'],
+    tags: ['餐厅', '餐桌', '位置'],
+    schools: ['bazhai', 'modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'neutral',
+      score: 70,
+      tags: ['平'],
+    },
+    impact: { health: 3, relationship: 4, wealth: 2 },
+    improvement: '餐桌放在餐厅中心位置',
+  },
+  {
+    id: 'dining-round-table',
+    name: '餐桌圆形为佳',
+    category: 'dining',
+    applicableTo: ['dining'],
+    source: ['阳宅三要'],
+    heritage: 'classical',
+    priority: 70,
+    weight: 65,
+    confidence: 75,
+    referenceIds: ['yzsy-020'],
+    tags: ['餐厅', '餐桌', '形状', '吉'],
+    schools: ['bazhai'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'neutral',
+      score: 70,
+      tags: ['平'],
+    },
+    impact: { relationship: 4, health: 2 },
+    improvement: '圆形餐桌象征团圆圆满',
+  },
+  {
+    id: 'dining-good-lighting',
+    name: '餐厅光线充足',
+    category: 'dining',
+    applicableTo: ['dining'],
+    source: ['现代风水'],
+    heritage: 'modern',
+    priority: 70,
+    weight: 65,
+    confidence: 80,
+    referenceIds: ['xd-016'],
+    tags: ['餐厅', '采光', '吉'],
+    schools: ['modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'auspicious',
+      score: 75,
+      tags: ['吉'],
+    },
+    impact: { health: 3, relationship: 3 },
+    improvement: '餐厅保持明亮',
+  },
+  {
+    id: 'dining-tidy',
+    name: '餐厅整洁',
+    category: 'dining',
+    applicableTo: ['dining'],
+    source: ['现代风水'],
+    heritage: 'modern',
+    priority: 65,
+    weight: 60,
+    confidence: 80,
+    referenceIds: ['xd-017'],
+    tags: ['餐厅', '整洁', '吉'],
+    schools: ['modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'auspicious',
+      score: 70,
+      tags: ['吉'],
+    },
+    impact: { health: 3, relationship: 2 },
+    improvement: '餐后及时清理',
+  },
+]

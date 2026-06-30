@@ -1,0 +1,148 @@
+/**
+ * Bathroom Rules - 卫生间规则
+ * 
+ * 涵盖：厕压中宫、厕冲门、厕冲床、湿气、排风、采光、排污、异味、漏水、镜子
+ */
+
+import type { FengShuiRule, FengShuiContext } from '../../types'
+
+export const BATHROOM_RULES: FengShuiRule[] = [
+  {
+    id: 'bathroom-not-center',
+    name: '厕不压中宫',
+    category: 'bathroom',
+    applicableTo: ['bathroom'],
+    source: ['阳宅三要', '阳宅十书'],
+    heritage: 'classical',
+    priority: 95,
+    weight: 90,
+    confidence: 90,
+    referenceIds: ['yzsy-010', 'yzsx-003'],
+    tags: ['卫生间', '中宫', '凶'],
+    schools: ['bazhai', 'xuankong'],
+    condition: (ctx: FengShuiContext) => {
+      const bathroom = ctx.rooms.find(r => r.roomType === 'bathroom')
+      return !!(bathroom && bathroom.score > 50)
+    },
+    result: {
+      type: 'auspicious',
+      score: 90,
+      tags: ['吉'],
+    },
+    impact: { health: 6, wealth: 4, career: 2 },
+    improvement: '卫生间不宜在房屋中心',
+  },
+  {
+    id: 'bathroom-good-ventilation',
+    name: '卫生间通风良好',
+    category: 'bathroom',
+    applicableTo: ['bathroom'],
+    source: ['阳宅三要', '现代风水'],
+    heritage: 'both',
+    priority: 85,
+    weight: 80,
+    confidence: 88,
+    referenceIds: ['yzsy-009'],
+    tags: ['卫生间', '通风', '除湿', '吉'],
+    schools: ['bazhai', 'modern'],
+    condition: (ctx: FengShuiContext) => {
+      const bathroom = ctx.rooms.find(r => r.roomType === 'bathroom')
+      return !!(bathroom && bathroom.score > 60)
+    },
+    result: {
+      type: 'auspicious',
+      score: 80,
+      tags: ['吉'],
+    },
+    impact: { health: 5, wealth: 2 },
+    improvement: '安装强力排气扇',
+  },
+  {
+    id: 'bathroom-no-door-chong',
+    name: '卫生间不对门冲',
+    category: 'bathroom',
+    applicableTo: ['bathroom'],
+    source: ['阳宅三要', '现代风水'],
+    heritage: 'both',
+    priority: 80,
+    weight: 75,
+    confidence: 85,
+    referenceIds: ['yzsy-017'],
+    tags: ['卫生间', '门冲', '凶'],
+    schools: ['bazhai', 'modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'neutral',
+      score: 70,
+      tags: ['平'],
+    },
+    impact: { health: -3, wealth: -2 },
+    improvement: '设置门帘或绿植遮挡',
+  },
+  {
+    id: 'bathroom-no-bed-direct',
+    name: '卫生间不对床',
+    category: 'bathroom',
+    applicableTo: ['bathroom'],
+    source: ['现代风水'],
+    heritage: 'modern',
+    priority: 75,
+    weight: 70,
+    confidence: 80,
+    referenceIds: ['xd-011'],
+    tags: ['卫生间', '床', '凶'],
+    schools: ['modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'neutral',
+      score: 70,
+      tags: ['平'],
+    },
+    impact: { health: -3, relationship: -2 },
+    improvement: '调整床位或设置隔断',
+  },
+  {
+    id: 'bathroom-keep-clean',
+    name: '卫生间保持清洁',
+    category: 'bathroom',
+    applicableTo: ['bathroom'],
+    source: ['现代风水'],
+    heritage: 'modern',
+    priority: 70,
+    weight: 65,
+    confidence: 85,
+    referenceIds: ['xd-012'],
+    tags: ['卫生间', '整洁', '吉'],
+    schools: ['modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'auspicious',
+      score: 75,
+      tags: ['吉'],
+    },
+    impact: { health: 4 },
+    improvement: '保持卫生间清洁干燥',
+  },
+  {
+    id: 'bathroom-has-window',
+    name: '卫生间有窗',
+    category: 'bathroom',
+    applicableTo: ['bathroom'],
+    source: ['现代风水'],
+    heritage: 'modern',
+    priority: 70,
+    weight: 65,
+    confidence: 85,
+    referenceIds: ['xd-013'],
+    tags: ['卫生间', '采光', '吉'],
+    schools: ['modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'neutral',
+      score: 70,
+      tags: ['平'],
+    },
+    impact: { health: 3 },
+    improvement: '卫生间有窗户最佳',
+  },
+]

@@ -1,0 +1,123 @@
+/**
+ * Study Rules - 书房规则
+ * 
+ * 涵盖：书桌朝向、文昌位、书柜、采光、靠山、背门、背窗、电脑位置、专注度
+ */
+
+import type { FengShuiRule, FengShuiContext } from '../../types'
+
+export const STUDY_RULES: FengShuiRule[] = [
+  {
+    id: 'study-desk-has-back',
+    name: '书桌有靠山',
+    category: 'study',
+    applicableTo: ['study'],
+    source: ['阳宅三要', '现代风水'],
+    heritage: 'both',
+    priority: 85,
+    weight: 80,
+    confidence: 85,
+    referenceIds: ['yzsy-011'],
+    tags: ['书房', '书桌', '靠山', '吉'],
+    schools: ['bazhai', 'modern'],
+    condition: (ctx: FengShuiContext) => {
+      const study = ctx.rooms.find(r => r.roomType === 'study')
+      return !!(study && study.score > 60)
+    },
+    result: {
+      type: 'auspicious',
+      score: 80,
+      tags: ['吉'],
+    },
+    impact: { career: 5, study: 4, wealth: 2 },
+    improvement: '书桌靠墙摆放',
+  },
+  {
+    id: 'study-wenchang-position',
+    name: '文昌位得位',
+    category: 'study',
+    applicableTo: ['study'],
+    source: ['八宅明镜', '玄空学'],
+    heritage: 'classical',
+    priority: 80,
+    weight: 75,
+    confidence: 80,
+    referenceIds: ['bzmj-003', 'xk-001'],
+    tags: ['书房', '文昌', '学业', '吉'],
+    schools: ['bazhai', 'xuankong'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'neutral',
+      score: 70,
+      tags: ['平'],
+    },
+    impact: { study: 5, career: 3 },
+    improvement: '书桌放在文昌位',
+  },
+  {
+    id: 'study-good-lighting',
+    name: '书房采光充足',
+    category: 'study',
+    applicableTo: ['study'],
+    source: ['现代风水'],
+    heritage: 'modern',
+    priority: 75,
+    weight: 70,
+    confidence: 85,
+    referenceIds: ['xd-014'],
+    tags: ['书房', '采光', '吉'],
+    schools: ['modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'auspicious',
+      score: 75,
+      tags: ['吉'],
+    },
+    impact: { study: 4, health: 2 },
+    improvement: '书桌靠近窗户，自然光最佳',
+  },
+  {
+    id: 'study-no-back-door',
+    name: '书桌不背门',
+    category: 'study',
+    applicableTo: ['study'],
+    source: ['阳宅三要', '现代风水'],
+    heritage: 'both',
+    priority: 70,
+    weight: 65,
+    confidence: 80,
+    referenceIds: ['yzsy-018'],
+    tags: ['书房', '背门', '凶'],
+    schools: ['bazhai', 'modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'neutral',
+      score: 70,
+      tags: ['平'],
+    },
+    impact: { career: -3, study: -2 },
+    improvement: '调整书桌方向，避免背门而坐',
+  },
+  {
+    id: 'study-tidy',
+    name: '书房整洁',
+    category: 'study',
+    applicableTo: ['study'],
+    source: ['现代风水'],
+    heritage: 'modern',
+    priority: 65,
+    weight: 60,
+    confidence: 80,
+    referenceIds: ['xd-015'],
+    tags: ['书房', '整洁', '吉'],
+    schools: ['modern'],
+    condition: (ctx: FengShuiContext) => true,
+    result: {
+      type: 'auspicious',
+      score: 70,
+      tags: ['吉'],
+    },
+    impact: { study: 3, career: 2 },
+    improvement: '保持书桌整洁',
+  },
+]

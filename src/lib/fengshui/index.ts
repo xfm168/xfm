@@ -1,7 +1,17 @@
 /**
- * 风水模块
+ * 玄风风水模块 V4
  * 
- * 复用八字 Rule Engine 架构
+ * 统一数据流：
+ * 图片 → Vision Engine → FloorPlan Engine → Spatial Engine → Furniture Engine
+ * → Room Engine → Feature Engine → Rule Engine → Score Engine → Knowledge Base
+ * → Explain Engine → AI Report → Frontend
+ * 
+ * 核心特性：
+ * - 按房间分类管理规则（10+房间类型）
+ * - 知识库（古籍/案例/植物/颜色/材料/符号）
+ * - 固定报告模板（12个标准部分）
+ * - 证据链（结论→Rule→古籍→改善→预计提升）
+ * - 整改模拟（调整家具实时重算评分）
  * 
  * @example
  * // 基础分析
@@ -12,7 +22,6 @@
  *   direction: { mainDirection: 'south', facingDirection: 'north', doorDirection: 'south' },
  *   layout: { shape: 'square', score: 85, missingCorners: [], totalArea: 100, usableArea: 90 },
  *   rooms: [...],
- *   elementDistribution: { 木: 2, 火: 2, 土: 2, 金: 2, 水: 2 },
  * })
  * 
  * const result = analyzeFengShui(context)
@@ -26,14 +35,18 @@
  *   includeAI: true,
  * })
  * 
- * console.log(report.fengshuiAnalysis.result)
- * console.log(report.aiSuggestions)
- * console.log(report.report.sections)
+ * @example
+ * // 整改模拟
+ * import { SimulationEngine } from '@/lib/fengshui'
+ * 
+ * const sim = new SimulationEngine(context)
+ * const result = sim.moveFurniture('bed-1', { x: 30, y: 40 })
+ * console.log(result.delta.overallScore) // +5
  */
 
 export * from './types'
 export * from './analyzer'
-export * from './rules/fengshuiRules'
+export * from './rules'
 export * from './imageAnalyzer'
 export * from './aiImageAnalyzer'
 export * from './reportGenerator'
@@ -43,6 +56,9 @@ export * from './spatial'
 export * from './room-engine'
 export * from './feature-engine'
 export * from './score-engine'
+export * from './knowledge'
+export * from './evidenceChain'
+export * from './simulation'
 
 import type { FengShuiContext, Direction, Room, Furniture } from './types'
 

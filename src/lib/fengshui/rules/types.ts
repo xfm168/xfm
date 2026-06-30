@@ -48,11 +48,24 @@ export interface FengShuiRule {
   condition: (ctx: FengShuiContext) => boolean
   /** 结果 */
   result: RuleResult
+  /** 影响方面（健康/财运/事业/感情/学业） */
+  impact?: RuleImpact
+  /** 改善建议 */
+  improvement?: string
+}
+
+export interface RuleImpact {
+  health?: number
+  wealth?: number
+  career?: number
+  relationship?: number
+  study?: number
+  sleep?: number
 }
 
 export interface RuleResult {
   /** 结果类型 */
-  type: 'auspicious' | 'inauspicious' | 'neutral'
+  type: 'auspicious' | 'inauspicious' | 'neutral' | 'warning'
   /** 基础分 */
   score: number
   /** 标签 */
@@ -69,9 +82,13 @@ export type RuleCategory =
   | 'bathroom'         // 卫生间
   | 'living'           // 客厅
   | 'study'            // 书房
+  | 'dining'           // 餐厅
+  | 'balcony'          // 阳台
+  | 'entrance'         // 玄关
   | 'balance'          // 平衡
   | 'element'          // 五行
   | 'sha'              // 煞气
+  | 'house'            // 房屋整体
 
 export type RoomType = 
   | 'entrance'     // 玄关
@@ -144,7 +161,7 @@ export interface FengShuiRuleResult {
   /** 优先级 */
   priority: number
   /** 类型 */
-  type: 'auspicious' | 'inauspicious' | 'neutral'
+  type: 'auspicious' | 'inauspicious' | 'neutral' | 'warning'
   /** 解释 */
   explanation?: string
   /** 古籍依据 */
