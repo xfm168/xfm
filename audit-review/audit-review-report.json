@@ -1,0 +1,374 @@
+{
+  "auditTime": "2026-06-30T03:59:20.553Z",
+  "part1_timeline": {
+    "stages": [
+      {
+        "stage": 1,
+        "name": "coverageHook包装",
+        "rules": 149,
+        "coverage": "~89.9%",
+        "deadRules": 15,
+        "reason": "重复ID覆盖"
+      },
+      {
+        "stage": 2,
+        "name": "数组索引统计",
+        "rules": 150,
+        "coverage": "90.0%",
+        "deadRules": 15,
+        "reason": "8000样本，5档强度"
+      },
+      {
+        "stage": 3,
+        "name": "engine.ts内部Hook",
+        "rules": 149,
+        "coverage": "96.6%",
+        "deadRules": 5,
+        "reason": "仍用ID统计"
+      },
+      {
+        "stage": 4,
+        "name": "精确统计V1",
+        "rules": 150,
+        "coverage": "96.67%",
+        "deadRules": 5,
+        "reason": "索引统计+连续随机强度"
+      }
+    ],
+    "keyFindings": [
+      "规则数149→150：统计口径变化（ID vs 索引）",
+      "Coverage 89.9%→96.67%：样本生成方式改进（5档→连续）",
+      "Dead Rule 15→5：低强度样本增加，触发更多边界规则"
+    ]
+  },
+  "part2_selfCheck": [
+    {
+      "category": "重复统计",
+      "item": "每条Rule是否被统计多次",
+      "result": "PASS",
+      "evidence": "preciseStats 使用 GEJU_RULES.map 初始化，长度等于 GEJU_RULES.length（150），for循环按索引遍历，每条只统计一次"
+    },
+    {
+      "category": "漏统计",
+      "item": "是否有Rule未被统计",
+      "result": "PASS",
+      "evidence": "preciseStats 初始化时遍历 GEJU_RULES 全部150条，执行循环 for (let idx = 0; idx < GEJU_RULES.length; idx++)，无遗漏"
+    },
+    {
+      "category": "重复ID",
+      "item": "重复ID是否导致统计覆盖",
+      "result": "PASS",
+      "evidence": "不使用 rule.id 作为统计key，使用数组索引，\"cong-yin-zhen\"两条分别在索引11和145，独立统计"
+    },
+    {
+      "category": "重复统计",
+      "item": "同一个Rule实例是否被统计两次",
+      "result": "PASS",
+      "evidence": "for循环按索引遍历，每个索引对应一个Rule实例，无重复"
+    },
+    {
+      "category": "全局状态",
+      "item": "是否有全局状态污染风险",
+      "result": "WARN",
+      "evidence": "engine.ts 的 __RULE_AUDIT__ 是全局变量，但脚本中 preciseStats 是局部变量，主统计不依赖全局Hook。全局Hook仅用于获取Traces，存在一定耦合。"
+    },
+    {
+      "category": "可复现性",
+      "item": "随机样本是否可复现",
+      "result": "WARN",
+      "evidence": "当前脚本使用 Math.random()，不可复现。需要固定Seed才能验证稳定性。"
+    },
+    {
+      "category": "绕过Hook",
+      "item": "是否直接调用 condition 绕过 engine.ts Hook",
+      "result": "PASS",
+      "evidence": "精确统计部分确实直接调用 rule.condition(ctx)，但这是为了精确统计（解决重复ID问题）。同时也调用了 determineGeJu() → executeRules()，完整走了生产路径。精确统计和生产路径是两条并行线，各有用途。"
+    },
+    {
+      "category": "贡献度",
+      "item": "贡献度计算逻辑是否正确",
+      "result": "PASS",
+      "evidence": "matchedIndices 按 priority*10 + weight 排序，第0名记 bestMatchCount+top3Count，第1-2名记 top3Count+assistCount，第3名以后只记 assistCount，逻辑正确"
+    },
+    {
+      "category": "被压制",
+      "item": "blockedByPriority/blockedByWeight 是否正确",
+      "result": "PASS",
+      "evidence": "非第0名的Rule，与第0名比较：priority低则blockedByPriority++，weight低则blockedByWeight++，逻辑正确"
+    },
+    {
+      "category": "Dead Rule",
+      "item": "Dead Rule子条件分析是否准确",
+      "result": "WARN",
+      "evidence": "子条件评估使用 new Function + 模拟外部变量，对于复杂函数体可能有偏差。分类依据最弱子条件失败率，有参考价值但需人工复核。"
+    }
+  ],
+  "part3_dashboardVerification": [
+    {
+      "index": 11,
+      "ruleId": "cong-yin-zhen",
+      "name": "从印格",
+      "dashboard_execution": 1000,
+      "dashboard_match": 0,
+      "precise_execution": 1000,
+      "precise_match": 0,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 46,
+      "ruleId": "shangguan-poge-guansha",
+      "name": "伤官破格-无财通关",
+      "dashboard_execution": 1000,
+      "dashboard_match": 17,
+      "precise_execution": 1000,
+      "precise_match": 17,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 52,
+      "ruleId": "guancai-xiangsheng",
+      "name": "官财相生",
+      "dashboard_execution": 1000,
+      "dashboard_match": 32,
+      "precise_execution": 1000,
+      "precise_match": 32,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 72,
+      "ruleId": "feitian-luma",
+      "name": "飞天禄马",
+      "dashboard_execution": 1000,
+      "dashboard_match": 0,
+      "precise_execution": 1000,
+      "precise_match": 0,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 76,
+      "ruleId": "renqi-longbei",
+      "name": "壬骑龙背格",
+      "dashboard_execution": 1000,
+      "dashboard_match": 5,
+      "precise_execution": 1000,
+      "precise_match": 5,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 114,
+      "ruleId": "ban-cong",
+      "name": "半从格",
+      "dashboard_execution": 1000,
+      "dashboard_match": 65,
+      "precise_execution": 1000,
+      "precise_match": 65,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 122,
+      "ruleId": "jia-cong-yin",
+      "name": "假从印格",
+      "dashboard_execution": 1000,
+      "dashboard_match": 10,
+      "precise_execution": 1000,
+      "precise_match": 10,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 123,
+      "ruleId": "zhen-cong-sha",
+      "name": "真从杀格",
+      "dashboard_execution": 1000,
+      "dashboard_match": 0,
+      "precise_execution": 1000,
+      "precise_match": 0,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 146,
+      "ruleId": "zhuānwàng-gé",
+      "name": "专旺格-纯",
+      "dashboard_execution": 1000,
+      "dashboard_match": 6,
+      "precise_execution": 1000,
+      "precise_match": 6,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    },
+    {
+      "index": 149,
+      "ruleId": "default-putong",
+      "name": "普通格局",
+      "dashboard_execution": 1000,
+      "dashboard_match": 1000,
+      "precise_execution": 1000,
+      "precise_match": 1000,
+      "sourceMatch": true,
+      "realCaseMatch": true,
+      "result": "PASS"
+    }
+  ],
+  "part4_stability": {
+    "seedResults": [
+      {
+        "seed": 42,
+        "matched": 146,
+        "coverage": 97.33333333333334
+      },
+      {
+        "seed": 123,
+        "matched": 147,
+        "coverage": 98
+      },
+      {
+        "seed": 999,
+        "matched": 147,
+        "coverage": 98
+      },
+      {
+        "seed": 2024,
+        "matched": 147,
+        "coverage": 98
+      },
+      {
+        "seed": 8888,
+        "matched": 147,
+        "coverage": 98
+      }
+    ],
+    "maxDiff": 0.6666666666666572,
+    "stable": true
+  },
+  "part5_duplicateId": {
+    "duplicateId": "cong-yin-zhen",
+    "indices": [
+      11,
+      145
+    ],
+    "bothExecuted": true,
+    "bothCounted": true,
+    "bothSorted": true,
+    "matchCountDiff": false
+  },
+  "part6_performance": [
+    {
+      "sampleSize": 10000,
+      "withoutHook": {
+        "tps": 23911,
+        "avgTimeMs": 0.041821969700000045
+      },
+      "withHook": {
+        "tps": 22327,
+        "avgTimeMs": 0.04478925969999996
+      },
+      "overheadPercent": 7.0950508101006795
+    },
+    {
+      "sampleSize": 50000,
+      "withoutHook": {
+        "tps": 27827,
+        "avgTimeMs": 0.03593602852
+      },
+      "withHook": {
+        "tps": 25898,
+        "avgTimeMs": 0.03861245086000001
+      },
+      "overheadPercent": 7.447741028228694
+    }
+  ],
+  "part7_decisionTrace": {
+    "verifiedCases": 5,
+    "consistent": true,
+    "note": "最终MainGeJu与bestMatch可能不同，因为determineGeJu有后处理逻辑"
+  },
+  "part8_scores": [
+    {
+      "name": "统计可信度",
+      "score": 92,
+      "improvements": [
+        "建议将精确统计逻辑集成到engine.ts内部（通过索引而不是ID）",
+        "增加更多边界测试用例验证极端情况"
+      ]
+    },
+    {
+      "name": "覆盖可信度",
+      "score": 88,
+      "improvements": [
+        "样本量增加到10万+，进一步降低随机波动",
+        "补充特殊格局的定向测试（飞天禄马、金神格等）",
+        "增加真实历史命例验证"
+      ]
+    },
+    {
+      "name": "HeatMap可信度",
+      "score": 90,
+      "improvements": [
+        "增加按时间维度的HeatMap（趋势分析）",
+        "区分不同类型命例的命中率差异"
+      ]
+    },
+    {
+      "name": "Dead Rule可信度",
+      "score": 75,
+      "improvements": [
+        "改进子条件解析算法，支持更复杂的函数体",
+        "使用真实的闭包环境测试子条件（而不是new Function）",
+        "增加\"人工复核\"标记，避免完全自动化误判",
+        "对\"B-永远不可达\"类需提供数学证明或反例"
+      ]
+    },
+    {
+      "name": "Decision Trace可信度",
+      "score": 94,
+      "improvements": [
+        "记录更多上下文信息（如具体的score计算过程）",
+        "支持Trace的条件过滤和检索"
+      ]
+    },
+    {
+      "name": "Dashboard可信度",
+      "score": 85,
+      "improvements": [
+        "Pattern分类应从Rule元数据读取而非从名称推断",
+        "增加数据交互性（筛选、排序、钻取）",
+        "增加历史版本对比功能"
+      ]
+    },
+    {
+      "name": "Explain统计可信度",
+      "score": 70,
+      "improvements": [
+        "增加Explain质量评估（相关性、准确性）",
+        "分析模板变量覆盖率",
+        "人工抽样评估Explain有用性"
+      ]
+    },
+    {
+      "name": "Confidence统计可信度",
+      "score": 93,
+      "improvements": [
+        "按Pattern/分类更细粒度的分布分析",
+        "增加Confidence与实际准确率的相关性分析",
+        "增加Confidence校准（calibration）检验"
+      ]
+    }
+  ],
+  "overallScore": 85.875
+}
