@@ -4,6 +4,7 @@
  * 复用八字 Rule Engine 架构
  * 
  * @example
+ * // 基础分析
  * import { analyzeFengShui, createDefaultContext } from '@/lib/fengshui'
  * 
  * const context = createDefaultContext({
@@ -15,11 +16,27 @@
  * })
  * 
  * const result = analyzeFengShui(context)
+ * 
+ * @example
+ * // 图片分析完整流程
+ * import { generateFengShuiReport } from '@/lib/fengshui'
+ * 
+ * const report = await generateFengShuiReport(imageBase64, {
+ *   analysisType: 'full',
+ *   includeAI: true,
+ * })
+ * 
+ * console.log(report.fengshuiAnalysis.result)
+ * console.log(report.aiSuggestions)
+ * console.log(report.report.sections)
  */
 
 export * from './types'
 export * from './analyzer'
 export * from './rules/fengshuiRules'
+export * from './imageAnalyzer'
+export * from './aiImageAnalyzer'
+export * from './reportGenerator'
 
 import type { FengShuiContext, Direction, Room, Furniture } from './types'
 
