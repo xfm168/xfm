@@ -41,6 +41,8 @@ export * from './vision'
 export * from './floor-plan'
 export * from './spatial'
 export * from './room-engine'
+export * from './feature-engine'
+export * from './score-engine'
 
 import type { FengShuiContext, Direction, Room, Furniture } from './types'
 
