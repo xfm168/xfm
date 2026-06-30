@@ -247,15 +247,58 @@ export interface ElementAnalysis {
 
 // ============ 规则相关类型 ============
 
+export type RuleHeritage = 'classical' | 'modern' | 'verified'
+export type RuleLayer = 'classical' | 'practical' | 'modern'
+export type FengShuiSchool = 'bzhai' | 'xuankong' | 'sanjiao' | 'zangfeng' | 'modern'
+
 export interface FengShuiRuleResult extends RuleResult {
-  name: string
-  category: FengShuiCategory
-  description: string
+  type: string
   score: number
-  matched: boolean
+  explanation: string
+  classicalRef: string
+  practicalAdvice: string
 }
 
-export type FengShuiRule = BaseRule<FengShuiContext, FengShuiRuleResult>
+export interface FengShuiRule extends BaseRule<FengShuiContext, FengShuiRuleResult> {
+  id: string
+  name: string
+  category: FengShuiCategory
+  
+  source: string[]
+  heritage: RuleHeritage
+  layer: RuleLayer
+  schools: FengShuiSchool[]
+  
+  priority: number
+  weight: number
+  confidence: number
+  
+  condition: (ctx: FengShuiContext) => boolean
+  
+  result: FengShuiRuleResult
+  
+  tags: string[]
+}
+
+// ============ Explain 三段式 ============
+
+export interface ClassicalReference {
+  source: string
+  quote: string
+  school: FengShuiSchool
+}
+
+export interface FengShuiExplain {
+  classicalRefs: ClassicalReference[]
+  practicalExplanation: string[]
+  suggestions: string[]
+  matchedPatterns: string[]
+  warnings: string[]
+  tips: string[]
+  
+  whyGood: string[]
+  whyBad: string[]
+}
 
 // ============ 分析选项 ============
 
