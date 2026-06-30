@@ -46,7 +46,7 @@
 
 export * from './types'
 export * from './analyzer'
-export * from './rules'
+export { ALL_RULES, RULES_BY_ROOM, RULE_STATS, executeRules } from './rules'
 export * from './imageAnalyzer'
 export * from './aiImageAnalyzer'
 export * from './reportGenerator'
@@ -59,6 +59,8 @@ export * from './score-engine'
 export * from './knowledge'
 export * from './evidenceChain'
 export * from './simulation'
+export { runFullPipeline, PIPELINE_STEPS } from './pipeline'
+export type { PipelineStep, PipelineInput, PipelineOutput, PipelineReport, ReportSection } from './pipeline'
 
 import type { FengShuiContext, Direction, Room, Furniture } from './types'
 

@@ -1,7 +1,7 @@
 /**
  * Bathroom Rules - 卫生间规则
  * 
- * 涵盖：厕压中宫、厕冲门、厕冲床、湿气、排风、采光、排污、异味、漏水、镜子
+ * 涵盖：厕压中宫、厕冲门、厕冲床、湿气、排风、采光、排污、异味、漏水、镜子、财位、门常关
  */
 
 import type { FengShuiRule, FengShuiContext } from '../../types'
@@ -144,5 +144,55 @@ export const BATHROOM_RULES: FengShuiRule[] = [
     },
     impact: { health: 3 },
     improvement: '卫生间有窗户最佳',
+  },
+  {
+    id: 'bathroom-not-wealth-position',
+    name: '卫生间不在财位',
+    category: 'bathroom',
+    applicableTo: ['bathroom'],
+    source: ['阳宅三要', '八宅明镜'],
+    heritage: 'classical',
+    priority: 90,
+    weight: 85,
+    confidence: 88,
+    referenceIds: ['yzsy-015', 'bzjm-008'],
+    tags: ['卫生间', '财位', '凶'],
+    schools: ['bazhai', 'xuankong'],
+    condition: (ctx: FengShuiContext) => {
+      const bathroom = ctx.rooms.find(r => r.roomType === 'bathroom')
+      return !!(bathroom && bathroom.score > 55)
+    },
+    result: {
+      type: 'auspicious',
+      score: 85,
+      tags: ['吉'],
+    },
+    impact: { wealth: 7, health: 2, career: 3 },
+    improvement: '卫生间忌压财位，宜用五帝钱或绿植化解',
+  },
+  {
+    id: 'bathroom-door-closed',
+    name: '卫生间门常关',
+    category: 'bathroom',
+    applicableTo: ['bathroom'],
+    source: ['阳宅三要', '现代风水'],
+    heritage: 'both',
+    priority: 75,
+    weight: 70,
+    confidence: 82,
+    referenceIds: ['yzsy-018', 'xd-014'],
+    tags: ['卫生间', '门', '吉'],
+    schools: ['bazhai', 'modern'],
+    condition: (ctx: FengShuiContext) => {
+      const bathroom = ctx.rooms.find(r => r.roomType === 'bathroom')
+      return !!(bathroom && bathroom.score > 50)
+    },
+    result: {
+      type: 'auspicious',
+      score: 75,
+      tags: ['吉'],
+    },
+    impact: { health: 4, wealth: 3, relationship: 2 },
+    improvement: '卫生间门应随手关闭，防止秽气外泄',
   },
 ]
