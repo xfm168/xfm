@@ -13,8 +13,7 @@ import type {
   RuleCategory,
 } from './types'
 
-// 导入规则
-import { CLASSICAL_RULES_V2 } from './fengshuiRulesV2'
+import { ALL_RULES } from './index'
 
 /**
  * 执行所有规则
@@ -22,7 +21,6 @@ import { CLASSICAL_RULES_V2 } from './fengshuiRulesV2'
 export function executeRules(input: RuleExecutionInput): FengShuiRuleResult[] {
   const results: FengShuiRuleResult[] = []
   
-  // 获取适用的规则
   const applicableRules = getApplicableRules(input)
   
   for (const rule of applicableRules) {
@@ -80,9 +78,8 @@ export function executeRulesFull(input: RuleExecutionInput): RuleExecutionResult
  * 获取适用的规则
  */
 function getApplicableRules(input: RuleExecutionInput): FengShuiRule[] {
-  let rules = [...CLASSICAL_RULES_V2]
+  let rules = [...ALL_RULES]
   
-  // 按分类过滤
   if (input.categories && input.categories.length > 0) {
     rules = rules.filter(r => input.categories!.includes(r.category))
   }

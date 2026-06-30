@@ -61,6 +61,9 @@ export interface RuleImpact {
   relationship?: number
   study?: number
   sleep?: number
+  benefactor?: number
+  fame?: number
+  harmony?: number
 }
 
 export interface RuleResult {

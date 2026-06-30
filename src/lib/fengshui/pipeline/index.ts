@@ -20,6 +20,7 @@ import { analyzeSpatial } from '../spatial'
 import { analyzeHouseRooms } from '../room-engine'
 import { extractFeatures } from '../feature-engine'
 import { executeRules } from '../rules/executor'
+import { ALL_RULES } from '../rules'
 import { calculateScore } from '../score-engine'
 import { knowledgeBase, generateExplain } from '../knowledge'
 import { buildEvidenceChains } from '../evidenceChain'
@@ -174,7 +175,7 @@ export async function runFullPipeline(input: PipelineInput): Promise<PipelineOut
     // ============ Step 3: Spatial Engine 空间分析 ============
     updateStep('spatial', { status: 'running', progress: 0, startTime: Date.now() })
     
-    spatialResult = runSpatialStep(floorPlanResult, visionResult)
+    spatialResult = runSpatialStep(floorPlanResult, visionResult, input)
     
     updateStep('spatial', { status: 'completed', progress: 100, endTime: Date.now() })
 
@@ -292,8 +293,7 @@ async function runFloorPlanStep(input: PipelineInput, visionResult: ImageAnalysi
   }
 }
 
-function runSpatialStep(floorPlanResult: any, visionResult: ImageAnalysisResult): any {
-  // 构建 Spatial Engine 输入
+function runSpatialStep(floorPlanResult: any, visionResult: ImageAnalysisResult, input: PipelineInput): any {
   const doors = buildDoorsFromVision(visionResult)
   const windows = buildWindowsFromVision(visionResult)
   const furniture = buildFurnitureFromVision(visionResult)
@@ -303,24 +303,23 @@ function runSpatialStep(floorPlanResult: any, visionResult: ImageAnalysisResult)
       outline: floorPlanResult?.outline || [],
       orientation: visionResult.roomInfo?.mainDirection || 'south',
       floorInfo: {
-        currentFloor: inputOrDefault(input => input.userInfo?.floor, 1),
-        totalFloors: inputOrDefault(input => input.userInfo?.totalFloors, 1),
+        currentFloor: inputOrDefault(input, i => i.userInfo?.floor, 1),
+        totalFloors: inputOrDefault(input, i => i.userInfo?.totalFloors, 30),
         buildingType: 'apartment' as any,
-        houseAge: inputOrDefault(input => input.userInfo?.buildingAge, 10),
+        houseAge: inputOrDefault(input, i => i.userInfo?.buildingAge, 10),
       },
       doors,
       windows,
       furniture,
     })
   } catch {
-    // 降级：返回基础空间信息
     return {
       house: {
         shape: visionResult.roomInfo?.shape || 'rectangle',
         orientation: visionResult.roomInfo?.mainDirection || 'south',
         sittingDirection: getOppositeDirection(visionResult.roomInfo?.mainDirection || 'south'),
-        totalArea: 80,
-        usableArea: 70,
+        totalArea: null,
+        usableArea: null,
         missingCorners: [],
       },
       doors,
@@ -454,18 +453,21 @@ function runScoreStep(
 
 function runKnowledgeStep(ruleResult: any): EvidenceChain[] {
   try {
-    // 从规则结果构建证据链
-    const rules = Array.isArray(ruleResult) ? ruleResult : (ruleResult?.details || [])
-    const rulesWithData = rules
-      .filter((r: any) => r.matched || r.ruleId)
+    const allResults = Array.isArray(ruleResult) 
+      ? ruleResult 
+      : (ruleResult?.matchedRules || ruleResult?.results || ruleResult?.details || [])
+    
+    const matchedRules = allResults
+      .filter((r: any) => r.matched && r.type !== 'neutral')
       .map((r: any) => {
-        // 尝试从知识库查找对应规则
-        const allRules = knowledgeBase.stats ? [] : []
-        return allRules.find((k: any) => k.id === r.ruleId) || null
+        const ruleId = r.ruleId || r.id
+        const rule = ALL_RULES.find(ru => ru.id === ruleId)
+        if (!rule) return null
+        return rule
       })
       .filter(Boolean)
     
-    return buildEvidenceChains(rulesWithData as any[])
+    return buildEvidenceChains(matchedRules as any[])
   } catch {
     return []
   }
@@ -807,9 +809,10 @@ function getOppositeDirection(dir: string): string {
   return map[dir] || 'north'
 }
 
-function inputOrDefault<T>(fn: (input: PipelineInput) => T, defaultValue: T): T {
+function inputOrDefault<T>(input: PipelineInput, fn: (input: PipelineInput) => T | undefined, defaultValue: T): T {
   try {
-    return defaultValue
+    const result = fn(input)
+    return result !== undefined && result !== null ? result : defaultValue
   } catch {
     return defaultValue
   }

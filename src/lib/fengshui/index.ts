@@ -1,55 +1,43 @@
 /**
- * 玄风风水模块 V4
+ * 玄风风水模块 V4.2
  * 
- * 统一数据流：
+ * 唯一 Pipeline（禁止绕过）：
  * 图片 → Vision Engine → FloorPlan Engine → Spatial Engine → Furniture Engine
  * → Room Engine → Feature Engine → Rule Engine → Score Engine → Knowledge Base
  * → Explain Engine → AI Report → Frontend
  * 
  * 核心特性：
- * - 按房间分类管理规则（10+房间类型）
+ * - 101条精品规则（按房间分类管理）
  * - 知识库（古籍/案例/植物/颜色/材料/符号）
- * - 固定报告模板（12个标准部分）
+ * - 固定12章节报告模板
  * - 证据链（结论→Rule→古籍→改善→预计提升）
  * - 整改模拟（调整家具实时重算评分）
  * 
  * @example
- * // 基础分析
- * import { analyzeFengShui, createDefaultContext } from '@/lib/fengshui'
+ * // 图片分析完整流程（推荐入口）
+ * import { runFullPipeline } from '@/lib/fengshui'
  * 
- * const context = createDefaultContext({
- *   houseType: 'apartment',
- *   direction: { mainDirection: 'south', facingDirection: 'north', doorDirection: 'south' },
- *   layout: { shape: 'square', score: 85, missingCorners: [], totalArea: 100, usableArea: 90 },
- *   rooms: [...],
+ * const result = await runFullPipeline({
+ *   imageData: imageBase64,
+ *   roomType: 'living',
+ *   mode: 'standard',
  * })
- * 
- * const result = analyzeFengShui(context)
  * 
  * @example
- * // 图片分析完整流程
- * import { generateFengShuiReport } from '@/lib/fengshui'
- * 
- * const report = await generateFengShuiReport(imageBase64, {
- *   analysisType: 'full',
- *   includeAI: true,
- * })
+ * // 规则库访问
+ * import { ALL_RULES, RULE_STATS } from '@/lib/fengshui'
+ * console.log(RULE_STATS.total) // 101
  * 
  * @example
  * // 整改模拟
  * import { SimulationEngine } from '@/lib/fengshui'
- * 
  * const sim = new SimulationEngine(context)
- * const result = sim.moveFurniture('bed-1', { x: 30, y: 40 })
- * console.log(result.delta.overallScore) // +5
  */
 
 export * from './types'
-export * from './analyzer'
 export { ALL_RULES, RULES_BY_ROOM, RULE_STATS, executeRules } from './rules'
 export * from './imageAnalyzer'
 export * from './aiImageAnalyzer'
-export * from './reportGenerator'
 export * from './vision'
 export * from './floor-plan'
 export * from './spatial'

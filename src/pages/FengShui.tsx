@@ -53,16 +53,36 @@ export default function FengShui() {
   }
 
   const handleFileSelect = useCallback((file: File) => {
-    if (file && file.type.startsWith('image/')) {
-      setError(null)
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setUploadedImage(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
-    } else {
-      setError('请上传图片文件（JPG、PNG格式）')
+    if (!file) {
+      setError('请选择要上传的图片')
+      return
     }
+    
+    if (!file.type.startsWith('image/')) {
+      setError('请上传图片文件（JPG、PNG 格式）')
+      return
+    }
+    
+    const MAX_SIZE = 10 * 1024 * 1024
+    if (file.size > MAX_SIZE) {
+      setError('图片大小不能超过 10MB，请压缩后重新上传')
+      return
+    }
+    
+    if (file.size < 1024) {
+      setError('图片文件过小，请上传有效的图片')
+      return
+    }
+    
+    setError(null)
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setUploadedImage(e.target?.result as string)
+    }
+    reader.onerror = () => {
+      setError('图片读取失败，请重新选择文件')
+    }
+    reader.readAsDataURL(file)
   }, [])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -202,9 +222,14 @@ export default function FengShui() {
             </div>
 
             {error && (
-              <div className="error-message large">
-                <span className="error-icon-inline">⚠️</span>
-                <span>{error}</span>
+              <div className="error-message large with-action">
+                <div className="error-content">
+                  <span className="error-icon-inline">⚠️</span>
+                  <span>{error}</span>
+                </div>
+                <button className="retry-btn" onClick={handleAnalyze}>
+                  重新分析
+                </button>
               </div>
             )}
           </div>
