@@ -1,0 +1,2270 @@
+{
+  "overall": {
+    "total": 150,
+    "executed": 150,
+    "matched": 146,
+    "coverage": 97.33333333333334
+  },
+  "byPriority": [
+    {
+      "dimension": "priority",
+      "value": "P200",
+      "total": 6,
+      "executed": 6,
+      "matched": 6,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P190",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P185",
+      "total": 4,
+      "executed": 4,
+      "matched": 4,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P180",
+      "total": 2,
+      "executed": 2,
+      "matched": 2,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P170",
+      "total": 4,
+      "executed": 4,
+      "matched": 4,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P160",
+      "total": 5,
+      "executed": 5,
+      "matched": 5,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P150",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P145",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P140",
+      "total": 2,
+      "executed": 2,
+      "matched": 2,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P130",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P120",
+      "total": 2,
+      "executed": 2,
+      "matched": 2,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P100",
+      "total": 9,
+      "executed": 9,
+      "matched": 9,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P95",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P99",
+      "total": 7,
+      "executed": 7,
+      "matched": 7,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P98",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P92",
+      "total": 6,
+      "executed": 6,
+      "matched": 6,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P88",
+      "total": 6,
+      "executed": 6,
+      "matched": 6,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P220",
+      "total": 4,
+      "executed": 4,
+      "matched": 4,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P218",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P216",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P214",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P212",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P210",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P208",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P206",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P204",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P202",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P198",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P196",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P194",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P193",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P192",
+      "total": 6,
+      "executed": 6,
+      "matched": 6,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P80",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P75",
+      "total": 2,
+      "executed": 2,
+      "matched": 2,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P70",
+      "total": 4,
+      "executed": 4,
+      "matched": 4,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P175",
+      "total": 8,
+      "executed": 8,
+      "matched": 8,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P172",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P168",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P165",
+      "total": 4,
+      "executed": 4,
+      "matched": 4,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P162",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P156",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P154",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P152",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P148",
+      "total": 2,
+      "executed": 2,
+      "matched": 2,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P146",
+      "total": 2,
+      "executed": 2,
+      "matched": 2,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P118",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P116",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P114",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P110",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P108",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P104",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P102",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P96",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P94",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P188",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P155",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P153",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P144",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P60",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P205",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P50",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P1",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "priority",
+      "value": "P195",
+      "total": 4,
+      "executed": 4,
+      "matched": 3,
+      "coverage": 75
+    },
+    {
+      "dimension": "priority",
+      "value": "P158",
+      "total": 2,
+      "executed": 2,
+      "matched": 1,
+      "coverage": 50
+    },
+    {
+      "dimension": "priority",
+      "value": "P112",
+      "total": 1,
+      "executed": 1,
+      "matched": 0,
+      "coverage": 0
+    },
+    {
+      "dimension": "priority",
+      "value": "P142",
+      "total": 1,
+      "executed": 1,
+      "matched": 0,
+      "coverage": 0
+    }
+  ],
+  "byCategory": [
+    {
+      "dimension": "category",
+      "value": "专旺格",
+      "total": 7,
+      "executed": 7,
+      "matched": 7,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "化气格",
+      "total": 6,
+      "executed": 6,
+      "matched": 6,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "调候格",
+      "total": 4,
+      "executed": 4,
+      "matched": 4,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "病药格",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "扶抑格",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "通关格",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "正格",
+      "total": 11,
+      "executed": 11,
+      "matched": 11,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "正格成格",
+      "total": 25,
+      "executed": 25,
+      "matched": 25,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "破格",
+      "total": 18,
+      "executed": 18,
+      "matched": 18,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "格局层次",
+      "total": 8,
+      "executed": 8,
+      "matched": 8,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "清纯判断",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "特殊格局",
+      "total": 9,
+      "executed": 9,
+      "matched": 9,
+      "coverage": 100
+    },
+    {
+      "dimension": "category",
+      "value": "特殊格",
+      "total": 25,
+      "executed": 25,
+      "matched": 24,
+      "coverage": 96
+    },
+    {
+      "dimension": "category",
+      "value": "从格",
+      "total": 25,
+      "executed": 25,
+      "matched": 22,
+      "coverage": 88
+    }
+  ],
+  "byPattern": [
+    {
+      "dimension": "pattern",
+      "value": "专旺格系",
+      "total": 6,
+      "executed": 6,
+      "matched": 6,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "化气格系",
+      "total": 1,
+      "executed": 1,
+      "matched": 1,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "调候格系",
+      "total": 4,
+      "executed": 4,
+      "matched": 4,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "病药格系",
+      "total": 2,
+      "executed": 2,
+      "matched": 2,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "扶抑格系",
+      "total": 3,
+      "executed": 3,
+      "matched": 3,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "通关格系",
+      "total": 4,
+      "executed": 4,
+      "matched": 4,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "正格系",
+      "total": 42,
+      "executed": 42,
+      "matched": 42,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "特殊格系",
+      "total": 9,
+      "executed": 9,
+      "matched": 9,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "成象格系",
+      "total": 7,
+      "executed": 7,
+      "matched": 7,
+      "coverage": 100
+    },
+    {
+      "dimension": "pattern",
+      "value": "其他",
+      "total": 45,
+      "executed": 45,
+      "matched": 44,
+      "coverage": 97.77777777777777
+    },
+    {
+      "dimension": "pattern",
+      "value": "从格系",
+      "total": 27,
+      "executed": 27,
+      "matched": 24,
+      "coverage": 88.88888888888889
+    }
+  ],
+  "byRuleType": [
+    {
+      "dimension": "ruleType",
+      "value": "正格成格",
+      "total": 25,
+      "executed": 25,
+      "matched": 25,
+      "coverage": 100
+    },
+    {
+      "dimension": "ruleType",
+      "value": "格局层次",
+      "total": 8,
+      "executed": 8,
+      "matched": 8,
+      "coverage": 100
+    },
+    {
+      "dimension": "ruleType",
+      "value": "普通成格",
+      "total": 117,
+      "executed": 117,
+      "matched": 113,
+      "coverage": 96.58119658119658
+    }
+  ],
+  "rules": [
+    {
+      "index": 0,
+      "ruleId": "quzhi-ge",
+      "name": "曲直格",
+      "category": "专旺格",
+      "priority": 200,
+      "executionCount": 5000,
+      "matchCount": 12,
+      "coverage": "0.24%"
+    },
+    {
+      "index": 1,
+      "ruleId": "yanshang-ge",
+      "name": "炎上格",
+      "category": "专旺格",
+      "priority": 200,
+      "executionCount": 5000,
+      "matchCount": 9,
+      "coverage": "0.18%"
+    },
+    {
+      "index": 2,
+      "ruleId": "jiase-ge",
+      "name": "稼穑格",
+      "category": "专旺格",
+      "priority": 200,
+      "executionCount": 5000,
+      "matchCount": 32,
+      "coverage": "0.64%"
+    },
+    {
+      "index": 3,
+      "ruleId": "congge-ge",
+      "name": "从革格",
+      "category": "专旺格",
+      "priority": 200,
+      "executionCount": 5000,
+      "matchCount": 5,
+      "coverage": "0.10%"
+    },
+    {
+      "index": 4,
+      "ruleId": "runxia-ge",
+      "name": "润下格",
+      "category": "专旺格",
+      "priority": 200,
+      "executionCount": 5000,
+      "matchCount": 7,
+      "coverage": "0.14%"
+    },
+    {
+      "index": 5,
+      "ruleId": "cong-guansha-zhen",
+      "name": "从官杀格",
+      "category": "从格",
+      "priority": 190,
+      "executionCount": 5000,
+      "matchCount": 7,
+      "coverage": "0.14%"
+    },
+    {
+      "index": 6,
+      "ruleId": "qiming-congsha",
+      "name": "弃命从杀",
+      "category": "从格",
+      "priority": 185,
+      "executionCount": 5000,
+      "matchCount": 1,
+      "coverage": "0.02%"
+    },
+    {
+      "index": 7,
+      "ruleId": "qiming-congguan",
+      "name": "弃命从官",
+      "category": "从格",
+      "priority": 185,
+      "executionCount": 5000,
+      "matchCount": 1,
+      "coverage": "0.02%"
+    },
+    {
+      "index": 8,
+      "ruleId": "cong-cai-zhen",
+      "name": "从财格",
+      "category": "从格",
+      "priority": 190,
+      "executionCount": 5000,
+      "matchCount": 1,
+      "coverage": "0.02%"
+    },
+    {
+      "index": 9,
+      "ruleId": "qiming-congcai",
+      "name": "弃命从财",
+      "category": "从格",
+      "priority": 185,
+      "executionCount": 5000,
+      "matchCount": 1,
+      "coverage": "0.02%"
+    },
+    {
+      "index": 10,
+      "ruleId": "cong-er-zhen",
+      "name": "从儿格",
+      "category": "从格",
+      "priority": 185,
+      "executionCount": 5000,
+      "matchCount": 5,
+      "coverage": "0.10%"
+    },
+    {
+      "index": 11,
+      "ruleId": "cong-yin-zhen",
+      "name": "从印格",
+      "category": "从格",
+      "priority": 180,
+      "executionCount": 5000,
+      "matchCount": 4,
+      "coverage": "0.08%"
+    },
+    {
+      "index": 12,
+      "ruleId": "jia-cong",
+      "name": "假从格",
+      "category": "从格",
+      "priority": 170,
+      "executionCount": 5000,
+      "matchCount": 188,
+      "coverage": "3.76%"
+    },
+    {
+      "index": 13,
+      "ruleId": "hua-qi-ge",
+      "name": "化气格",
+      "category": "化气格",
+      "priority": 160,
+      "executionCount": 5000,
+      "matchCount": 55,
+      "coverage": "1.10%"
+    },
+    {
+      "index": 14,
+      "ruleId": "tiao-hou-zuoyong",
+      "name": "调候格",
+      "category": "调候格",
+      "priority": 150,
+      "executionCount": 5000,
+      "matchCount": 1627,
+      "coverage": "32.54%"
+    },
+    {
+      "index": 15,
+      "ruleId": "hannuan-zaoshi",
+      "name": "寒暖燥湿格",
+      "category": "调候格",
+      "priority": 145,
+      "executionCount": 5000,
+      "matchCount": 1309,
+      "coverage": "26.18%"
+    },
+    {
+      "index": 16,
+      "ruleId": "bing-yao-ge",
+      "name": "病药格",
+      "category": "病药格",
+      "priority": 140,
+      "executionCount": 5000,
+      "matchCount": 2492,
+      "coverage": "49.84%"
+    },
+    {
+      "index": 17,
+      "ruleId": "fu-yi-ge",
+      "name": "扶抑格",
+      "category": "扶抑格",
+      "priority": 130,
+      "executionCount": 5000,
+      "matchCount": 2044,
+      "coverage": "40.88%"
+    },
+    {
+      "index": 18,
+      "ruleId": "tong-guan-ge",
+      "name": "通关格",
+      "category": "通关格",
+      "priority": 120,
+      "executionCount": 5000,
+      "matchCount": 469,
+      "coverage": "9.38%"
+    },
+    {
+      "index": 19,
+      "ruleId": "zheng-guan-tou",
+      "name": "正官格",
+      "category": "正格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 518,
+      "coverage": "10.36%"
+    },
+    {
+      "index": 20,
+      "ruleId": "qi-sha-tou",
+      "name": "七杀格",
+      "category": "正格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 527,
+      "coverage": "10.54%"
+    },
+    {
+      "index": 21,
+      "ruleId": "zheng-yin-tou",
+      "name": "正印格",
+      "category": "正格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 493,
+      "coverage": "9.86%"
+    },
+    {
+      "index": 22,
+      "ruleId": "pian-yin-tou",
+      "name": "偏印格",
+      "category": "正格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 477,
+      "coverage": "9.54%"
+    },
+    {
+      "index": 23,
+      "ruleId": "shi-shen-tou",
+      "name": "食神格",
+      "category": "正格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 494,
+      "coverage": "9.88%"
+    },
+    {
+      "index": 24,
+      "ruleId": "shang-guan-tou",
+      "name": "伤官格",
+      "category": "正格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 481,
+      "coverage": "9.62%"
+    },
+    {
+      "index": 25,
+      "ruleId": "zheng-cai-tou",
+      "name": "正财格",
+      "category": "正格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 488,
+      "coverage": "9.76%"
+    },
+    {
+      "index": 26,
+      "ruleId": "pian-cai-tou",
+      "name": "偏财格",
+      "category": "正格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 485,
+      "coverage": "9.70%"
+    },
+    {
+      "index": 27,
+      "ruleId": "bi-jian-tou",
+      "name": "比肩格",
+      "category": "正格",
+      "priority": 95,
+      "executionCount": 5000,
+      "matchCount": 523,
+      "coverage": "10.46%"
+    },
+    {
+      "index": 28,
+      "ruleId": "jie-cai-tou",
+      "name": "劫财格",
+      "category": "正格",
+      "priority": 95,
+      "executionCount": 5000,
+      "matchCount": 514,
+      "coverage": "10.28%"
+    },
+    {
+      "index": 29,
+      "ruleId": "zhengguan-shangge",
+      "name": "正官上格",
+      "category": "正格成格",
+      "priority": 99,
+      "executionCount": 5000,
+      "matchCount": 40,
+      "coverage": "0.80%"
+    },
+    {
+      "index": 30,
+      "ruleId": "zhengguan-zhongge",
+      "name": "正官中格",
+      "category": "正格成格",
+      "priority": 98,
+      "executionCount": 5000,
+      "matchCount": 500,
+      "coverage": "10.00%"
+    },
+    {
+      "index": 31,
+      "ruleId": "qisha-shangge",
+      "name": "七杀上格",
+      "category": "正格成格",
+      "priority": 99,
+      "executionCount": 5000,
+      "matchCount": 243,
+      "coverage": "4.86%"
+    },
+    {
+      "index": 32,
+      "ruleId": "qisha-zhongge",
+      "name": "七杀中格",
+      "category": "正格成格",
+      "priority": 98,
+      "executionCount": 5000,
+      "matchCount": 510,
+      "coverage": "10.20%"
+    },
+    {
+      "index": 33,
+      "ruleId": "zhengyin-shangge",
+      "name": "正印上格",
+      "category": "正格成格",
+      "priority": 99,
+      "executionCount": 5000,
+      "matchCount": 174,
+      "coverage": "3.48%"
+    },
+    {
+      "index": 34,
+      "ruleId": "shishen-shangge",
+      "name": "食神上格",
+      "category": "正格成格",
+      "priority": 99,
+      "executionCount": 5000,
+      "matchCount": 155,
+      "coverage": "3.10%"
+    },
+    {
+      "index": 35,
+      "ruleId": "shangguan-shangge",
+      "name": "伤官上格",
+      "category": "正格成格",
+      "priority": 99,
+      "executionCount": 5000,
+      "matchCount": 153,
+      "coverage": "3.06%"
+    },
+    {
+      "index": 36,
+      "ruleId": "zhengcai-shangge",
+      "name": "正财上格",
+      "category": "正格成格",
+      "priority": 99,
+      "executionCount": 5000,
+      "matchCount": 85,
+      "coverage": "1.70%"
+    },
+    {
+      "index": 37,
+      "ruleId": "piancai-shangge",
+      "name": "偏财上格",
+      "category": "正格成格",
+      "priority": 99,
+      "executionCount": 5000,
+      "matchCount": 158,
+      "coverage": "3.16%"
+    },
+    {
+      "index": 38,
+      "ruleId": "zhengguan-poge-guanke",
+      "name": "正官破格-官被克",
+      "category": "破格",
+      "priority": 92,
+      "executionCount": 5000,
+      "matchCount": 98,
+      "coverage": "1.96%"
+    },
+    {
+      "index": 39,
+      "ruleId": "zhengguan-poge-qisya",
+      "name": "正官破格-七杀混杂",
+      "category": "破格",
+      "priority": 92,
+      "executionCount": 5000,
+      "matchCount": 101,
+      "coverage": "2.02%"
+    },
+    {
+      "index": 40,
+      "ruleId": "qisha-poge-wuzhi",
+      "name": "七杀破格-无制",
+      "category": "破格",
+      "priority": 92,
+      "executionCount": 5000,
+      "matchCount": 258,
+      "coverage": "5.16%"
+    },
+    {
+      "index": 41,
+      "ruleId": "qisha-poge-yinshang",
+      "name": "七杀破格-印被财破",
+      "category": "破格",
+      "priority": 88,
+      "executionCount": 5000,
+      "matchCount": 47,
+      "coverage": "0.94%"
+    },
+    {
+      "index": 42,
+      "ruleId": "cai-poge-jiecai",
+      "name": "财格破格-劫财分财",
+      "category": "破格",
+      "priority": 88,
+      "executionCount": 5000,
+      "matchCount": 177,
+      "coverage": "3.54%"
+    },
+    {
+      "index": 43,
+      "ruleId": "yin-poge-caixin",
+      "name": "印格破格-财星破印",
+      "category": "破格",
+      "priority": 88,
+      "executionCount": 5000,
+      "matchCount": 323,
+      "coverage": "6.46%"
+    },
+    {
+      "index": 44,
+      "ruleId": "shishen-poge-xiaoshen",
+      "name": "食神破格-枭神夺食",
+      "category": "破格",
+      "priority": 92,
+      "executionCount": 5000,
+      "matchCount": 88,
+      "coverage": "1.76%"
+    },
+    {
+      "index": 45,
+      "ruleId": "shishen-poge-shangguan",
+      "name": "食神破格-伤官见官",
+      "category": "破格",
+      "priority": 92,
+      "executionCount": 5000,
+      "matchCount": 16,
+      "coverage": "0.32%"
+    },
+    {
+      "index": 46,
+      "ruleId": "shangguan-poge-guansha",
+      "name": "伤官破格-无财通关",
+      "category": "破格",
+      "priority": 88,
+      "executionCount": 5000,
+      "matchCount": 90,
+      "coverage": "1.80%"
+    },
+    {
+      "index": 47,
+      "ruleId": "zhengguan-chengge-wugen",
+      "name": "正官成格-官有根",
+      "category": "正格成格",
+      "priority": 220,
+      "executionCount": 5000,
+      "matchCount": 191,
+      "coverage": "3.82%"
+    },
+    {
+      "index": 48,
+      "ruleId": "qisha-chengge-youzhi",
+      "name": "七杀成格-杀有制",
+      "category": "正格成格",
+      "priority": 220,
+      "executionCount": 5000,
+      "matchCount": 269,
+      "coverage": "5.38%"
+    },
+    {
+      "index": 49,
+      "ruleId": "shishen-chengge-wuxie",
+      "name": "食神成格-食神无邪",
+      "category": "正格成格",
+      "priority": 220,
+      "executionCount": 5000,
+      "matchCount": 322,
+      "coverage": "6.44%"
+    },
+    {
+      "index": 50,
+      "ruleId": "cai-chengge-caiyouli",
+      "name": "财格成格-财星有力",
+      "category": "正格成格",
+      "priority": 220,
+      "executionCount": 5000,
+      "matchCount": 513,
+      "coverage": "10.26%"
+    },
+    {
+      "index": 51,
+      "ruleId": "guanyin-xiangsheng",
+      "name": "官印相生",
+      "category": "正格成格",
+      "priority": 218,
+      "executionCount": 5000,
+      "matchCount": 97,
+      "coverage": "1.94%"
+    },
+    {
+      "index": 52,
+      "ruleId": "guancai-xiangsheng",
+      "name": "官财相生",
+      "category": "正格成格",
+      "priority": 216,
+      "executionCount": 5000,
+      "matchCount": 181,
+      "coverage": "3.62%"
+    },
+    {
+      "index": 53,
+      "ruleId": "guanxing-duqing",
+      "name": "官星独清",
+      "category": "正格成格",
+      "priority": 214,
+      "executionCount": 5000,
+      "matchCount": 332,
+      "coverage": "6.64%"
+    },
+    {
+      "index": 54,
+      "ruleId": "zhen-guan-ge",
+      "name": "真官格",
+      "category": "正格成格",
+      "priority": 212,
+      "executionCount": 5000,
+      "matchCount": 26,
+      "coverage": "0.52%"
+    },
+    {
+      "index": 55,
+      "ruleId": "guansha-hunza",
+      "name": "官杀混杂",
+      "category": "破格",
+      "priority": 210,
+      "executionCount": 5000,
+      "matchCount": 276,
+      "coverage": "5.52%"
+    },
+    {
+      "index": 56,
+      "ruleId": "guanzhong-shenqing",
+      "name": "官重身轻",
+      "category": "破格",
+      "priority": 208,
+      "executionCount": 5000,
+      "matchCount": 179,
+      "coverage": "3.58%"
+    },
+    {
+      "index": 57,
+      "ruleId": "guanqing-yinzhong",
+      "name": "官轻印重",
+      "category": "破格",
+      "priority": 206,
+      "executionCount": 5000,
+      "matchCount": 5,
+      "coverage": "0.10%"
+    },
+    {
+      "index": 58,
+      "ruleId": "zhen-qisha-ge",
+      "name": "真七杀格",
+      "category": "正格成格",
+      "priority": 204,
+      "executionCount": 5000,
+      "matchCount": 59,
+      "coverage": "1.18%"
+    },
+    {
+      "index": 59,
+      "ruleId": "shayin-xiangsheng",
+      "name": "杀印相生",
+      "category": "正格成格",
+      "priority": 202,
+      "executionCount": 5000,
+      "matchCount": 193,
+      "coverage": "3.86%"
+    },
+    {
+      "index": 60,
+      "ruleId": "zhen-shishen-ge",
+      "name": "真食神格",
+      "category": "正格成格",
+      "priority": 200,
+      "executionCount": 5000,
+      "matchCount": 130,
+      "coverage": "2.60%"
+    },
+    {
+      "index": 61,
+      "ruleId": "zhen-shangguan-ge",
+      "name": "真伤官格",
+      "category": "正格成格",
+      "priority": 198,
+      "executionCount": 5000,
+      "matchCount": 123,
+      "coverage": "2.46%"
+    },
+    {
+      "index": 62,
+      "ruleId": "zhen-cai-ge",
+      "name": "真财格",
+      "category": "正格成格",
+      "priority": 196,
+      "executionCount": 5000,
+      "matchCount": 264,
+      "coverage": "5.28%"
+    },
+    {
+      "index": 63,
+      "ruleId": "zhen-zhengyin-ge",
+      "name": "真正印格",
+      "category": "正格成格",
+      "priority": 194,
+      "executionCount": 5000,
+      "matchCount": 101,
+      "coverage": "2.02%"
+    },
+    {
+      "index": 64,
+      "ruleId": "zhen-pianyin-ge",
+      "name": "真偏印格",
+      "category": "正格成格",
+      "priority": 193,
+      "executionCount": 5000,
+      "matchCount": 90,
+      "coverage": "1.80%"
+    },
+    {
+      "index": 65,
+      "ruleId": "zhen-bijian-ge",
+      "name": "真比肩格",
+      "category": "正格成格",
+      "priority": 192,
+      "executionCount": 5000,
+      "matchCount": 123,
+      "coverage": "2.46%"
+    },
+    {
+      "index": 66,
+      "ruleId": "geju-gao-wanzheng",
+      "name": "格局高-完美成格",
+      "category": "格局层次",
+      "priority": 80,
+      "executionCount": 5000,
+      "matchCount": 921,
+      "coverage": "18.42%"
+    },
+    {
+      "index": 67,
+      "ruleId": "geju-gao-tiaohou",
+      "name": "格局高-调候为急",
+      "category": "格局层次",
+      "priority": 80,
+      "executionCount": 5000,
+      "matchCount": 961,
+      "coverage": "19.22%"
+    },
+    {
+      "index": 68,
+      "ruleId": "geju-chenggong",
+      "name": "格局成-用神有力",
+      "category": "格局层次",
+      "priority": 75,
+      "executionCount": 5000,
+      "matchCount": 2508,
+      "coverage": "50.16%"
+    },
+    {
+      "index": 69,
+      "ruleId": "geju-bai",
+      "name": "格局败-偏枯太重",
+      "category": "格局层次",
+      "priority": 75,
+      "executionCount": 5000,
+      "matchCount": 747,
+      "coverage": "14.94%"
+    },
+    {
+      "index": 70,
+      "ruleId": "qingcun-zhenguan",
+      "name": "清纯-官星清",
+      "category": "清纯判断",
+      "priority": 70,
+      "executionCount": 5000,
+      "matchCount": 417,
+      "coverage": "8.34%"
+    },
+    {
+      "index": 71,
+      "ruleId": "qingcun-shishen",
+      "name": "清纯-食神清",
+      "category": "清纯判断",
+      "priority": 70,
+      "executionCount": 5000,
+      "matchCount": 322,
+      "coverage": "6.44%"
+    },
+    {
+      "index": 72,
+      "ruleId": "feitian-luma",
+      "name": "飞天禄马",
+      "category": "特殊格局",
+      "priority": 180,
+      "executionCount": 5000,
+      "matchCount": 2,
+      "coverage": "0.04%"
+    },
+    {
+      "index": 73,
+      "ruleId": "jinshen-ge",
+      "name": "金神格",
+      "category": "特殊格局",
+      "priority": 170,
+      "executionCount": 5000,
+      "matchCount": 53,
+      "coverage": "1.06%"
+    },
+    {
+      "index": 74,
+      "ruleId": "kuigang-ge",
+      "name": "魁罡格",
+      "category": "特殊格局",
+      "priority": 175,
+      "executionCount": 5000,
+      "matchCount": 181,
+      "coverage": "3.62%"
+    },
+    {
+      "index": 75,
+      "ruleId": "liuyi-shugui",
+      "name": "六乙鼠贵格",
+      "category": "特殊格局",
+      "priority": 175,
+      "executionCount": 5000,
+      "matchCount": 42,
+      "coverage": "0.84%"
+    },
+    {
+      "index": 76,
+      "ruleId": "renqi-longbei",
+      "name": "壬骑龙背格",
+      "category": "特殊格局",
+      "priority": 175,
+      "executionCount": 5000,
+      "matchCount": 45,
+      "coverage": "0.90%"
+    },
+    {
+      "index": 77,
+      "ruleId": "liuyin-chaoyang",
+      "name": "六阴朝阳格",
+      "category": "特殊格局",
+      "priority": 175,
+      "executionCount": 5000,
+      "matchCount": 37,
+      "coverage": "0.74%"
+    },
+    {
+      "index": 78,
+      "ruleId": "liujia-quqian",
+      "name": "六甲趋乾格",
+      "category": "特殊格局",
+      "priority": 175,
+      "executionCount": 5000,
+      "matchCount": 43,
+      "coverage": "0.86%"
+    },
+    {
+      "index": 79,
+      "ruleId": "jinglan-cha",
+      "name": "井栏叉格",
+      "category": "特殊格局",
+      "priority": 170,
+      "executionCount": 5000,
+      "matchCount": 10,
+      "coverage": "0.20%"
+    },
+    {
+      "index": 80,
+      "ruleId": "daochong-ge",
+      "name": "倒冲格",
+      "category": "特殊格局",
+      "priority": 170,
+      "executionCount": 5000,
+      "matchCount": 13,
+      "coverage": "0.26%"
+    },
+    {
+      "index": 81,
+      "ruleId": "tianyuan-yiqi",
+      "name": "天元一气",
+      "category": "特殊格",
+      "priority": 175,
+      "executionCount": 5000,
+      "matchCount": 3,
+      "coverage": "0.06%"
+    },
+    {
+      "index": 82,
+      "ruleId": "diyuan-yiqi",
+      "name": "地元一气",
+      "category": "特殊格",
+      "priority": 172,
+      "executionCount": 5000,
+      "matchCount": 1,
+      "coverage": "0.02%"
+    },
+    {
+      "index": 83,
+      "ruleId": "liangshen-chengxiang",
+      "name": "两神成象",
+      "category": "特殊格",
+      "priority": 168,
+      "executionCount": 5000,
+      "matchCount": 39,
+      "coverage": "0.78%"
+    },
+    {
+      "index": 84,
+      "ruleId": "sanqi-guiren",
+      "name": "三奇贵人",
+      "category": "特殊格",
+      "priority": 165,
+      "executionCount": 5000,
+      "matchCount": 304,
+      "coverage": "6.08%"
+    },
+    {
+      "index": 85,
+      "ruleId": "jinbai-shuiqing",
+      "name": "金白水清",
+      "category": "特殊格",
+      "priority": 162,
+      "executionCount": 5000,
+      "matchCount": 109,
+      "coverage": "2.18%"
+    },
+    {
+      "index": 86,
+      "ruleId": "muhuo-tongming",
+      "name": "木火通明",
+      "category": "特殊格",
+      "priority": 160,
+      "executionCount": 5000,
+      "matchCount": 78,
+      "coverage": "1.56%"
+    },
+    {
+      "index": 87,
+      "ruleId": "shuihuo-jiji",
+      "name": "水火既济",
+      "category": "特殊格",
+      "priority": 158,
+      "executionCount": 5000,
+      "matchCount": 724,
+      "coverage": "14.48%"
+    },
+    {
+      "index": 88,
+      "ruleId": "huotu-chengci",
+      "name": "火土成慈",
+      "category": "特殊格",
+      "priority": 156,
+      "executionCount": 5000,
+      "matchCount": 151,
+      "coverage": "3.02%"
+    },
+    {
+      "index": 89,
+      "ruleId": "jinhan-shuiling",
+      "name": "金寒水冷",
+      "category": "特殊格",
+      "priority": 154,
+      "executionCount": 5000,
+      "matchCount": 32,
+      "coverage": "0.64%"
+    },
+    {
+      "index": 90,
+      "ruleId": "caiguan-shuangmei",
+      "name": "财官双美",
+      "category": "特殊格",
+      "priority": 152,
+      "executionCount": 5000,
+      "matchCount": 876,
+      "coverage": "17.52%"
+    },
+    {
+      "index": 91,
+      "ruleId": "shayin-shuangqing",
+      "name": "杀印双清",
+      "category": "特殊格",
+      "priority": 150,
+      "executionCount": 5000,
+      "matchCount": 193,
+      "coverage": "3.86%"
+    },
+    {
+      "index": 92,
+      "ruleId": "shishen-zhisha",
+      "name": "食神制杀",
+      "category": "特殊格",
+      "priority": 148,
+      "executionCount": 5000,
+      "matchCount": 278,
+      "coverage": "5.56%"
+    },
+    {
+      "index": 93,
+      "ruleId": "shangguan-peiyin",
+      "name": "伤官佩印",
+      "category": "特殊格",
+      "priority": 146,
+      "executionCount": 5000,
+      "matchCount": 487,
+      "coverage": "9.74%"
+    },
+    {
+      "index": 94,
+      "ruleId": "liuxiu-ri",
+      "name": "六秀日",
+      "category": "特殊格",
+      "priority": 120,
+      "executionCount": 5000,
+      "matchCount": 241,
+      "coverage": "4.82%"
+    },
+    {
+      "index": 95,
+      "ruleId": "shiling-ri",
+      "name": "十灵日",
+      "category": "特殊格",
+      "priority": 118,
+      "executionCount": 5000,
+      "matchCount": 425,
+      "coverage": "8.50%"
+    },
+    {
+      "index": 96,
+      "ruleId": "siwei-chunquan",
+      "name": "四位纯全",
+      "category": "特殊格",
+      "priority": 116,
+      "executionCount": 5000,
+      "matchCount": 20,
+      "coverage": "0.40%"
+    },
+    {
+      "index": 97,
+      "ruleId": "tiangan-shunshi",
+      "name": "天干顺食",
+      "category": "特殊格",
+      "priority": 114,
+      "executionCount": 5000,
+      "matchCount": 34,
+      "coverage": "0.68%"
+    },
+    {
+      "index": 98,
+      "ruleId": "liangqi-chengxiang",
+      "name": "两气成象",
+      "category": "特殊格",
+      "priority": 112,
+      "executionCount": 5000,
+      "matchCount": 0,
+      "coverage": "0.00%"
+    },
+    {
+      "index": 99,
+      "ruleId": "shishen-shengcai",
+      "name": "食神生财",
+      "category": "特殊格",
+      "priority": 110,
+      "executionCount": 5000,
+      "matchCount": 172,
+      "coverage": "3.44%"
+    },
+    {
+      "index": 100,
+      "ruleId": "shangguan-shengcai",
+      "name": "伤官生财",
+      "category": "特殊格",
+      "priority": 108,
+      "executionCount": 5000,
+      "matchCount": 169,
+      "coverage": "3.38%"
+    },
+    {
+      "index": 101,
+      "ruleId": "yinlai-shasheng",
+      "name": "印赖杀生",
+      "category": "特殊格",
+      "priority": 104,
+      "executionCount": 5000,
+      "matchCount": 213,
+      "coverage": "4.26%"
+    },
+    {
+      "index": 102,
+      "ruleId": "shangguan-jianguan",
+      "name": "伤官见官",
+      "category": "破格",
+      "priority": 102,
+      "executionCount": 5000,
+      "matchCount": 262,
+      "coverage": "5.24%"
+    },
+    {
+      "index": 103,
+      "ruleId": "xiaoshen-duoshi",
+      "name": "枭神夺食",
+      "category": "破格",
+      "priority": 100,
+      "executionCount": 5000,
+      "matchCount": 88,
+      "coverage": "1.76%"
+    },
+    {
+      "index": 104,
+      "ruleId": "tiangan-yiqi",
+      "name": "天干一气",
+      "category": "特殊格",
+      "priority": 98,
+      "executionCount": 5000,
+      "matchCount": 3,
+      "coverage": "0.06%"
+    },
+    {
+      "index": 105,
+      "ruleId": "dizhi-yiqi",
+      "name": "地支一气",
+      "category": "特殊格",
+      "priority": 96,
+      "executionCount": 5000,
+      "matchCount": 1,
+      "coverage": "0.02%"
+    },
+    {
+      "index": 106,
+      "ruleId": "tiandi-dehe",
+      "name": "天地德合",
+      "category": "特殊格",
+      "priority": 94,
+      "executionCount": 5000,
+      "matchCount": 39,
+      "coverage": "0.78%"
+    },
+    {
+      "index": 107,
+      "ruleId": "fude-xiuxiu",
+      "name": "福德秀气",
+      "category": "特殊格",
+      "priority": 92,
+      "executionCount": 5000,
+      "matchCount": 85,
+      "coverage": "1.70%"
+    },
+    {
+      "index": 108,
+      "ruleId": "zhen-cong-guansha",
+      "name": "真从官杀格",
+      "category": "从格",
+      "priority": 195,
+      "executionCount": 5000,
+      "matchCount": 0,
+      "coverage": "0.00%"
+    },
+    {
+      "index": 109,
+      "ruleId": "jia-cong-guansha",
+      "name": "假从官杀格",
+      "category": "从格",
+      "priority": 188,
+      "executionCount": 5000,
+      "matchCount": 24,
+      "coverage": "0.48%"
+    },
+    {
+      "index": 110,
+      "ruleId": "zhen-cong-cai",
+      "name": "真从财格",
+      "category": "从格",
+      "priority": 195,
+      "executionCount": 5000,
+      "matchCount": 10,
+      "coverage": "0.20%"
+    },
+    {
+      "index": 111,
+      "ruleId": "jia-cong-cai",
+      "name": "假从财格",
+      "category": "从格",
+      "priority": 188,
+      "executionCount": 5000,
+      "matchCount": 48,
+      "coverage": "0.96%"
+    },
+    {
+      "index": 112,
+      "ruleId": "zhen-cong-er",
+      "name": "真从儿格",
+      "category": "从格",
+      "priority": 195,
+      "executionCount": 5000,
+      "matchCount": 3,
+      "coverage": "0.06%"
+    },
+    {
+      "index": 113,
+      "ruleId": "jia-cong-er",
+      "name": "假从儿格",
+      "category": "从格",
+      "priority": 188,
+      "executionCount": 5000,
+      "matchCount": 24,
+      "coverage": "0.48%"
+    },
+    {
+      "index": 114,
+      "ruleId": "ban-cong",
+      "name": "半从格",
+      "category": "从格",
+      "priority": 165,
+      "executionCount": 5000,
+      "matchCount": 313,
+      "coverage": "6.26%"
+    },
+    {
+      "index": 115,
+      "ruleId": "cong-er-bucong",
+      "name": "从而不从格",
+      "category": "从格",
+      "priority": 160,
+      "executionCount": 5000,
+      "matchCount": 317,
+      "coverage": "6.34%"
+    },
+    {
+      "index": 116,
+      "ruleId": "zhen-cong-shi",
+      "name": "真从势格",
+      "category": "从格",
+      "priority": 158,
+      "executionCount": 5000,
+      "matchCount": 0,
+      "coverage": "0.00%"
+    },
+    {
+      "index": 117,
+      "ruleId": "jia-cong-shi",
+      "name": "假从势格",
+      "category": "从格",
+      "priority": 155,
+      "executionCount": 5000,
+      "matchCount": 46,
+      "coverage": "0.92%"
+    },
+    {
+      "index": 118,
+      "ruleId": "zhen-cong-qiang",
+      "name": "真从强格",
+      "category": "从格",
+      "priority": 153,
+      "executionCount": 5000,
+      "matchCount": 13,
+      "coverage": "0.26%"
+    },
+    {
+      "index": 119,
+      "ruleId": "jia-cong-qiang",
+      "name": "假从强格",
+      "category": "从格",
+      "priority": 150,
+      "executionCount": 5000,
+      "matchCount": 117,
+      "coverage": "2.34%"
+    },
+    {
+      "index": 120,
+      "ruleId": "cong-wang",
+      "name": "从旺格",
+      "category": "从格",
+      "priority": 148,
+      "executionCount": 5000,
+      "matchCount": 113,
+      "coverage": "2.26%"
+    },
+    {
+      "index": 121,
+      "ruleId": "ban-cong-yin",
+      "name": "半从印格",
+      "category": "从格",
+      "priority": 146,
+      "executionCount": 5000,
+      "matchCount": 9,
+      "coverage": "0.18%"
+    },
+    {
+      "index": 122,
+      "ruleId": "jia-cong-yin",
+      "name": "假从印格",
+      "category": "从格",
+      "priority": 144,
+      "executionCount": 5000,
+      "matchCount": 42,
+      "coverage": "0.84%"
+    },
+    {
+      "index": 123,
+      "ruleId": "zhen-cong-sha",
+      "name": "真从杀格",
+      "category": "从格",
+      "priority": 142,
+      "executionCount": 5000,
+      "matchCount": 0,
+      "coverage": "0.00%"
+    },
+    {
+      "index": 124,
+      "ruleId": "congge-poge",
+      "name": "从格破格",
+      "category": "破格",
+      "priority": 140,
+      "executionCount": 5000,
+      "matchCount": 432,
+      "coverage": "8.64%"
+    },
+    {
+      "index": 125,
+      "ruleId": "jia-zhuanwang",
+      "name": "假专旺格",
+      "category": "专旺格",
+      "priority": 195,
+      "executionCount": 5000,
+      "matchCount": 41,
+      "coverage": "0.82%"
+    },
+    {
+      "index": 126,
+      "ruleId": "jiaji-huatu",
+      "name": "甲己化土格",
+      "category": "化气格",
+      "priority": 192,
+      "executionCount": 5000,
+      "matchCount": 123,
+      "coverage": "2.46%"
+    },
+    {
+      "index": 127,
+      "ruleId": "yigeng-huajin",
+      "name": "乙庚化金格",
+      "category": "化气格",
+      "priority": 192,
+      "executionCount": 5000,
+      "matchCount": 158,
+      "coverage": "3.16%"
+    },
+    {
+      "index": 128,
+      "ruleId": "bingxin-huashui",
+      "name": "丙辛化水格",
+      "category": "化气格",
+      "priority": 192,
+      "executionCount": 5000,
+      "matchCount": 159,
+      "coverage": "3.18%"
+    },
+    {
+      "index": 129,
+      "ruleId": "dingren-huamu",
+      "name": "丁壬化木格",
+      "category": "化气格",
+      "priority": 192,
+      "executionCount": 5000,
+      "matchCount": 134,
+      "coverage": "2.68%"
+    },
+    {
+      "index": 130,
+      "ruleId": "wugui-huahuo",
+      "name": "戊癸化火格",
+      "category": "化气格",
+      "priority": 192,
+      "executionCount": 5000,
+      "matchCount": 129,
+      "coverage": "2.58%"
+    },
+    {
+      "index": 131,
+      "ruleId": "hanming-tiaohou",
+      "name": "寒命调候格",
+      "category": "调候格",
+      "priority": 175,
+      "executionCount": 5000,
+      "matchCount": 145,
+      "coverage": "2.90%"
+    },
+    {
+      "index": 132,
+      "ruleId": "nuanming-tiaohou",
+      "name": "暖命调候格",
+      "category": "调候格",
+      "priority": 175,
+      "executionCount": 5000,
+      "matchCount": 156,
+      "coverage": "3.12%"
+    },
+    {
+      "index": 133,
+      "ruleId": "bingzhong-yaoqing",
+      "name": "病重药轻格",
+      "category": "病药格",
+      "priority": 160,
+      "executionCount": 5000,
+      "matchCount": 1006,
+      "coverage": "20.12%"
+    },
+    {
+      "index": 134,
+      "ruleId": "bingyao-xiangji",
+      "name": "病药相济格",
+      "category": "病药格",
+      "priority": 160,
+      "executionCount": 5000,
+      "matchCount": 1514,
+      "coverage": "30.28%"
+    },
+    {
+      "index": 135,
+      "ruleId": "guansha-tongguan",
+      "name": "官杀通关格",
+      "category": "通关格",
+      "priority": 165,
+      "executionCount": 5000,
+      "matchCount": 64,
+      "coverage": "1.28%"
+    },
+    {
+      "index": 136,
+      "ruleId": "bijie-tongguan",
+      "name": "比劫通关格",
+      "category": "通关格",
+      "priority": 165,
+      "executionCount": 5000,
+      "matchCount": 2448,
+      "coverage": "48.96%"
+    },
+    {
+      "index": 137,
+      "ruleId": "zhengguan-poge-hunza",
+      "name": "正官破格-官杀混杂",
+      "category": "破格",
+      "priority": 95,
+      "executionCount": 5000,
+      "matchCount": 101,
+      "coverage": "2.02%"
+    },
+    {
+      "index": 138,
+      "ruleId": "cai-poge-hunza",
+      "name": "财格破格-财星混杂",
+      "category": "破格",
+      "priority": 88,
+      "executionCount": 5000,
+      "matchCount": 181,
+      "coverage": "3.62%"
+    },
+    {
+      "index": 139,
+      "ruleId": "yin-poge-hunza",
+      "name": "印格破格-印星混杂",
+      "category": "破格",
+      "priority": 88,
+      "executionCount": 5000,
+      "matchCount": 168,
+      "coverage": "3.36%"
+    },
+    {
+      "index": 140,
+      "ruleId": "geju-shangdeng",
+      "name": "格局上等",
+      "category": "格局层次",
+      "priority": 80,
+      "executionCount": 5000,
+      "matchCount": 103,
+      "coverage": "2.06%"
+    },
+    {
+      "index": 141,
+      "ruleId": "geju-zhongdeng",
+      "name": "格局中等",
+      "category": "格局层次",
+      "priority": 70,
+      "executionCount": 5000,
+      "matchCount": 2031,
+      "coverage": "40.62%"
+    },
+    {
+      "index": 142,
+      "ruleId": "geju-xiadeng",
+      "name": "格局下等",
+      "category": "格局层次",
+      "priority": 60,
+      "executionCount": 5000,
+      "matchCount": 1006,
+      "coverage": "20.12%"
+    },
+    {
+      "index": 143,
+      "ruleId": "fuyi-fushen",
+      "name": "扶抑格-扶身",
+      "category": "扶抑格",
+      "priority": 130,
+      "executionCount": 5000,
+      "matchCount": 716,
+      "coverage": "14.32%"
+    },
+    {
+      "index": 144,
+      "ruleId": "fuyi-yixie",
+      "name": "扶抑格-抑泄",
+      "category": "扶抑格",
+      "priority": 130,
+      "executionCount": 5000,
+      "matchCount": 709,
+      "coverage": "14.18%"
+    },
+    {
+      "index": 145,
+      "ruleId": "cong-yin-zhen",
+      "name": "真从印格",
+      "category": "从格",
+      "priority": 190,
+      "executionCount": 5000,
+      "matchCount": 3,
+      "coverage": "0.06%"
+    },
+    {
+      "index": 146,
+      "ruleId": "zhuānwàng-gé",
+      "name": "专旺格-纯",
+      "category": "专旺格",
+      "priority": 205,
+      "executionCount": 5000,
+      "matchCount": 39,
+      "coverage": "0.78%"
+    },
+    {
+      "index": 147,
+      "ruleId": "qingcun-cai",
+      "name": "清纯-财星清",
+      "category": "清纯判断",
+      "priority": 70,
+      "executionCount": 5000,
+      "matchCount": 796,
+      "coverage": "15.92%"
+    },
+    {
+      "index": 148,
+      "ruleId": "geju-wanzhong",
+      "name": "格局万终-用神溃散",
+      "category": "格局层次",
+      "priority": 50,
+      "executionCount": 5000,
+      "matchCount": 488,
+      "coverage": "9.76%"
+    },
+    {
+      "index": 149,
+      "ruleId": "default-putong",
+      "name": "普通格局",
+      "category": "正格",
+      "priority": 1,
+      "executionCount": 5000,
+      "matchCount": 5000,
+      "coverage": "100.00%"
+    }
+  ]
+}

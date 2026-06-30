@@ -1,0 +1,1115 @@
+{
+  "totalTraces": 2000,
+  "sampleTraces": [
+    {
+      "timestamp": 1782791389681,
+      "contextSummary": "癸日 戌月 偏财 S19",
+      "matchedRules": [
+        {
+          "id": "cong-guansha-zhen",
+          "name": "从官杀格",
+          "priority": 190,
+          "weight": 90,
+          "score": 1990
+        },
+        {
+          "id": "jia-cong-guansha",
+          "name": "假从官杀格",
+          "priority": 188,
+          "weight": 82,
+          "score": 1962
+        },
+        {
+          "id": "jia-cong-cai",
+          "name": "假从财格",
+          "priority": 188,
+          "weight": 80,
+          "score": 1960
+        },
+        {
+          "id": "jia-cong",
+          "name": "假从格",
+          "priority": 170,
+          "weight": 70,
+          "score": 1770
+        },
+        {
+          "id": "bijie-tongguan",
+          "name": "比劫通关格",
+          "priority": 165,
+          "weight": 80,
+          "score": 1730
+        },
+        {
+          "id": "bingzhong-yaoqing",
+          "name": "病重药轻格",
+          "priority": 160,
+          "weight": 75,
+          "score": 1675
+        },
+        {
+          "id": "jia-cong-shi",
+          "name": "假从势格",
+          "priority": 155,
+          "weight": 75,
+          "score": 1625
+        },
+        {
+          "id": "hannuan-zaoshi",
+          "name": "寒暖燥湿格",
+          "priority": 145,
+          "weight": 70,
+          "score": 1520
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "priority": 140,
+          "weight": 75,
+          "score": 1475
+        },
+        {
+          "id": "pian-cai-tou",
+          "name": "偏财格",
+          "priority": 100,
+          "weight": 80,
+          "score": 1080
+        },
+        {
+          "id": "qingcun-cai",
+          "name": "清纯-财星清",
+          "priority": 70,
+          "weight": 82,
+          "score": 782
+        },
+        {
+          "id": "geju-xiadeng",
+          "name": "格局下等",
+          "priority": 60,
+          "weight": 55,
+          "score": 655
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "cong-guansha-zhen",
+      "bestMatchScore": 1990,
+      "eliminatedRules": [
+        {
+          "id": "jia-cong-guansha",
+          "name": "假从官杀格",
+          "reason": "priority低"
+        },
+        {
+          "id": "jia-cong-cai",
+          "name": "假从财格",
+          "reason": "priority低"
+        },
+        {
+          "id": "jia-cong",
+          "name": "假从格",
+          "reason": "priority低"
+        },
+        {
+          "id": "bijie-tongguan",
+          "name": "比劫通关格",
+          "reason": "priority低"
+        },
+        {
+          "id": "bingzhong-yaoqing",
+          "name": "病重药轻格",
+          "reason": "priority低"
+        },
+        {
+          "id": "jia-cong-shi",
+          "name": "假从势格",
+          "reason": "priority低"
+        },
+        {
+          "id": "hannuan-zaoshi",
+          "name": "寒暖燥湿格",
+          "reason": "priority低"
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "reason": "priority低"
+        },
+        {
+          "id": "pian-cai-tou",
+          "name": "偏财格",
+          "reason": "priority低"
+        },
+        {
+          "id": "qingcun-cai",
+          "name": "清纯-财星清",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-xiadeng",
+          "name": "格局下等",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389683,
+      "contextSummary": "甲日 卯月 劫财 S72",
+      "matchedRules": [
+        {
+          "id": "jiaji-huatu",
+          "name": "甲己化土格",
+          "priority": 192,
+          "weight": 90,
+          "score": 2010
+        },
+        {
+          "id": "liangshen-chengxiang",
+          "name": "两神成象",
+          "priority": 168,
+          "weight": 80,
+          "score": 1760
+        },
+        {
+          "id": "bingyao-xiangji",
+          "name": "病药相济格",
+          "priority": 160,
+          "weight": 85,
+          "score": 1685
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "priority": 130,
+          "weight": 80,
+          "score": 1380
+        },
+        {
+          "id": "jie-cai-tou",
+          "name": "劫财格",
+          "priority": 95,
+          "weight": 70,
+          "score": 1020
+        },
+        {
+          "id": "geju-chenggong",
+          "name": "格局成-用神有力",
+          "priority": 75,
+          "weight": 85,
+          "score": 835
+        },
+        {
+          "id": "geju-zhongdeng",
+          "name": "格局中等",
+          "priority": 70,
+          "weight": 75,
+          "score": 775
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "jiaji-huatu",
+      "bestMatchScore": 2010,
+      "eliminatedRules": [
+        {
+          "id": "liangshen-chengxiang",
+          "name": "两神成象",
+          "reason": "priority低"
+        },
+        {
+          "id": "bingyao-xiangji",
+          "name": "病药相济格",
+          "reason": "priority低"
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "reason": "priority低"
+        },
+        {
+          "id": "jie-cai-tou",
+          "name": "劫财格",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-chenggong",
+          "name": "格局成-用神有力",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-zhongdeng",
+          "name": "格局中等",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389683,
+      "contextSummary": "己日 卯月 偏官 S47",
+      "matchedRules": [
+        {
+          "id": "qisha-chengge-youzhi",
+          "name": "七杀成格-杀有制",
+          "priority": 220,
+          "weight": 88,
+          "score": 2288
+        },
+        {
+          "id": "zhen-qisha-ge",
+          "name": "真七杀格",
+          "priority": 204,
+          "weight": 90,
+          "score": 2130
+        },
+        {
+          "id": "shayin-xiangsheng",
+          "name": "杀印相生",
+          "priority": 202,
+          "weight": 88,
+          "score": 2108
+        },
+        {
+          "id": "caiguan-shuangmei",
+          "name": "财官双美",
+          "priority": 152,
+          "weight": 80,
+          "score": 1600
+        },
+        {
+          "id": "shayin-shuangqing",
+          "name": "杀印双清",
+          "priority": 150,
+          "weight": 82,
+          "score": 1582
+        },
+        {
+          "id": "fu-yi-ge",
+          "name": "扶抑格",
+          "priority": 130,
+          "weight": 70,
+          "score": 1370
+        },
+        {
+          "id": "tong-guan-ge",
+          "name": "通关格",
+          "priority": 120,
+          "weight": 65,
+          "score": 1265
+        },
+        {
+          "id": "qi-sha-tou",
+          "name": "七杀格",
+          "priority": 100,
+          "weight": 85,
+          "score": 1085
+        },
+        {
+          "id": "qisha-shangge",
+          "name": "七杀上格",
+          "priority": 99,
+          "weight": 95,
+          "score": 1085
+        },
+        {
+          "id": "qisha-zhongge",
+          "name": "七杀中格",
+          "priority": 98,
+          "weight": 82,
+          "score": 1062
+        },
+        {
+          "id": "qisha-poge-yinshang",
+          "name": "七杀破格-印被财破",
+          "priority": 88,
+          "weight": 85,
+          "score": 965
+        },
+        {
+          "id": "geju-chenggong",
+          "name": "格局成-用神有力",
+          "priority": 75,
+          "weight": 85,
+          "score": 835
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "qisha-chengge-youzhi",
+      "bestMatchScore": 2288,
+      "eliminatedRules": [
+        {
+          "id": "zhen-qisha-ge",
+          "name": "真七杀格",
+          "reason": "priority低"
+        },
+        {
+          "id": "shayin-xiangsheng",
+          "name": "杀印相生",
+          "reason": "priority低"
+        },
+        {
+          "id": "caiguan-shuangmei",
+          "name": "财官双美",
+          "reason": "priority低"
+        },
+        {
+          "id": "shayin-shuangqing",
+          "name": "杀印双清",
+          "reason": "priority低"
+        },
+        {
+          "id": "fu-yi-ge",
+          "name": "扶抑格",
+          "reason": "priority低"
+        },
+        {
+          "id": "tong-guan-ge",
+          "name": "通关格",
+          "reason": "priority低"
+        },
+        {
+          "id": "qi-sha-tou",
+          "name": "七杀格",
+          "reason": "priority低"
+        },
+        {
+          "id": "qisha-shangge",
+          "name": "七杀上格",
+          "reason": "priority低"
+        },
+        {
+          "id": "qisha-zhongge",
+          "name": "七杀中格",
+          "reason": "priority低"
+        },
+        {
+          "id": "qisha-poge-yinshang",
+          "name": "七杀破格-印被财破",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-chenggong",
+          "name": "格局成-用神有力",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389683,
+      "contextSummary": "庚日 申月 偏财 S80",
+      "matchedRules": [
+        {
+          "id": "cai-chengge-caiyouli",
+          "name": "财格成格-财星有力",
+          "priority": 220,
+          "weight": 85,
+          "score": 2285
+        },
+        {
+          "id": "sanqi-guiren",
+          "name": "三奇贵人",
+          "priority": 165,
+          "weight": 78,
+          "score": 1728
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "priority": 140,
+          "weight": 75,
+          "score": 1475
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "priority": 130,
+          "weight": 80,
+          "score": 1380
+        },
+        {
+          "id": "pian-cai-tou",
+          "name": "偏财格",
+          "priority": 100,
+          "weight": 80,
+          "score": 1080
+        },
+        {
+          "id": "qingcun-cai",
+          "name": "清纯-财星清",
+          "priority": 70,
+          "weight": 82,
+          "score": 782
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "cai-chengge-caiyouli",
+      "bestMatchScore": 2285,
+      "eliminatedRules": [
+        {
+          "id": "sanqi-guiren",
+          "name": "三奇贵人",
+          "reason": "priority低"
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "reason": "priority低"
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "reason": "priority低"
+        },
+        {
+          "id": "pian-cai-tou",
+          "name": "偏财格",
+          "reason": "priority低"
+        },
+        {
+          "id": "qingcun-cai",
+          "name": "清纯-财星清",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389684,
+      "contextSummary": "己日 巳月 伤官 S91",
+      "matchedRules": [
+        {
+          "id": "sanqi-guiren",
+          "name": "三奇贵人",
+          "priority": 165,
+          "weight": 78,
+          "score": 1728
+        },
+        {
+          "id": "bijie-tongguan",
+          "name": "比劫通关格",
+          "priority": 165,
+          "weight": 80,
+          "score": 1730
+        },
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "priority": 150,
+          "weight": 75,
+          "score": 1575
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "priority": 140,
+          "weight": 75,
+          "score": 1475
+        },
+        {
+          "id": "shangguan-jianguan",
+          "name": "伤官见官",
+          "priority": 102,
+          "weight": 75,
+          "score": 1095
+        },
+        {
+          "id": "shang-guan-tou",
+          "name": "伤官格",
+          "priority": 100,
+          "weight": 80,
+          "score": 1080
+        },
+        {
+          "id": "shangguan-poge-guansha",
+          "name": "伤官破格-无财通关",
+          "priority": 88,
+          "weight": 85,
+          "score": 965
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "bijie-tongguan",
+      "bestMatchScore": 1730,
+      "eliminatedRules": [
+        {
+          "id": "sanqi-guiren",
+          "name": "三奇贵人",
+          "reason": "weight低"
+        },
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "reason": "priority低"
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "reason": "priority低"
+        },
+        {
+          "id": "shangguan-jianguan",
+          "name": "伤官见官",
+          "reason": "priority低"
+        },
+        {
+          "id": "shang-guan-tou",
+          "name": "伤官格",
+          "reason": "priority低"
+        },
+        {
+          "id": "shangguan-poge-guansha",
+          "name": "伤官破格-无财通关",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389685,
+      "contextSummary": "辛日 子月 偏印 S3",
+      "matchedRules": [
+        {
+          "id": "hanming-tiaohou",
+          "name": "寒命调候格",
+          "priority": 175,
+          "weight": 88,
+          "score": 1838
+        },
+        {
+          "id": "bingzhong-yaoqing",
+          "name": "病重药轻格",
+          "priority": 160,
+          "weight": 75,
+          "score": 1675
+        },
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "priority": 150,
+          "weight": 75,
+          "score": 1575
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "priority": 140,
+          "weight": 75,
+          "score": 1475
+        },
+        {
+          "id": "pian-yin-tou",
+          "name": "偏印格",
+          "priority": 100,
+          "weight": 80,
+          "score": 1080
+        },
+        {
+          "id": "yin-poge-hunza",
+          "name": "印格破格-印星混杂",
+          "priority": 88,
+          "weight": 85,
+          "score": 965
+        },
+        {
+          "id": "geju-bai",
+          "name": "格局败-偏枯太重",
+          "priority": 75,
+          "weight": 80,
+          "score": 830
+        },
+        {
+          "id": "geju-xiadeng",
+          "name": "格局下等",
+          "priority": 60,
+          "weight": 55,
+          "score": 655
+        },
+        {
+          "id": "geju-wanzhong",
+          "name": "格局万终-用神溃散",
+          "priority": 50,
+          "weight": 45,
+          "score": 545
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "hanming-tiaohou",
+      "bestMatchScore": 1838,
+      "eliminatedRules": [
+        {
+          "id": "bingzhong-yaoqing",
+          "name": "病重药轻格",
+          "reason": "priority低"
+        },
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "reason": "priority低"
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "reason": "priority低"
+        },
+        {
+          "id": "pian-yin-tou",
+          "name": "偏印格",
+          "reason": "priority低"
+        },
+        {
+          "id": "yin-poge-hunza",
+          "name": "印格破格-印星混杂",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-bai",
+          "name": "格局败-偏枯太重",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-xiadeng",
+          "name": "格局下等",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-wanzhong",
+          "name": "格局万终-用神溃散",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389685,
+      "contextSummary": "丁日 辰月 伤官 S80",
+      "matchedRules": [
+        {
+          "id": "zhen-shangguan-ge",
+          "name": "真伤官格",
+          "priority": 198,
+          "weight": 86,
+          "score": 2066
+        },
+        {
+          "id": "bijie-tongguan",
+          "name": "比劫通关格",
+          "priority": 165,
+          "weight": 80,
+          "score": 1730
+        },
+        {
+          "id": "hannuan-zaoshi",
+          "name": "寒暖燥湿格",
+          "priority": 145,
+          "weight": 70,
+          "score": 1520
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "priority": 140,
+          "weight": 75,
+          "score": 1475
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "priority": 130,
+          "weight": 80,
+          "score": 1380
+        },
+        {
+          "id": "shang-guan-tou",
+          "name": "伤官格",
+          "priority": 100,
+          "weight": 80,
+          "score": 1080
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "zhen-shangguan-ge",
+      "bestMatchScore": 2066,
+      "eliminatedRules": [
+        {
+          "id": "bijie-tongguan",
+          "name": "比劫通关格",
+          "reason": "priority低"
+        },
+        {
+          "id": "hannuan-zaoshi",
+          "name": "寒暖燥湿格",
+          "reason": "priority低"
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "reason": "priority低"
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "reason": "priority低"
+        },
+        {
+          "id": "shang-guan-tou",
+          "name": "伤官格",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389685,
+      "contextSummary": "甲日 亥月 伤官 S83",
+      "matchedRules": [
+        {
+          "id": "bijie-tongguan",
+          "name": "比劫通关格",
+          "priority": 165,
+          "weight": 80,
+          "score": 1730
+        },
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "priority": 150,
+          "weight": 75,
+          "score": 1575
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "priority": 140,
+          "weight": 75,
+          "score": 1475
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "priority": 130,
+          "weight": 80,
+          "score": 1380
+        },
+        {
+          "id": "shang-guan-tou",
+          "name": "伤官格",
+          "priority": 100,
+          "weight": 80,
+          "score": 1080
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "bijie-tongguan",
+      "bestMatchScore": 1730,
+      "eliminatedRules": [
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "reason": "priority低"
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "reason": "priority低"
+        },
+        {
+          "id": "fuyi-yixie",
+          "name": "扶抑格-抑泄",
+          "reason": "priority低"
+        },
+        {
+          "id": "shang-guan-tou",
+          "name": "伤官格",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389686,
+      "contextSummary": "癸日 巳月 劫财 S3",
+      "matchedRules": [
+        {
+          "id": "bingzhong-yaoqing",
+          "name": "病重药轻格",
+          "priority": 160,
+          "weight": 75,
+          "score": 1675
+        },
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "priority": 150,
+          "weight": 75,
+          "score": 1575
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "priority": 140,
+          "weight": 75,
+          "score": 1475
+        },
+        {
+          "id": "jie-cai-tou",
+          "name": "劫财格",
+          "priority": 95,
+          "weight": 70,
+          "score": 1020
+        },
+        {
+          "id": "geju-bai",
+          "name": "格局败-偏枯太重",
+          "priority": 75,
+          "weight": 80,
+          "score": 830
+        },
+        {
+          "id": "geju-xiadeng",
+          "name": "格局下等",
+          "priority": 60,
+          "weight": 55,
+          "score": 655
+        },
+        {
+          "id": "geju-wanzhong",
+          "name": "格局万终-用神溃散",
+          "priority": 50,
+          "weight": 45,
+          "score": 545
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "bingzhong-yaoqing",
+      "bestMatchScore": 1675,
+      "eliminatedRules": [
+        {
+          "id": "tiao-hou-zuoyong",
+          "name": "调候格",
+          "reason": "priority低"
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "reason": "priority低"
+        },
+        {
+          "id": "jie-cai-tou",
+          "name": "劫财格",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-bai",
+          "name": "格局败-偏枯太重",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-xiadeng",
+          "name": "格局下等",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-wanzhong",
+          "name": "格局万终-用神溃散",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    },
+    {
+      "timestamp": 1782791389686,
+      "contextSummary": "庚日 卯月 偏印 S14",
+      "matchedRules": [
+        {
+          "id": "bingzhong-yaoqing",
+          "name": "病重药轻格",
+          "priority": 160,
+          "weight": 75,
+          "score": 1675
+        },
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "priority": 140,
+          "weight": 75,
+          "score": 1475
+        },
+        {
+          "id": "pian-yin-tou",
+          "name": "偏印格",
+          "priority": 100,
+          "weight": 80,
+          "score": 1080
+        },
+        {
+          "id": "geju-bai",
+          "name": "格局败-偏枯太重",
+          "priority": 75,
+          "weight": 80,
+          "score": 830
+        },
+        {
+          "id": "geju-xiadeng",
+          "name": "格局下等",
+          "priority": 60,
+          "weight": 55,
+          "score": 655
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "priority": 1,
+          "weight": 50,
+          "score": 60
+        }
+      ],
+      "bestMatchRule": "bingzhong-yaoqing",
+      "bestMatchScore": 1675,
+      "eliminatedRules": [
+        {
+          "id": "bing-yao-ge",
+          "name": "病药格",
+          "reason": "priority低"
+        },
+        {
+          "id": "pian-yin-tou",
+          "name": "偏印格",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-bai",
+          "name": "格局败-偏枯太重",
+          "reason": "priority低"
+        },
+        {
+          "id": "geju-xiadeng",
+          "name": "格局下等",
+          "reason": "priority低"
+        },
+        {
+          "id": "default-putong",
+          "name": "普通格局",
+          "reason": "priority低"
+        }
+      ]
+    }
+  ],
+  "mainRuleDistribution": {
+    "bijie-tongguan": 366,
+    "cai-chengge-caiyouli": 195,
+    "shishen-chengge-wuxie": 132,
+    "bingyao-xiangji": 115,
+    "qisha-chengge-youzhi": 109,
+    "bingzhong-yaoqing": 83,
+    "zhengguan-chengge-wugen": 81,
+    "guansha-hunza": 80,
+    "zhen-shangguan-ge": 51,
+    "zhen-cai-ge": 50,
+    "zhen-zhengyin-ge": 43,
+    "zhen-bijian-ge": 42,
+    "guanxing-duqing": 37,
+    "guancai-xiangsheng": 37,
+    "nuanming-tiaohou": 35,
+    "bingxin-huashui": 34,
+    "zhen-pianyin-ge": 33,
+    "jiaji-huatu": 30,
+    "hanming-tiaohou": 28,
+    "yigeng-huajin": 28
+  },
+  "eliminationReasons": {
+    "priority低": 18105,
+    "weight低": 73,
+    "同分": 4
+  },
+  "avgMatchedRulesPerCase": 10.091
+}

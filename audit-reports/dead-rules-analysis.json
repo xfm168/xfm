@@ -1,0 +1,162 @@
+[
+  {
+    "index": 98,
+    "ruleId": "liangqi-chengxiang",
+    "name": "两气成象",
+    "category": "特殊格",
+    "priority": 112,
+    "executionCount": 5000,
+    "matchCount": 0,
+    "conditionSource": "ctx=>{const ZHI_ELEMENT={\"\\u5B50\":\"\\u6C34\",\"\\u4E11\":\"\\u571F\",\"\\u5BC5\":\"\\u6728\",\"\\u536F\":\"\\u6728\",\"\\u8FB0\":\"\\u571F\",\"\\u5DF3\":\"\\u706B\",\"\\u5348\":\"\\u706B\",\"\\u672A\":\"\\u571F\",\"\\u7533\":\"\\u91D1\",\"\\u9149\":\"\\u91D1\",\"\\u620C\":\"\\u571F\",\"\\u4EA5\":\"\\u6C34\"};const ganEls=new Set([getElement(ctx.sixLines.year.gan),getElement(ctx.sixLines.month.gan),getElement(ctx.sixLines.day.gan),getElement(ctx.sixLines.hour.gan)]);const zhiEls=new Set([ZHI_ELEMENT[ctx.sixLines.year.zhi],ZHI_ELEMENT[ctx.sixLines.month.zhi],ZHI_E",
+    "subConditions": [
+      {
+        "expression": "ganEls.size===1",
+        "successCount": 0,
+        "failCount": 2000,
+        "successRate": 0
+      },
+      {
+        "expression": "zhiEls.size===1",
+        "successCount": 0,
+        "failCount": 2000,
+        "successRate": 0
+      },
+      {
+        "expression": "ganEls.values().next().value!==zhiEls.values().next().value",
+        "successCount": 0,
+        "failCount": 2000,
+        "successRate": 0
+      }
+    ],
+    "weakestCondition": "",
+    "weakestConditionFailRate": 0,
+    "closestContext": null,
+    "classification": "A-条件过严",
+    "evidence": [
+      "多个子条件失败率均>50%，条件组合过严"
+    ]
+  },
+  {
+    "index": 108,
+    "ruleId": "zhen-cong-guansha",
+    "name": "真从官杀格",
+    "category": "从格",
+    "priority": 195,
+    "executionCount": 5000,
+    "matchCount": 0,
+    "conditionSource": "ctx=>{const guanShaElement=BE_OVERCOME[ctx.dayElement];return ctx.monthElement===guanShaElement&&ctx.strengthScore<15&&!ctx.hasTongGen&&ctx.diffPartyCount>=4}",
+    "subConditions": [
+      {
+        "expression": "ctx.monthElement===guanShaElement",
+        "successCount": 0,
+        "failCount": 2000,
+        "successRate": 0
+      },
+      {
+        "expression": "ctx.strengthScore<15",
+        "successCount": 314,
+        "failCount": 1686,
+        "successRate": 15.7
+      },
+      {
+        "expression": "!ctx.hasTongGen",
+        "successCount": 187,
+        "failCount": 1813,
+        "successRate": 9.35
+      },
+      {
+        "expression": "ctx.diffPartyCount>=4",
+        "successCount": 0,
+        "failCount": 2000,
+        "successRate": 0
+      }
+    ],
+    "weakestCondition": "ctx.diffPartyCount>=4",
+    "weakestConditionFailRate": 100,
+    "closestContext": "丁日子月 强度14 (2/4子条件通过)",
+    "classification": "B-永远不可达",
+    "evidence": [
+      "子条件\"ctx.diffPartyCount>=4\"失败率100%，在2000个样本中全部失败"
+    ]
+  },
+  {
+    "index": 116,
+    "ruleId": "zhen-cong-shi",
+    "name": "真从势格",
+    "category": "从格",
+    "priority": 158,
+    "executionCount": 5000,
+    "matchCount": 0,
+    "conditionSource": "ctx=>{return ctx.strengthScore<12&&!ctx.hasTongGen&&ctx.diffPartyCount>=4}",
+    "subConditions": [
+      {
+        "expression": "ctx.strengthScore<12",
+        "successCount": 243,
+        "failCount": 1757,
+        "successRate": 12.15
+      },
+      {
+        "expression": "!ctx.hasTongGen",
+        "successCount": 187,
+        "failCount": 1813,
+        "successRate": 9.35
+      },
+      {
+        "expression": "ctx.diffPartyCount>=4",
+        "successCount": 0,
+        "failCount": 2000,
+        "successRate": 0
+      }
+    ],
+    "weakestCondition": "ctx.diffPartyCount>=4",
+    "weakestConditionFailRate": 100,
+    "closestContext": "乙日子月 强度5 (2/3子条件通过)",
+    "classification": "B-永远不可达",
+    "evidence": [
+      "子条件\"ctx.diffPartyCount>=4\"失败率100%，在2000个样本中全部失败"
+    ]
+  },
+  {
+    "index": 123,
+    "ruleId": "zhen-cong-sha",
+    "name": "真从杀格",
+    "category": "从格",
+    "priority": 142,
+    "executionCount": 5000,
+    "matchCount": 0,
+    "conditionSource": "ctx=>{const shaElement=BE_OVERCOME[ctx.dayElement];return ctx.monthElement===shaElement&&ctx.strengthScore<12&&!ctx.hasTongGen&&ctx.diffPartyCount>=4}",
+    "subConditions": [
+      {
+        "expression": "ctx.monthElement===shaElement",
+        "successCount": 0,
+        "failCount": 2000,
+        "successRate": 0
+      },
+      {
+        "expression": "ctx.strengthScore<12",
+        "successCount": 243,
+        "failCount": 1757,
+        "successRate": 12.15
+      },
+      {
+        "expression": "!ctx.hasTongGen",
+        "successCount": 187,
+        "failCount": 1813,
+        "successRate": 9.35
+      },
+      {
+        "expression": "ctx.diffPartyCount>=4",
+        "successCount": 0,
+        "failCount": 2000,
+        "successRate": 0
+      }
+    ],
+    "weakestCondition": "ctx.diffPartyCount>=4",
+    "weakestConditionFailRate": 100,
+    "closestContext": "乙日子月 强度5 (2/4子条件通过)",
+    "classification": "B-永远不可达",
+    "evidence": [
+      "子条件\"ctx.diffPartyCount>=4\"失败率100%，在2000个样本中全部失败"
+    ]
+  }
+]
