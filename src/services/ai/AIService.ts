@@ -13,6 +13,7 @@ import { SupabaseEdgeProvider } from './providers/supabase-edge'
 import { GeminiProvider } from './providers/gemini'
 import { OpenAIProvider } from './providers/openai'
 import { getPrompt, renderPrompt } from './prompts'
+import { logger } from '../../utils/logger'
 
 export class AIService {
   private providers: Map<AIProviderType, AIProvider> = new Map()
@@ -68,7 +69,7 @@ export class AIService {
         })
       } catch (err) {
         lastError = err
-        console.error(`[AI] Provider ${providerType} failed:`, err)
+        logger.error(`Provider ${providerType} failed`, 'AIService', err)
       }
     }
 

@@ -12,6 +12,7 @@ import type {
   DetectedObject,
   DetectedObjectType,
 } from './imageAnalyzer'
+import { logger } from '../../utils/logger'
 
 // 创建AI服务实例
 const aiService = new AIService({
@@ -32,7 +33,7 @@ export async function analyzeImage(request: ImageAnalysisRequest): Promise<Image
     
     return parsed
   } catch (error) {
-    console.error('图片分析失败:', error)
+    logger.error('图片分析失败', 'aiImageAnalyzer', error)
     return {
       detectedObjects: [],
       roomInfo: {
@@ -91,7 +92,7 @@ async function callMultimodalAI(request: ImageAnalysisRequest): Promise<string> 
     
     return response.content
   } catch (error) {
-    console.error('Gemini 调用失败，尝试其他方式:', error)
+    logger.error('Gemini 调用失败，尝试其他方式', 'aiImageAnalyzer', error)
     
     // 如果多模态失败，尝试使用文本描述
     return await analyzeFromTextDescription(request)
@@ -158,7 +159,7 @@ function parseAIResponse(content: string): ImageAnalysisResult {
       rawResult: parsed,
     }
   } catch (error) {
-    console.error('解析AI响应失败:', error)
+    logger.error('解析AI响应失败', 'aiImageAnalyzer', error)
     return {
       detectedObjects: [],
       roomInfo: {

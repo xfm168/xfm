@@ -48,7 +48,7 @@ export class GeminiProvider extends BaseAIProvider {
     const baseUrl = this.config.baseUrl || 'https://generativelanguage.googleapis.com/v1beta'
     const url = `${baseUrl}/models/${model}:generateContent?key=${this.config.apiKey}`
 
-    const execute = async (): Promise<AIResponse> => {
+    return this.withTimeoutAndRetry(async (signal) => {
       const systemInstruction = messages.find((m) => m.role === 'system')
       const chatMessages = messages
         .filter((m) => m.role !== 'system')
@@ -79,6 +79,7 @@ export class GeminiProvider extends BaseAIProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal,
       })
 
       if (!response.ok) {
@@ -105,8 +106,6 @@ export class GeminiProvider extends BaseAIProvider {
         },
         raw: data,
       }
-    }
-
-    return this.withRetry(execute, options.retryCount || 2, 2000)
+    }, options)
   }
 }

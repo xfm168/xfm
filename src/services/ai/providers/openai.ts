@@ -47,7 +47,7 @@ export class OpenAIProvider extends BaseAIProvider {
 
     const baseUrl = this.config.baseUrl || 'https://api.openai.com/v1'
 
-    const execute = async (): Promise<AIResponse> => {
+    return this.withTimeoutAndRetry(async (signal) => {
       const response = await fetch(`${baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -61,6 +61,7 @@ export class OpenAIProvider extends BaseAIProvider {
           max_tokens: options.maxTokens,
           top_p: options.topP,
         }),
+        signal,
       })
 
       if (!response.ok) {
@@ -83,8 +84,6 @@ export class OpenAIProvider extends BaseAIProvider {
         usage: data.usage,
         raw: data,
       }
-    }
-
-    return this.withRetry(execute, options.retryCount || 2, 2000)
+    }, options)
   }
 }

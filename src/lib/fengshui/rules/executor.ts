@@ -14,6 +14,7 @@ import type {
 } from './types'
 
 import { ALL_RULES } from './index'
+import { logger } from '../../../utils/logger'
 
 /**
  * 执行所有规则
@@ -101,7 +102,7 @@ function executeSingleRule(
     matched = rule.condition(context)
     score = matched ? rule.result.score : 0
   } catch (error) {
-    console.error(`Rule ${rule.id} execution error:`, error)
+    logger.error(`Rule ${rule.id} execution error`, 'RuleExecutor', error)
     matched = false
     score = 0
   }

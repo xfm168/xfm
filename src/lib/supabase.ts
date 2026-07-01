@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { logger } from '../utils/logger'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
@@ -9,9 +10,10 @@ export function getSupabase(): SupabaseClient | null {
   if (supabaseInstance) return supabaseInstance
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error(
-      '[Supabase] 缺少环境变量配置：VITE_SUPABASE_URL 和/或 VITE_SUPABASE_ANON_KEY。' +
-      '需要 Supabase 功能的页面将无法正常工作。'
+    logger.error(
+      '缺少环境变量配置：VITE_SUPABASE_URL 和/或 VITE_SUPABASE_ANON_KEY。' +
+      '需要 Supabase 功能的页面将无法正常工作。',
+      'Supabase'
     )
     return null
   }

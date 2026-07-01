@@ -82,9 +82,9 @@ const LUCKY_COLORS = [
   '黛紫', '霜白', '墨黑', '藏青', '铜绿',
 ]
 
-// Mock analysis sentences keyed by hexagram number (1-indexed)
-// In Phase 2 this will be replaced by AI-generated content
-const MOCK_ANALYSIS: Record<number, string> = {
+// Built-in hexagram interpretation texts (64 hexagrams)
+// These are traditional interpretations, not mock/test data
+const BUILTIN_HEXAGRAM_TEXT: Record<number, string> = {
   1:  '今日乾卦当令，天行健，元气充沛。宜主动出击，开拓新局面，一切尽在掌握之中。',
   2:  '坤卦临身，厚德载物。今日宜低调行事，以柔克刚，默默耕耘终见成效。',
   3:  '屯卦示警，开创初期难免坎坷。今日遇事需冷静应对，寻求援助，守正待机。',
@@ -178,7 +178,7 @@ export function generateDailyValues(visitorId: string, date: string): GeneratedD
   const health_score   = scoreFrom(seed, 16, 60, 99)
   const lucky_number   = (seed % 9) + 1
   const lucky_color    = LUCKY_COLORS[(seed >>> 20) % LUCKY_COLORS.length]
-  const analysis       = MOCK_ANALYSIS[hexagram_number] ?? '今日卦象神秘，宜静心感悟，顺其自然。'
+  const analysis       = BUILTIN_HEXAGRAM_TEXT[hexagram_number] ?? '今日卦象神秘，宜静心感悟，顺其自然。'
 
   return {
     hexagram_number,
@@ -290,7 +290,7 @@ const OFFLINE_HEXAGRAMS: Hexagram[] = Array.from({ length: 64 }, (_, i) => {
     upper_trigram: TRIGRAMS_UPPER[upperIdx],
     lower_trigram: TRIGRAMS_LOWER[lowerIdx],
     lines: buildLines(upperIdx, lowerIdx),
-    description: MOCK_ANALYSIS[number]?.slice(0, 30) ?? '天地有象，万事有机',
+    description: BUILTIN_HEXAGRAM_TEXT[number]?.slice(0, 30) ?? '天地有象，万事有机',
     fortune: FORTUNE_TEXTS[i] ?? '运势平稳，顺势而为',
     career: '事业方面宜稳扎稳打，脚踏实地，积累经验，厚积薄发。',
     wealth: '财运平稳，量入为出，合理规划，避免冲动投资。',

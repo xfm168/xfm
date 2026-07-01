@@ -1,5 +1,5 @@
 /**
- * 玄风风水模块 V4.3
+ * 玄风风水模块 V4.4
  * 
  * 唯一 Pipeline（禁止绕过）：
  * 图片 → Vision Engine → FloorPlan Engine → Spatial Engine → Furniture Engine
@@ -11,7 +11,6 @@
  * - 知识库（古籍/案例/植物/颜色/材料/符号）
  * - 固定12章节报告模板
  * - 证据链（结论→Rule→古籍→改善→预计提升）
- * - 整改模拟（调整家具实时重算评分）
  * 
  * @example
  * // 图片分析完整流程（推荐入口）
@@ -27,19 +26,12 @@
  * // 规则库访问
  * import { ALL_RULES, RULE_STATS } from '@/lib/fengshui'
  * console.log(RULE_STATS.total) // 101
- * 
- * @example
- * // 整改模拟
- * import { SimulationEngine } from '@/lib/fengshui'
- * const sim = new SimulationEngine(context)
  */
 
 export type * from './types'
 export { ALL_RULES, RULES_BY_ROOM, RULE_STATS, executeRules } from './rules'
 export { runFullPipeline, PIPELINE_STEPS } from './pipeline'
 export type { PipelineStep, PipelineInput, PipelineOutput, PipelineReport, ReportSection } from './pipeline'
-export { SimulationEngine } from './simulation'
-export type { SimulationState, SimulationResult } from './simulation'
 export { buildEvidenceChain, evidenceChainToMarkdown } from './evidenceChain'
 export { knowledgeBase } from './knowledge'
 export type { KnowledgeEntry, FengShuiCase, SchoolInfo, PlantKnowledge, ColorKnowledge, MaterialKnowledge, SymbolKnowledge } from './knowledge'
