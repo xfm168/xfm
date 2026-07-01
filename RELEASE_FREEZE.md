@@ -66,6 +66,67 @@
 | Rule Engine | Frozen | No modification |
 | Knowledge Base | Frozen | No modification |
 
+---
+
+## New Feature Development Principles
+
+All new features **MUST** reuse V4.4 existing architecture:
+
+| Architecture Component | Purpose | Reuse For |
+|------------------------|---------|-----------|
+| AI Provider | Unified timeout/retry/error | Bazi AI, 合盘 AI, Admin AI |
+| Pipeline | 10-step flow pattern | Bazi Pipeline, 合盘 Pipeline |
+| Report Engine | 12-section template | Bazi Report, 合盘 Report |
+| Logger | Unified logging (dev/prod) | All new modules |
+| Knowledge Base | Knowledge pattern | Bazi knowledge, 合盘 knowledge |
+| Release Metadata | Version info | All new pages/logs |
+
+**Rule:** Do NOT create second framework or duplicate implementation.
+Only build new architecture if there is a clear technical limitation.
+
+---
+
+## Development Roadmap (Post-Freeze)
+
+### Phase 1: Bazi System (Highest Priority)
+- 命盘核心：四柱排盘、十神、五行、纳音、神煞、旺衰
+- 格局系统：正格、从格、化格、调候、用神、喜神、忌神
+- 运势系统：大运、流年、流月、应期（3年/5年/10年）
+- AI八字报告：性格、事业、财富、婚姻、健康、子女、父母、运势、建议
+
+### Phase 2: Couple Analysis
+- 风水 + 八字合盘
+- 合婚评分、五行互补、性格互补
+- 婚姻稳定度、财富指数、子女缘
+- 居住风水建议、幸运颜色、幸运方位
+
+### Phase 3: Admin System
+- 用户、订单、支付、会员管理
+- AI调用统计、Token统计、错误日志
+- 反馈、CMS、知识库维护、规则维护、公告管理
+
+### Phase 4: Security
+- Supabase RLS
+- API Rate Limit
+- JWT / Refresh Token
+- Webhook 验证
+- AI 调用限制
+- 日志系统
+
+### Phase 5: Commercialization
+- 会员系统
+- 支付系统
+- PDF报告 / Word导出
+- 分享 / 邀请码 / 优惠券
+- 订单系统
+
+### Phase 6: Beta Launch
+- 100人测试
+- Bug收集、AI成本分析、用户反馈
+- 正式上线
+
+---
+
 ## Version
 
 - Release: V4.4 Release
