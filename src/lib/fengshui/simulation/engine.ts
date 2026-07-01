@@ -1,9 +1,8 @@
 /**
- * 风水模拟引擎 - 核心实现
- * 
- * @deprecated 此模块为实验性功能，当前版本未启用。
- *             保留以备未来 Premium 版本、实验模式或 AB Test 使用。
- *             请勿在生产环境直接调用。
+ * @deprecated
+ * 保留用于未来 Premium / 实验功能。
+ * 当前正式版不会调用。
+ * 若未来未重新启用，可在 V5 删除。
  */
 
 import type { FengShuiContext } from '../types'
@@ -73,8 +72,6 @@ export class SimulationEngine {
 }
 
 /**
- * 便捷函数：执行单次模拟
- * 
  * @deprecated 实验性功能，请使用 SimulationEngine 类
  */
 export async function simulate(
@@ -83,5 +80,3 @@ export async function simulate(
   const engine = new SimulationEngine()
   return engine.simulate(params)
 }
-
-export default SimulationEngine
