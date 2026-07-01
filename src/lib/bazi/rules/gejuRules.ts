@@ -2769,13 +2769,13 @@ export const GEJU_RULES: BaseRule<GeJuContext, Partial<GeJuResult>>[] = [
       const zhis = [ctx.sixLines.year.zhi, ctx.sixLines.month.zhi, ctx.sixLines.day.zhi, ctx.sixLines.hour.zhi]
       const zhiSet = new Set(zhis)
       // 子午卯酉（四正）
-      const sizheng = ['子', '午', '卯', '酉'].every(z => zhiSet.has(z))
+      const sizheng = (['子', '午', '卯', '酉'] as const).every(z => zhiSet.has(z))
       if (sizheng) return true
       // 寅申巳亥（四生）
-      const sisheng = ['寅', '申', '巳', '亥'].every(z => zhiSet.has(z))
+      const sisheng = (['寅', '申', '巳', '亥'] as const).every(z => zhiSet.has(z))
       if (sisheng) return true
       // 辰戌丑未（四库）
-      const siku = ['辰', '戌', '丑', '未'].every(z => zhiSet.has(z))
+      const siku = (['辰', '戌', '丑', '未'] as const).every(z => zhiSet.has(z))
       if (siku) return true
       return false
     },

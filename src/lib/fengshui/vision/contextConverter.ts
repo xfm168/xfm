@@ -114,9 +114,9 @@ export function convertToFengShuiContext(
     context,
     analysis,
     detectedSha: analysis.detectedSha || [],
-    elements: analysis.elementDistribution || elementDistribution,
+    elements: (analysis.elementDistribution || elementDistribution) as ElementAnalysisResult,
     warnings,
-    confidence: analysis.confidence,
+    confidence: analysis.confidence || 0,
   }
 }
 
@@ -127,7 +127,7 @@ function detectDoorDirection(objects: DetectedObject[]): any {
   return door?.direction || 'south'
 }
 
-function calculateLayoutScore(room: RoomAnalysisResult): number {
+function calculateLayoutScore(room: RoomAnalysisResult | Record<string, any>): number {
   let score = 80
   
   // 形状扣分

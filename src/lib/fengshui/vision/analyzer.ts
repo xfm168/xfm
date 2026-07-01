@@ -6,7 +6,7 @@
 
 import { analyzeImage } from '../aiImageAnalyzer'
 import { convertToFengShuiContext, detectShaFromAnalysis } from './contextConverter'
-import type { VisionInput, VisionReport, VisionToContextResult } from './types'
+import type { VisionInput, VisionReport, VisionToContextResult, ImageAnalysisResult } from './types'
 
 /**
  * 主分析函数
@@ -27,7 +27,7 @@ export async function analyzeFengShuiImage(
   })
   
   // 2. 从分析结果中检测煞气
-  const detectedSha = detectShaFromAnalysis(aiResult)
+  const detectedSha = detectShaFromAnalysis(aiResult as unknown as ImageAnalysisResult)
   
   // 3. 将 AI 结果添加到分析结果
   const enhancedAnalysis = {
@@ -37,7 +37,7 @@ export async function analyzeFengShuiImage(
   }
   
   // 4. 转换为 FengShuiContext
-  const result = convertToFengShuiContext(enhancedAnalysis, input.houseInfo)
+  const result = convertToFengShuiContext(enhancedAnalysis as unknown as ImageAnalysisResult, input.houseInfo)
   
   return result
 }

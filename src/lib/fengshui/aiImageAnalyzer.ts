@@ -5,6 +5,7 @@
  */
 
 import { AIService } from '../../services/ai/AIService'
+import type { AIMessage } from '../../services/ai/types'
 import type {
   ImageAnalysisRequest,
   ImageAnalysisResult,
@@ -84,8 +85,8 @@ async function callMultimodalAI(request: ImageAnalysisRequest): Promise<string> 
   
   try {
     // 尝试使用 Gemini
-    const response = await aiService.chat(messages, {
-      model: 'gemini-1.5-flash',
+    const response = await aiService.chat(messages as unknown as AIMessage[], {
+      model: 'gemini-2.0-flash',
     })
     
     return response.content
