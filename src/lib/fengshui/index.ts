@@ -1,5 +1,5 @@
 /**
- * 玄风风水模块 V4.2
+ * 玄风风水模块 V4.3
  * 
  * 唯一 Pipeline（禁止绕过）：
  * 图片 → Vision Engine → FloorPlan Engine → Spatial Engine → Furniture Engine
@@ -34,21 +34,15 @@
  * const sim = new SimulationEngine(context)
  */
 
-export * from './types'
+export type * from './types'
 export { ALL_RULES, RULES_BY_ROOM, RULE_STATS, executeRules } from './rules'
-export * from './imageAnalyzer'
-export * from './aiImageAnalyzer'
-export * from './vision'
-export * from './floor-plan'
-export * from './spatial'
-export * from './room-engine'
-export * from './feature-engine'
-export * from './score-engine'
-export * from './knowledge'
-export * from './evidenceChain'
-export * from './simulation'
 export { runFullPipeline, PIPELINE_STEPS } from './pipeline'
 export type { PipelineStep, PipelineInput, PipelineOutput, PipelineReport, ReportSection } from './pipeline'
+export { SimulationEngine } from './simulation'
+export type { SimulationState, SimulationResult } from './simulation'
+export { buildEvidenceChain, evidenceChainToMarkdown } from './evidenceChain'
+export { knowledgeBase } from './knowledge'
+export type { KnowledgeEntry, FengShuiCase, SchoolInfo, PlantKnowledge, ColorKnowledge, MaterialKnowledge, SymbolKnowledge } from './knowledge'
 
 import type { FengShuiContext, Direction, Room, Furniture } from './types'
 
@@ -95,90 +89,4 @@ export function createDefaultContext(partial?: Partial<FengShuiContext>): FengSh
     
     ownerBazi: partial?.ownerBazi,
   }
-}
-
-/**
- * 创建示例上下文
- */
-export function createExampleContext(): FengShuiContext {
-  return createDefaultContext({
-    houseType: 'apartment',
-    houseAge: 3,
-    currentFloor: 15,
-    totalFloors: 33,
-    totalArea: 120,
-    
-    direction: {
-      mainDirection: 'south',
-      facingDirection: 'north',
-      doorDirection: 'south',
-    },
-    
-    layout: {
-      shape: 'square',
-      score: 85,
-      missingCorners: [],
-      totalArea: 120,
-      usableArea: 108,
-    },
-    
-    rooms: [
-      {
-        type: 'living',
-        size: 30,
-        direction: 'south' as Direction,
-        position: 'front',
-        hasWindow: true,
-        hasBalcony: true,
-        floor: 15,
-        furniture: [
-          { type: 'sofa', direction: 'north' as Direction, position: 'center', material: '木' },
-          { type: 'tv-stand', direction: 'south' as Direction, position: 'center' },
-        ],
-        element: '火',
-      },
-      {
-        type: 'master-bedroom',
-        size: 20,
-        direction: 'east' as Direction,
-        position: 'back',
-        hasWindow: true,
-        hasBalcony: false,
-        floor: 15,
-        furniture: [
-          { type: 'bed', direction: 'east' as Direction, position: 'center', material: '木' },
-          { type: 'wardrobe', direction: 'north' as Direction, position: 'right' },
-        ],
-        element: '木',
-      },
-      {
-        type: 'kitchen',
-        size: 10,
-        direction: 'north' as Direction,
-        position: 'left',
-        hasWindow: true,
-        hasBalcony: false,
-        floor: 15,
-        furniture: [
-          { type: 'stove', direction: 'east' as Direction, position: 'center', material: '火' },
-          { type: 'refrigerator', direction: 'west' as Direction, position: 'corner', material: '金' },
-        ],
-        element: '火',
-      },
-    ],
-    
-    elementDistribution: {
-      '木': 3,
-      '火': 2,
-      '土': 2,
-      '金': 2,
-      '水': 1,
-    },
-    
-    nearbyRoads: 0,
-    nearbyTJunction: false,
-    nearbyPole: false,
-    nearWater: false,
-    nearMountain: false,
-  })
 }

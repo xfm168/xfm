@@ -51,11 +51,14 @@ export function convertToFengShuiContext(
   // 4. 构建房间列表
   const rooms = buildRooms(analysis, houseInfo)
   
-  // 5. 构建五行分布
-  const elementDistribution = analysis.elementDistribution || {
-    wood: 2, fire: 2, earth: 2, metal: 2, water: 2,
-    dominant: '土' as const,
-    deficient: '土' as const,
+  // 5. 构建五行分布（英文键 → 中文键）
+  const rawElements = analysis.elementDistribution
+  const elementDistribution = {
+    '木': rawElements?.wood ?? 2,
+    '火': rawElements?.fire ?? 2,
+    '土': rawElements?.earth ?? 2,
+    '金': rawElements?.metal ?? 2,
+    '水': rawElements?.water ?? 2,
   }
   
   // 6. 检测外部环境（从识别结果推断）

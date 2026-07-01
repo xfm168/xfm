@@ -90,7 +90,7 @@ async function callMultimodalAI(request: ImageAnalysisRequest): Promise<string> 
     
     return response.content
   } catch (error) {
-    console.warn('Gemini 调用失败，尝试其他方式:', error)
+    console.error('Gemini 调用失败，尝试其他方式:', error)
     
     // 如果多模态失败，尝试使用文本描述
     return await analyzeFromTextDescription(request)

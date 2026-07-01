@@ -48,15 +48,17 @@ export interface ImageAnalysisResult {
   /** 识别到的物体 */
   detectedObjects: DetectedObject[]
   /** 房间信息 */
-  roomInfo: RoomAnalysisResult
+  roomInfo: RoomAnalysisResult | Record<string, any>
   /** 家具列表 */
   furniture: FurnitureAnalysisResult[]
   /** 五行分布 */
   elementDistribution: ElementAnalysisResult
-  /** 风水煞气 */
-  detectedSha: DetectedSha[]
-  /** 整体置信度 */
-  confidence: number
+  /** 风水煞气（可选，可由后续步骤添加） */
+  detectedSha?: DetectedSha[]
+  /** 整体置信度（可选，可由 overallConfidence 映射） */
+  confidence?: number
+  /** 整体置信度（AI分析返回的原始字段） */
+  overallConfidence?: number
   /** 原始AI结果 */
   rawResult?: any
   /** 错误信息 */

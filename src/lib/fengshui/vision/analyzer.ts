@@ -33,6 +33,7 @@ export async function analyzeFengShuiImage(
   const enhancedAnalysis = {
     ...aiResult,
     detectedSha,
+    confidence: aiResult.overallConfidence,
   }
   
   // 4. 转换为 FengShuiContext

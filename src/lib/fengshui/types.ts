@@ -106,6 +106,8 @@ export interface ElementDistribution {
 }
 
 export interface FengShuiContext {
+  [key: string]: unknown
+  
   // 房屋基本信息
   houseType: HouseType
   houseAge: number

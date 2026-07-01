@@ -21,6 +21,7 @@ import type {
   FloorPlanAssessment,
   AssessmentIssue,
   MissingCornerAssessment,
+  LayoutShape,
 } from './types'
 
 /**
@@ -296,7 +297,7 @@ function calculateCenterPoint(
   }
   
   if (isOccupied) {
-    const function_ = roomInCenter?.function || roomInCenter?.type
+    const function_ = roomInCenter?.type
     assessment = {
       isGood: false,
       reason: `中宫被${function_}占用，气场受阻`,

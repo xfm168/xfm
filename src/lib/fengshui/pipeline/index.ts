@@ -11,6 +11,8 @@
 import type { 
   FengShuiContext, 
   FengShuiResult, 
+} from '../types'
+import type {
   ImageAnalysisResult,
   FengShuiReport,
 } from '../imageAnalyzer'
@@ -278,7 +280,7 @@ async function runFloorPlanStep(input: PipelineInput, visionResult: ImageAnalysi
   try {
     // 尝试用 FloorPlan Engine 分析
     const floorPlan = await analyzeFloorPlan(input.imageData, {
-      depth: input.mode === 'deep' ? 'deep' : 'standard',
+      depth: input.mode === 'deep' ? 'detailed' : 'standard',
     })
     return floorPlan
   } catch {
@@ -447,7 +449,7 @@ function runScoreStep(
       suggestions: [],
       hitRules: [],
       context: {} as any,
-    } as FengShuiResult
+    } as unknown as FengShuiResult
   }
 }
 

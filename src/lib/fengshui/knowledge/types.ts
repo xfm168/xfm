@@ -13,8 +13,8 @@
 // ============ 基础类型 ============
 
 export type KnowledgeLanguage = 'original' | 'translation' | 'modern' | 'ai'
-export type KnowledgeCategory = 'direction' | 'layout' | 'room' | 'kitchen' | 'bedroom' | 'wealth' | 'health' | 'career' | 'relationship'
-export type FengShuiSchool = 'bazhai' | 'xuankong' | 'sanhe' | 'sanyuan' | 'xingfa' | 'zangfeng' | 'modern'
+export type KnowledgeCategory = 'direction' | 'layout' | 'room' | 'kitchen' | 'bedroom' | 'wealth' | 'health' | 'career' | 'relationship' | 'environment'
+export type FengShuiSchool = 'bazhai' | 'xuankong' | 'sanhe' | 'sanyuan' | 'xingfa' | 'zangfeng' | 'modern' | 'sanjiao'
 
 // ============ 古籍知识条目 ============
 

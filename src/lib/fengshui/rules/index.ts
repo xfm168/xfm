@@ -82,7 +82,5 @@ export const RULE_STATS = {
   },
 }
 
-// 保持向后兼容
-export { CLASSICAL_RULES_V2 } from './fengshuiRulesV2'
 export * from './types'
 export * from './executor'

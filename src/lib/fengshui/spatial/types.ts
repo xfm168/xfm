@@ -12,6 +12,8 @@
 
 import type { Direction, LayoutShape } from '../types'
 
+export type { Direction, LayoutShape }
+
 // ============ 基础空间类型 ============
 
 export interface Point2D {

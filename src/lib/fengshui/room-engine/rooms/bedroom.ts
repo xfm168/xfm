@@ -153,7 +153,7 @@ function calculateLayoutScore(input: RoomEngineInput, issues: RoomIssue[], stren
     // 床不对门
     const door = input.doors.find(d => d.type === 'main')
     if (door) {
-      const bedFacingDoor = Math.abs(bed.direction as any - door.direction as any) < 45
+      const bedFacingDoor = Math.abs(Number(bed.direction) - Number(door.direction)) < 45
       if (bedFacingDoor) {
         score -= 15
         issues.push({

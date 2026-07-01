@@ -135,8 +135,8 @@ export const MASTER_BEDROOM_RULES: FengShuiRule[] = [
     improvement: '根据命卦调整床头朝向',
   },
   {
-    id: 'bedroom-good-lighting',
-    name: '卧室采光适中',
+    id: 'master-bedroom-good-lighting',
+    name: '主卧采光适中',
     category: 'bed',
     applicableTo: ['master-bedroom', 'bedroom'],
     source: ['现代风水'],
@@ -157,8 +157,8 @@ export const MASTER_BEDROOM_RULES: FengShuiRule[] = [
     improvement: '使用遮光窗帘调节光线',
   },
   {
-    id: 'bedroom-good-ventilation',
-    name: '卧室通风良好',
+    id: 'master-bedroom-good-ventilation',
+    name: '主卧通风良好',
     category: 'bed',
     applicableTo: ['master-bedroom', 'bedroom'],
     source: ['现代风水'],

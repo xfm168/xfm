@@ -249,11 +249,14 @@ function isFacingDoor(
   return isDirectFacing(furniture.direction, nearestDoor.door.direction)
 }
 
-function isAgainstWall(furniture: FurnitureSpatial, allFurniture: FurnitureSpatial[]): boolean {
-  // 简化判断：家具在房间边缘就算靠墙
+function isAgainstWall(furniture: FurnitureSpatial, _allFurniture: FurnitureSpatial[]): boolean {
+  // 简化判断：根据 boundingBox 位置判断是否靠墙
   // 实际应该根据墙的位置判断
-  return furniture.position === 'left' || furniture.position === 'right' ||
-         furniture.position === 'front' || furniture.position === 'back'
+  const { boundingBox } = furniture
+  if (!boundingBox) return false
+  const centerX = (boundingBox.x + boundingBox.width / 2)
+  const centerY = (boundingBox.y + boundingBox.height / 2)
+  return centerX < 20 || centerX > 80 || centerY < 20 || centerY > 80
 }
 
 // ============ 家具类空间煞气检测 ============

@@ -4,6 +4,8 @@
 
 import type { Direction, LayoutShape } from '../types'
 
+export type { Direction, LayoutShape }
+
 // ============ 户型轮廓类型 ============
 
 export interface FloorPlanOutline {

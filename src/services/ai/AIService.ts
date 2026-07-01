@@ -68,7 +68,7 @@ export class AIService {
         })
       } catch (err) {
         lastError = err
-        console.warn(`[AI] Provider ${providerType} failed:`, err)
+        console.error(`[AI] Provider ${providerType} failed:`, err)
       }
     }
 

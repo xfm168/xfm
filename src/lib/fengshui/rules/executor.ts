@@ -101,7 +101,7 @@ function executeSingleRule(
     matched = rule.condition(context)
     score = matched ? rule.result.score : 0
   } catch (error) {
-    console.warn(`Rule ${rule.id} execution error:`, error)
+    console.error(`Rule ${rule.id} execution error:`, error)
     matched = false
     score = 0
   }
@@ -126,6 +126,3 @@ function executeSingleRule(
     source: rule.source,
   }
 }
-
-// 导出规则
-export * from './fengshuiRulesV2'
