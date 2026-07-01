@@ -10,8 +10,12 @@ export const RELEASE = {
   version: '4.4.0',
   /** Release channel */
   channel: 'Release',
+  /** Build date (YYYY-MM-DD) */
+  buildDate: '2026-07-01',
   /** Build month */
   build: '2026-07',
+  /** Pipeline engine version */
+  engineVersion: 'Pipeline V4',
   /** Pipeline status */
   pipeline: 'Stable',
   /** Architecture status */

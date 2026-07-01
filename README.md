@@ -86,16 +86,32 @@ npm run build    # Build for production
 npm run release-check  # Run release validation
 ```
 
-## Release Status
+## Project Status
 
-**V4.4 Release Freeze**
+**Maintenance Mode - Release Freeze**
 
-Architecture frozen. Only allow:
+| Item | Status |
+|------|--------|
+| Version | 4.4.0 |
+| Channel | Release |
+| Architecture | Frozen |
+| Pipeline | Stable |
+| Rules | 101 (Frozen) |
+| Knowledge | 76 (Frozen) |
+
+### What's Allowed
 - Bug Fix
 - Security Fix
-- Business Feature
+- Business Feature (会员/支付/报告导出等)
 
-No architecture refactor.
+### What's Forbidden
+- Architecture Refactor
+- Rule Refactor
+- Pipeline Refactor
+- Knowledge Refactor
+- Type Refactor (for reducing any)
+
+See [RELEASE_FREEZE.md](./RELEASE_FREEZE.md) for details.
 
 ## License
 
