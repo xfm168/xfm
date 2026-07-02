@@ -66,3 +66,6 @@ export { generateBaZiAIReport } from './ai'
 // Knowledge Base
 export { default as baziKnowledge } from './knowledge'
 export type { BaZiKnowledgeEntry, KnowledgeStats, KnowledgeCategory } from './knowledge/types'
+
+// P0-② 子时换日模块
+export * from './zishi'

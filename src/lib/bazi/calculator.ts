@@ -16,6 +16,7 @@ import type {
   XiYongShen,
   BaZiAnalysis,
   BaZiChart,
+  ZiShiStrategyType,
 } from './types'
 
 import { DEFAULT_BAZI_ANALYSIS } from '../../constants/defaultAnalysis'
@@ -28,6 +29,8 @@ import { getRelatedShens, getStemElement, getStemYinYang } from './shishen'
 import { determineGeJu } from './geju'
 import { calculateStrength } from './wuxing'
 import { determineXiYongShen } from './xiyongshen'
+// P0-② 子时换日策略
+import { resolveChartDate, computeHourIndex } from './zishi'
 
 // 常量
 const HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
@@ -155,36 +158,22 @@ function getMonthGanZhi(date: Date, yearGan: HeavenlyStem): GanZhi {
 
 // ========== 时柱 ==========
 
-function getHourGanZhi(date: Date, dayGan: HeavenlyStem): GanZhi {
-  const hours = date.getHours()
-  const minutes = date.getMinutes()
-  const totalMinutes = hours * 60 + minutes
-
-  let hourIndex = 0
-  if (totalMinutes >= 23 * 60 || totalMinutes < 1 * 60) {
-    hourIndex = 0
-  } else if (totalMinutes < 3 * 60) {
-    hourIndex = 1
-  } else if (totalMinutes < 5 * 60) {
-    hourIndex = 2
-  } else if (totalMinutes < 7 * 60) {
-    hourIndex = 3
-  } else if (totalMinutes < 9 * 60) {
-    hourIndex = 4
-  } else if (totalMinutes < 11 * 60) {
-    hourIndex = 5
-  } else if (totalMinutes < 13 * 60) {
-    hourIndex = 6
-  } else if (totalMinutes < 15 * 60) {
-    hourIndex = 7
-  } else if (totalMinutes < 17 * 60) {
-    hourIndex = 8
-  } else if (totalMinutes < 19 * 60) {
-    hourIndex = 9
-  } else if (totalMinutes < 21 * 60) {
-    hourIndex = 10
+/**
+ * 时柱计算（支持新签名 hourIndex 与旧签名 date 兼容）
+ *
+ * 新签名：getHourGanZhi(hourIndex, dayGan) —— 推荐使用，配合子时换日策略
+ * 旧签名：getHourGanZhi(date, dayGan) —— 兼容旧调用，内部计算 hourIndex
+ */
+function getHourGanZhi(hourIndex: number, dayGan: HeavenlyStem): GanZhi
+function getHourGanZhi(date: Date, dayGan: HeavenlyStem): GanZhi
+function getHourGanZhi(arg1: number | Date, dayGan: HeavenlyStem): GanZhi {
+  let hourIndex: number
+  if (typeof arg1 === 'number') {
+    // 新签名：直接使用 hourIndex
+    hourIndex = arg1
   } else {
-    hourIndex = 11
+    // 旧签名：从 date 计算 hourIndex（兼容旧调用）
+    hourIndex = computeHourIndex(arg1.getHours(), arg1.getMinutes())
   }
 
   const zhi = EARTHLY_BRANCHES[hourIndex]
@@ -237,17 +226,30 @@ function calculateFiveElementCount(sixLines: SixLines): FiveElementCount {
 
 // ========== 主排盘函数 ==========
 
-export function calculateBaZi(birthInfo: BirthInfo): BaZiChart {
+/**
+ * 八字排盘入口
+ *
+ * @param birthInfo 出生信息
+ * @param options 可选配置
+ *   - ziShiStrategy: 子时换日策略（'late'|'early'|'gregorian'），默认 'late'
+ */
+export function calculateBaZi(
+  birthInfo: BirthInfo,
+  options?: { ziShiStrategy?: ZiShiStrategyType },
+): BaZiChart {
   const [year, month, day] = birthInfo.birthDate.split('-').map(Number)
   const [hours, minutes] = birthInfo.birthTime.split(':').map(Number)
 
   const birthDate = new Date(year, month - 1, day, hours, minutes)
 
-  // 四柱
-  const yearGanZhi = getYearGanZhi(birthDate)
-  const monthGanZhi = getMonthGanZhi(birthDate, yearGanZhi.gan)
-  const dayGanZhi = getDayGanZhi(birthDate)
-  const hourGanZhi = getHourGanZhi(birthDate, dayGanZhi.gan)
+  // P0-② 子时换日策略解析：得到排盘日期 chartDate 与时辰索引 hourIndex
+  const { chartDate, hourIndex } = resolveChartDate(birthDate, options?.ziShiStrategy)
+
+  // 四柱：日柱/年柱/月柱使用 chartDate 计算，时柱使用 hourIndex 计算
+  const yearGanZhi = getYearGanZhi(chartDate)
+  const monthGanZhi = getMonthGanZhi(chartDate, yearGanZhi.gan)
+  const dayGanZhi = getDayGanZhi(chartDate)
+  const hourGanZhi = getHourGanZhi(hourIndex, dayGanZhi.gan)
 
   const sixLines: SixLines = {
     year: yearGanZhi,

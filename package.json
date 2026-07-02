@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "release-check": "node scripts/release-check.cjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "server:dev": "tsx watch src/server/index.ts",
+    "server:start": "node --import tsx src/server/index.ts"
   },
   "keywords": [
     "fengshui",
@@ -18,8 +20,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hono/node-server": "^2.0.8",
     "@supabase/supabase-js": "^2.108.2",
     "date-chinese": "^2.1.4",
+    "hono": "^4.12.27",
     "qimendunjia-standalone": "^0.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -30,6 +34,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
+    "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
     "vitest": "^4.1.9"

@@ -123,3 +123,6 @@ export type SolarTermName =
   | '立秋' | '处暑' | '白露' | '秋分'
   | '寒露' | '霜降' | '立冬' | '小雪'
   | '大雪' | '冬至' | '小寒' | '大寒'
+
+// P0-② 子时换日策略类型
+export type ZiShiStrategyType = 'late' | 'early' | 'gregorian'

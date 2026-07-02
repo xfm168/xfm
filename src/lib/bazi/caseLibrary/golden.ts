@@ -124,11 +124,11 @@ export const GOLDEN_CASES: GoldenCase[] = [
     expected: {
       yearGanZhi: '丙午',
       monthGanZhi: '甲午',
-      dayGanZhi: '庚申',
-      hourGanZhi: '丙子',
+      dayGanZhi: '辛酉',   // P0-② 晚子时换日：chartDate=次日2026-06-16辛酉日
+      hourGanZhi: '戊子',   // 辛日子时起戊子（五鼠遁：丙辛起戊子）
     },
     verified: 'calculator-baseline',
-    note: '晚子时 23:30（当前未实现子初换日，P0-②将修复）',
+    note: '晚子时 23:30（P0-②已修复子初换日）：chartDate=次日2026-06-16辛酉日，与早子时00:30(GD-B006)日柱不同',
   },
   {
     id: 'GD-B006',
@@ -140,11 +140,11 @@ export const GOLDEN_CASES: GoldenCase[] = [
     expected: {
       yearGanZhi: '丙午',
       monthGanZhi: '甲午',
-      dayGanZhi: '庚申',
-      hourGanZhi: '丙子',
+      dayGanZhi: '庚申',   // P0-② 早子时：chartDate=当日2026-06-15庚申日（不换日）
+      hourGanZhi: '丙子',   // 庚日子时起丙子（五鼠遁：乙庚起丙子）
     },
     verified: 'calculator-baseline',
-    note: '早子时 00:30（当前与23:30日柱相同，P0-②将修复）',
+    note: '早子时 00:30（P0-②已修复）：chartDate=当日2026-06-15庚申日，与晚子时23:30(GD-B005)日柱不同',
   },
 
   // ========== 普通命例 ==========
