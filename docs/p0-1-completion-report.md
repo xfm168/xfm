@@ -2,8 +2,13 @@
 
 > **基线**：V4.8.1 Final
 > **模块**：P0-① 节气精确到时分秒
-> **状态**：✅ 已交付（Quality Gate PASSED）
-> **日期**：2026-07-01
+> **状态**：✅ **Completed & Accepted**（Acceptance Gate 6/6 PASSED，已冻结）
+> **版本**：P0-①-1.0.0
+> **交付日期**：2026-07-01
+> **验收日期**：2026-07-02
+> **冻结标签**：`P0-①-1.0.0`
+> **验收报告**：[P0-① Acceptance Report](file:///workspace/docs/p0-1-acceptance-report.md)
+> **宪章依据**：[玄风开发宪章](file:///workspace/docs/xuanfeng-charter.md) 原则 ⑥ Acceptance First
 
 ---
 

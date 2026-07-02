@@ -55,12 +55,12 @@ export const GOLDEN_CASES: GoldenCase[] = [
     gender: 'male',
     expected: {
       yearGanZhi: '乙巳',   // 立春前 → 属上一年乙巳
-      monthGanZhi: '戊子',   // 丑月（立春前属丑月）
+      monthGanZhi: '己丑',   // 丑月（大寒为气不换月，小寒→立春整段丑月）
       dayGanZhi: '己酉',
       hourGanZhi: '丙寅',
     },
-    verified: 'calculator-baseline',
-    note: '2026年立春前，年柱属乙巳年。立春精确时刻决定年柱归属',
+    verified: 'verified',
+    note: '2026年立春前，年柱属乙巳年。立春精确时刻决定年柱归属。Acceptance①修正：大寒不换月，丑月己丑',
   },
   {
     id: 'GD-B002',
@@ -71,12 +71,12 @@ export const GOLDEN_CASES: GoldenCase[] = [
     gender: 'female',
     expected: {
       yearGanZhi: '甲辰',   // 立春前 → 属上一年甲辰
-      monthGanZhi: '丙子',   // 丑月
+      monthGanZhi: '丁丑',   // 丑月（大寒为气不换月）
       dayGanZhi: '癸卯',
       hourGanZhi: '戊午',
     },
-    verified: 'calculator-baseline',
-    note: '2025年立春前后边界',
+    verified: 'verified',
+    note: '2025年立春前后边界。Acceptance①修正：大寒不换月，丑月丁丑',
   },
 
   // ========== 节气换月边界 ==========

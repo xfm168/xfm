@@ -21,6 +21,8 @@ export * from './qualityGate'
 export * from './observability'
 export * from './dashboard'
 export * from './rulePack'
+export * from './acceptance'
+export * from './freeze'
 
 export { P0_SOLAR_TERM_PACK, P0_SOLAR_TERM_RULES } from './packs/p0SolarTerm'
 export { runSolarTermBenchmark, SOLAR_TERM_BENCHMARK_COUNT } from './benchmarks/p0SolarTerm'
