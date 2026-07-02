@@ -11,7 +11,8 @@
  *     birthplace?: "北京",
  *     timezone?: "Asia/Shanghai",
  *     zishi_strategy?: "late" | "early" | "gregorian",  // 子时策略，默认 late
- *     use_solar_time?: boolean         // 是否使用真太阳时，默认 true
+ *     use_solar_time?: boolean,         // 是否使用真太阳时，默认 true
+ *     longitude?: number                // 出生地经度（东经为正），优先于 birthplace
  *   }
  *
  * 响应：
@@ -39,6 +40,7 @@ interface BaziRequestBody {
   zishi_strategy?: unknown
   use_solar_time?: unknown
   birth_time_unknown?: unknown
+  longitude?: unknown
 }
 
 app.post('/', async (c) => {
@@ -82,7 +84,7 @@ app.post('/', async (c) => {
   const useSolarTime = typeof body.use_solar_time === 'boolean' ? body.use_solar_time : true
 
   // ── 调用排盘算法 ──────────────────────────
-  // P0-② 已接入子时换日策略：late(默认)/early/gregorian
+  // P0-② 子时策略 + P0-③ 真太阳时
   const birthInfo: BirthInfo = {
     birthDate: birth_date,
     birthTime: body.birth_time as string,
@@ -92,9 +94,12 @@ app.post('/', async (c) => {
     solarTime: useSolarTime,
   }
 
+  // 经度：优先请求体，否则从城市名推算
+  const longitude = typeof body.longitude === 'number' ? body.longitude : undefined
+
   let chart: BaZiChart
   try {
-    chart = calculateBaZi(birthInfo, { ziShiStrategy: strategy })
+    chart = calculateBaZi(birthInfo, { ziShiStrategy: strategy, useSolarTime, longitude })
   } catch (err) {
     console.error('[bazi] 排盘失败:', err)
     throw ApiError.internal('排盘计算失败', {

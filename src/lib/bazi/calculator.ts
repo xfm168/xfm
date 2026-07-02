@@ -31,6 +31,9 @@ import { calculateStrength } from './wuxing'
 import { determineXiYongShen } from './xiyongshen'
 // P0-② 子时换日策略
 import { resolveChartDate, computeHourIndex } from './zishi'
+// P0-③ 真太阳时
+import { calculateSolarTime, getCityLongitude } from './solarTime'
+export { calculateSolarTime, getCityLongitude } from './solarTime'
 
 // 常量
 const HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
@@ -232,15 +235,28 @@ function calculateFiveElementCount(sixLines: SixLines): FiveElementCount {
  * @param birthInfo 出生信息
  * @param options 可选配置
  *   - ziShiStrategy: 子时换日策略（'late'|'early'|'gregorian'），默认 'late'
+ *   - useSolarTime: 是否使用真太阳时（默认 false，需提供 longitude 或 region）
+ *   - longitude: 出生地经度（东经为正），优先于 region
  */
 export function calculateBaZi(
   birthInfo: BirthInfo,
-  options?: { ziShiStrategy?: ZiShiStrategyType },
+  options?: {
+    ziShiStrategy?: ZiShiStrategyType
+    useSolarTime?: boolean
+    longitude?: number
+  },
 ): BaZiChart {
   const [year, month, day] = birthInfo.birthDate.split('-').map(Number)
   const [hours, minutes] = birthInfo.birthTime.split(':').map(Number)
 
-  const birthDate = new Date(year, month - 1, day, hours, minutes)
+  let birthDate = new Date(year, month - 1, day, hours, minutes)
+
+  // P0-③ 真太阳时校正
+  if (options?.useSolarTime || birthInfo.solarTime) {
+    const longitude = options?.longitude ?? getCityLongitude(birthInfo.region ?? '')
+    const solarResult = calculateSolarTime(birthDate, longitude)
+    birthDate = solarResult.solarTime
+  }
 
   // P0-② 子时换日策略解析：得到排盘日期 chartDate 与时辰索引 hourIndex
   const { chartDate, hourIndex } = resolveChartDate(birthDate, options?.ziShiStrategy)
