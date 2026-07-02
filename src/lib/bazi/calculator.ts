@@ -32,8 +32,8 @@ import { determineXiYongShen } from './xiyongshen'
 // P0-② 子时换日策略
 import { resolveChartDate, computeHourIndex } from './zishi'
 // P0-③ 真太阳时
-import { calculateSolarTime, getCityLongitude } from './solarTime'
-export { calculateSolarTime, getCityLongitude } from './solarTime'
+import { calculateSolarTime, getCityCoordinate } from './solarTime'
+export { calculateSolarTime, getCityCoordinate } from './solarTime'
 
 // 常量
 const HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
@@ -253,8 +253,10 @@ export function calculateBaZi(
 
   // P0-③ 真太阳时校正
   if (options?.useSolarTime || birthInfo.solarTime) {
-    const longitude = options?.longitude ?? getCityLongitude(birthInfo.region ?? '')
-    const solarResult = calculateSolarTime(birthDate, longitude)
+    const coord = options?.longitude !== undefined
+      ? { longitude: options.longitude, latitude: 0 }
+      : getCityCoordinate(birthInfo.region ?? '')
+    const solarResult = calculateSolarTime(birthDate, coord)
     birthDate = solarResult.solarTime
   }
 
