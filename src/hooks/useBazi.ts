@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import { calculateBaZi, type BaZiChart, type BirthInfo } from '../lib/bazi'
+import { calculateBaZi, calculateBaZiFromBirthData, type BaZiChart, type BirthInfo } from '../lib/bazi'
+import type { BirthData } from '@/lib/core'
 
 const STORAGE_KEY = 'xuanfengmen_bazi_charts'
 
@@ -11,6 +12,7 @@ interface UseBaziResult {
   error: string | null
   charts: BaZiChart[]
   calculateChart: (info: BirthInfo) => void
+  calculateChartFromBirthData: (data: BirthData) => void
   saveChart: (chart: BaZiChart) => void
   loadCharts: () => void
   deleteChart: (createdAt: number) => void
@@ -52,6 +54,19 @@ export function useBazi(): UseBaziResult {
     }
   }, [])
 
+  const calculateChartFromBirthData = useCallback((data: BirthData) => {
+    try {
+      setStatus('loading')
+      setError(null)
+      const result = calculateBaZiFromBirthData(data)
+      setChart(result)
+      setStatus('ready')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '排盘失败')
+      setStatus('error')
+    }
+  }, [])
+
   const saveChart = useCallback((newChart: BaZiChart) => {
     setCharts(prev => {
       const exists = prev.some(c => c.createdAt === newChart.createdAt)
@@ -81,6 +96,7 @@ export function useBazi(): UseBaziResult {
     error,
     charts,
     calculateChart,
+    calculateChartFromBirthData,
     saveChart,
     loadCharts,
     deleteChart,

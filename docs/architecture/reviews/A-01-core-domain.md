@@ -1,8 +1,8 @@
 # Architecture Review A-01: Core Domain
 
 **日期**：2026-07-03  
-**版本**：v1  
-**状态**：✅ 完成
+**版本**：v2  
+**状态**：✅ Completed
 
 ---
 
@@ -62,35 +62,37 @@ src/lib/core/
 
 ---
 
-## 二、未完成内容
+## 二、未完成内容（Deferred to Sprint A-05）
 
 ### 2.1 剩余重复常量
 
-| 常量 | 剩余定义位置 | 数量 |
-|------|-------------|:----:|
-| STEM_ELEMENT | shishenRules.ts | 1 |
-| BRANCH_ELEMENT | gejuRules.ts | 1 |
-| GENERATE | gejuRules.ts, shishenRules.ts, xiyongRules.ts | 3 |
-| OVERCOME | gejuRules.ts, shishenRules.ts, xiyongRules.ts | 3 |
-| CANG_GAN | wuxing.ts | 1 |
+以下常量位于 Rule 文件中，按照 Roadmap 应在 A-05 Rule Engine 重构时统一处理，避免二次修改。
+
+| 常量 | 剩余定义位置 | 数量 | 计划处理 |
+|------|-------------|:----:|---------|
+| STEM_ELEMENT | shishenRules.ts | 1 | Sprint A-05 |
+| BRANCH_ELEMENT | gejuRules.ts | 1 | Sprint A-05 |
+| GENERATE | gejuRules.ts, shishenRules.ts, xiyongRules.ts | 3 | Sprint A-05 |
+| OVERCOME | gejuRules.ts, shishenRules.ts, xiyongRules.ts | 3 | Sprint A-05 |
+| CANG_GAN | wuxing.ts | 1 | Sprint A-05 |
 
 ### 2.2 剩余重复工具函数
 
-| 函数 | 剩余定义位置 | 数量 |
-|------|-------------|:----:|
-| getStemElement | shishenRules.ts | 1 |
-| getGanElement | wuxingRules.ts（兼容别名） | 1 |
+| 函数 | 剩余定义位置 | 数量 | 计划处理 |
+|------|-------------|:----:|---------|
+| getStemElement | shishenRules.ts | 1 | Sprint A-05 |
+| getGanElement | wuxingRules.ts（兼容别名） | 1 | Sprint A-05 |
 
 ### 2.3 待迁移模块
 
-| 模块 | 状态 |
-|------|------|
-| shishenRules.ts | 等待迁移 |
-| gejuRules.ts | 等待迁移 |
-| xiyongRules.ts | 等待迁移 |
-| wuxing.ts | 等待迁移 |
-| changshengRules.ts | 等待迁移 |
-| nayin.ts | 等待迁移 |
+| 模块 | 状态 | 计划处理 |
+|------|------|---------|
+| shishenRules.ts | Deferred | Sprint A-05 |
+| gejuRules.ts | Deferred | Sprint A-05 |
+| xiyongRules.ts | Deferred | Sprint A-05 |
+| wuxing.ts | Deferred | Sprint A-05 |
+| changshengRules.ts | Deferred | Sprint A-05 |
+| nayin.ts | Deferred | Sprint A-05 |
 
 ---
 
@@ -151,27 +153,15 @@ src/lib/core/
 
 ## 五、下一步
 
-### 5.1 继续迁移（Sprint A-08 任务）
+### 5.1 进入 A-02
 
-按优先级顺序迁移剩余重复代码：
+执行《BirthData Migration Plan》：
+- 建立 BirthData（唯一出生信息结构）
+- 建立 Adapter（兼容旧接口）
+- 逐模块迁移（Calculator → Pipeline → API → Hook → UI）
+- BirthInfo 标记 @deprecated
 
-1. **shishenRules.ts**（高优先级，十神核心）
-2. **xiyongRules.ts**（高优先级，用神核心）
-3. **gejuRules.ts**（中优先级，格局规则，体积大）
-4. **wuxing.ts**（中优先级，五行计算）
-5. **changshengRules.ts**（低优先级，十二长生）
-6. **nayin.ts**（低优先级，纳音）
-
-### 5.2 进入 A-02
-
-迁移完成后，输出《BirthData Migration Plan》，确认：
-- BirthInfo 来源和引用点
-- BaziRequestBody 定义位置
-- Database Chart 表结构
-- API 接口参数
-- Form 表单字段
-
-### 5.3 统一 Import 规范
+### 5.2 统一 Import 规范
 
 全项目统一使用：
 ```typescript
@@ -184,14 +174,16 @@ import { ... } from '@/lib/core'
 
 ## 六、结论
 
-**A-01 状态**：✅ 完成 85%
+**A-01 状态**：✅ Completed
 
-| 指标 | 达成度 |
-|------|:-----:|
-| Core Domain 建立 | 100% |
-| 路径别名配置 | 100% |
-| 第一批常量迁移 | 100% |
-| 测试验证 | 100% |
-| 剩余重复迁移 | 待完成 |
+| 指标 | 状态 |
+|------|:----:|
+| Core Domain 建立 | ✅ |
+| 路径别名配置 | ✅ |
+| 第一批常量迁移 | ✅ |
+| 测试验证 | ✅ |
+| 剩余重复迁移 | ⏳ Deferred to Sprint A-05 |
 
-**建议**：继续推进 A-02 BirthData 唯一化，同时在 A-08 中完成剩余重复代码迁移。
+**关键决策**：剩余 Rule 文件中的重复常量不立即迁移，留待 Sprint A-05 Rule Engine 重构时统一处理，避免二次修改。
+
+**建议**：继续推进 A-02 BirthData 唯一化。

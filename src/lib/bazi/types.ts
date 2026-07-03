@@ -36,6 +36,11 @@ export type ShiErChangSheng =
 
 export type WuXingWangShuai = '旺' | '相' | '休' | '囚' | '死'
 
+/**
+ * @deprecated 使用 BirthData 代替
+ * 仅为向后兼容保留，Sprint C 后移除
+ * @see {@link https://github.com/xuanfengmen/bazi-docs/blob/main/docs/architecture/migrations/A-02-birthdata-migration.md}
+ */
 export interface BirthInfo {
   birthDate: string
   birthTime: string

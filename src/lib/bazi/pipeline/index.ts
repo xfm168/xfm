@@ -15,7 +15,7 @@
  */
 
 import { logger } from '../../../utils/logger'
-import { calculateBaZi } from '../calculator'
+import { calculateBaZi, calculateBaZiFromBirthData } from '../calculator'
 import type { BaZiChart, BirthInfo } from '../types'
 import { determineGeJu, type GeJuResult } from '../geju'
 import { determineXiYongShen } from '../xiyongshen'
@@ -25,26 +25,51 @@ import type {
   BaZiAnalysisOptions,
   BaZiPipelineResult,
   BaZiPipelineStep,
+  BaZiPipelineInput,
 } from './types'
+
+import type { BirthData, BirthInfoAdapter } from '@/lib/core'
 
 const pipelineLogger = logger.child('BaziPipeline')
 
 /**
- * 八字 Pipeline 执行器
+ * 八字 Pipeline 执行器（新入口）
  * 
- * 统一入口，不允许绕过 Pipeline 直接调用底层
+ * @deprecated 使用 runBaZiPipelineFromBirthData 代替
+ * 仅为向后兼容保留
  */
 export async function runBaZiPipeline(
   birthInfo: BirthInfo,
   options: BaZiAnalysisOptions = {}
 ): Promise<BaZiPipelineResult> {
+  const birthData: BirthData = {
+    birthday: birthInfo.birthDate,
+    birthTime: birthInfo.birthTime,
+    gender: birthInfo.gender,
+    timezone: birthInfo.timezone,
+    location: birthInfo.region,
+    useTrueSolarTime: birthInfo.solarTime,
+  }
+  return runBaZiPipelineFromBirthData({ birthData, options })
+}
+
+/**
+ * 八字 Pipeline 执行器（BirthData 入口）
+ * 
+ * 统一入口，不允许绕过 Pipeline 直接调用底层
+ */
+export async function runBaZiPipelineFromBirthData(
+  input: BaZiPipelineInput
+): Promise<BaZiPipelineResult> {
+  const { birthData, options = {} } = input
   const { includeAI = false, detailed = false } = options
+  const startTime = Date.now()
 
   pipelineLogger.info('开始八字排盘分析')
 
   // Step 1: 排盘分析
   pipelineLogger.debug('Step 1: 四柱排盘')
-  const chart = calculateBaZi(birthInfo)
+  const chart = calculateBaZiFromBirthData(birthData)
 
   // Step 2: 格局判断
   pipelineLogger.debug('Step 2: 格局判断')
@@ -73,8 +98,11 @@ export async function runBaZiPipeline(
   // Step 5: 综合评分
   pipelineLogger.debug('Step 5: 综合评分')
   const score = calculateBaZiScore(chart, geJuResult, xiYongResult)
+  const duration = Date.now() - startTime
 
   const result: BaZiPipelineResult = {
+    success: true,
+    birthData,
     chart,
     geJu: geJuResult,
     xiYongShen: xiYongResult,
@@ -92,12 +120,12 @@ export async function runBaZiPipeline(
     detailed,
     createdAt: Date.now(),
     version: '4.4.0',
+    duration,
   }
 
   // Step 6: AI 报告（可选）
   if (includeAI) {
     pipelineLogger.debug('Step 6: AI 报告生成')
-    // AI 报告由 ai/ 模块负责，Pipeline 预留接口
     result.steps.push({ name: 'AI 报告', status: 'pending', duration: 0 })
   }
 

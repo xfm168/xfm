@@ -1,8 +1,8 @@
 # BirthData Migration Plan
 
 **日期**：2026-07-03  
-**版本**：v1  
-**状态**：Draft  
+**版本**：v2  
+**状态**：Approved  
 **目标**：统一全项目出生信息结构
 
 ---
@@ -18,21 +18,22 @@
 | **API Request Body** | [bazi.ts](file:///workspace/src/server/routes/bazi.ts#L41-L43) | use_solar_time?, longitude? |
 | **Calculator Options** | [calculator.ts](file:///workspace/src/lib/bazi/calculator.ts#L233-L234) | useSolarTime?, longitude? |
 | **Form** | [BaziInput.tsx](file:///workspace/src/pages/BaziInput.tsx#L22-L27) | 使用 BirthInfo |
+| **Pipeline** | [pipeline/types.ts](file:///workspace/src/lib/bazi/pipeline/types.ts) | PipelineInput, PipelineContext, PipelineResult |
 
 ### 1.2 字段对比
 
-| 字段 | BirthInfo | Database | API | Calculator | 问题 |
-|------|----------|----------|-----|------------|------|
-| 日期 | birthDate: string | birth_date: string | ✅ | ✅ | 格式不统一 |
-| 时间 | birthTime: string | birth_time: string | ✅ | ✅ | 格式不统一 |
-| 性别 | gender: 'male'\|'female' | gender: Gender | ✅ | ✅ | 类型定义不一致 |
-| 时区 | timezone?: string | timezone: string \| null | ✅ | ✅ | 命名不一致 |
-| 经度 | ❌ | longitude: number \| null | ✅ | ✅（options） | 缺失于 BirthInfo |
-| 纬度 | ❌ | latitude: number \| null | ❌ | ❌ | 缺失于 BirthInfo |
-| 子时策略 | ❌ | zishi_strategy: ZiShiStrategy | ✅ | ✅（options） | 缺失于 BirthInfo |
-| 真太阳时开关 | solarTime?: boolean | use_solar_time: boolean | use_solar_time | useSolarTime | **三个名字** |
-| 城市/地区 | region?: string | birthplace: string \| null | ❌ | ✅（region） | 命名不一致 |
-| 时间未知 | ❌ | birth_time_unknown: boolean | ❌ | ❌ | 缺失于 BirthInfo |
+| 字段 | BirthInfo | Database | API | Calculator | Pipeline | 问题 |
+|------|----------|----------|-----|------------|----------|------|
+| 日期 | birthDate: string | birth_date: string | ✅ | ✅ | ✅ | 格式不统一 |
+| 时间 | birthTime: string | birth_time: string | ✅ | ✅ | ✅ | 格式不统一 |
+| 性别 | gender: 'male'\|'female' | gender: Gender | ✅ | ✅ | ✅ | 类型定义不一致 |
+| 时区 | timezone?: string | timezone: string \| null | ✅ | ✅ | ✅ | 命名不一致 |
+| 经度 | ❌ | longitude: number \| null | ✅ | ✅（options） | ❌ | 缺失于 BirthInfo |
+| 纬度 | ❌ | latitude: number \| null | ❌ | ❌ | ❌ | 缺失于 BirthInfo |
+| 子时策略 | ❌ | zishi_strategy: ZiShiStrategy | ✅ | ✅（options） | ✅ | 缺失于 BirthInfo |
+| 真太阳时开关 | solarTime?: boolean | use_solar_time: boolean | use_solar_time | useSolarTime | ✅ | **三个名字** |
+| 城市/地区 | region?: string | birthplace: string \| null | ❌ | ✅（region） | ❌ | 命名不一致 |
+| 时间未知 | ❌ | birth_time_unknown: boolean | ❌ | ❌ | ❌ | 缺失于 BirthInfo |
 
 ### 1.3 引用点统计
 
@@ -109,61 +110,212 @@ export interface BirthData {
 
 1. **经纬度优先**：longitude/latitude 是主输入，location 仅作为辅助
 2. **单一数据源**：全项目只有一套 BirthData
-3. **向后兼容**：旧接口标记 @deprecated，保留兼容层
+3. **Adapter 兼容**：通过 Adapter 转换旧接口，不直接替换
 4. **计算后填充**：trueSolarTime 和 hash 在计算流程中填充
+5. **Pipeline 优先**：BirthData 必须通过 Pipeline 进入系统
 
 ---
 
-## 三、迁移路线图
+## 三、Adapter 设计
 
-### 3.1 迁移步骤
+### 3.1 Adapter 架构
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                      BirthData（唯一来源）                        │
+└────────────────────────────────────────────────────────────────┘
+                              ↑
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│ BirthInfo     │    │ Chart Record  │    │ API Request   │
+│   Adapter     │    │   Adapter     │    │   Adapter     │
+└───────────────┘    └───────────────┘    └───────────────┘
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│   BirthInfo   │    │   Chart      │    │   API Body    │
+│   (Deprecated)│    │  (Database)  │    │   (Request)   │
+└───────────────┘    └───────────────┘    └───────────────┘
+```
+
+### 3.2 BirthInfoAdapter
+
+```typescript
+// src/lib/core/adapters/birthDataAdapter.ts
+
+export class BirthInfoAdapter {
+  static convert(info: BirthInfo): BirthData {
+    return {
+      birthday: info.birthDate,
+      birthTime: info.birthTime,
+      gender: info.gender,
+      timezone: info.timezone,
+      location: info.region,
+      useTrueSolarTime: info.solarTime,
+    }
+  }
+}
+```
+
+### 3.3 ChartAdapter
+
+```typescript
+export class ChartAdapter {
+  static convert(chart: Chart): BirthData {
+    return {
+      birthday: chart.birth_date,
+      birthTime: chart.birth_time,
+      gender: chart.gender,
+      location: chart.birthplace ?? undefined,
+      timezone: chart.timezone ?? undefined,
+      longitude: chart.longitude ?? undefined,
+      latitude: chart.latitude ?? undefined,
+      childHourStrategy: chart.zishi_strategy,
+      useTrueSolarTime: chart.use_solar_time,
+      birthTimeUnknown: chart.birth_time_unknown,
+    }
+  }
+}
+```
+
+### 3.4 ApiRequestBodyAdapter
+
+```typescript
+export class ApiRequestBodyAdapter {
+  static convert(body: BaziRequestBody): BirthData {
+    return {
+      birthday: body.birth_date,
+      birthTime: body.birth_time,
+      gender: body.gender,
+      longitude: typeof body.longitude === 'number' ? body.longitude : undefined,
+      useTrueSolarTime: typeof body.use_solar_time === 'boolean' ? body.use_solar_time : true,
+      childHourStrategy: body.strategy ?? 'late',
+    }
+  }
+}
+```
+
+---
+
+## 四、Pipeline 集成
+
+### 4.1 PipelineInput 结构
+
+```typescript
+// PipelineInput 使用 BirthData 作为唯一输入
+export interface PipelineInput {
+  birthData: BirthData
+  options?: {
+    includeAnalysis?: boolean
+    includeAI?: boolean
+    aiModel?: string
+  }
+}
+```
+
+### 4.2 PipelineContext 结构
+
+```typescript
+// PipelineContext 在流程中传递 BirthData
+export interface PipelineContext {
+  birthData: BirthData
+  chart?: BaZiChart
+  analysis?: AnalysisResult
+  aiResult?: AIResult
+  startTime: number
+}
+```
+
+### 4.3 PipelineResult 结构
+
+```typescript
+// PipelineResult 包含原始 BirthData
+export interface PipelineResult {
+  success: boolean
+  birthData: BirthData
+  chart?: BaZiChart
+  analysis?: AnalysisResult
+  aiResult?: AIResult
+  error?: string
+  duration: number
+}
+```
+
+### 4.4 Pipeline 数据流
+
+```
+BirthData
+    ↓
+runBaZiPipeline(input: PipelineInput)
+    ↓
+Step 1: 计算真太阳时（如果 useTrueSolarTime）
+    ↓
+Step 2: 排盘（Calculator）
+    ↓
+Step 3: 分析（Analyzer）
+    ↓
+Step 4: AI 报告（可选）
+    ↓
+PipelineResult（包含 BirthData）
+```
+
+---
+
+## 五、迁移路线图
+
+### 5.1 迁移步骤（修正版）
 
 | 步骤 | 内容 | 影响范围 | 风险 |
 |------|------|---------|------|
-| **Step 1** | 在 core/types/birth.ts 定义 BirthData | 新增文件 | Low |
-| **Step 2** | 在 core/index.ts 导出 BirthData | Core 模块 | Low |
-| **Step 3** | 修改 Calculator，支持 BirthData | calculator.ts | Medium |
-| **Step 4** | 修改 Pipeline，使用 BirthData | pipeline/* | Medium |
-| **Step 5** | 修改 API Route，使用 BirthData | server/routes/bazi.ts | Medium |
-| **Step 6** | 修改 Hook，使用 BirthData | hooks/useBazi.ts | Medium |
-| **Step 7** | 修改 UI，使用 BirthData | pages/BaziInput.tsx, BaziChart.tsx | Medium |
-| **Step 8** | 修改 Database 类型，使用 BirthData | database/types.ts | High |
-| **Step 9** | 标记 BirthInfo @deprecated | types.ts | Low |
-| **Step 10** | 清理旧接口调用 | 全项目 | Medium |
+| **Step 1** | 完成所有引用统计（已完成） | 全项目 | Low |
+| **Step 2** | 在 core/types/birth.ts 定义 BirthData | 新增文件 | Low |
+| **Step 3** | 在 core/adapters/ 建立 Adapter（BirthInfoAdapter/ChartAdapter/ApiAdapter） | 新增文件 | Low |
+| **Step 4** | 在 core/index.ts 导出 BirthData + Adapter | Core 模块 | Low |
+| **Step 5** | Calculator 支持 BirthData（内部使用 Adapter 兼容旧接口） | calculator.ts | Medium |
+| **Step 6** | Pipeline 使用 BirthData（PipelineInput/Context/Result） | pipeline/* | Medium |
+| **Step 7** | API Route 使用 BirthData + ApiAdapter | server/routes/bazi.ts | Medium |
+| **Step 8** | Hook 使用 BirthData | hooks/useBazi.ts | Medium |
+| **Step 9** | UI 使用 BirthData | pages/BaziInput.tsx, BaziChart.tsx | Medium |
+| **Step 10** | BirthInfo 标记 @deprecated | types.ts | Low |
+| **Step 11** | 删除旧接口调用（Sprint C） | 全项目 | Medium |
 
-### 3.2 迁移顺序
+### 5.2 迁移顺序
 
 ```
-Step 1: 定义 BirthData（Core）
+Step 1: 引用统计（已完成）
        ↓
-Step 2: 导出 BirthData
+Step 2: 定义 BirthData（Core）
        ↓
-Step 3: Calculator 支持 BirthData（核心）
+Step 3: 建立 Adapter（兼容层）
        ↓
-Step 4: Pipeline 使用 BirthData
+Step 4: 导出 BirthData + Adapter
        ↓
-Step 5: API Route 使用 BirthData
+Step 5: Calculator 支持 BirthData（核心）
        ↓
-Step 6: Hook 使用 BirthData
+Step 6: Pipeline 使用 BirthData（唯一入口）
        ↓
-Step 7: UI 使用 BirthData
+Step 7: API Route 使用 BirthData
        ↓
-Step 8: Database 类型更新
+Step 8: Hook 使用 BirthData
        ↓
-Step 9: BirthInfo @deprecated
+Step 9: UI 使用 BirthData
        ↓
-Step 10: 清理旧接口
+Step 10: BirthInfo @deprecated
+       ↓
+Step 11: 删除旧接口（Sprint C）
 ```
 
-### 3.3 兼容性策略
+### 5.3 兼容性策略
 
 ```
 过渡期（Sprint A → Sprint C）：
 
 旧接口（BirthInfo）：
 ├── @deprecated 标记
+├── 通过 BirthInfoAdapter 转换为 BirthData
 ├── 保留完整功能
-├── 内部自动转换为 BirthData
 └── 禁止新增调用
 
 新接口（BirthData）：
@@ -171,15 +323,21 @@ Step 10: 清理旧接口
 ├── 全量功能
 └── 新增代码必须使用
 
+Adapter：
+├── BirthInfoAdapter（BirthInfo → BirthData）
+├── ChartAdapter（Chart → BirthData）
+├── ApiRequestBodyAdapter（API Body → BirthData）
+└── 保证迁移期间不破坏现有业务
+
 Sprint C 结束后：
-└── 删除 BirthInfo（Sprint D 清理）
+└── 删除 BirthInfo + Adapter（Sprint D 清理）
 ```
 
 ---
 
-## 四、字段映射
+## 六、字段映射
 
-### 4.1 旧 → 新 字段映射
+### 6.1 BirthInfo → BirthData
 
 | 旧字段（BirthInfo） | 新字段（BirthData） | 转换规则 |
 |-------------------|-------------------|---------|
@@ -189,15 +347,15 @@ Sprint C 结束后：
 | timezone | timezone | 直接映射 |
 | region | location | 重命名 |
 | solarTime | useTrueSolarTime | 重命名（布尔值相同） |
-| ❌ | longitude | 需要从 Database/API 补充 |
-| ❌ | latitude | 需要从 Database/API 补充 |
-| ❌ | childHourStrategy | 需要从 options 补充 |
+| ❌ | longitude | 默认 undefined |
+| ❌ | latitude | 默认 undefined |
+| ❌ | childHourStrategy | 默认 'late' |
 | ❌ | calendarType | 默认 'solar' |
 | ❌ | trueSolarTime | 计算后填充 |
 | ❌ | birthTimeUnknown | 默认 false |
 | ❌ | hash | 计算后填充 |
 
-### 4.2 Database → BirthData 映射
+### 6.2 Database Chart → BirthData
 
 | Database 字段 | BirthData 字段 | 转换规则 |
 |--------------|--------------|---------|
@@ -212,7 +370,7 @@ Sprint C 结束后：
 | use_solar_time | useTrueSolarTime | 重命名 |
 | birth_time_unknown | birthTimeUnknown | 直接映射 |
 
-### 4.3 API → BirthData 映射
+### 6.3 API → BirthData
 
 | API 字段 | BirthData 字段 | 转换规则 |
 |---------|--------------|---------|
@@ -225,61 +383,14 @@ Sprint C 结束后：
 
 ---
 
-## 五、转换函数设计
+## 七、迁移影响评估
 
-### 5.1 BirthInfo → BirthData
-
-```typescript
-export function birthInfoToBirthData(info: BirthInfo): BirthData {
-  return {
-    birthday: info.birthDate,
-    birthTime: info.birthTime,
-    gender: info.gender,
-    timezone: info.timezone,
-    location: info.region,
-    useTrueSolarTime: info.solarTime,
-  }
-}
-```
-
-### 5.2 Database Chart → BirthData
-
-```typescript
-export function chartToBirthData(chart: Chart): BirthData {
-  return {
-    birthday: chart.birth_date,
-    birthTime: chart.birth_time,
-    gender: chart.gender,
-    location: chart.birthplace ?? undefined,
-    timezone: chart.timezone ?? undefined,
-    longitude: chart.longitude ?? undefined,
-    latitude: chart.latitude ?? undefined,
-    childHourStrategy: chart.zishi_strategy,
-    useTrueSolarTime: chart.use_solar_time,
-    birthTimeUnknown: chart.birth_time_unknown,
-  }
-}
-```
-
-### 5.3 BirthData → Hash
-
-```typescript
-export function calculateBirthDataHash(data: BirthData): string {
-  const { birthday, birthTime, gender, longitude, latitude, timezone, childHourStrategy } = data
-  const input = `${birthday}|${birthTime}|${gender}|${longitude ?? 0}|${latitude ?? 0}|${timezone ?? ''}|${childHourStrategy ?? 'late'}`
-  return crypto.createHash('sha256').update(input).digest('hex')
-}
-```
-
----
-
-## 六、迁移影响评估
-
-### 6.1 模块影响
+### 7.1 模块影响
 
 | 模块 | 改动量 | 风险等级 | 验证方式 |
 |------|:-----:|:--------:|---------|
 | Core | 新增文件 | Low | 编译通过 |
+| Adapter | 新增文件 | Low | 编译通过 |
 | Calculator | 修改参数 | Medium | 单元测试 |
 | Pipeline | 修改参数 | Medium | 集成测试 |
 | API Route | 修改请求处理 | Medium | API 测试 |
@@ -287,33 +398,36 @@ export function calculateBirthDataHash(data: BirthData): string {
 | UI | 修改表单和状态 | Medium | E2E 测试 |
 | Database | 类型定义 | High | 数据库测试 |
 
-### 6.2 风险清单
+### 7.2 风险清单
 
 | 风险 | 等级 | 说明 | 缓解措施 |
 |------|:----:|------|---------|
 | Database 字段名变更 | High | birthplace → location | 双写过渡，逐步清理 |
 | 真太阳时参数名不一致 | Medium | solarTime / useSolarTime / use_solar_time | 统一为 useTrueSolarTime |
 | 子时策略参数名不一致 | Medium | ziShiStrategy / zishi_strategy / strategy | 统一为 childHourStrategy |
-| 经纬度缺失于 BirthInfo | Medium | 旧数据可能没有经纬度 | 提供默认值和城市坐标查询 |
+| 经纬度缺失于 BirthInfo | Medium | 旧数据可能没有经纬度 | Adapter 提供默认值 |
 | UI 表单字段变更 | Medium | 用户输入字段调整 | 保持表单字段向后兼容 |
+| Pipeline 成为唯一入口 | Medium | 现有直接调用需迁移 | 逐步迁移，禁止新增直接调用 |
 
 ---
 
-## 七、验证计划
+## 八、验证计划
 
-### 7.1 验证步骤
+### 8.1 验证步骤
 
 | 步骤 | 验证内容 | 工具 | 通过条件 |
 |------|---------|------|---------|
 | 1 | BirthData 定义正确 | tsc | 0 error |
-| 2 | Calculator 支持 BirthData | vitest | 单元测试通过 |
-| 3 | 金标准命例验证 | vitest | GD-B001~B008 通过 |
-| 4 | API 接口验证 | curl/postman | 响应正确 |
-| 5 | UI 表单验证 | E2E | 表单提交成功 |
-| 6 | Database 映射验证 | vitest | 类型兼容 |
-| 7 | Hash 计算验证 | vitest | 相同输入相同 hash |
+| 2 | Adapter 转换正确 | vitest | Adapter 测试通过 |
+| 3 | Calculator 支持 BirthData | vitest | 单元测试通过 |
+| 4 | Pipeline 使用 BirthData | vitest | 集成测试通过 |
+| 5 | 金标准命例验证 | vitest | GD-B001~B008 通过 |
+| 6 | API 接口验证 | curl/postman | 响应正确 |
+| 7 | UI 表单验证 | E2E | 表单提交成功 |
+| 8 | Database 映射验证 | vitest | 类型兼容 |
+| 9 | Hash 计算验证 | vitest | 相同输入相同 hash |
 
-### 7.2 回归测试
+### 8.2 回归测试
 
 必须运行的测试：
 - `npx vitest run fourPillars`（四柱推算）
@@ -322,32 +436,34 @@ export function calculateBirthDataHash(data: BirthData): string {
 
 ---
 
-## 八、完成标准
+## 九、完成标准（DoD）
 
 | # | 标准 | 验证方式 |
 |---|------|---------|
 | 1 | BirthData 在 core/types 定义 | `grep 'interface BirthData' src/lib/core/types/` |
-| 2 | core/index.ts 导出 BirthData | `grep 'BirthData' src/lib/core/index.ts` |
-| 3 | Calculator 支持 BirthData | calculateBaZi 参数包含 BirthData |
-| 4 | Pipeline 使用 BirthData | runBaZiPipeline 参数为 BirthData |
-| 5 | API Route 使用 BirthData | bazi.ts 导入 BirthData |
-| 6 | Hook 使用 BirthData | useBazi.ts 导入 BirthData |
-| 7 | UI 使用 BirthData | BaziInput.tsx 导入 BirthData |
-| 8 | BirthInfo 标记 @deprecated | `grep '@deprecated' src/lib/bazi/types.ts` |
-| 9 | 全量测试通过 | `npx vitest run` |
-| 10 | 金标准命例通过 | `npx vitest run fourPillars` |
+| 2 | Adapter 在 core/adapters 定义 | `ls src/lib/core/adapters/` |
+| 3 | core/index.ts 导出 BirthData + Adapter | `grep 'BirthData\|Adapter' src/lib/core/index.ts` |
+| 4 | Calculator 支持 BirthData | calculateBaZi 参数包含 BirthData |
+| 5 | Pipeline 使用 BirthData | runBaZiPipeline 参数为 PipelineInput<BirthData> |
+| 6 | API Route 使用 BirthData | bazi.ts 导入 BirthData + ApiAdapter |
+| 7 | Hook 使用 BirthData | useBazi.ts 导入 BirthData |
+| 8 | UI 使用 BirthData | BaziInput.tsx 导入 BirthData |
+| 9 | BirthInfo 标记 @deprecated | `grep '@deprecated' src/lib/bazi/types.ts` |
+| 10 | Adapter 覆盖所有旧接口 | 三个 Adapter 都存在 |
+| 11 | 全量测试通过 | `npx vitest run`（228/228） |
+| 12 | 金标准命例通过 | `npx vitest run fourPillars` |
 
 ---
 
-## 九、下一步
+## 十、下一步
 
-1. **确认此迁移计划**
-2. **开始执行 Step 1-10**
-3. **每步验证后提交**
-4. **完成后输出 Architecture Review A-02**
+1. **开始执行 Step 2-10**
+2. **每步验证后提交**
+3. **完成后输出 Architecture Review A-02**
+4. **进入 A-03 Calculator Pure Compute**
 
 ---
 
-**文档版本**：v1  
+**文档版本**：v2  
 **生效日期**：2026-07-03  
-**下次更新**：Migration 开始前确认
+**状态**：Approved

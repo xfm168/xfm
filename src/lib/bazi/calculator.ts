@@ -29,6 +29,8 @@ import {
   CANG_GAN,
   getStemElement,
   getStemYinYang,
+  BirthData,
+  BirthInfoAdapter,
 } from '@/lib/core'
 
 // 各模块
@@ -344,4 +346,107 @@ export {
   getHourGanZhi,
   getSolarTermDate,
   getYearSolarTerms,
+}
+
+// ========== BirthData 支持（新入口） ==========
+
+export function calculateBaZiFromBirthData(
+  birthData: BirthData,
+): BaZiChart {
+  const [year, month, day] = birthData.birthday.split('-').map(Number)
+  const [hours, minutes] = birthData.birthTime.split(':').map(Number)
+
+  let birthDate = new Date(year, month - 1, day, hours, minutes)
+
+  if (birthData.useTrueSolarTime) {
+    const coord = birthData.longitude !== undefined
+      ? { longitude: birthData.longitude, latitude: birthData.latitude ?? 0 }
+      : getCityCoordinate(birthData.location ?? '')
+    const solarResult = calculateSolarTime(birthDate, coord)
+    birthDate = solarResult.solarTime
+  }
+
+  const { chartDate, hourIndex } = resolveChartDate(birthDate, birthData.childHourStrategy)
+
+  const yearGanZhi = getYearGanZhi(chartDate)
+  const monthGanZhi = getMonthGanZhi(chartDate, yearGanZhi.gan)
+  const dayGanZhi = getDayGanZhi(chartDate)
+  const hourGanZhi = getHourGanZhi(hourIndex, dayGanZhi.gan)
+
+  const sixLines: SixLines = {
+    year: yearGanZhi,
+    month: monthGanZhi,
+    day: dayGanZhi,
+    hour: hourGanZhi,
+  }
+
+  const relatedShens = getRelatedShens(dayGanZhi.gan)
+
+  const enrichedSixLines: SixLines = {
+    year: { ...sixLines.year, shenShi: relatedShens[sixLines.year.gan], changSheng: getChangSheng(dayGanZhi.gan, sixLines.year.zhi) },
+    month: { ...sixLines.month, shenShi: relatedShens[sixLines.month.gan], changSheng: getChangSheng(dayGanZhi.gan, sixLines.month.zhi) },
+    day: { ...sixLines.day, shenShi: relatedShens[sixLines.day.gan], changSheng: getChangSheng(dayGanZhi.gan, sixLines.day.zhi) },
+    hour: { ...sixLines.hour, shenShi: relatedShens[sixLines.hour.gan], changSheng: getChangSheng(dayGanZhi.gan, sixLines.hour.zhi) },
+  }
+
+  const fiveElementCount = calculateFiveElementCount(enrichedSixLines)
+
+  const strengthResult = calculateStrength(enrichedSixLines, dayGanZhi.gan, monthGanZhi.zhi)
+
+  const geJuResult = determineGeJu(
+    enrichedSixLines,
+    relatedShens,
+    strengthResult.strengthScore,
+    dayGanZhi.gan,
+    monthGanZhi.zhi,
+    fiveElementCount,
+  )
+
+  const dayMaster: DayMasterAnalysis = {
+    dayGan: dayGanZhi.gan,
+    dayGanElement: dayGanZhi.element as FiveElement,
+    dayGanYinYang: dayGanZhi.yinYang,
+    relatedShens,
+    wangShuai: strengthResult.wangShuai,
+    strengthScore: strengthResult.strengthScore,
+  }
+
+  const xiYongResult = determineXiYongShen(
+    strengthResult.strengthScore,
+    strengthResult.wangShuai,
+    geJuResult.name,
+    dayGanZhi.element as FiveElement,
+  )
+
+  const xiYongShen: XiYongShen = {
+    bestElement: xiYongResult.bestElement,
+    happiness: xiYongResult.description,
+    usage: `喜${xiYongResult.bestElement}，忌${xiYongResult.avoidedElements.join('、')}。`,
+    avoidedElements: xiYongResult.avoidedElements,
+  }
+
+  const analysis: BaZiAnalysis = { ...DEFAULT_BAZI_ANALYSIS }
+  const overallScore = Math.round(60 + (strengthResult.strengthScore / 100) * 40)
+
+  const birthInfo: BirthInfo = {
+    birthDate: birthData.birthday,
+    birthTime: birthData.birthTime,
+    gender: birthData.gender,
+    timezone: birthData.timezone,
+    region: birthData.location,
+    solarTime: birthData.useTrueSolarTime,
+  }
+
+  return {
+    birthInfo,
+    sixLines: enrichedSixLines,
+    fiveElementCount,
+    dayMaster,
+    cangGan: CANG_GAN,
+    xiYongShen,
+    analysis,
+    overallScore,
+    version: '3.0',
+    createdAt: Date.now(),
+  }
 }

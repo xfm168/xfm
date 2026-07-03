@@ -53,5 +53,12 @@ export {
   DEFAULT_USE_TRUE_SOLAR_TIME,
 } from './config'
 
+// ─── Adapter ───
+export {
+  BirthInfoAdapter,
+  ChartAdapter,
+  ApiRequestBodyAdapter,
+} from './adapters/birthDataAdapter'
+
 // ─── 基础值对象 ───
 export type { GanZhi, SixLines, FiveElementCount, CangGanMap } from './base'

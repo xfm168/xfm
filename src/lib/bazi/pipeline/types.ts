@@ -6,12 +6,26 @@ import type { BaZiChart, BirthInfo, XiYongShen } from '../types'
 import type { GeJuResult } from '../geju'
 import type { XiYongShenResult } from '../xiyongshen'
 import type { BaZiKnowledgeEntry } from '../knowledge/types'
+import type { BirthData } from '@/lib/core'
 
 export interface BaZiAnalysisOptions {
   includeAI?: boolean
   detailed?: boolean
   includeLuck?: boolean
   years?: number
+}
+
+export interface BaZiPipelineInput {
+  birthData: BirthData
+  options?: BaZiAnalysisOptions
+}
+
+export interface BaZiPipelineContext {
+  birthData: BirthData
+  chart?: BaZiChart
+  geJu?: GeJuResult
+  xiYongShen?: XiYongShenResult
+  startTime: number
 }
 
 export interface BaZiPipelineStep {
@@ -29,6 +43,8 @@ export interface BaZiScore {
 }
 
 export interface BaZiPipelineResult {
+  success: boolean
+  birthData: BirthData
   chart: BaZiChart
   geJu: GeJuResult
   xiYongShen: XiYongShenResult
@@ -40,6 +56,8 @@ export interface BaZiPipelineResult {
   detailed: boolean
   createdAt: number
   version: string
+  error?: string
+  duration: number
 }
 
 export interface BaZiAIReport {

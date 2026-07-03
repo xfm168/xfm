@@ -20,9 +20,10 @@
  */
 
 import { Hono } from 'hono'
-import { calculateBaZi } from '../../lib/bazi/calculator'
-import type { BirthInfo, BaZiChart } from '../../lib/bazi/types'
+import { calculateBaZiFromBirthData } from '../../lib/bazi/calculator'
+import type { BaZiChart } from '../../lib/bazi/types'
 import { ApiError } from '../middleware/error'
+import { BirthData, ApiRequestBodyAdapter } from '@/lib/core'
 
 const app = new Hono()
 
@@ -85,21 +86,21 @@ app.post('/', async (c) => {
 
   // ── 调用排盘算法 ──────────────────────────
   // P0-② 子时策略 + P0-③ 真太阳时
-  const birthInfo: BirthInfo = {
-    birthDate: birth_date,
+  const birthData: BirthData = {
+    birthday: birth_date,
     birthTime: body.birth_time as string,
     gender,
-    ...(typeof body.timezone === 'string' ? { timezone: body.timezone } : {}),
-    ...(typeof body.birthplace === 'string' ? { region: body.birthplace } : {}),
-    solarTime: useSolarTime,
+    timezone: typeof body.timezone === 'string' ? body.timezone : undefined,
+    location: typeof body.birthplace === 'string' ? body.birthplace : undefined,
+    longitude: typeof body.longitude === 'number' ? body.longitude : undefined,
+    useTrueSolarTime: useSolarTime,
+    childHourStrategy: strategy,
+    birthTimeUnknown: birthTimeUnknown,
   }
-
-  // 经度：优先请求体，否则从城市名推算
-  const longitude = typeof body.longitude === 'number' ? body.longitude : undefined
 
   let chart: BaZiChart
   try {
-    chart = calculateBaZi(birthInfo, { ziShiStrategy: strategy, useSolarTime, longitude })
+    chart = calculateBaZiFromBirthData(birthData)
   } catch (err) {
     console.error('[bazi] 排盘失败:', err)
     throw ApiError.internal('排盘计算失败', {

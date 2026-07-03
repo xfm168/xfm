@@ -2,7 +2,8 @@ import { useState, FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageTitle, Button, Card } from '../components/ui'
 import { useBazi } from '../hooks/useBazi'
-import { calculateBaZi, type BirthInfo } from '../lib/bazi'
+import { calculateBaZiFromBirthData } from '../lib/bazi'
+import type { BirthData } from '@/lib/core'
 import './BaziInput.css'
 
 export default function BaziInput() {
@@ -19,19 +20,19 @@ export default function BaziInput() {
     setCalculating(true)
 
     setTimeout(() => {
-      const info: BirthInfo = {
-        birthDate,
+      const birthData: BirthData = {
+        birthday: birthDate,
         birthTime,
         gender,
         timezone: 'Asia/Shanghai',
-        solarTime: false,
+        useTrueSolarTime: false,
       }
 
-      const chart = calculateBaZi(info)
+      const chart = calculateBaZiFromBirthData(birthData)
       saveChart(chart)
 
       setCalculating(false)
-      navigate('/bazi/chart', { state: { birthInfo: info } })
+      navigate('/bazi/chart', { state: { birthData } })
     }, 800)
   }
 

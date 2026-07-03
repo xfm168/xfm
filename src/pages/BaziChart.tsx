@@ -4,8 +4,9 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import { calculateBaZi, type FiveElement, type BirthInfo, type BaZiAnalysis } from '../lib/bazi'
+import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
+import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
 type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'xiyong' | 'analysis'
@@ -32,11 +33,11 @@ export default function BaziChart() {
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const { saveChart, charts } = useBazi()
 
-  const birthInfo = (location.state as { birthInfo?: BirthInfo } | null)?.birthInfo
+  const birthData = (location.state as { birthData?: BirthData } | null)?.birthData
 
   const [chart, setChart] = useState(() => {
-    if (birthInfo) {
-      const result = calculateBaZi(birthInfo)
+    if (birthData) {
+      const result = calculateBaZiFromBirthData(birthData)
       return result
     }
     if (charts.length > 0) {
