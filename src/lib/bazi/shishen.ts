@@ -13,22 +13,16 @@ import {
   SHISHEN_RULES,
 } from './rules/shishenRules'
 
+// ─── 统一从 Core 导入基础常量 ───
+import {
+  HEAVENLY_STEMS,
+  STEM_ELEMENT,
+  STEM_YINYANG,
+  getStemElement,
+  getStemYinYang,
+} from '@/lib/core'
+
 export type { ShenShi }
-
-const STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
-
-const STEM_ELEMENT: Record<HeavenlyStem, FiveElement> = {
-  甲: '木', 乙: '木',
-  丙: '火', 丁: '火',
-  戊: '土', 己: '土',
-  庚: '金', 辛: '金',
-  壬: '水', 癸: '水',
-}
-
-const STEM_YINYANG: Record<HeavenlyStem, '阳' | '阴'> = {
-  甲: '阳', 丙: '阳', 戊: '阳', 庚: '阳', 壬: '阳',
-  乙: '阴', 丁: '阴', 己: '阴', 辛: '阴', 癸: '阴',
-}
 
 /**
  * 计算两个天干之间的十神关系
@@ -51,24 +45,10 @@ export function getRelatedShens(dayGan: HeavenlyStem): Record<HeavenlyStem, Shen
 }
 
 /**
- * 获取天干的五行属性
- */
-export function getStemElement(gan: HeavenlyStem): FiveElement {
-  return STEM_ELEMENT[gan]
-}
-
-/**
- * 获取天干的阴阳属性
- */
-export function getStemYinYang(gan: HeavenlyStem): '阳' | '阴' {
-  return STEM_YINYANG[gan]
-}
-
-/**
  * 获取所有天干列表
  */
 export function getAllStems(): HeavenlyStem[] {
-  return [...STEMS]
+  return [...HEAVENLY_STEMS]
 }
 
 /**

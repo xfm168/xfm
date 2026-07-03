@@ -14,96 +14,22 @@ import type {
   CangGan,
 } from '../types'
 
-// ========== 类型定义 ==========
+// ─── 统一从 Core 导入基础常量 ───
+import {
+  STEM_ELEMENT,
+  STEM_YINYANG,
+  BRANCH_ELEMENT,
+  WANG_SHUAI_TABLE,
+  GENERATE,
+  OVERCOME,
+  getStemElement,
+  getBranchElement,
+  getWangShuai,
+} from '@/lib/core'
 
-export interface WuXingContext extends RuleContext {
-  sixLines: SixLines
-  dayGan: HeavenlyStem
-  dayElement: FiveElement
-  dayYinYang: YinYang
-  monthZhi: EarthlyBranch
-  monthElement: FiveElement
-  cangGanData: Record<EarthlyBranch, CangGan>
-}
-
-export interface StrengthBreakdown {
-  yueLingWeight: number
-  touGanWeight: number
-  cangGanWeight: number
-  tongGenDepth: number
-  sameParty: number
-  diffParty: number
-  heHuaChongKe: number
-}
-
-export interface StrengthResult {
-  strengthScore: number
-  level: '极弱' | '偏弱' | '中和' | '偏强' | '极强'
-  wangShuai: WuXingWangShuai
-  fiveElementScores: Record<FiveElement, number>
-  reasons: string[]
-  matchedRules: string[]
-  confidence: number
-  breakdown: StrengthBreakdown
-}
-
-export interface WuXingRuleResult extends RuleResult {
-  scoreAdjustment: number
-  reason: string
-}
-
-export type WuXingRule = BaseRule<WuXingContext, WuXingRuleResult>
-
-// ========== 基础数据 ==========
-
-const STEM_ELEMENT: Record<HeavenlyStem, FiveElement> = {
-  甲: '木', 乙: '木',
-  丙: '火', 丁: '火',
-  戊: '土', 己: '土',
-  庚: '金', 辛: '金',
-  壬: '水', 癸: '水',
-}
-
-const STEM_YINYANG: Record<HeavenlyStem, YinYang> = {
-  甲: '阳', 丙: '阳', 戊: '阳', 庚: '阳', 壬: '阳',
-  乙: '阴', 丁: '阴', 己: '阴', 辛: '阴', 癸: '阴',
-}
-
-const BRANCH_ELEMENT: Record<EarthlyBranch, FiveElement> = {
-  子: '水', 丑: '土', 寅: '木', 卯: '木',
-  辰: '土', 巳: '火', 午: '火', 未: '土',
-  申: '金', 酉: '金', 戌: '土', 亥: '水',
-}
-
-const WANG_SHUAI_TABLE: Record<FiveElement, Record<FiveElement, WuXingWangShuai>> = {
-  木: { 木: '旺', 火: '相', 土: '死', 金: '囚', 水: '休' },
-  火: { 木: '休', 火: '旺', 土: '相', 金: '死', 水: '囚' },
-  土: { 木: '死', 火: '囚', 土: '旺', 金: '相', 水: '休' },
-  金: { 木: '囚', 火: '休', 土: '死', 金: '旺', 水: '相' },
-  水: { 木: '相', 火: '死', 土: '囚', 金: '休', 水: '旺' },
-}
-
-const GENERATE: Record<FiveElement, FiveElement> = {
-  木: '火', 火: '土', 土: '金', 金: '水', 水: '木',
-}
-
-const OVERCOME: Record<FiveElement, FiveElement> = {
-  木: '土', 土: '水', 水: '火', 火: '金', 金: '木',
-}
-
-// ========== 辅助函数 ==========
-
-function getGanElement(gan: HeavenlyStem): FiveElement {
-  return STEM_ELEMENT[gan]
-}
-
-function getZhiElement(zhi: EarthlyBranch): FiveElement {
-  return BRANCH_ELEMENT[zhi]
-}
-
-function getWangShuai(monthElement: FiveElement, dayElement: FiveElement): WuXingWangShuai {
-  return WANG_SHUAI_TABLE[monthElement][dayElement]
-}
+// ─── 兼容旧代码别名 ───
+const getGanElement = getStemElement
+const getZhiElement = getBranchElement
 
 function getSamePartyElements(dayElement: FiveElement): FiveElement[] {
   const yinElement = Object.entries(GENERATE).find(([_, v]) => v === dayElement)?.[0] as FiveElement

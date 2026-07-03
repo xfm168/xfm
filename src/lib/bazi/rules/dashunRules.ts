@@ -1,12 +1,16 @@
 import type { BaseRule, RuleContext, RuleResult } from './engine'
 import type { HeavenlyStem, EarthlyBranch, GanZhi, SolarTermName } from '../types'
 import { getYearSolarTerms } from '../solarTerms'
-import { getStemElement, getStemYinYang } from '../shishen'
 import { getNaYin } from '../nayin'
 
-const HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
-const EARTHLY_BRANCHES: EarthlyBranch[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
-const MONTH_BRANCHES: EarthlyBranch[] = ['寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑']
+// ─── 统一从 Core 导入基础常量 ───
+import {
+  HEAVENLY_STEMS,
+  EARTHLY_BRANCHES,
+  MONTH_BRANCHES,
+  getStemElement,
+  getStemYinYang,
+} from '@/lib/core'
 
 const TERM_ORDER: SolarTermName[] = [
   '小寒', '大寒', '立春', '雨水', '惊蛰', '春分',

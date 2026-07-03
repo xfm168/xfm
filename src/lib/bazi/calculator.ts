@@ -21,11 +21,21 @@ import type {
 
 import { DEFAULT_BAZI_ANALYSIS } from '../../constants/defaultAnalysis'
 
+// ─── 统一从 Core 导入基础常量 ───
+import {
+  HEAVENLY_STEMS,
+  EARTHLY_BRANCHES,
+  MONTH_BRANCHES,
+  CANG_GAN,
+  getStemElement,
+  getStemYinYang,
+} from '@/lib/core'
+
 // 各模块
 import { getSolarTermDate, getYearSolarTerms, getMonthZhiIndex, isAfterLiChun } from './solarTerms'
 import { getNaYin } from './nayin'
 import { getChangSheng } from './changsheng'
-import { getRelatedShens, getStemElement, getStemYinYang } from './shishen'
+import { getRelatedShens } from './shishen'
 import { determineGeJu } from './geju'
 import { calculateStrength } from './wuxing'
 import { determineXiYongShen } from './xiyongshen'
@@ -34,28 +44,6 @@ import { resolveChartDate, computeHourIndex } from './zishi'
 // P0-③ 真太阳时
 import { calculateSolarTime, getCityCoordinate } from './solarTime'
 export { calculateSolarTime, getCityCoordinate } from './solarTime'
-
-// 常量
-const HEAVENLY_STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
-const EARTHLY_BRANCHES: EarthlyBranch[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
-
-const MONTH_BRANCHES: EarthlyBranch[] = ['寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥', '子', '丑']
-
-// 藏干表
-const CANG_GAN: Record<EarthlyBranch, CangGan> = {
-  子: { ben: '癸', zhong: null, yao: null },
-  丑: { ben: '己', zhong: '辛', yao: '癸' },
-  寅: { ben: '甲', zhong: '丙', yao: '戊' },
-  卯: { ben: '乙', zhong: null, yao: null },
-  辰: { ben: '戊', zhong: '乙', yao: '癸' },
-  巳: { ben: '丙', zhong: '庚', yao: '戊' },
-  午: { ben: '丁', zhong: '己', yao: null },
-  未: { ben: '己', zhong: '丁', yao: '乙' },
-  申: { ben: '庚', zhong: '壬', yao: '戊' },
-  酉: { ben: '辛', zhong: null, yao: null },
-  戌: { ben: '戊', zhong: '辛', yao: '丁' },
-  亥: { ben: '壬', zhong: '甲', yao: null },
-}
 
 // ========== JDN 日柱算法 ==========
 
