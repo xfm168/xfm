@@ -91,5 +91,9 @@ export type { DaYunAnalysisStep, DaYunAnalysisResult } from './dayunAnalysis'
 export { analyzeLiuNian } from './liunianAnalysis'
 export type { LiuNianYear, LiuNianAnalysisResult } from './liunianAnalysis'
 
+// LiuYue Analysis (流月分析)
+export { analyzeLiuYue } from './liuyueAnalysis'
+export type { LiuYueMonth, LiuYueAnalysisResult } from './liuyueAnalysis'
+
 // P0-② 子时换日模块
 export * from './zishi'
