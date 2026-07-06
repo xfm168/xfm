@@ -9,12 +9,13 @@ import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'xiyong' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'xiyong' | 'analysis'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
   { key: 'wuxing', label: '五行' },
   { key: 'shenshi', label: '十神' },
+  { key: 'wangshuai', label: '旺衰' },
   { key: 'xiyong', label: '喜用神' },
   { key: 'analysis', label: '解析' },
 ]
@@ -226,6 +227,31 @@ export default function BaziChart() {
                   </div>
                 ))}
               </div>
+            </Card>
+          )}
+
+          {activeTab === 'wangshuai' && (
+            <Card className="bazi-wangshuai-card">
+              <h3 className="card-title">日主旺衰</h3>
+              <div className="wangshuai-main">
+                <div className="wangshuai-score">
+                  <ScoreRing score={dayMaster.strengthScore} size={140} />
+                </div>
+                <div className="wangshuai-info">
+                  <div className="wangshuai-level" style={{ color: ELEMENT_COLORS[dayMaster.dayGanElement] }}>
+                    {dayMaster.wangShuai}
+                  </div>
+                  <p className="wangshuai-label">旺衰等级</p>
+                </div>
+              </div>
+              <div className="wangshuai-details">
+                <p><strong>日主：</strong>{dayMaster.dayGan}{dayMaster.dayGanElement}</p>
+                <p><strong>强弱得分：</strong>{dayMaster.strengthScore} 分</p>
+              </div>
+              <p className="wangshuai-desc">
+                日主{dayMaster.wangShuai === '旺' ? '偏旺' : dayMaster.wangShuai === '弱' ? '偏弱' : dayMaster.wangShuai}，
+                {dayMaster.wangShuai === '旺' ? '需克制泄耗，宜用克泄耗五行' : dayMaster.wangShuai === '弱' ? '需生扶助力，宜用生助五行' : '五行相对平衡，喜用神选择需综合判断'}。
+              </p>
             </Card>
           )}
 

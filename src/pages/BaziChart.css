@@ -324,6 +324,64 @@
   margin: 0 0 var(--space-6) 0;
 }
 
+.wangshuai-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-4) 0;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.wangshuai-score {
+  flex-shrink: 0;
+}
+
+.wangshuai-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wangshuai-level {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  margin-bottom: var(--space-1);
+}
+
+.wangshuai-label {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.2em;
+  margin: 0;
+}
+
+.wangshuai-details {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.wangshuai-details p {
+  margin: 0 0 var(--space-1) 0;
+}
+
+.wangshuai-details p:last-child {
+  margin-bottom: 0;
+}
+
+.wangshuai-desc {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
 @media (max-width: 480px) {
   .pillar-gan {
     font-size: 1.2rem;
@@ -339,5 +397,9 @@
 
   .shenshi-name {
     font-size: 0.65rem;
+  }
+
+  .wangshuai-main {
+    gap: var(--space-4);
   }
 }
