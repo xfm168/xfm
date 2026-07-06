@@ -87,5 +87,9 @@ export type { ElementPowerDetail, FiveElementPowerResult } from './fiveElementPo
 export { analyzeDaYun } from './dayunAnalysis'
 export type { DaYunAnalysisStep, DaYunAnalysisResult } from './dayunAnalysis'
 
+// LiuNian Analysis (流年分析)
+export { analyzeLiuNian } from './liunianAnalysis'
+export type { LiuNianYear, LiuNianAnalysisResult } from './liunianAnalysis'
+
 // P0-② 子时换日模块
 export * from './zishi'

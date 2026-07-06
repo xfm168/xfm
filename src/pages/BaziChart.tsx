@@ -4,12 +4,12 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun } from '../lib/bazi'
+import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'analysis'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
@@ -20,6 +20,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'shensha', label: '神煞' },
   { key: 'xiyong', label: '喜用神' },
   { key: 'dayun', label: '大运' },
+  { key: 'liunian', label: '流年' },
   { key: 'analysis', label: '解析' },
 ]
 
@@ -78,6 +79,8 @@ export default function BaziChart() {
   })
 
   const [saved, setSaved] = useState(false)
+  const [expandedDayun, setExpandedDayun] = useState<number | null>(null)
+  const [expandedLiunian, setExpandedLiunian] = useState<number | null>(null)
 
   useEffect(() => {
     if (!chart && charts.length > 0) {
@@ -162,6 +165,14 @@ export default function BaziChart() {
     chartBirth.gender,
     [xiYongShen.bestElement],
     xiYongShen.avoidedElements,
+  )
+
+  const currentYear = new Date().getFullYear()
+  const liuNian = analyzeLiuNian(
+    sixLines,
+    dayMaster.dayGan,
+    currentYear,
+    100,
   )
 
   function handleSave() {
@@ -698,9 +709,12 @@ export default function BaziChart() {
                   {daYun.steps.map((step, idx) => (
                     <div
                       key={step.index}
-                      className={`dayun-item ${idx === daYun.currentStepIndex ? 'dayun-item--current' : ''}`}
+                      className={`dayun-item ${idx === daYun.currentStepIndex ? 'dayun-item--current' : ''} ${expandedDayun === step.index ? 'dayun-item--expanded' : ''}`}
                     >
-                      <div className="dayun-item-header">
+                      <div
+                        className="dayun-item-header"
+                        onClick={() => setExpandedDayun(expandedDayun === step.index ? null : step.index)}
+                      >
                         <div className="dayun-item-index">第{step.index}步</div>
                         <div className="dayun-item-ganzhi">
                           <span className="dayun-gan">{step.ganZhi.gan}</span>
@@ -708,6 +722,9 @@ export default function BaziChart() {
                         </div>
                         <div className="dayun-item-shenshi">
                           <Badge variant="default" size="sm">{step.shenShi.gan}</Badge>
+                        </div>
+                        <div className="dayun-item-toggle">
+                          {expandedDayun === step.index ? '收起 ▲' : '展开 ▼'}
                         </div>
                       </div>
                       <div className="dayun-item-info">
@@ -738,9 +755,103 @@ export default function BaziChart() {
                       <div className="dayun-item-summary">
                         {step.summary}
                       </div>
-                      <div className="dayun-item-detail">
-                        <p>{step.detail}</p>
+                      {expandedDayun === step.index && (
+                        <div className="dayun-item-detail">
+                          <p>{step.detail}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'liunian' && (
+            <div className="bazi-liunian-analysis">
+              <Card className="bazi-liunian-overview-card">
+                <h3 className="card-title">流年概览</h3>
+                <div className="liunian-overview-info">
+                  <p>显示未来100年流年运势，从 {liuNian.startYear} 年到 {liuNian.endYear} 年</p>
+                </div>
+              </Card>
+
+              <Card className="bazi-liunian-list-card">
+                <h3 className="card-title">流年列表</h3>
+                <div className="liunian-list">
+                  {liuNian.years.map((year) => (
+                    <div
+                      key={year.year}
+                      className={`liunian-item ${year.isCurrentYear ? 'liunian-item--current' : ''} ${expandedLiunian === year.year ? 'liunian-item--expanded' : ''}`}
+                    >
+                      <div
+                        className="liunian-item-header"
+                        onClick={() => setExpandedLiunian(expandedLiunian === year.year ? null : year.year)}
+                      >
+                        <div className="liunian-item-year">{year.year}年</div>
+                        <div className="liunian-item-ganzhi">
+                          <span className="liunian-gan">{year.ganZhi.gan}</span>
+                          <span className="liunian-zhi">{year.ganZhi.zhi}</span>
+                        </div>
+                        <div className="liunian-item-shenshi">
+                          <Badge variant="default" size="sm">{year.shenShi.gan}</Badge>
+                        </div>
+                        <div className="liunian-item-toggle">
+                          {expandedLiunian === year.year ? '收起 ▲' : '展开 ▼'}
+                        </div>
                       </div>
+                      <div className="liunian-item-relations">
+                        {year.chong.length > 0 && (
+                          <Badge variant="error" size="sm">冲</Badge>
+                        )}
+                        {year.he.length > 0 && (
+                          <Badge variant="success" size="sm">合</Badge>
+                        )}
+                        {year.xing.length > 0 && (
+                          <Badge variant="warning" size="sm">刑</Badge>
+                        )}
+                        {year.hai.length > 0 && (
+                          <Badge variant="error" size="sm">害</Badge>
+                        )}
+                        {year.po.length > 0 && (
+                          <Badge variant="default" size="sm">破</Badge>
+                        )}
+                      </div>
+                      <div className="liunian-item-score">
+                        <div className="liunian-score-bar">
+                          <div
+                            className="liunian-score-fill"
+                            style={{
+                              width: `${year.score}%`,
+                              background: year.score >= 70 ? 'var(--success)' : year.score >= 50 ? 'var(--gold-500)' : 'var(--error)'
+                            }}
+                          />
+                        </div>
+                        <span className="liunian-score-value">{year.score}分</span>
+                      </div>
+                      <div className="liunian-item-summary">
+                        {year.summary}
+                      </div>
+                      {expandedLiunian === year.year && (
+                        <div className="liunian-item-detail">
+                          <p>{year.detail}</p>
+                          {year.chong.length > 0 && (
+                            <p><strong>冲：</strong>{year.chong.join('、')}</p>
+                          )}
+                          {year.he.length > 0 && (
+                            <p><strong>合：</strong>{year.he.join('、')}</p>
+                          )}
+                          {year.xing.length > 0 && (
+                            <p><strong>刑：</strong>{year.xing.join('、')}</p>
+                          )}
+                          {year.hai.length > 0 && (
+                            <p><strong>害：</strong>{year.hai.join('、')}</p>
+                          )}
+                          {year.po.length > 0 && (
+                            <p><strong>破：</strong>{year.po.join('、')}</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
