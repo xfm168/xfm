@@ -34,7 +34,7 @@
  */
 
 export * from './types'
-export { calculateBaZi, HEAVENLY_STEMS, EARTHLY_BRANCHES, getDayGanZhi, getYearGanZhi, getMonthGanZhi, getHourGanZhi, getSolarTermDate, getYearSolarTerms } from './calculator'
+export { calculateBaZi, calculateBaZiFromBirthData, HEAVENLY_STEMS, EARTHLY_BRANCHES, getDayGanZhi, getYearGanZhi, getMonthGanZhi, getHourGanZhi, getSolarTermDate, getYearSolarTerms } from './calculator'
 
 // Rule Engine (统一入口)
 export { executeRules, createRule } from './rules/engine'
