@@ -4,18 +4,19 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis } from '../lib/bazi'
+import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'xiyong' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'xiyong' | 'analysis'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
   { key: 'wuxing', label: '五行' },
   { key: 'shenshi', label: '十神' },
   { key: 'wangshuai', label: '旺衰' },
+  { key: 'geju', label: '格局' },
   { key: 'xiyong', label: '喜用神' },
   { key: 'analysis', label: '解析' },
 ]
@@ -97,6 +98,15 @@ export default function BaziChart() {
   }
 
   const { sixLines, fiveElementCount, dayMaster, xiYongShen, overallScore, birthInfo: chartBirth } = chart
+
+  const geJu = determineGeJu(
+    sixLines,
+    dayMaster.relatedShens,
+    dayMaster.strengthScore,
+    dayMaster.dayGan,
+    sixLines.month.zhi,
+    fiveElementCount,
+  )
 
   function handleSave() {
     if (chart) {
@@ -252,6 +262,49 @@ export default function BaziChart() {
                 日主{dayMaster.wangShuai === '旺' ? '偏旺' : dayMaster.wangShuai === '弱' ? '偏弱' : dayMaster.wangShuai}，
                 {dayMaster.wangShuai === '旺' ? '需克制泄耗，宜用克泄耗五行' : dayMaster.wangShuai === '弱' ? '需生扶助力，宜用生助五行' : '五行相对平衡，喜用神选择需综合判断'}。
               </p>
+            </Card>
+          )}
+
+          {activeTab === 'geju' && (
+            <Card className="bazi-geju-card">
+              <h3 className="card-title">格局分析</h3>
+              <div className="geju-main">
+                <div className="geju-name">{geJu.name}</div>
+                <Badge variant={geJu.isSpecial ? 'gold' : 'primary'} size="sm">
+                  {geJu.isSpecial ? '变格' : '正格'}
+                </Badge>
+              </div>
+              <div className="geju-score-row">
+                <div className="geju-score-item">
+                  <ScoreRing score={geJu.score} size={100} />
+                  <p className="geju-score-label">成格评分</p>
+                </div>
+                <div className="geju-score-item">
+                  <ScoreRing score={geJu.confidence} size={100} />
+                  <p className="geju-score-label">可信度</p>
+                </div>
+                <div className="geju-score-item">
+                  <ScoreRing score={geJu.pureScore} size={100} />
+                  <p className="geju-score-label">清纯度</p>
+                </div>
+              </div>
+              <div className="geju-details">
+                <p><strong>等级：</strong>{geJu.grade}</p>
+                <p><strong>可信度原因：</strong>{geJu.confidenceReason}</p>
+                <p><strong>破格：</strong>{geJu.poGe ? '是' : '否'}</p>
+                {geJu.poGe && geJu.poGeReason && (
+                  <p><strong>破格原因：</strong>{geJu.poGeReason}</p>
+                )}
+              </div>
+              <div className="geju-reasons">
+                <p className="geju-reasons-title">判断依据：</p>
+                <ul className="geju-reasons-list">
+                  {geJu.reasons.map((reason, idx) => (
+                    <li key={idx}>{reason}</li>
+                  ))}
+                </ul>
+              </div>
+              <p className="geju-desc">{geJu.description}</p>
             </Card>
           )}
 

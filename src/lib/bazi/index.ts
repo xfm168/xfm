@@ -67,5 +67,9 @@ export { generateBaZiAIReport } from './ai'
 export { default as baziKnowledge } from './knowledge'
 export type { BaZiKnowledgeEntry, KnowledgeStats, KnowledgeCategory } from './knowledge/types'
 
+// GeJu (格局系统)
+export { determineGeJu } from './geju'
+export type { GeJuResult } from './geju'
+
 // P0-② 子时换日模块
 export * from './zishi'
