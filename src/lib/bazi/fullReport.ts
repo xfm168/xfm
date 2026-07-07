@@ -12,6 +12,7 @@ import type { CareerAnalysisResult } from './careerAnalysis'
 import type { WealthAnalysisResult } from './wealthAnalysis'
 import type { HealthAnalysisResult } from './healthAnalysis'
 import type { FengShuiAnalysisResult } from './fengshuiAnalysis'
+import type { DaYunAnalysisResult } from './dayunAnalysis'
 
 export interface ReportChapter {
   id: string
@@ -41,6 +42,7 @@ export interface FullReportInput {
   wealth: WealthAnalysisResult
   health: HealthAnalysisResult
   fengshui: FengShuiAnalysisResult
+  daYun: DaYunAnalysisResult
 }
 
 function generateChapter1_overview(input: FullReportInput): string {
@@ -322,19 +324,192 @@ function generateChapter10_health(input: FullReportInput): string {
   return lines.join('\n')
 }
 
+function getDayunCareerAdvice(shenShi: { gan: string; zhi: string }, isXi: boolean, isJi: boolean, score: number): string {
+  const gan = shenShi.gan as string
+  const careerMap: Record<string, { xi: string[]; ji: string[]; mid: string[] }> = {
+    '正官': { xi: ['官运亨通，贵人提拔，职位升迁有望', '事业稳步上升，适合在体制内或大企业发展', '管理工作得心应手，领导能力受到认可'], ji: ['官杀压力大，职场竞争激烈，谨防小人排挤', '注意职场人际关系，避免卷入权力斗争', '不宜冒进，踏实做事方为上策'], mid: ['官星暗藏，事业变化不大，需主动争取机会', '适合稳中求进，不宜频繁跳槽'] },
+    '偏官': { xi: ['七杀化权，胆识过人，适合开创事业新局面', '突破常规，敢打敢拼，有领导才能', '竞争中获得优势，能攻克难关'], ji: ['压力过重，身体透支，注意劳逸结合', '易有口舌是非，谨防官非诉讼', '小人当道，做事需低调谨慎'], mid: ['事业有挑战也有机遇，需审时度势', '遇事冷静应对，不可冲动行事'] },
+    '正印': { xi: ['印星护身，学业有成，考试顺利', '上司赏识，文化教育类事业大吉', '适合进修学习，考取资格证书'], ji: ['依赖心过重，缺乏自主判断力', '长辈干预过多，需有自己的主见', '文书方面易出纰漏，需仔细核对'], mid: ['学业运平稳，适合提升专业技能', '适合从事教育、文化、出版等事业'] },
+    '偏印': { xi: ['偏印得力，灵感充沛，适合创作研究', '技艺类事业大放异彩，专利、版权收益佳', '玄学、宗教、心理学等领域有所建树'], ji: ['思虑过重，容易钻牛角尖', '事业方向摇摆不定，缺乏持续动力', '人际关系冷淡，需主动沟通交流'], mid: ['思维活跃，适合技术、研发、设计类工作', '可发展副业或兼职'] },
+    '比肩': { xi: ['朋友相助，合伙经营有利', '同辈贵人多，人脉资源广', '适合团队协作，共同发展'], ji: ['竞争激烈，容易被取代', '合伙易生纠纷，不宜合伙创业', '开销增大，钱财难聚'], mid: ['朋友运一般，需靠自己努力', '竞争中求合作，合作中求共赢'] },
+    '劫财': { xi: ['竞争带来动力，反而激发斗志', '社交活跃，人际关系广泛', '适合销售、贸易等竞争性行业'], ji: ['破财风险极大，不宜投资借贷', '小人多，谨防被骗', '感情易有第三者介入'], mid: ['财运平稳，不宜贪大求全', '守住本分，稳健发展'] },
+    '食神': { xi: ['食神吐秀，才华得到充分展现', '口福好，社交宴会增多，拓展人脉', '创意类事业大吉，文艺创作丰收'], ji: ['贪图享乐，不思进取', '过于理想化，落地执行不足', '注意控制饮食，防止肥胖及三高'], mid: ['生活惬意，适合从事餐饮、美容、艺术等行业', '心情愉悦，工作效率较高'] },
+    '伤官': { xi: ['伤官配印，才华横溢，创新突破', '口才极佳，适合律师、讲师、咨询师', '敢于打破常规，事业焕发新机'], ji: ['口舌是非多，易得罪领导', '恃才傲物，人际关系紧张', '感情波折，需多沟通包容'], mid: ['才华出众但需低调行事', '适合技术、艺术、自媒体等自由职业'] },
+    '正财': { xi: ['正财旺运，收入稳步增长', '努力付出有丰厚回报，加薪升职', '适合从事商业、金融、贸易类工作'], ji: ['因贪财而误事，需财外求财', '过度劳累赚钱，损害健康', '投资需谨慎，不宜冒险'], mid: ['收入稳定，适合稳扎稳打', '理财需有规划，不宜冲动消费'] },
+    '偏财': { xi: ['偏财运旺，意外之财频频', '投资眼光独到，理财收益丰厚', '人缘极佳，贵人带来商机'], ji: ['贪财冒险，血本无归', '桃花过旺，感情复杂', '一夜暴富心态不可取'], mid: ['有偏财机会但需谨慎把握', '适合做投资但不宜重仓'] },
+  }
+  const map = careerMap[gan] || careerMap['比肩']
+  if (isXi) return map.xi[0]
+  if (isJi) return map.ji[0]
+  return map.mid[0]
+}
+
+function getDayunWealthAdvice(shenShi: { gan: string; zhi: string }, isXi: boolean, isJi: boolean, score: number): string {
+  const gan = shenShi.gan as string
+  if (['正财', '偏财'].includes(gan)) {
+    if (isXi) return score >= 70 ? '财运大旺，正偏财兼得，投资获利丰厚，是积累财富的黄金十年' : '财运不错，收入增长，适合稳健理财，积少成多'
+    if (isJi) return '财星虽现但受克，求财辛苦，易因借贷、担保破财，需严控开支'
+    return '财运平淡，收入稳定，不宜投机冒险，宜勤俭持家'
+  }
+  if (['食神', '伤官'].includes(gan)) {
+    if (isXi) return '食伤生财，靠才华技能赚钱，副业收入可观，适合发展创意经济'
+    if (isJi) return '食伤泄身太过，身体消耗大，赚钱花费也大，存不住钱'
+    return '靠技术和才华赚钱，收入尚可，可考虑兼职或副业增加收入'
+  }
+  if (['比肩', '劫财'].includes(gan)) {
+    if (isXi) return '比劫帮身，人脉带来财运，合伙经营有利，但需防合伙纠纷'
+    if (isJi) return '比劫争财，财运不聚，易因朋友借贷、合伙而破财，不宜大额投资'
+    return '社交花费较多，守财需谨慎，不宜借钱给人'
+  }
+  if (['正官', '偏官'].includes(gan)) {
+    if (isXi) return '官星护财，职位提升带来收入增长，正当收入丰厚'
+    if (isJi) return '官杀克身，工作压力大，收入难以提升，需注意职场变故'
+    return '工作稳定带来稳定收入，财运平淡但可靠'
+  }
+  // 印星
+  if (isXi) return '印星护身，有长辈贵人资助，学业提升带来未来财富'
+  if (isJi) return '印星受克，投资判断力下降，不宜大额投资，需多咨询专业人士'
+  return '偏重精神生活，财运平稳，适合稳中求财'
+}
+
+function getDayunMarriageAdvice(shenShi: { gan: string; zhi: string }, isXi: boolean, isJi: boolean, score: number): string {
+  const gan = shenShi.gan as string
+  if (['正财', '正官'].includes(gan)) {
+    if (isXi) return '婚姻宫稳固，夫妻感情和睦，家庭幸福美满'
+    if (isJi) return '财官受克，感情有波折，需多沟通理解，谨防冷战'
+    return '婚姻平稳，日常磕碰难免，需彼此包容'
+  }
+  if (['偏财', '偏官'].includes(gan)) {
+    if (isJi) return '偏星旺盛，桃花过旺，异性缘太好反成困扰，需守住本心'
+    if (isXi) return '异性缘好，社交活跃，单身者易遇良缘，已婚者需注意分寸'
+    return '感情生活较丰富，需以家庭为重，避免外界干扰'
+  }
+  if (['比肩', '劫财'].includes(gan)) {
+    if (isJi) return '比劫争妻/夫，感情有竞争者出现，婚姻面临考验'
+    if (isXi) return '伴侣关系平等，能共同奋斗，但需注意各自空间'
+    return '伴侣间需多沟通，避免因朋友社交引发矛盾'
+  }
+  if (['食神', '伤官'].includes(gan)) {
+    if (isJi) return '伤官克官，对伴侣挑剔苛刻，口舌争端增多，需改善沟通方式'
+    if (isXi) return '食伤运浪漫多情，感情生活丰富多彩，适合增进夫妻感情'
+    return '追求浪漫和品质生活，与伴侣的共同爱好增多'
+  }
+  if (isXi) return '印星护身，家庭和睦，长辈助力婚姻，生活安定'
+  if (isJi) return '印星受克，内心孤独感增强，与伴侣易产生隔阂，需多关心对方'
+  return '婚姻生活平淡安宁，注重精神交流'
+}
+
+function getDayunHealthAdvice(shenShi: { gan: string; zhi: string }, wangShuai: string, isXi: boolean, isJi: boolean, score: number): string {
+  const gan = shenShi.gan as string
+  const zhi = shenShi.zhi as string
+  const elementMap: Record<string, string> = {
+    '木': '肝胆系统', '火': '心血管系统', '土': '脾胃消化系统', '金': '肺及呼吸系统', '水': '肾脏泌尿系统',
+  }
+  const shenShiElementMap: Record<string, string> = {
+    '正官': '木', '偏官': '木', '正印': '火', '偏印': '火',
+    '比肩': '土', '劫财': '土', '食神': '金', '伤官': '金',
+    '正财': '水', '偏财': '水',
+  }
+  const relatedOrgan = elementMap[shenShiElementMap[gan] || '土']
+  if (['食神', '伤官'].includes(gan)) {
+    if (isJi) return `食伤泄身太过，${relatedOrgan}负担加重，注意饮食规律，避免暴饮暴食，定期体检`
+    return `食伤运注意${relatedOrgan}保养，饮食宜清淡，适当运动`
+  }
+  if (['比肩', '劫财'].includes(gan)) {
+    if (isJi) return `比劫旺争，${relatedOrgan}易失衡，注意外伤、意外，出行需谨慎`
+    return `身体消耗较大，注意休息充足，避免过度劳累`
+  }
+  if (['正官', '偏官'].includes(gan)) {
+    if (isJi) return `官杀克身，精神压力大，容易失眠焦虑，注意心理健康，建议冥想或瑜伽`
+    return `事业压力下需注意身体，保持规律作息，适度锻炼`
+  }
+  if (isXi && wangShuai === '旺' || wangShuai === '相') return '身体状态良好，精力充沛，但不可因此透支身体，保持良好作息'
+  if (isJi && (wangShuai === '囚' || wangShuai === '死')) return `大运${wangShuai}地，身体抵抗力下降，${relatedOrgan}需重点防护，建议定期体检`
+  return '健康无大碍，日常注意保养即可'
+}
+
+function getDayunOverallSuggestion(shenShi: { gan: string; zhi: string }, isXi: boolean, isJi: boolean, score: number, step: { startAge: number; endAge: number }): string {
+  if (isXi && score >= 75) return `此运为命主人生的黄金十年，正值${step.startAge}至${step.endAge}岁，应乘势而上，大胆开拓，把握一切机遇，成就人生高峰。`
+  if (isXi && score >= 60) return `${step.startAge}至${step.endAge}岁运势向好，宜积极进取，拓展事业版图，但不可骄傲自满，稳中求进。`
+  if (isJi && score <= 35) return `${step.startAge}至${step.endAge}岁为人生低谷期，宜韬光养晦，积蓄力量，保守稳健，切不可冒进。多读书、多学习、多运动，为下一个好运期做准备。`
+  if (isJi && score <= 50) return `${step.startAge}至${step.endAge}岁运势偏弱，做事多遇阻力，需耐心应对。保持低调，减少不必要的社交和投资，专注提升自身实力。`
+  return `${step.startAge}至${step.endAge}岁运势平稳，不温不火。宜保持平常心，稳扎稳打，不宜大起大落。可利用此阶段夯实基础，培养新技能。`
+}
+
 function generateChapter11_dayun(input: FullReportInput): string {
-  const { chart } = input
-  const lines = [
+  const { daYun, dayMaster } = input
+  const lines: string[] = [
     `## 十一、大运分析`,
     ``,
-    `大运是人生十年一个阶段的运势走向。根据命局推算，命主的大运走势如下：`,
+    `大运是人生每十年一个阶段的运势走向，反映了命主在不同人生阶段的吉凶祸福、事业起伏、财富聚散、婚姻走向和健康变化。`,
     ``,
-    `**起运年龄**：${chart.dayMaster.yunStartAge}岁。`,
+    `**日主**：${dayMaster.dayGan}（${dayMaster.dayGanElement}）`,
     ``,
-    `大运反映了人生不同阶段的运势起伏。在好运期间，应积极进取，把握机遇；在逆运期间，应稳扎稳打，积蓄力量。`,
+    `**起运信息**：${daYun.qiYun.qiYunAge}岁起运，${daYun.qiYun.isShun ? '顺行' : '逆行'}。`,
     ``,
-    `大运与流年相互作用，构成了人生的运势图谱。了解自己的大运走势，有助于在人生的关键节点做出正确的决策。`,
+    `**当前大运**：第${(daYun.currentStepIndex >= 0 ? daYun.currentStepIndex + 1 : '—')}步。`,
+    ``,
+    `命主一生共行${daYun.totalSteps}步大运，详细分析如下：`,
+    ``,
   ]
+
+  for (const step of daYun.steps) {
+    const ganZhiStr = `${step.ganZhi.gan}${step.ganZhi.zhi}`
+    const shenShiStr = `${step.shenShi.gan}（天干）、${step.shenShi.zhi}（地支本气）`
+    const jiXiLabel = step.isXi ? '吉' : step.isJi ? '凶' : '平'
+    const jiXiEmoji = step.isXi ? '✦ 吉运' : step.isJi ? '✧ 凶运' : '○ 平运'
+    const scoreBar = step.score >= 80 ? '████████░░' : step.score >= 60 ? '██████░░░░' : step.score >= 40 ? '████░░░░░░' : step.score <= 20 ? '██░░░░░░░░' : '█████░░░░░'
+    const isCurrent = step.index === daYun.currentStepIndex
+
+    lines.push(`### 第${step.index + 1}步大运：${ganZhiStr}（${step.startAge}～${step.endAge}岁）`)
+    if (isCurrent) {
+      lines.push(`**← 当前所在大运（${step.startYear}～${step.endYear}年）**`)
+    } else {
+      lines.push(`（${step.startYear}～${step.endYear}年）`)
+    }
+    lines.push(``)
+
+    lines.push(`| 项目 | 内容 |`)
+    lines.push(`|:---:|:---|`)
+    lines.push(`| 起止年龄 | ${step.startAge}岁 ～ ${step.endAge}岁 |`)
+    lines.push(`| 干支 | ${ganZhiStr} |`)
+    lines.push(`| 十神 | ${shenShiStr} |`)
+    lines.push(`| 旺衰 | ${step.wangShuai} |`)
+    lines.push(`| 运势 | ${jiXiEmoji}（${scoreBar} ${step.score}分）|`)
+    lines.push(``)
+
+    lines.push(`**【事业变化】**`)
+    lines.push(getDayunCareerAdvice(step.shenShi, step.isXi, step.isJi, step.score))
+    lines.push(``)
+
+    lines.push(`**【财富变化】**`)
+    lines.push(getDayunWealthAdvice(step.shenShi, step.isXi, step.isJi, step.score))
+    lines.push(``)
+
+    lines.push(`**【婚姻变化】**`)
+    lines.push(getDayunMarriageAdvice(step.shenShi, step.isXi, step.isJi, step.score))
+    lines.push(``)
+
+    lines.push(`**【健康变化】**`)
+    lines.push(getDayunHealthAdvice(step.shenShi, step.wangShuai, step.isXi, step.isJi, step.score))
+    lines.push(``)
+
+    lines.push(`**【此运总评】**`)
+    lines.push(step.detail)
+    lines.push(``)
+
+    lines.push(`**【建议】**`)
+    lines.push(getDayunOverallSuggestion(step.shenShi, step.isXi, step.isJi, step.score, step))
+    lines.push(``)
+    lines.push(`---`)
+    lines.push(``)
+  }
+
+  lines.push(`**大运总论**`)
+  lines.push(``)
+  lines.push(`命主一生运势起伏有序。吉运期间应抓住机遇、乘势而上；凶运期间应韬光养晦、稳扎稳打。大运与流年相互交织，吉凶互见。了解自身大运走势，有助于在人生关键节点做出明智决策，趋吉避凶，顺势而为。`)
+  lines.push(``)
+
   return lines.join('\n')
 }
 

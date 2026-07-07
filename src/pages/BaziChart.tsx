@@ -252,6 +252,7 @@ export default function BaziChart() {
     wealth,
     health,
     fengshui,
+    daYun,
   })
 
   function handleSave() {
