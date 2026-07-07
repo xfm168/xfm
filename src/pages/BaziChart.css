@@ -1465,3 +1465,276 @@
     gap: var(--space-4);
   }
 }
+
+/* ========== 婚姻分析 (P2) ========== */
+.bazi-marriage-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-marriage-score-card {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.marriage-score-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.marriage-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.marriage-score-level {
+  margin-top: var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+
+.bazi-marriage-palace-card {
+  padding: var(--space-5);
+}
+
+.marriage-palace-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.marriage-palace-zhi {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.palace-zhi-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.palace-zhi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.marriage-palace-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.bazi-marriage-relations-card {
+  padding: var(--space-5);
+}
+
+.marriage-relations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.marriage-relation-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.marriage-relation-item.severity-high {
+  border-left-color: var(--error);
+  background: rgba(212, 87, 58, 0.08);
+}
+
+.marriage-relation-item.severity-medium {
+  border-left-color: var(--warning);
+  background: rgba(196, 149, 106, 0.08);
+}
+
+.marriage-relation-item.severity-low {
+  border-left-color: var(--success);
+  background: rgba(74, 156, 109, 0.08);
+}
+
+.marriage-relation-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.marriage-relation-target {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.marriage-relation-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-marriage-shensha-card {
+  padding: var(--space-5);
+}
+
+.marriage-shensha-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.marriage-shensha-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  opacity: 0.7;
+}
+
+.marriage-shensha-item.hit {
+  opacity: 1;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid var(--gold-500);
+}
+
+.marriage-shensha-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.marriage-shensha-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.marriage-shensha-position {
+  font-size: 0.8rem;
+  color: var(--gold-500);
+  margin-bottom: var(--space-1);
+}
+
+.marriage-shensha-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-marriage-age-card {
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.marriage-age-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-4) 0;
+}
+
+.marriage-age-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold-500);
+}
+
+.marriage-age-unit {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.marriage-age-reason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  text-align: left;
+}
+
+.bazi-marriage-risks-card {
+  padding: var(--space-5);
+}
+
+.marriage-risks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.marriage-risk-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.marriage-risk-item.level-high {
+  border-left: 3px solid var(--error);
+}
+
+.marriage-risk-item.level-medium {
+  border-left: 3px solid var(--warning);
+}
+
+.marriage-risk-item.level-low {
+  border-left: 3px solid var(--success);
+}
+
+.marriage-risk-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.marriage-risk-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.marriage-risk-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-marriage-suggestions-card {
+  padding: var(--space-5);
+}
+
+.marriage-suggestions-list {
+  margin-top: var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.marriage-suggestions-list li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-2);
+}
+
+.bazi-marriage-summary-card {
+  padding: var(--space-5);
+}
+
+.marriage-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}

@@ -4,12 +4,12 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue } from '../lib/bazi'
+import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'analysis'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
@@ -22,6 +22,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'dayun', label: '大运' },
   { key: 'liunian', label: '流年' },
   { key: 'liuyue', label: '流月' },
+  { key: 'marriage', label: '婚姻' },
   { key: 'analysis', label: '解析' },
 ]
 
@@ -182,6 +183,12 @@ export default function BaziChart() {
     sixLines,
     dayMaster.dayGan,
     liuYueYear,
+  )
+
+  const marriage = analyzeMarriage(
+    sixLines,
+    dayMaster.dayGan,
+    chartBirth.gender,
   )
 
   function handleSave() {
@@ -965,6 +972,124 @@ export default function BaziChart() {
                     </div>
                   ))}
                 </div>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'marriage' && (
+            <div className="bazi-marriage-analysis">
+              <Card className="bazi-marriage-score-card">
+                <h3 className="card-title">婚恋评分</h3>
+                <div className="marriage-score-main">
+                  <ScoreRing score={marriage.score} size={160} />
+                  <p className="marriage-score-label">婚姻综合指数</p>
+                </div>
+                <div className="marriage-score-level">
+                  {marriage.score >= 80 ? '婚姻运势良好' :
+                   marriage.score >= 60 ? '婚姻有喜有忧' : '婚姻需谨慎'}
+                </div>
+              </Card>
+
+              <Card className="bazi-marriage-palace-card">
+                <h3 className="card-title">夫妻宫</h3>
+                <div className="marriage-palace-info">
+                  <div className="marriage-palace-zhi">
+                    <span className="palace-zhi-label">日支</span>
+                    <span className="palace-zhi-value">{marriage.spousePalace.zhi}</span>
+                    <Badge variant="gold" size="sm">{marriage.spousePalace.element}</Badge>
+                  </div>
+                  <p className="marriage-palace-desc">{marriage.spousePalace.description}</p>
+                </div>
+              </Card>
+
+              {marriage.relations.length > 0 && (
+                <Card className="bazi-marriage-relations-card">
+                  <h3 className="card-title">夫妻宫关系</h3>
+                  <div className="marriage-relations-list">
+                    {marriage.relations.map((rel, idx) => (
+                      <div key={idx} className={`marriage-relation-item severity-${rel.severity}`}>
+                        <div className="marriage-relation-header">
+                          <Badge
+                            variant={
+                              rel.type === '冲' ? 'error' :
+                              rel.type === '刑' ? 'warning' :
+                              rel.type === '害' ? 'warning' :
+                              rel.type === '破' ? 'default' : 'success'
+                            }
+                            size="sm"
+                          >
+                            {rel.type}
+                          </Badge>
+                          <span className="marriage-relation-target">{rel.target}</span>
+                        </div>
+                        <p className="marriage-relation-desc">{rel.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+
+              <Card className="bazi-marriage-shensha-card">
+                <h3 className="card-title">婚姻神煞</h3>
+                <div className="marriage-shensha-grid">
+                  {marriage.shenSha.map((item, idx) => (
+                    <div key={idx} className={`marriage-shensha-item ${item.inPosition ? 'hit' : ''}`}>
+                      <div className="marriage-shensha-header">
+                        <span className="marriage-shensha-name">{item.name}</span>
+                        <Badge variant={item.inPosition ? 'success' : 'default'} size="sm">
+                          {item.inPosition ? '命中' : '无'}
+                        </Badge>
+                      </div>
+                      {item.inPosition && (
+                        <p className="marriage-shensha-position">位置：{item.position}</p>
+                      )}
+                      <p className="marriage-shensha-desc">{item.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-marriage-age-card">
+                <h3 className="card-title">最佳结婚年龄</h3>
+                <div className="marriage-age-main">
+                  <span className="marriage-age-value">{marriage.bestMarriageAge.min}-{marriage.bestMarriageAge.max}</span>
+                  <span className="marriage-age-unit">岁</span>
+                </div>
+                <p className="marriage-age-reason">{marriage.bestMarriageAge.reason}</p>
+              </Card>
+
+              <Card className="bazi-marriage-risks-card">
+                <h3 className="card-title">婚姻风险</h3>
+                <div className="marriage-risks-list">
+                  {marriage.risks.map((risk, idx) => (
+                    <div key={idx} className={`marriage-risk-item level-${risk.level}`}>
+                      <div className="marriage-risk-header">
+                        <span className="marriage-risk-name">{risk.type}</span>
+                        <Badge
+                          variant={risk.level === 'high' ? 'error' : risk.level === 'medium' ? 'warning' : 'default'}
+                          size="sm"
+                        >
+                          {risk.level === 'high' ? '高风险' : risk.level === 'medium' ? '中风险' : '低风险'}
+                        </Badge>
+                      </div>
+                      <p className="marriage-risk-desc">{risk.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-marriage-suggestions-card">
+                <h3 className="card-title">改善建议</h3>
+                <ul className="marriage-suggestions-list">
+                  {marriage.suggestions.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </Card>
+
+              <Card className="bazi-marriage-summary-card">
+                <h3 className="card-title">婚姻总结</h3>
+                <p className="marriage-summary-text">{marriage.summary}</p>
               </Card>
             </div>
           )}

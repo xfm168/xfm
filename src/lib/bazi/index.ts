@@ -95,5 +95,9 @@ export type { LiuNianYear, LiuNianAnalysisResult } from './liunianAnalysis'
 export { analyzeLiuYue } from './liuyueAnalysis'
 export type { LiuYueMonth, LiuYueAnalysisResult } from './liuyueAnalysis'
 
+// Marriage Analysis (婚姻分析 P2)
+export { analyzeMarriage } from './marriageAnalysis'
+export type { MarriageAnalysisResult, MarriageShenSha, SpousePalaceRelation, MarriageRisk } from './marriageAnalysis'
+
 // P0-② 子时换日模块
 export * from './zishi'
