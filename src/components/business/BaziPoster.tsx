@@ -4,21 +4,13 @@
  */
 import { useRef } from 'react'
 import html2canvas from 'html2canvas'
-import type { BaZiChart } from '../lib/bazi'
-import type { FiveElement } from '../lib/bazi'
+import type { BaZiChart, FiveElement } from '../../lib/bazi'
+import { ELEMENT_COLORS } from '../../lib/bazi'
 import './BaziPoster.css'
 
 interface BaziPosterProps {
   chart: BaZiChart
   onClose: () => void
-}
-
-const ELEMENT_COLORS: Record<FiveElement, string> = {
-  木: '#4a9c6d',
-  火: '#d4573a',
-  土: '#c4956a',
-  金: '#d4af37',
-  水: '#4a7ab8',
 }
 
 export default function BaziPoster({ chart, onClose }: BaziPosterProps) {

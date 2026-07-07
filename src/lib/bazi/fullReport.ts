@@ -649,44 +649,23 @@ function generateChapter14_liuyue(input: FullReportInput): string {
   const xiongMonths = liuYue.months.filter(m => m.jiXiong === '凶' || m.jiXiong === '大凶')
   const pingMonths = liuYue.months.filter(m => m.jiXiong === '平')
 
-  // 吉月
-  if (jiMonths.length > 0) {
-    lines.push(`### 吉月`)
+  // 吉月/凶月/平月分类表格（统一辅助函数）
+  function pushMonthTable(lines: string[], title: string, months: typeof liuYue.months) {
+    if (months.length === 0) return
+    lines.push(`### ${title}`)
     lines.push(``)
     lines.push(`| 月份 | 干支 | 十神 | 吉凶 | 评分 | 注意事项 |`)
     lines.push(`|:---:|:---:|:---:|:---:|:---:|:---|`)
-    for (const m of jiMonths) {
+    for (const m of months) {
       const ganZhiStr = `${m.ganZhi.gan}${m.ganZhi.zhi}`
       lines.push(`| ${m.monthName} | ${ganZhiStr} | ${m.shenShi.gan} / ${m.shenShi.zhi} | ${m.jiXiong} | ${m.score} | ${m.notice} |`)
     }
     lines.push(``)
   }
 
-  // 凶月
-  if (xiongMonths.length > 0) {
-    lines.push(`### 凶月`)
-    lines.push(``)
-    lines.push(`| 月份 | 干支 | 十神 | 吉凶 | 评分 | 注意事项 |`)
-    lines.push(`|:---:|:---:|:---:|:---:|:---:|:---|`)
-    for (const m of xiongMonths) {
-      const ganZhiStr = `${m.ganZhi.gan}${m.ganZhi.zhi}`
-      lines.push(`| ${m.monthName} | ${ganZhiStr} | ${m.shenShi.gan} / ${m.shenShi.zhi} | ${m.jiXiong} | ${m.score} | ${m.notice} |`)
-    }
-    lines.push(``)
-  }
-
-  // 平月
-  if (pingMonths.length > 0) {
-    lines.push(`### 平月`)
-    lines.push(``)
-    lines.push(`| 月份 | 干支 | 十神 | 吉凶 | 评分 | 注意事项 |`)
-    lines.push(`|:---:|:---:|:---:|:---:|:---:|:---|`)
-    for (const m of pingMonths) {
-      const ganZhiStr = `${m.ganZhi.gan}${m.ganZhi.zhi}`
-      lines.push(`| ${m.monthName} | ${ganZhiStr} | ${m.shenShi.gan} / ${m.shenShi.zhi} | ${m.jiXiong} | ${m.score} | ${m.notice} |`)
-    }
-    lines.push(``)
-  }
+  pushMonthTable(lines, '吉月', jiMonths)
+  pushMonthTable(lines, '凶月', xiongMonths)
+  pushMonthTable(lines, '平月', pingMonths)
 
   // 逐月详细分析
   lines.push(`### 逐月详析`)

@@ -18,6 +18,7 @@ import {
   generateFullReport, type FullReportResult,
   type FiveElementPowerResult,
   exportMarkdown, exportWord, exportPdf,
+  ELEMENT_COLORS,
 } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
@@ -43,14 +44,6 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'fengshui', label: '风水' },
   { key: 'analysis', label: '解析' },
 ]
-
-const ELEMENT_COLORS: Record<FiveElement, string> = {
-  木: '#4a9c6d',
-  火: '#d4573a',
-  土: '#c4956a',
-  金: '#d4af37',
-  水: '#4a7ab8',
-}
 
 function getRadarPoints(scale: number): string {
   const points: string[] = []
@@ -111,7 +104,7 @@ export default function BaziChart() {
   // 分步 Loading 状态
   const [loadingStep, setLoadingStep] = useState(0)
   const [analysisReady, setAnalysisReady] = useState(false)
-  const analysisRef = useRef<{
+  const analysisRef = useRef<Partial<{
     geJu: GeJuResult
     shenSha: ShenShaCategory[]
     shenShiAnalysis: ShenShiAnalysisResult
@@ -125,7 +118,7 @@ export default function BaziChart() {
     health: HealthAnalysisResult
     fengshui: FengShuiAnalysisResult
     fullReport: FullReportResult
-  } | null>(null)
+  }>>({})
 
   useEffect(() => {
     if (!chart && charts.length > 0) {
@@ -147,44 +140,44 @@ export default function BaziChart() {
       () => {
         const g = determineGeJu(sixLines, dayMaster.relatedShens, dayMaster.strengthScore, dayMaster.dayGan, sixLines.month.zhi, fiveElementCount)
         const s = calculateShenSha(sixLines, dayMaster.dayGan, chartBirth.gender)
-        analysisRef.current = { ...analysisRef.current!, geJu: g, shenSha: s } as any
+        analysisRef.current = { ...analysisRef.current, geJu: g, shenSha: s }
         setLoadingStep(2)
       },
       () => {
         const ss = analyzeShenShi(sixLines, dayMaster.dayGan, chartBirth.gender)
         const fe = calculateFiveElementPower(sixLines, dayMaster.dayGan)
-        analysisRef.current = { ...analysisRef.current!, shenShiAnalysis: ss, fiveElementPower: fe } as any
+        analysisRef.current = { ...analysisRef.current, shenShiAnalysis: ss, fiveElementPower: fe }
         setLoadingStep(3)
       },
       () => {
         const dy = analyzeDaYun(sixLines, birthDate, dayMaster.dayGan, chartBirth.gender, [xiYongShen.bestElement], xiYongShen.avoidedElements)
         const ln = analyzeLiuNian(sixLines, dayMaster.dayGan, currentYear, 100)
-        analysisRef.current = { ...analysisRef.current!, daYun: dy, liuNian: ln } as any
+        analysisRef.current = { ...analysisRef.current, daYun: dy, liuNian: ln }
         setLoadingStep(4)
       },
       () => {
         const ly = analyzeLiuYue(sixLines, dayMaster.dayGan, currentYear)
-        analysisRef.current = { ...analysisRef.current!, liuYue: ly } as any
+        analysisRef.current = { ...analysisRef.current, liuYue: ly }
         setLoadingStep(5)
       },
       () => {
         const m = analyzeMarriage(sixLines, dayMaster.dayGan, chartBirth.gender)
-        const c = analyzeCareer(sixLines, dayMaster.dayGan, chartBirth.gender, analysisRef.current!.shenShiAnalysis, analysisRef.current!.geJu, analysisRef.current!.fiveElementPower)
-        analysisRef.current = { ...analysisRef.current!, marriage: m, career: c } as any
+        const c = analyzeCareer(sixLines, dayMaster.dayGan, chartBirth.gender, analysisRef.current.shenShiAnalysis!, analysisRef.current.geJu!, analysisRef.current.fiveElementPower!)
+        analysisRef.current = { ...analysisRef.current, marriage: m, career: c }
         setLoadingStep(6)
       },
       () => {
         const w = analyzeWealth(sixLines, dayMaster.dayGan, analysisRef.current!.shenShiAnalysis, analysisRef.current!.liuNian, analysisRef.current!.geJu)
         const h = analyzeHealth(sixLines, dayMaster.dayGan, analysisRef.current!.fiveElementPower)
         const f = analyzeFengShui(sixLines, dayMaster.dayGan, xiYongShen, analysisRef.current!.fiveElementPower, analysisRef.current!.shenShiAnalysis.details[0]?.name || '')
-        analysisRef.current = { ...analysisRef.current!, wealth: w, health: h, fengshui: f } as any
+        analysisRef.current = { ...analysisRef.current, wealth: w, health: h, fengshui: f }
         setLoadingStep(7)
       },
       () => {
         const r = generateFullReport({
           chart, sixLines, dayMaster,
           geJu: analysisRef.current!.geJu,
-          wangShuai: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements },
+          wangShuai: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements, level: dayMaster.wangShuai },
           shenShiAnalysis: analysisRef.current!.shenShiAnalysis,
           fiveElementPower: analysisRef.current!.fiveElementPower,
           shenSha: analysisRef.current!.shenSha,
@@ -323,19 +316,20 @@ export default function BaziChart() {
   const { sixLines, fiveElementCount, dayMaster, xiYongShen, overallScore, birthInfo: chartBirth } = chart
 
   // 从 analysisRef 读取计算结果（分步 Loading 完成后可用）
-  const geJu = analysisRef.current?.geJu!
-  const shenSha = analysisRef.current?.shenSha!
-  const shenShiAnalysis = analysisRef.current?.shenShiAnalysis!
-  const fiveElementPower = analysisRef.current?.fiveElementPower!
-  const daYun = analysisRef.current?.daYun!
-  const liuNian = analysisRef.current?.liuNian!
-  const liuYue = analysisRef.current?.liuYue!
-  const marriage = analysisRef.current?.marriage!
-  const career = analysisRef.current?.career!
-  const wealth = analysisRef.current?.wealth!
-  const health = analysisRef.current?.health!
-  const fengshui = analysisRef.current?.fengshui!
-  const fullReport = analysisRef.current?.fullReport!
+  const a = analysisRef.current!
+  const geJu = a.geJu!
+  const shenSha = a.shenSha!
+  const shenShiAnalysis = a.shenShiAnalysis!
+  const fiveElementPower = a.fiveElementPower!
+  const daYun = a.daYun!
+  const liuNian = a.liuNian!
+  const liuYue = a.liuYue!
+  const marriage = a.marriage!
+  const career = a.career!
+  const wealth = a.wealth!
+  const health = a.health!
+  const fengshui = a.fengshui!
+  const fullReport = a.fullReport!
 
   function handleSave() {
     if (chart) {

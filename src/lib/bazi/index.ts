@@ -82,6 +82,7 @@ export type { ShenShiDetail, ShenShiAnalysisResult, ShenShiPower, ShenShiCombina
 // FiveElement Power (五行力量分析)
 export { calculateFiveElementPower } from './fiveElementPower'
 export type { ElementPowerDetail, FiveElementPowerResult } from './fiveElementPower'
+export { ELEMENT_COLORS } from './fiveElementPower'
 
 // DaYun Analysis (大运分析)
 export { analyzeDaYun } from './dayunAnalysis'
