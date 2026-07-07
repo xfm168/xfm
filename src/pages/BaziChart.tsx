@@ -5,7 +5,7 @@ import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
 import {
-  calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis,
+  calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, type BaZiChart,
   determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory,
   analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower,
   analyzeDaYun, analyzeLiuNian, analyzeLiuYue,
@@ -98,6 +98,8 @@ export default function BaziChart() {
   })
 
   const [saved, setSaved] = useState(false)
+  const [compareTarget, setCompareTarget] = useState<BaZiChart | null>(null)
+  const [showHistory, setShowHistory] = useState(false)
   const [expandedDayun, setExpandedDayun] = useState<number | null>(null)
   const [expandedLiunian, setExpandedLiunian] = useState<number | null>(null)
   const [expandedChapters, setExpandedChapters] = useState<Set<number>>(() => new Set([0, 1, 2]))
@@ -341,6 +343,106 @@ export default function BaziChart() {
     }
   }
 
+  function renderComparePanel() {
+    if (!compareTarget || !chart) return null
+    const a = chart
+    const b = compareTarget
+    const labels = ['年柱', '月柱', '日柱', '时柱']
+    const aLines = [a.sixLines.year, a.sixLines.month, a.sixLines.day, a.sixLines.hour]
+    const bLines = [b.sixLines.year, b.sixLines.month, b.sixLines.day, b.sixLines.hour]
+
+    return (
+      <div className="bazi-compare-panel">
+        {/* 四柱对比 */}
+        <div className="bazi-compare-block">
+          <h4 className="bazi-compare-block-title">四柱对比</h4>
+          <div className="bazi-compare-table">
+            <div className="bazi-compare-row bazi-compare-row--header">
+              <span className="bazi-compare-cell">柱</span>
+              <span className="bazi-compare-cell">当前命盘</span>
+              <span className="bazi-compare-cell">对比命盘</span>
+              <span className="bazi-compare-cell">差异</span>
+            </div>
+            {labels.map((label, i) => {
+              const aGanZhi = `${aLines[i].gan}${aLines[i].zhi}`
+              const bGanZhi = `${bLines[i].gan}${bLines[i].zhi}`
+              const isSame = aGanZhi === bGanZhi
+              const aEl = aLines[i].element
+              const bEl = bLines[i].element
+              const elDiff = aEl !== bEl
+              return (
+                <div key={label} className={`bazi-compare-row${!isSame || elDiff ? ' bazi-compare-row--diff' : ''}`}>
+                  <span className="bazi-compare-cell">{label}</span>
+                  <span className="bazi-compare-cell">{aGanZhi}<small> {aEl}</small></span>
+                  <span className="bazi-compare-cell">{bGanZhi}<small> {bEl}</small></span>
+                  <span className="bazi-compare-cell">
+                    {isSame && !elDiff ? '—' : `${elDiff ? `${aEl}→${bEl}` : ''}`}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* 五行对比 */}
+        <div className="bazi-compare-block">
+          <h4 className="bazi-compare-block-title">五行对比</h4>
+          <div className="bazi-compare-table">
+            <div className="bazi-compare-row bazi-compare-row--header">
+              <span className="bazi-compare-cell">五行</span>
+              <span className="bazi-compare-cell">当前</span>
+              <span className="bazi-compare-cell">对比</span>
+            </div>
+            {(['木', '火', '土', '金', '水'] as FiveElement[]).map(el => {
+              const aVal = a.fiveElementCount[el] || 0
+              const bVal = b.fiveElementCount[el] || 0
+              const isDiff = aVal !== bVal
+              return (
+                <div key={el} className={`bazi-compare-row${isDiff ? ' bazi-compare-row--diff' : ''}`}>
+                  <span className="bazi-compare-cell" style={{ color: ELEMENT_COLORS[el] }}>{el}</span>
+                  <span className="bazi-compare-cell">{aVal}</span>
+                  <span className="bazi-compare-cell">{bVal}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* 喜用神 + 旺衰 + 评分 */}
+        <div className="bazi-compare-block">
+          <h4 className="bazi-compare-block-title">命盘指标对比</h4>
+          <div className="bazi-compare-table">
+            <div className="bazi-compare-row bazi-compare-row--header">
+              <span className="bazi-compare-cell">指标</span>
+              <span className="bazi-compare-cell">当前</span>
+              <span className="bazi-compare-cell">对比</span>
+            </div>
+            <div className="bazi-compare-row">
+              <span className="bazi-compare-cell">日主</span>
+              <span className="bazi-compare-cell">{a.dayMaster.dayGan}</span>
+              <span className="bazi-compare-cell">{b.dayMaster.dayGan}</span>
+            </div>
+            <div className={`bazi-compare-row${a.dayMaster.wangShuai !== b.dayMaster.wangShuai ? ' bazi-compare-row--diff' : ''}`}>
+              <span className="bazi-compare-cell">旺衰</span>
+              <span className="bazi-compare-cell">{a.dayMaster.wangShuai}</span>
+              <span className="bazi-compare-cell">{b.dayMaster.wangShuai}</span>
+            </div>
+            <div className={`bazi-compare-row${a.xiYongShen.bestElement !== b.xiYongShen.bestElement ? ' bazi-compare-row--diff' : ''}`}>
+              <span className="bazi-compare-cell">喜用神</span>
+              <span className="bazi-compare-cell">{a.xiYongShen.bestElement}</span>
+              <span className="bazi-compare-cell">{b.xiYongShen.bestElement}</span>
+            </div>
+            <div className={`bazi-compare-row${a.overallScore !== b.overallScore ? ' bazi-compare-row--diff' : ''}`}>
+              <span className="bazi-compare-cell">综合评分</span>
+              <span className="bazi-compare-cell">{a.overallScore}</span>
+              <span className="bazi-compare-cell">{b.overallScore}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const pillars = [
     { label: '年柱', ...sixLines.year },
     { label: '月柱', ...sixLines.month },
@@ -362,6 +464,48 @@ export default function BaziChart() {
           <ScoreRing score={overallScore} size={160} />
           <p className="bazi-score-label">命盘综合指数</p>
         </div>
+
+        {/* 历史命盘对比 */}
+        {charts.length > 0 && (
+          <div className="bazi-compare-section">
+            {!compareTarget ? (
+              <Button variant="ghost" fullWidth onClick={() => setShowHistory(!showHistory)}>
+                {showHistory ? '收起历史列表 ▲' : `历史对比（${charts.length}个命盘） ▼`}
+              </Button>
+            ) : (
+              <div className="bazi-compare-active">
+                <div className="bazi-compare-header">
+                  <span className="bazi-compare-label">对比中</span>
+                  <span className="bazi-compare-names">
+                    当前 vs {compareTarget.birthInfo.birthDate} {compareTarget.birthInfo.birthTime}
+                  </span>
+                  <Button variant="ghost" size="sm" onClick={() => { setCompareTarget(null); setShowHistory(false) }}>
+                    关闭对比
+                  </Button>
+                </div>
+                {renderComparePanel()}
+              </div>
+            )}
+            {showHistory && !compareTarget && (
+              <div className="bazi-history-list">
+                {charts.filter(c => c.createdAt !== chart?.createdAt).map(c => (
+                  <div key={c.createdAt} className="bazi-history-item" onClick={() => { setCompareTarget(c); setShowHistory(false) }}>
+                    <div className="bazi-history-info">
+                      <span className="bazi-history-date">{c.birthInfo.birthDate} {c.birthInfo.birthTime}</span>
+                      <span className="bazi-history-gender">{c.birthInfo.gender === 'male' ? '男' : '女'}</span>
+                      <span className="bazi-history-day">{c.sixLines.day.gan}{c.sixLines.day.zhi}</span>
+                      <Badge variant={c.overallScore >= 70 ? 'gold' : 'default'} size="sm">{c.overallScore}分</Badge>
+                    </div>
+                    <span className="bazi-history-arrow">→</span>
+                  </div>
+                ))}
+                {charts.filter(c => c.createdAt !== chart?.createdAt).length === 0 && (
+                  <p className="bazi-history-empty">暂无其他已保存命盘</p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="bazi-pillars">
           {pillars.map(pillar => (
