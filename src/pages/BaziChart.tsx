@@ -98,6 +98,7 @@ export default function BaziChart() {
   const [saved, setSaved] = useState(false)
   const [expandedDayun, setExpandedDayun] = useState<number | null>(null)
   const [expandedLiunian, setExpandedLiunian] = useState<number | null>(null)
+  const [expandedChapters, setExpandedChapters] = useState<Set<number>>(() => new Set([0, 1, 2]))
   const [expandedLiuyue, setExpandedLiuyue] = useState<number | null>(null)
 
   useEffect(() => {
@@ -1763,31 +1764,57 @@ ${fullReport.chapters.map(c => `<h2>${c.title}</h2>\n${c.content.replace(/\n/g, 
                 </div>
               </Card>
 
-              {fullReport.chapters.map((chapter, idx) => (
-                <Card key={idx} className="bazi-report-chapter-card" id={`chapter-${chapter.id}`}>
-                  <h3 className="report-chapter-title">{chapter.title}</h3>
-                  <div className="report-chapter-content">
-                    {chapter.content.split('\n').map((line, lidx) => {
-                      if (line.startsWith('## ')) {
-                        return <h4 key={lidx} className="report-section-title">{line.replace('## ', '')}</h4>
-                      }
-                      if (line.startsWith('### ')) {
-                        return <h5 key={lidx} className="report-subsection-title">{line.replace('### ', '')}</h5>
-                      }
-                      if (line.startsWith('- ')) {
-                        return <li key={lidx} className="report-list-item">{line.replace('- ', '')}</li>
-                      }
-                      if (line.startsWith('**') && line.endsWith('**')) {
-                        return <p key={lidx} className="report-bold">{line.replace(/\*\*/g, '')}</p>
-                      }
-                      if (line.trim() === '') {
-                        return <br key={lidx} />
-                      }
-                      return <p key={lidx} className="report-paragraph">{line}</p>
-                    })}
-                  </div>
-                </Card>
-              ))}
+              {fullReport.chapters.map((chapter, idx) => {
+                const isExpanded = expandedChapters.has(idx)
+                const isLong = chapter.content.length > 500
+                return (
+                  <Card key={idx} className="bazi-report-chapter-card" id={`chapter-${chapter.id}`}>
+                    <h3 className="report-chapter-title">{chapter.title}</h3>
+                    <div className={`report-chapter-content${isLong && !isExpanded ? ' collapsed' : ''}`}>
+                      {chapter.content.split('\n').map((line, lidx) => {
+                        if (line.startsWith('## ')) {
+                          return <h4 key={lidx} className="report-section-title">{line.replace('## ', '')}</h4>
+                        }
+                        if (line.startsWith('### ')) {
+                          return <h5 key={lidx} className="report-subsection-title">{line.replace('### ', '')}</h5>
+                        }
+                        if (line.startsWith('- ')) {
+                          return <li key={lidx} className="report-list-item">{line.replace('- ', '')}</li>
+                        }
+                        if (line.startsWith('**') && line.endsWith('**')) {
+                          return <p key={lidx} className="report-bold">{line.replace(/\*\*/g, '')}</p>
+                        }
+                        if (line.trim() === '') {
+                          return <br key={lidx} />
+                        }
+                        return <p key={lidx} className="report-paragraph">{line}</p>
+                      })}
+                    </div>
+                    {isLong && !isExpanded && (
+                      <div
+                        className="report-collapse-toggle"
+                        onClick={() => setExpandedChapters(prev => new Set(prev).add(idx))}
+                      >
+                        展开全文 ▼
+                      </div>
+                    )}
+                    {isLong && isExpanded && (
+                      <div
+                        className="report-collapse-toggle"
+                        onClick={() => {
+                          setExpandedChapters(prev => {
+                            const next = new Set(prev)
+                            next.delete(idx)
+                            return next
+                          })
+                        }}
+                      >
+                        收起 ▲
+                      </div>
+                    )}
+                  </Card>
+                )
+              })}
             </div>
           )}
         </div>

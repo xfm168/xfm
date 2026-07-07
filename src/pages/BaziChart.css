@@ -2871,6 +2871,160 @@
   }
 }
 
+/* ============================================================
+   Mobile responsive optimization (commercial edition)
+   Only applies on screens <= 768px
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* ---------- 1. Tab horizontal scroll optimization ---------- */
+  .bazi-tabs {
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .bazi-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bazi-tab {
+    flex: none;
+    min-width: auto;
+    padding: 0 16px;
+    height: 48px;
+    scroll-snap-align: start;
+  }
+
+  /* ---------- 2. Card border-radius / shadow / spacing ---------- */
+  .bazi-chart-content {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .bazi-chart-content .card,
+  .bazi-chart-content .bazi-card,
+  .bazi-report-chapter-card,
+  .bazi-pillar-card,
+  .wuxing-radar-card,
+  .geju-card,
+  .wangshuai-card,
+  .xiyong-card,
+  .career-shishen-card,
+  .wealth-caiyun-card,
+  .health-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .bazi-pillars {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .dayun-item,
+  .liunian-item,
+  .liuyue-item,
+  .shensha-item,
+  .career-shishen-item,
+  .wealth-caiyun-item {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Analysis section gap tightening */
+  .bazi-full-report,
+  .bazi-dayun-list,
+  .bazi-liunian-list,
+  .bazi-liuyue-list,
+  .bazi-shensha-list,
+  .bazi-career-shishen-list,
+  .bazi-wealth-caiyun-list {
+    gap: var(--space-3);
+  }
+
+  /* ---------- 3. Chart auto-scaling ---------- */
+  .wuxing-radar-svg {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+  }
+
+  .wuxing-radar-container {
+    width: 100%;
+  }
+
+  /* ---------- 4. Font hierarchy adjustment ---------- */
+  .card-title {
+    font-size: 0.95rem;
+  }
+
+  .report-title {
+    font-size: 1.2rem;
+  }
+
+  .report-chapter-title {
+    font-size: 1rem;
+  }
+
+  .report-chapter-content {
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  .geju-name {
+    font-size: 1.2rem;
+  }
+
+  .wangshuai-level {
+    font-size: 2rem;
+  }
+
+  .xiyong-element {
+    font-size: 2.2rem;
+  }
+
+  /* ---------- 5. Long content collapse ---------- */
+  .report-chapter-content.collapsed {
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .report-chapter-content.collapsed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--bg-card)
+    );
+    pointer-events: none;
+  }
+
+  .report-collapse-toggle {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-2) 0;
+    cursor: pointer;
+    color: var(--gold-500);
+    font-size: 0.85rem;
+  }
+
+  /* ---------- 6. Touch target optimization ---------- */
+  .dayun-item-header,
+  .liunian-item-header,
+  .liuyue-item-header {
+    min-height: 44px;
+  }
+
+  .bazi-tab {
+    height: 48px;
+  }
+}
+
 /* Print styles for PDF export */
 @media print {
   .bazi-chart-header,
