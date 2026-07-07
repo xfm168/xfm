@@ -1,0 +1,275 @@
+/* ============================================================
+   命盘海报 - 分享图片
+   ============================================================ */
+
+/* 遮罩层 */
+.poster-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+}
+
+/* 操作按钮 */
+.poster-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.poster-btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.poster-btn:active {
+  opacity: 0.7;
+}
+
+.poster-btn--save {
+  background: #d4af37;
+  color: #fff;
+}
+
+.poster-btn--share {
+  background: #8B4513;
+  color: #fff;
+}
+
+.poster-btn--close {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* 海报容器 */
+.poster-container {
+  max-width: 420px;
+  width: 100%;
+}
+
+/* 海报卡片 */
+.poster-card {
+  background: linear-gradient(135deg, #1a1209 0%, #2d1f0e 50%, #1a1209 100%);
+  color: #f0e6d3;
+  padding: 32px 28px;
+  border-radius: 16px;
+  text-align: center;
+  font-family: "Noto Sans CJK SC", "Source Han Serif CN", "SimSun", serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 顶部装饰 */
+.poster-ornament-top {
+  font-size: 28px;
+  color: #d4af37;
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* 标题 */
+.poster-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #d4af37;
+  letter-spacing: 8px;
+  margin-bottom: 4px;
+  text-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.poster-subtitle {
+  font-size: 12px;
+  color: #a09080;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+/* 评分 */
+.poster-score {
+  margin: 12px 0 20px;
+}
+
+.poster-score-num {
+  font-size: 48px;
+  font-weight: bold;
+  color: #d4af37;
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+.poster-score-unit {
+  font-size: 14px;
+  color: #a09080;
+  margin-left: 4px;
+}
+
+/* 四柱 */
+.poster-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.poster-pillar {
+  background: rgba(212, 175, 55, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 10px;
+  padding: 10px 0;
+}
+
+.poster-pillar--day {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.poster-pillar-label {
+  font-size: 10px;
+  color: #a09080;
+  margin-bottom: 4px;
+}
+
+.poster-pillar-gan {
+  font-size: 20px;
+  font-weight: bold;
+  color: #f0e6d3;
+  line-height: 1.3;
+}
+
+.poster-pillar-zhi {
+  font-size: 20px;
+  font-weight: bold;
+  color: #f0e6d3;
+  line-height: 1.3;
+}
+
+.poster-pillar-el {
+  font-size: 11px;
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+
+/* 五行分布 */
+.poster-wuxing {
+  margin-bottom: 20px;
+  padding: 0 8px;
+}
+
+.poster-wuxing-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 5px 0;
+}
+
+.poster-wuxing-label {
+  font-size: 12px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.poster-wuxing-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.poster-wuxing-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.poster-wuxing-val {
+  font-size: 11px;
+  color: #a09080;
+  width: 16px;
+  text-align: right;
+}
+
+/* 关键指标 */
+.poster-info {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.poster-info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.poster-info-label {
+  font-size: 10px;
+  color: #a09080;
+}
+
+.poster-info-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f0e6d3;
+}
+
+/* 底部 */
+.poster-footer {
+  margin-top: 8px;
+}
+
+.poster-divider {
+  font-size: 10px;
+  color: rgba(212, 175, 55, 0.3);
+  letter-spacing: 8px;
+  margin-bottom: 8px;
+}
+
+.poster-brand {
+  font-size: 10px;
+  color: #706050;
+  letter-spacing: 1px;
+}
+
+/* 手机适配 */
+@media (max-width: 768px) {
+  .poster-card {
+    padding: 24px 20px;
+    border-radius: 12px;
+  }
+
+  .poster-title {
+    font-size: 20px;
+    letter-spacing: 6px;
+  }
+
+  .poster-score-num {
+    font-size: 40px;
+  }
+
+  .poster-pillar-gan,
+  .poster-pillar-zhi {
+    font-size: 18px;
+  }
+
+  .poster-info {
+    gap: 16px;
+  }
+
+  .poster-btn {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+  }
+}

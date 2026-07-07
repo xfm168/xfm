@@ -4,6 +4,7 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
+import BaziPoster from '../components/business/BaziPoster'
 import {
   calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, type BaZiChart,
   determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory,
@@ -100,6 +101,7 @@ export default function BaziChart() {
   const [saved, setSaved] = useState(false)
   const [compareTarget, setCompareTarget] = useState<BaZiChart | null>(null)
   const [showHistory, setShowHistory] = useState(false)
+  const [showPoster, setShowPoster] = useState(false)
   const [expandedDayun, setExpandedDayun] = useState<number | null>(null)
   const [expandedLiunian, setExpandedLiunian] = useState<number | null>(null)
   const [expandedChapters, setExpandedChapters] = useState<Set<number>>(() => new Set([0, 1, 2]))
@@ -2028,10 +2030,18 @@ export default function BaziChart() {
               已保存
             </Button>
           )}
+          <Button variant="ghost" fullWidth onClick={() => setShowPoster(true)}>
+            分享海报
+          </Button>
           <Button variant="ghost" fullWidth onClick={() => navigate('/bazi')}>
             重新排盘
           </Button>
         </div>
+
+        {/* 海报弹窗 */}
+        {showPoster && chart && (
+          <BaziPoster chart={chart} onClose={() => setShowPoster(false)} />
+        )}
       </div>
     </div>
   )
