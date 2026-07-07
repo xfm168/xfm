@@ -397,11 +397,11 @@ function generateSummary(
   }
 
   if (score >= 80) {
-    parts.push(' overall 婚姻运势良好，珍惜眼前人，用心经营婚姻。')
+    parts.push('综合来看，婚姻运势良好，珍惜眼前人，用心经营婚姻。')
   } else if (score >= 60) {
-    parts.push(' overall 婚姻有喜有忧，把握好时机，化解不利因素。')
+    parts.push('综合来看，婚姻有喜有忧，把握好时机，化解不利因素。')
   } else {
-    parts.push(' overall 婚姻之路较为坎坷，需多加努力，晚婚为宜。')
+    parts.push('综合来看，婚姻之路较为坎坷，需多加努力，晚婚为宜。')
   }
 
   return parts.join('')
