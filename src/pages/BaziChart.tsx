@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
@@ -15,6 +15,7 @@ import {
   analyzeHealth, type HealthAnalysisResult,
   analyzeFengShui, type FengShuiAnalysisResult,
   generateFullReport, type FullReportResult,
+  type FiveElementPowerResult,
 } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
@@ -100,12 +101,118 @@ export default function BaziChart() {
   const [expandedLiunian, setExpandedLiunian] = useState<number | null>(null)
   const [expandedChapters, setExpandedChapters] = useState<Set<number>>(() => new Set([0, 1, 2]))
   const [expandedLiuyue, setExpandedLiuyue] = useState<number | null>(null)
+  const [liuYueYear, setLiuYueYear] = useState(() => new Date().getFullYear())
+
+  // 分步 Loading 状态
+  const [loadingStep, setLoadingStep] = useState(0)
+  const [analysisReady, setAnalysisReady] = useState(false)
+  const analysisRef = useRef<{
+    geJu: GeJuResult
+    shenSha: ShenShaCategory[]
+    shenShiAnalysis: ShenShiAnalysisResult
+    fiveElementPower: FiveElementPowerResult
+    daYun: ReturnType<typeof analyzeDaYun>
+    liuNian: ReturnType<typeof analyzeLiuNian>
+    liuYue: ReturnType<typeof analyzeLiuYue>
+    marriage: MarriageAnalysisResult
+    career: CareerAnalysisResult
+    wealth: WealthAnalysisResult
+    health: HealthAnalysisResult
+    fengshui: FengShuiAnalysisResult
+    fullReport: FullReportResult
+  } | null>(null)
 
   useEffect(() => {
     if (!chart && charts.length > 0) {
       setChart(charts[0])
     }
   }, [charts])
+
+  // 分步 Loading：将所有同步计算拆分为异步步骤，避免白屏
+  useEffect(() => {
+    if (!chart || analysisReady) return
+
+    const timeoutIds: ReturnType<typeof setTimeout>[] = []
+    const { sixLines, fiveElementCount, dayMaster, xiYongShen, birthInfo: chartBirth, wangShuai: _ws } = chart
+    const birthDate = new Date(`${chartBirth.birthDate}T${chartBirth.birthTime}`)
+    const currentYear = new Date().getFullYear()
+
+    const steps = [
+      () => { setLoadingStep(1) },
+      () => {
+        const g = determineGeJu(sixLines, dayMaster.relatedShens, dayMaster.strengthScore, dayMaster.dayGan, sixLines.month.zhi, fiveElementCount)
+        const s = calculateShenSha(sixLines, dayMaster.dayGan, chartBirth.gender)
+        analysisRef.current = { ...analysisRef.current!, geJu: g, shenSha: s } as any
+        setLoadingStep(2)
+      },
+      () => {
+        const ss = analyzeShenShi(sixLines, dayMaster.dayGan, chartBirth.gender)
+        const fe = calculateFiveElementPower(sixLines, dayMaster.dayGan)
+        analysisRef.current = { ...analysisRef.current!, shenShiAnalysis: ss, fiveElementPower: fe } as any
+        setLoadingStep(3)
+      },
+      () => {
+        const dy = analyzeDaYun(sixLines, birthDate, dayMaster.dayGan, chartBirth.gender, [xiYongShen.bestElement], xiYongShen.avoidedElements)
+        const ln = analyzeLiuNian(sixLines, dayMaster.dayGan, currentYear, 100)
+        analysisRef.current = { ...analysisRef.current!, daYun: dy, liuNian: ln } as any
+        setLoadingStep(4)
+      },
+      () => {
+        const ly = analyzeLiuYue(sixLines, dayMaster.dayGan, currentYear)
+        analysisRef.current = { ...analysisRef.current!, liuYue: ly } as any
+        setLoadingStep(5)
+      },
+      () => {
+        const m = analyzeMarriage(sixLines, dayMaster.dayGan, chartBirth.gender)
+        const c = analyzeCareer(sixLines, dayMaster.dayGan, chartBirth.gender, analysisRef.current!.shenShiAnalysis, analysisRef.current!.geJu, analysisRef.current!.fiveElementPower)
+        analysisRef.current = { ...analysisRef.current!, marriage: m, career: c } as any
+        setLoadingStep(6)
+      },
+      () => {
+        const w = analyzeWealth(sixLines, dayMaster.dayGan, analysisRef.current!.shenShiAnalysis, analysisRef.current!.liuNian, analysisRef.current!.geJu)
+        const h = analyzeHealth(sixLines, dayMaster.dayGan, analysisRef.current!.fiveElementPower)
+        const f = analyzeFengShui(sixLines, dayMaster.dayGan, xiYongShen, analysisRef.current!.fiveElementPower, analysisRef.current!.shenShiAnalysis.details[0]?.name || '')
+        analysisRef.current = { ...analysisRef.current!, wealth: w, health: h, fengshui: f } as any
+        setLoadingStep(7)
+      },
+      () => {
+        const r = generateFullReport({
+          chart, sixLines, dayMaster,
+          geJu: analysisRef.current!.geJu,
+          wangShuai: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements },
+          shenShiAnalysis: analysisRef.current!.shenShiAnalysis,
+          fiveElementPower: analysisRef.current!.fiveElementPower,
+          shenSha: analysisRef.current!.shenSha,
+          xiYongShen: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements },
+          marriage: analysisRef.current!.marriage,
+          career: analysisRef.current!.career,
+          wealth: analysisRef.current!.wealth,
+          health: analysisRef.current!.health,
+          fengshui: analysisRef.current!.fengshui,
+          daYun: analysisRef.current!.daYun,
+          liuNian: analysisRef.current!.liuNian,
+          liuYue: analysisRef.current!.liuYue,
+        })
+        analysisRef.current = { ...analysisRef.current!, fullReport: r } as any
+        setLoadingStep(8)
+      },
+      () => {
+        setAnalysisReady(true)
+      },
+    ]
+
+    const DELAY = 180
+    let delay = 50
+    for (const step of steps) {
+      const id = setTimeout(step, delay)
+      timeoutIds.push(id)
+      delay += DELAY
+    }
+
+    return () => {
+      for (const id of timeoutIds) clearTimeout(id)
+    }
+  }, [chart, analysisReady])
 
   const birthDateTime = chart ? `${chart.birthInfo.birthDate} ${chart.birthInfo.birthTime}` : ''
   const gender = chart ? (chart.birthInfo.gender === 'male' ? '男' : '女') : ''
@@ -129,6 +236,66 @@ export default function BaziChart() {
     }
   }, [activeTab, chart, aiLoading, aiError])
 
+  // Loading 步骤文案
+  const LOADING_STEPS = [
+    { step: 1, text: '正在排演四柱……', icon: '☯' },
+    { step: 2, text: '正在推演格局……', icon: '◈' },
+    { step: 3, text: '正在分析十神……', icon: '✦' },
+    { step: 4, text: '正在推演大运……', icon: '⟳' },
+    { step: 5, text: '正在推算流年流月……', icon: '☽' },
+    { step: 6, text: '正在分析婚姻事业……', icon: '♡' },
+    { step: 7, text: '正在分析财富健康……', icon: '✧' },
+    { step: 8, text: '正在生成命书……', icon: '✎' },
+  ]
+
+  if (!analysisReady && chart) {
+    const currentStep = LOADING_STEPS.find(s => s.step === loadingStep)
+    const completedSteps = LOADING_STEPS.filter(s => s.step < loadingStep)
+    return (
+      <div className="bazi-chart-page">
+        <PageTitle
+          icon="☯"
+          label="玄风命理"
+          title="命盘推演"
+          subtitle={`${chartBirth.birthDate} ${chartBirth.birthTime} ${chartBirth.gender === 'male' ? '男命' : '女命'}`}
+        />
+        <div className="container bazi-chart-content">
+          <div className="bazi-loading-container">
+            <div className="bazi-loading-progress">
+              <div className="bazi-loading-progress-bar" style={{ width: `${Math.min(loadingStep / 8 * 100, 100)}%` }} />
+            </div>
+            <div className="bazi-loading-steps">
+              {completedSteps.map((s, i) => (
+                <div key={i} className="bazi-loading-step bazi-loading-step--done">
+                  <span className="bazi-loading-step-icon">{s.icon}</span>
+                  <span className="bazi-loading-step-text">{s.text.replace('……', '')}</span>
+                  <span className="bazi-loading-step-check">✓</span>
+                </div>
+              ))}
+              {currentStep && (
+                <div className="bazi-loading-step bazi-loading-step--active">
+                  <span className="bazi-loading-step-icon bazi-loading-pulse">{currentStep.icon}</span>
+                  <span className="bazi-loading-step-text">{currentStep.text}</span>
+                  <span className="bazi-loading-step-dots">
+                    <span className="dot">·</span>
+                    <span className="dot">·</span>
+                    <span className="dot">·</span>
+                  </span>
+                </div>
+              )}
+              {LOADING_STEPS.filter(s => s.step > loadingStep).map((s, i) => (
+                <div key={`pending-${i}`} className="bazi-loading-step bazi-loading-step--pending">
+                  <span className="bazi-loading-step-icon">{s.icon}</span>
+                  <span className="bazi-loading-step-text">{s.text.replace('……', '')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (!chart) {
     return (
       <div className="bazi-chart-page">
@@ -150,113 +317,20 @@ export default function BaziChart() {
 
   const { sixLines, fiveElementCount, dayMaster, xiYongShen, overallScore, birthInfo: chartBirth } = chart
 
-  const geJu = determineGeJu(
-    sixLines,
-    dayMaster.relatedShens,
-    dayMaster.strengthScore,
-    dayMaster.dayGan,
-    sixLines.month.zhi,
-    fiveElementCount,
-  )
-
-  const shenSha = calculateShenSha(
-    sixLines,
-    dayMaster.dayGan,
-    chartBirth.gender,
-  )
-
-  const shenShiAnalysis = analyzeShenShi(
-    sixLines,
-    dayMaster.dayGan,
-    chartBirth.gender,
-  )
-
-  const fiveElementPower = calculateFiveElementPower(
-    sixLines,
-    dayMaster.dayGan,
-  )
-
-  const birthDate = new Date(`${chartBirth.birthDate}T${chartBirth.birthTime}`)
-  const daYun = analyzeDaYun(
-    sixLines,
-    birthDate,
-    dayMaster.dayGan,
-    chartBirth.gender,
-    [xiYongShen.bestElement],
-    xiYongShen.avoidedElements,
-  )
-
-  const currentYear = new Date().getFullYear()
-  const liuNian = analyzeLiuNian(
-    sixLines,
-    dayMaster.dayGan,
-    currentYear,
-    100,
-  )
-
-  const [liuYueYear, setLiuYueYear] = useState(currentYear)
-  const liuYue = analyzeLiuYue(
-    sixLines,
-    dayMaster.dayGan,
-    liuYueYear,
-  )
-
-  const marriage = analyzeMarriage(
-    sixLines,
-    dayMaster.dayGan,
-    chartBirth.gender,
-  )
-
-  const career = analyzeCareer(
-    sixLines,
-    dayMaster.dayGan,
-    chartBirth.gender,
-    shenShiAnalysis,
-    geJu,
-    fiveElementPower,
-  )
-
-  const wealth = analyzeWealth(
-    sixLines,
-    dayMaster.dayGan,
-    shenShiAnalysis,
-    liuNian,
-    geJu,
-  )
-
-  const health = analyzeHealth(
-    sixLines,
-    dayMaster.dayGan,
-    fiveElementPower,
-  )
-
-  const fengshui = analyzeFengShui(
-    sixLines,
-    dayMaster.dayGan,
-    xiYongShen,
-    fiveElementPower,
-    shenShiAnalysis.details[0]?.name || '',
-  )
-
-  const fullReport = generateFullReport({
-    chart,
-    sixLines,
-    dayMaster,
-    geJu,
-    wangShuai,
-    shenShiAnalysis,
-    fiveElementPower,
-    shenSha,
-    xiYongShen: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements },
-    marriage,
-    career,
-    wealth,
-    health,
-    fengshui,
-    daYun,
-    liuNian,
-    liuYue,
-  })
+  // 从 analysisRef 读取计算结果（分步 Loading 完成后可用）
+  const geJu = analysisRef.current?.geJu!
+  const shenSha = analysisRef.current?.shenSha!
+  const shenShiAnalysis = analysisRef.current?.shenShiAnalysis!
+  const fiveElementPower = analysisRef.current?.fiveElementPower!
+  const daYun = analysisRef.current?.daYun!
+  const liuNian = analysisRef.current?.liuNian!
+  const liuYue = analysisRef.current?.liuYue!
+  const marriage = analysisRef.current?.marriage!
+  const career = analysisRef.current?.career!
+  const wealth = analysisRef.current?.wealth!
+  const health = analysisRef.current?.health!
+  const fengshui = analysisRef.current?.fengshui!
+  const fullReport = analysisRef.current?.fullReport!
 
   function handleSave() {
     if (chart) {

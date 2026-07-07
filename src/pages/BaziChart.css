@@ -3025,6 +3025,138 @@
   }
 }
 
+/* ============================================================
+   Step Loading Card
+   ============================================================ */
+.bazi-loading-container {
+  padding: var(--space-8) 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.bazi-loading-progress {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+  border-radius: 2px;
+  margin-bottom: var(--space-6);
+  overflow: hidden;
+}
+
+.bazi-loading-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-500, #d4af37), var(--gold-400, #e5c84b));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.bazi-loading-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.bazi-loading-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.06));
+  transition: background 0.3s ease;
+}
+
+.bazi-loading-step:last-child {
+  border-bottom: none;
+}
+
+.bazi-loading-step--pending {
+  opacity: 0.3;
+}
+
+.bazi-loading-step--done {
+  opacity: 0.7;
+}
+
+.bazi-loading-step--done .bazi-loading-step-text {
+  text-decoration: line-through;
+  text-decoration-color: var(--gold-500, #d4af37);
+}
+
+.bazi-loading-step--active {
+  background: rgba(212, 175, 55, 0.04);
+  border-radius: 8px;
+  margin: 2px 0;
+}
+
+.bazi-loading-step-icon {
+  font-size: 1.1rem;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.bazi-loading-step-text {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.bazi-loading-step-check {
+  color: var(--gold-500, #d4af37);
+  font-size: 0.85rem;
+}
+
+.bazi-loading-step-dots {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--gold-500, #d4af37);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.bazi-loading-step-dots .dot {
+  animation: loadingDotPulse 1.2s infinite;
+}
+
+.bazi-loading-step-dots .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.bazi-loading-step-dots .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loadingDotPulse {
+  0%, 60%, 100% { opacity: 0.2; transform: scale(0.8); }
+  30% { opacity: 1; transform: scale(1.2); }
+}
+
+.bazi-loading-pulse {
+  animation: loadingIconPulse 1.5s infinite;
+}
+
+@keyframes loadingIconPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Mobile: loading step min-height for touch */
+@media (max-width: 768px) {
+  .bazi-loading-step {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .bazi-loading-step-icon {
+    font-size: 1rem;
+    width: 24px;
+  }
+
+  .bazi-loading-step-text {
+    font-size: 0.85rem;
+  }
+}
+
 /* Print styles for PDF export */
 @media print {
   .bazi-chart-header,
