@@ -1979,3 +1979,273 @@
   line-height: 1.8;
   margin-bottom: var(--space-2);
 }
+
+/* ========== 财富分析 (P4) ========== */
+.bazi-wealth-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-wealth-score-card {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.wealth-score-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.wealth-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.wealth-score-level {
+  margin-top: var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+
+.bazi-wealth-caiyun-card {
+  padding: var(--space-5);
+}
+
+.wealth-caiyun-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-caiyun-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.wealth-caiyun-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.wealth-caiyun-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.wealth-caiyun-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-wealth-caiku-card {
+  padding: var(--space-5);
+}
+
+.wealth-caiku-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-caiku-zhi {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.wealth-caiku-desc {
+  margin-top: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-wealth-flags-card {
+  padding: var(--space-5);
+}
+
+.wealth-flags-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-flag-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.wealth-flag-item.warning {
+  border: 1px solid var(--warning);
+}
+
+.wealth-flag-item.error {
+  border: 1px solid var(--error);
+}
+
+.wealth-flag-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bazi-wealth-style-card,
+.bazi-wealth-summary-card {
+  padding: var(--space-5);
+}
+
+.wealth-style-text,
+.wealth-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+.bazi-wealth-investment-card {
+  padding: var(--space-5);
+}
+
+.wealth-investment-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-investment-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--border);
+}
+
+.wealth-investment-item.suitable {
+  border-left-color: var(--success);
+  background: rgba(74, 156, 109, 0.08);
+}
+
+.wealth-investment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.wealth-investment-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.wealth-investment-score {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.wealth-investment-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.wealth-investment-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.wealth-investment-score-value {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+}
+
+.wealth-investment-reason {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-wealth-riskyears-card {
+  padding: var(--space-5);
+}
+
+.wealth-riskyears-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-riskyear-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.wealth-riskyear-item.level-high {
+  border-left: 3px solid var(--error);
+}
+
+.wealth-riskyear-item.level-medium {
+  border-left: 3px solid var(--warning);
+}
+
+.wealth-riskyear-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.wealth-riskyear-year {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.wealth-riskyear-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-wealth-suggestions-card {
+  padding: var(--space-5);
+}
+
+.wealth-suggestions-list {
+  margin-top: var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.wealth-suggestions-list li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-2);
+}

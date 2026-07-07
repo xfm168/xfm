@@ -4,12 +4,12 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult, analyzeCareer, type CareerAnalysisResult } from '../lib/bazi'
+import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult, analyzeCareer, type CareerAnalysisResult, analyzeWealth, type WealthAnalysisResult } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'wealth' | 'analysis'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
@@ -24,6 +24,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'liuyue', label: '流月' },
   { key: 'marriage', label: '婚姻' },
   { key: 'career', label: '事业' },
+  { key: 'wealth', label: '财富' },
   { key: 'analysis', label: '解析' },
 ]
 
@@ -199,6 +200,14 @@ export default function BaziChart() {
     shenShiAnalysis,
     geJu,
     fiveElementPower,
+  )
+
+  const wealth = analyzeWealth(
+    sixLines,
+    dayMaster.dayGan,
+    shenShiAnalysis,
+    liuNian,
+    geJu,
   )
 
   function handleSave() {
@@ -1220,6 +1229,152 @@ export default function BaziChart() {
               <Card className="bazi-career-summary-card">
                 <h3 className="card-title">事业总结</h3>
                 <p className="career-summary-text">{career.summary}</p>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'wealth' && (
+            <div className="bazi-wealth-analysis">
+              <Card className="bazi-wealth-score-card">
+                <h3 className="card-title">财富评分</h3>
+                <div className="wealth-score-main">
+                  <ScoreRing score={wealth.score} size={160} />
+                  <p className="wealth-score-label">财富综合指数</p>
+                </div>
+                <div className="wealth-score-level">
+                  {wealth.score >= 80 ? '财富运势旺盛' :
+                   wealth.score >= 60 ? '财富有积累空间' : '财富需稳扎稳打'}
+                </div>
+              </Card>
+
+              <Card className="bazi-wealth-caiyun-card">
+                <h3 className="card-title">财运分析</h3>
+                <div className="wealth-caiyun-grid">
+                  {wealth.zhengCai && (
+                    <div className="wealth-caiyun-item">
+                      <div className="wealth-caiyun-header">
+                        <span className="wealth-caiyun-name">正财</span>
+                        <Badge variant="success" size="sm">{wealth.zhengCai.power}分</Badge>
+                      </div>
+                      <p className="wealth-caiyun-desc">{wealth.zhengCai.description}</p>
+                    </div>
+                  )}
+                  {wealth.pianCai && (
+                    <div className="wealth-caiyun-item">
+                      <div className="wealth-caiyun-header">
+                        <span className="wealth-caiyun-name">偏财</span>
+                        <Badge variant="gold" size="sm">{wealth.pianCai.power}分</Badge>
+                      </div>
+                      <p className="wealth-caiyun-desc">{wealth.pianCai.description}</p>
+                    </div>
+                  )}
+                  {!wealth.zhengCai && !wealth.pianCai && (
+                    <div className="wealth-caiyun-item">
+                      <p className="wealth-caiyun-desc">命中财星较弱，需靠技术和努力获取财富。</p>
+                    </div>
+                  )}
+                </div>
+              </Card>
+
+              <Card className="bazi-wealth-caiku-card">
+                <h3 className="card-title">财库</h3>
+                <div className="wealth-caiku-main">
+                  <Badge variant={wealth.caiKu.hasCaiKu ? 'success' : 'default'} size="md">
+                    {wealth.caiKu.hasCaiKu ? '命带财库' : '无财库'}
+                  </Badge>
+                  {wealth.caiKu.caiKuZhi && (
+                    <span className="wealth-caiku-zhi">{wealth.caiKu.caiKuZhi}</span>
+                  )}
+                </div>
+                <p className="wealth-caiku-desc">{wealth.caiKu.description}</p>
+              </Card>
+
+              <Card className="bazi-wealth-flags-card">
+                <h3 className="card-title">财运特征</h3>
+                <div className="wealth-flags-grid">
+                  <div className={`wealth-flag-item ${wealth.louCai ? 'warning' : ''}`}>
+                    <span className="wealth-flag-label">漏财</span>
+                    <Badge variant={wealth.louCai ? 'warning' : 'default'} size="sm">
+                      {wealth.louCai ? '是' : '否'}
+                    </Badge>
+                  </div>
+                  <div className={`wealth-flag-item ${wealth.poCai ? 'error' : ''}`}>
+                    <span className="wealth-flag-label">破财</span>
+                    <Badge variant={wealth.poCai ? 'error' : 'default'} size="sm">
+                      {wealth.poCai ? '是' : '否'}
+                    </Badge>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="bazi-wealth-style-card">
+                <h3 className="card-title">赚钱方式</h3>
+                <p className="wealth-style-text">{wealth.moneyMakingStyle}</p>
+              </Card>
+
+              <Card className="bazi-wealth-investment-card">
+                <h3 className="card-title">投资方向</h3>
+                <div className="wealth-investment-list">
+                  {wealth.investmentDirections.map((item, idx) => (
+                    <div key={idx} className={`wealth-investment-item ${item.suitable ? 'suitable' : ''}`}>
+                      <div className="wealth-investment-header">
+                        <span className="wealth-investment-name">{item.direction}</span>
+                        <Badge variant={item.suitable ? 'success' : 'default'} size="sm">
+                          {item.suitable ? '适合' : '一般'}
+                        </Badge>
+                      </div>
+                      <div className="wealth-investment-score">
+                        <div className="wealth-investment-bar">
+                          <div
+                            className="wealth-investment-bar-fill"
+                            style={{
+                              width: `${item.score}%`,
+                              background: item.score >= 70 ? 'var(--success)' : item.score >= 50 ? 'var(--gold-500)' : 'var(--error)'
+                            }}
+                          />
+                        </div>
+                        <span className="wealth-investment-score-value">{item.score}分</span>
+                      </div>
+                      <p className="wealth-investment-reason">{item.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {wealth.riskYears.length > 0 && (
+                <Card className="bazi-wealth-riskyears-card">
+                  <h3 className="card-title">风险年份</h3>
+                  <div className="wealth-riskyears-list">
+                    {wealth.riskYears.map((item, idx) => (
+                      <div key={idx} className={`wealth-riskyear-item level-${item.level}`}>
+                        <div className="wealth-riskyear-header">
+                          <span className="wealth-riskyear-year">{item.year}年 ({item.ganZhi})</span>
+                          <Badge
+                            variant={item.level === 'high' ? 'error' : item.level === 'medium' ? 'warning' : 'default'}
+                            size="sm"
+                          >
+                            {item.riskType}
+                          </Badge>
+                        </div>
+                        <p className="wealth-riskyear-desc">{item.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+
+              <Card className="bazi-wealth-suggestions-card">
+                <h3 className="card-title">理财建议</h3>
+                <ul className="wealth-suggestions-list">
+                  {wealth.suggestions.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </Card>
+
+              <Card className="bazi-wealth-summary-card">
+                <h3 className="card-title">财富总结</h3>
+                <p className="wealth-summary-text">{wealth.summary}</p>
               </Card>
             </div>
           )}

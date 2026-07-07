@@ -103,5 +103,9 @@ export type { MarriageAnalysisResult, MarriageShenSha, SpousePalaceRelation, Mar
 export { analyzeCareer } from './careerAnalysis'
 export type { CareerAnalysisResult, CareerShiShenScore, CareerDirection, IndustryMatch } from './careerAnalysis'
 
+// Wealth Analysis (财富分析 P4)
+export { analyzeWealth } from './wealthAnalysis'
+export type { WealthAnalysisResult, WealthShiShen, CaiKu, WealthRiskYear, InvestmentDirection } from './wealthAnalysis'
+
 // P0-② 子时换日模块
 export * from './zishi'
