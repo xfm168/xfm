@@ -253,6 +253,8 @@ export default function BaziChart() {
     health,
     fengshui,
     daYun,
+    liuNian,
+    liuYue,
   })
 
   function handleSave() {

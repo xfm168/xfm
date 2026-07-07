@@ -13,6 +13,8 @@ import type { WealthAnalysisResult } from './wealthAnalysis'
 import type { HealthAnalysisResult } from './healthAnalysis'
 import type { FengShuiAnalysisResult } from './fengshuiAnalysis'
 import type { DaYunAnalysisResult } from './dayunAnalysis'
+import type { LiuNianAnalysisResult, LiuNianYear } from './liunianAnalysis'
+import type { LiuYueAnalysisResult } from './liuyueAnalysis'
 
 export interface ReportChapter {
   id: string
@@ -43,6 +45,8 @@ export interface FullReportInput {
   health: HealthAnalysisResult
   fengshui: FengShuiAnalysisResult
   daYun: DaYunAnalysisResult
+  liuNian: LiuNianAnalysisResult
+  liuYue: LiuYueAnalysisResult
 }
 
 function generateChapter1_overview(input: FullReportInput): string {
@@ -513,16 +517,202 @@ function generateChapter11_dayun(input: FullReportInput): string {
   return lines.join('\n')
 }
 
+function getLiuNianNotice(year: LiuNianYear): string {
+  const parts: string[] = []
+  if (year.chong.length > 0) parts.push(`有冲（${year.chong.join('、')}），宜防变动与冲突`)
+  if (year.xing.length > 0) parts.push(`犯三刑，需防官非口舌`)
+  if (year.hai.length > 0) parts.push(`有相害（${year.hai.join('、')}），人际需谨慎`)
+  if (year.po.length > 0) parts.push(`有破（${year.po.join('、')}），注意财物破损`)
+  if (year.he.length > 0) parts.push(`有合（${year.he.join('、')}），利合作与感情`)
+  if (parts.length === 0) parts.push('四柱平和，无冲合刑害，稳中向好')
+  return parts.join('；')
+}
+
+function getLiuNianSuggestion(year: LiuNianYear): string {
+  if (year.score >= 75) return `${year.year}年为命主大吉之年，流年天干${year.ganZhi.gan}化${year.shenShi.gan}，运势旺盛，宜积极进取、把握机遇，在事业和财运上大胆开拓。`
+  if (year.score >= 60) return `${year.year}年运势向好，流年${year.ganZhi.gan}${year.ganZhi.zhi}，整体顺遂，宜稳中求进，把握贵人助力，避免贪多嚼不烂。`
+  if (year.score >= 45) return `${year.year}年运势平淡，流年${year.ganZhi.gan}${year.ganZhi.zhi}，吉凶参半，宜保持平常心，不宜冒进，做好本职工作为上。`
+  if (year.score >= 30) return `${year.year}年运势偏凶，流年天干化${year.shenShi.gan}不利，需多加谨慎，保守稳健，减少不必要开支和社交，注意健康与安全。`
+  return `${year.year}年为凶年，流年多冲多刑，大运不利叠加流年不佳，需格外小心。宜修身养性、积蓄力量，切忌冲动行事，凡事三思而后行。`
+}
+
 function generateChapter12_liunian(input: FullReportInput): string {
-  const lines = [
+  const { liuNian, dayMaster } = input
+  const lines: string[] = [
     `## 十二、流年分析`,
     ``,
-    `流年是每年的运势变化。根据命局推算，未来若干年的流年走势如下：`,
+    `流年是命主每年的具体运势变化。流年与大运相互作用，吉凶交织，构成人生一年一变的运势图谱。`,
     ``,
-    `流年运势起伏属正常现象，保持平常心即可。在吉年宜积极进取，在凶年宜保守稳健。`,
+    `**日主**：${dayMaster.dayGan}（${dayMaster.dayGanElement}）`,
     ``,
-    `流月分析可进一步细化每月的运势变化，帮助命主更好地把握时机。`,
+    `**分析范围**：${liuNian.startYear}年 ～ ${liuNian.endYear}年，共${liuNian.years.length}年。`,
+    ``,
+    `以下逐年分析（仅展示评分极端年份及当前年附近），其余年份概览列于文末：`,
+    ``,
   ]
+
+  // 分类：大吉年、凶年、当前年附近 ±3年
+  const extremeYears = liuNian.years.filter(y => y.score >= 80 || y.score <= 25)
+  const nearbyYears = liuNian.years.filter(y => Math.abs(y.year - liuNian.currentYear) <= 3)
+  const highlightSet = new Set<number>()
+  for (const y of extremeYears) highlightSet.add(y.year)
+  for (const y of nearbyYears) highlightSet.add(y.year)
+
+  // 输出高亮年份的详细分析
+  const sortedHighlights = liuNian.years.filter(y => highlightSet.has(y.year)).sort((a, b) => a.year - b.year)
+  for (const year of sortedHighlights) {
+    const ganZhiStr = `${year.ganZhi.gan}${year.ganZhi.zhi}`
+    const jiXiLabel = year.score >= 70 ? '吉' : year.score <= 35 ? '凶' : '平'
+    const jiXiEmoji = year.score >= 80 ? '★ 大吉' : year.score >= 65 ? '☆ 吉' : year.score >= 45 ? '— 平' : year.score >= 30 ? '▼ 凶' : '✕ 大凶'
+    const isCurrent = year.isCurrentYear
+
+    lines.push(`### ${year.year}年（${ganZhiStr}）`)
+    if (isCurrent) lines.push(`**← 今年**`)
+    lines.push(``)
+
+    lines.push(`| 项目 | 内容 |`)
+    lines.push(`|:---:|:---|`)
+    lines.push(`| 流年干支 | ${ganZhiStr} |`)
+    lines.push(`| 天干十神 | ${year.shenShi.gan} |`)
+    lines.push(`| 地支十神 | ${year.shenShi.zhi} |`)
+    lines.push(`| 吉凶 | ${jiXiEmoji}（${year.score}分）|`)
+    lines.push(``)
+
+    // 冲合刑害
+    const relations: string[] = []
+    if (year.chong.length > 0) relations.push(`**冲**：${year.chong.join('、')}`)
+    if (year.he.length > 0) relations.push(`**合**：${year.he.join('、')}`)
+    if (year.xing.length > 0) relations.push(`**刑**：${year.xing.join('、')}`)
+    if (year.hai.length > 0) relations.push(`**害**：${year.hai.join('、')}`)
+    if (year.po.length > 0) relations.push(`**破**：${year.po.join('、')}`)
+    if (relations.length === 0) relations.push('无冲合刑害')
+    lines.push(`**【冲合刑害】** ${relations.join('；')}`)
+    lines.push(``)
+
+    // 神煞
+    lines.push(`**【流年神煞】** ${year.shenSha.length > 0 ? year.shenSha.join('、') : '无特殊神煞'}`)
+    lines.push(``)
+
+    // 注意事项
+    lines.push(`**【注意事项】** ${getLiuNianNotice(year)}`)
+    lines.push(``)
+
+    // 总评
+    lines.push(`**【流年总评】** ${year.detail}`)
+    lines.push(``)
+
+    // 建议
+    lines.push(`**【综合建议】** ${getLiuNianSuggestion(year)}`)
+    lines.push(``)
+    lines.push(`---`)
+    lines.push(``)
+  }
+
+  // 其余年份概览表
+  const otherYears = liuNian.years.filter(y => !highlightSet.has(y.year))
+  if (otherYears.length > 0) {
+    lines.push(`### 其余年份概览`)
+    lines.push(``)
+    lines.push(`| 年份 | 干支 | 十神（干/支） | 冲合刑害 | 评分 |`)
+    lines.push(`|:---:|:---:|:---:|:---:|:---:|`)
+    for (const year of otherYears) {
+      const ganZhiStr = `${year.ganZhi.gan}${year.ganZhi.zhi}`
+      const relations = [...year.chong, ...year.he, ...year.xing, ...year.hai, ...year.po]
+      const relStr = relations.length > 0 ? relations.join('、') : '无'
+      lines.push(`| ${year.year} | ${ganZhiStr} | ${year.shenShi.gan} / ${year.shenShi.zhi} | ${relStr} | ${year.score} |`)
+    }
+    lines.push(``)
+  }
+
+  lines.push(`**流年总结**`)
+  lines.push(``)
+  const jiCount = liuNian.years.filter(y => y.score >= 60).length
+  const xiongCount = liuNian.years.filter(y => y.score < 45).length
+  lines.push(`命主${liuNian.startYear}至${liuNian.endYear}年共${liuNian.years.length}年中，吉年约${jiCount}年，凶年约${xiongCount}年，平年约${liuNian.years.length - jiCount - xiongCount}年。吉年应把握机遇、乘势而上；凶年应韬光养晦、稳扎稳打。结合大运走势，在吉年逢吉运时全力出击，凶年逢凶运时保守为上。`)
+
+  return lines.join('\n')
+}
+
+function generateChapter14_liuyue(input: FullReportInput): string {
+  const { liuYue } = input
+  const lines: string[] = [
+    `## 十四、流月分析`,
+    ``,
+    `流月是大运和流年之下的精细化运势分析，精确到每个月的吉凶变化，帮助命主在关键月份趋吉避凶。`,
+    ``,
+    `**分析年份**：${liuYue.year}年（${liuYue.yearGanZhi.gan}${liuYue.yearGanZhi.zhi}）`,
+    ``,
+  ]
+
+  // 分类吉月/凶月
+  const jiMonths = liuYue.months.filter(m => m.jiXiong === '大吉' || m.jiXiong === '吉')
+  const xiongMonths = liuYue.months.filter(m => m.jiXiong === '凶' || m.jiXiong === '大凶')
+  const pingMonths = liuYue.months.filter(m => m.jiXiong === '平')
+
+  // 吉月
+  if (jiMonths.length > 0) {
+    lines.push(`### 吉月`)
+    lines.push(``)
+    lines.push(`| 月份 | 干支 | 十神 | 吉凶 | 评分 | 注意事项 |`)
+    lines.push(`|:---:|:---:|:---:|:---:|:---:|:---|`)
+    for (const m of jiMonths) {
+      const ganZhiStr = `${m.ganZhi.gan}${m.ganZhi.zhi}`
+      lines.push(`| ${m.monthName} | ${ganZhiStr} | ${m.shenShi.gan} / ${m.shenShi.zhi} | ${m.jiXiong} | ${m.score} | ${m.notice} |`)
+    }
+    lines.push(``)
+  }
+
+  // 凶月
+  if (xiongMonths.length > 0) {
+    lines.push(`### 凶月`)
+    lines.push(``)
+    lines.push(`| 月份 | 干支 | 十神 | 吉凶 | 评分 | 注意事项 |`)
+    lines.push(`|:---:|:---:|:---:|:---:|:---:|:---|`)
+    for (const m of xiongMonths) {
+      const ganZhiStr = `${m.ganZhi.gan}${m.ganZhi.zhi}`
+      lines.push(`| ${m.monthName} | ${ganZhiStr} | ${m.shenShi.gan} / ${m.shenShi.zhi} | ${m.jiXiong} | ${m.score} | ${m.notice} |`)
+    }
+    lines.push(``)
+  }
+
+  // 平月
+  if (pingMonths.length > 0) {
+    lines.push(`### 平月`)
+    lines.push(``)
+    lines.push(`| 月份 | 干支 | 十神 | 吉凶 | 评分 | 注意事项 |`)
+    lines.push(`|:---:|:---:|:---:|:---:|:---:|:---|`)
+    for (const m of pingMonths) {
+      const ganZhiStr = `${m.ganZhi.gan}${m.ganZhi.zhi}`
+      lines.push(`| ${m.monthName} | ${ganZhiStr} | ${m.shenShi.gan} / ${m.shenShi.zhi} | ${m.jiXiong} | ${m.score} | ${m.notice} |`)
+    }
+    lines.push(``)
+  }
+
+  // 逐月详细分析
+  lines.push(`### 逐月详析`)
+  lines.push(``)
+  for (const m of liuYue.months) {
+    const ganZhiStr = `${m.ganZhi.gan}${m.ganZhi.zhi}`
+    const jiXiEmoji = m.jiXiong === '大吉' ? '★★★' : m.jiXiong === '吉' ? '★★☆' : m.jiXiong === '凶' ? '★☆☆' : m.jiXiong === '大凶' ? '☆☆☆' : '★★★'
+    const relations: string[] = []
+    if (m.chong.length > 0) relations.push(`冲${m.chong.join('、')}`)
+    if (m.he.length > 0) relations.push(`合${m.he.join('、')}`)
+    if (m.xing.length > 0) relations.push(`刑${m.xing.join('、')}`)
+    if (m.hai.length > 0) relations.push(`害${m.hai.join('、')}`)
+    if (m.po.length > 0) relations.push(`破${m.po.join('、')}`)
+
+    lines.push(`**${m.monthName}**（${ganZhiStr}）${jiXiEmoji} ${m.jiXiong}（${m.score}分）`)
+    lines.push(`- 十神：${m.shenShi.gan}（天干）、${m.shenShi.zhi}（地支本气）`)
+    lines.push(`- ${m.summary}`)
+    if (relations.length > 0) lines.push(`- 冲合刑害：${relations.join('、')}`)
+    lines.push(`- ${m.notice}`)
+    lines.push(``)
+  }
+
+  lines.push(`**流月总结**`)
+  lines.push(``)
+  lines.push(`${liuYue.year}年共${jiMonths.length}个吉月、${xiongMonths.length}个凶月、${pingMonths.length}个平月。吉月应积极行动、把握机遇；凶月应保守稳健、规避风险。流月与流年、大运叠加判断，方能精准把握每月运势节奏。`)
+
   return lines.join('\n')
 }
 
@@ -606,6 +796,7 @@ export function generateFullReport(input: FullReportInput): FullReportResult {
     { id: 'dayun', title: '大运分析', content: generateChapter11_dayun(input) },
     { id: 'liunian', title: '流年分析', content: generateChapter12_liunian(input) },
     { id: 'suggestions', title: '改运建议', content: generateChapter13_suggestions(input) },
+    { id: 'liuyue', title: '流月分析', content: generateChapter14_liuyue(input) },
   ]
 
   const fullText = chapters.map(c => c.content).join('\n\n')
