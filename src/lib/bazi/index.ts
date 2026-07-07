@@ -111,5 +111,9 @@ export type { WealthAnalysisResult, WealthShiShen, CaiKu, WealthRiskYear, Invest
 export { analyzeHealth } from './healthAnalysis'
 export type { HealthAnalysisResult, BodyConstitution, DiseaseRisk, DietSuggestion, ExerciseSuggestion, HealthRegimen } from './healthAnalysis'
 
+// FengShui Analysis (风水结合 P6)
+export { analyzeFengShui } from './fengshuiAnalysis'
+export type { FengShuiAnalysisResult, ColorAdvice, LuckyNumber, DirectionAdvice, RoomAdvice, SpecialPosition } from './fengshuiAnalysis'
+
 // P0-② 子时换日模块
 export * from './zishi'

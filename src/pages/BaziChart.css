@@ -2509,3 +2509,248 @@
   color: var(--text-primary);
   line-height: 1.8;
 }
+
+/* ========== 风水结合 (P6) ========== */
+.bazi-fengshui-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-fengshui-colors-card,
+.bazi-fengshui-numbers-card,
+.bazi-fengshui-directions-card,
+.bazi-fengshui-residence-card,
+.bazi-fengshui-rooms-card,
+.bazi-fengshui-special-card,
+.bazi-fengshui-summary-card {
+  padding: var(--space-5);
+}
+
+.fengshui-colors-grid,
+.fengshui-numbers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-color-item,
+.fengshui-number-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.fengshui-color-item.lucky { border: 1px solid var(--success); }
+.fengshui-color-item.avoid { border: 1px solid var(--border); opacity: 0.7; }
+.fengshui-number-item.lucky { border: 1px solid var(--success); }
+.fengshui-number-item.avoid { border: 1px solid var(--border); opacity: 0.7; }
+
+.fengshui-color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+}
+
+.fengshui-color-name,
+.fengshui-number-value {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.fengshui-number-value {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  font-size: 1rem;
+}
+
+.fengshui-section-title {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: var(--space-3) 0 var(--space-2);
+}
+
+.fengshui-directions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-direction-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.fengshui-direction-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-direction-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.fengshui-direction-score {
+  font-size: 0.85rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.fengshui-direction-bar {
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-direction-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.fengshui-direction-desc,
+.fengshui-direction-usage {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.fengshui-residence-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-residence-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.fengshui-residence-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.fengshui-residence-desc {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.fengshui-rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-room-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.fengshui-room-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-room-position {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.fengshui-room-facing {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-room-tips,
+.fengshui-room-taboos {
+  margin-bottom: var(--space-1);
+}
+
+.fengshui-tips-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: var(--space-1);
+}
+
+.fengshui-tips-label.tips { color: var(--success); }
+.fengshui-tips-label.taboo { color: var(--error); }
+
+.fengshui-room-tips span,
+.fengshui-room-taboos span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-right: var(--space-2);
+}
+
+.fengshui-special-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-special-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid var(--gold-500);
+}
+
+.fengshui-special-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-special-direction {
+  font-size: 0.85rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.fengshui-special-desc,
+.fengshui-special-usage {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.fengshui-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}

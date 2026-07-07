@@ -4,12 +4,12 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult, analyzeCareer, type CareerAnalysisResult, analyzeWealth, type WealthAnalysisResult, analyzeHealth, type HealthAnalysisResult } from '../lib/bazi'
+import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult, analyzeCareer, type CareerAnalysisResult, analyzeWealth, type WealthAnalysisResult, analyzeHealth, type HealthAnalysisResult, analyzeFengShui, type FengShuiAnalysisResult } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'wealth' | 'health' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'wealth' | 'health' | 'fengshui' | 'analysis'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
@@ -26,6 +26,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'career', label: '事业' },
   { key: 'wealth', label: '财富' },
   { key: 'health', label: '健康' },
+  { key: 'fengshui', label: '风水' },
   { key: 'analysis', label: '解析' },
 ]
 
@@ -215,6 +216,14 @@ export default function BaziChart() {
     sixLines,
     dayMaster.dayGan,
     fiveElementPower,
+  )
+
+  const fengshui = analyzeFengShui(
+    sixLines,
+    dayMaster.dayGan,
+    xiYongShen,
+    fiveElementPower,
+    shenShiAnalysis.details[0]?.name || '',
   )
 
   function handleSave() {
@@ -1519,6 +1528,143 @@ export default function BaziChart() {
               <Card className="bazi-health-summary-card">
                 <h3 className="card-title">健康总结</h3>
                 <p className="health-summary-text">{health.summary}</p>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'fengshui' && (
+            <div className="bazi-fengshui-analysis">
+              <Card className="bazi-fengshui-colors-card">
+                <h3 className="card-title">喜用颜色</h3>
+                <div className="fengshui-colors-grid">
+                  {fengshui.luckyColors.map((item, idx) => (
+                    <div key={idx} className="fengshui-color-item lucky">
+                      <div className="fengshui-color-swatch" style={{ background: item.hex }} />
+                      <span className="fengshui-color-name">{item.color}</span>
+                      <Badge variant="success" size="sm">{item.element}</Badge>
+                    </div>
+                  ))}
+                </div>
+                {fengshui.avoidColors.length > 0 && (
+                  <div className="fengshui-colors-section">
+                    <h4 className="fengshui-section-title">忌讳颜色</h4>
+                    <div className="fengshui-colors-grid">
+                      {fengshui.avoidColors.map((item, idx) => (
+                        <div key={idx} className="fengshui-color-item avoid">
+                          <div className="fengshui-color-swatch" style={{ background: item.hex }} />
+                          <span className="fengshui-color-name">{item.color}</span>
+                          <Badge variant="default" size="sm">{item.element}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </Card>
+
+              <Card className="bazi-fengshui-numbers-card">
+                <h3 className="card-title">幸运数字</h3>
+                <div className="fengshui-numbers-grid">
+                  {fengshui.luckyNumbers.map((item, idx) => (
+                    <div key={idx} className="fengshui-number-item lucky">
+                      <span className="fengshui-number-value">{item.number}</span>
+                      <Badge variant="success" size="sm">{item.element}</Badge>
+                    </div>
+                  ))}
+                </div>
+                {fengshui.avoidNumbers.length > 0 && (
+                  <div className="fengshui-numbers-section">
+                    <h4 className="fengshui-section-title">忌讳数字</h4>
+                    <div className="fengshui-numbers-grid">
+                      {fengshui.avoidNumbers.map((item, idx) => (
+                        <div key={idx} className="fengshui-number-item avoid">
+                          <span className="fengshui-number-value">{item.number}</span>
+                          <Badge variant="default" size="sm">{item.element}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </Card>
+
+              <Card className="bazi-fengshui-directions-card">
+                <h3 className="card-title">吉方位</h3>
+                <div className="fengshui-directions-list">
+                  {fengshui.directions.map((dir, idx) => (
+                    <div key={idx} className="fengshui-direction-item">
+                      <div className="fengshui-direction-header">
+                        <span className="fengshui-direction-name">{dir.name}</span>
+                        <span className="fengshui-direction-score">{dir.score}分</span>
+                      </div>
+                      <div className="fengshui-direction-bar">
+                        <div className="fengshui-direction-bar-fill" style={{
+                          width: `${dir.score}%`,
+                          background: dir.score >= 70 ? 'var(--success)' : dir.score >= 50 ? 'var(--gold-500)' : 'var(--error)'
+                        }} />
+                      </div>
+                      <p className="fengshui-direction-desc">{dir.description}</p>
+                      <p className="fengshui-direction-usage">{dir.usage}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-fengshui-residence-card">
+                <h3 className="card-title">住宅坐向</h3>
+                <div className="fengshui-residence-main">
+                  <div className="fengshui-residence-row">
+                    <span className="fengshui-residence-label">最佳朝向</span>
+                    <Badge variant="success" size="md">{fengshui.residence.bestFacing}</Badge>
+                  </div>
+                  <div className="fengshui-residence-row">
+                    <span className="fengshui-residence-label">最佳坐向</span>
+                    <Badge variant="gold" size="md">{fengshui.residence.bestSitting}</Badge>
+                  </div>
+                </div>
+                <p className="fengshui-residence-desc">{fengshui.residence.description}</p>
+              </Card>
+
+              <Card className="bazi-fengshui-rooms-card">
+                <h3 className="card-title">房间布局</h3>
+                <div className="fengshui-rooms-list">
+                  {fengshui.rooms.map((room, idx) => (
+                    <div key={idx} className="fengshui-room-item">
+                      <div className="fengshui-room-header">
+                        <Badge variant="gold" size="sm">{room.room}</Badge>
+                        <span className="fengshui-room-position">{room.position}</span>
+                      </div>
+                      <p className="fengshui-room-facing">朝向：{room.facing}</p>
+                      <div className="fengshui-room-tips">
+                        <span className="fengshui-tips-label tips">建议：</span>
+                        {room.tips.map((t, tidx) => <span key={tidx}>{t}</span>)}
+                      </div>
+                      <div className="fengshui-room-taboos">
+                        <span className="fengshui-tips-label taboo">禁忌：</span>
+                        {room.taboos.map((t, tidx) => <span key={tidx}>{t}</span>)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-fengshui-special-card">
+                <h3 className="card-title">特殊方位</h3>
+                <div className="fengshui-special-list">
+                  {fengshui.specialPositions.map((pos, idx) => (
+                    <div key={idx} className="fengshui-special-item">
+                      <div className="fengshui-special-header">
+                        <Badge variant="gold" size="sm">{pos.name}</Badge>
+                        <span className="fengshui-special-direction">{pos.direction}</span>
+                      </div>
+                      <p className="fengshui-special-desc">{pos.description}</p>
+                      <p className="fengshui-special-usage">用途：{pos.usage}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-fengshui-summary-card">
+                <h3 className="card-title">风水总结</h3>
+                <p className="fengshui-summary-text">{fengshui.summary}</p>
               </Card>
             </div>
           )}
