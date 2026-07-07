@@ -99,5 +99,9 @@ export type { LiuYueMonth, LiuYueAnalysisResult } from './liuyueAnalysis'
 export { analyzeMarriage } from './marriageAnalysis'
 export type { MarriageAnalysisResult, MarriageShenSha, SpousePalaceRelation, MarriageRisk } from './marriageAnalysis'
 
+// Career Analysis (事业分析 P3)
+export { analyzeCareer } from './careerAnalysis'
+export type { CareerAnalysisResult, CareerShiShenScore, CareerDirection, IndustryMatch } from './careerAnalysis'
+
 // P0-② 子时换日模块
 export * from './zishi'

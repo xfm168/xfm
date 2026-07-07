@@ -1738,3 +1738,244 @@
   color: var(--text-primary);
   line-height: 1.8;
 }
+
+/* ========== 事业分析 (P3) ========== */
+.bazi-career-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-career-score-card {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.career-score-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.career-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.career-score-level {
+  margin-top: var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+
+.bazi-career-shishen-card {
+  padding: var(--space-5);
+}
+
+.career-shishen-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.career-shishen-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.career-shishen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.career-shishen-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.career-shishen-bar {
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: var(--space-1);
+}
+
+.career-shishen-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.career-shishen-power {
+  font-size: 0.8rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.career-shishen-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-top: var(--space-1);
+}
+
+.bazi-career-directions-card {
+  padding: var(--space-5);
+}
+
+.career-directions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.career-direction-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--border);
+}
+
+.career-direction-item.suitable {
+  border-left-color: var(--success);
+  background: rgba(74, 156, 109, 0.08);
+}
+
+.career-direction-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.career-direction-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.career-direction-score {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.career-direction-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.career-direction-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.career-direction-score-value {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+}
+
+.career-direction-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-career-industries-card {
+  padding: var(--space-5);
+}
+
+.career-industries-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.career-industry-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.career-industry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.career-industry-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.career-industry-score {
+  font-size: 0.85rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.career-industry-tags {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.career-industry-reason {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-career-path-card,
+.bazi-career-wealth-card,
+.bazi-career-risks-card,
+.bazi-career-suggestions-card,
+.bazi-career-summary-card {
+  padding: var(--space-5);
+}
+
+.career-path-text,
+.career-wealth-text,
+.career-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+.career-risks-list,
+.career-suggestions-list {
+  margin-top: var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.career-risks-list li,
+.career-suggestions-list li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-2);
+}

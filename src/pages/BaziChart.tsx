@@ -4,12 +4,12 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult } from '../lib/bazi'
+import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult, analyzeCareer, type CareerAnalysisResult } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'analysis'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
@@ -23,6 +23,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'liunian', label: '流年' },
   { key: 'liuyue', label: '流月' },
   { key: 'marriage', label: '婚姻' },
+  { key: 'career', label: '事业' },
   { key: 'analysis', label: '解析' },
 ]
 
@@ -189,6 +190,15 @@ export default function BaziChart() {
     sixLines,
     dayMaster.dayGan,
     chartBirth.gender,
+  )
+
+  const career = analyzeCareer(
+    sixLines,
+    dayMaster.dayGan,
+    chartBirth.gender,
+    shenShiAnalysis,
+    geJu,
+    fiveElementPower,
   )
 
   function handleSave() {
@@ -1090,6 +1100,126 @@ export default function BaziChart() {
               <Card className="bazi-marriage-summary-card">
                 <h3 className="card-title">婚姻总结</h3>
                 <p className="marriage-summary-text">{marriage.summary}</p>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'career' && (
+            <div className="bazi-career-analysis">
+              <Card className="bazi-career-score-card">
+                <h3 className="card-title">事业评分</h3>
+                <div className="career-score-main">
+                  <ScoreRing score={career.score} size={160} />
+                  <p className="career-score-label">事业综合指数</p>
+                </div>
+                <div className="career-score-level">
+                  {career.score >= 80 ? '事业运势旺盛' :
+                   career.score >= 60 ? '事业有发展潜力' : '事业需稳步积累'}
+                </div>
+              </Card>
+
+              <Card className="bazi-career-shishen-card">
+                <h3 className="card-title">事业十神格局</h3>
+                <div className="career-shishen-list">
+                  {career.shishenScores.slice(0, 5).map((item, idx) => (
+                    <div key={idx} className="career-shishen-item">
+                      <div className="career-shishen-header">
+                        <span className="career-shishen-name">{item.name}</span>
+                        <Badge variant="gold" size="sm">{item.role}</Badge>
+                      </div>
+                      <div className="career-shishen-bar">
+                        <div
+                          className="career-shishen-bar-fill"
+                          style={{ width: `${item.power}%` }}
+                        />
+                      </div>
+                      <span className="career-shishen-power">{item.power}分</span>
+                      <p className="career-shishen-desc">{item.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-career-directions-card">
+                <h3 className="card-title">发展方向</h3>
+                <div className="career-directions-list">
+                  {career.directions.map((dir, idx) => (
+                    <div key={idx} className={`career-direction-item ${dir.suitable ? 'suitable' : ''}`}>
+                      <div className="career-direction-header">
+                        <span className="career-direction-name">{dir.name}</span>
+                        <Badge variant={dir.suitable ? 'success' : 'default'} size="sm">
+                          {dir.suitable ? '适合' : '一般'}
+                        </Badge>
+                      </div>
+                      <div className="career-direction-score">
+                        <div className="career-direction-bar">
+                          <div
+                            className="career-direction-bar-fill"
+                            style={{
+                              width: `${dir.score}%`,
+                              background: dir.score >= 70 ? 'var(--success)' : dir.score >= 50 ? 'var(--gold-500)' : 'var(--error)'
+                            }}
+                          />
+                        </div>
+                        <span className="career-direction-score-value">{dir.score}分</span>
+                      </div>
+                      <p className="career-direction-desc">{dir.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-career-industries-card">
+                <h3 className="card-title">适合行业</h3>
+                <div className="career-industries-list">
+                  {career.industries.map((item, idx) => (
+                    <div key={idx} className="career-industry-item">
+                      <div className="career-industry-header">
+                        <span className="career-industry-name">{item.industry}</span>
+                        <span className="career-industry-score">{item.score}分</span>
+                      </div>
+                      <div className="career-industry-tags">
+                        {item.tags.map((tag, tidx) => (
+                          <Badge key={tidx} variant="default" size="sm">{tag}</Badge>
+                        ))}
+                      </div>
+                      <p className="career-industry-reason">{item.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-career-path-card">
+                <h3 className="card-title">最佳发展路径</h3>
+                <p className="career-path-text">{career.bestPath}</p>
+              </Card>
+
+              <Card className="bazi-career-wealth-card">
+                <h3 className="card-title">财富方向</h3>
+                <p className="career-wealth-text">{career.wealthDirection}</p>
+              </Card>
+
+              <Card className="bazi-career-risks-card">
+                <h3 className="card-title">事业风险</h3>
+                <ul className="career-risks-list">
+                  {career.risks.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </Card>
+
+              <Card className="bazi-career-suggestions-card">
+                <h3 className="card-title">发展建议</h3>
+                <ul className="career-suggestions-list">
+                  {career.suggestions.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </Card>
+
+              <Card className="bazi-career-summary-card">
+                <h3 className="card-title">事业总结</h3>
+                <p className="career-summary-text">{career.summary}</p>
               </Card>
             </div>
           )}
