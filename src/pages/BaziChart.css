@@ -2249,3 +2249,263 @@
   line-height: 1.8;
   margin-bottom: var(--space-2);
 }
+
+/* ========== 健康分析 (P5) ========== */
+.bazi-health-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-health-score-card {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.health-score-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.health-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.health-score-level {
+  margin-top: var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+
+.bazi-health-constitution-card {
+  padding: var(--space-5);
+}
+
+.health-constitution-main {
+  margin-top: var(--space-3);
+}
+
+.health-constitution-desc {
+  margin-top: var(--space-2);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.health-constitution-chars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.health-char-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.bazi-health-tcm-card {
+  padding: var(--space-5);
+}
+
+.health-tcm-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.health-tcm-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.health-tcm-item.cold { border-left: 3px solid #6b8cce; }
+.health-tcm-item.hot { border-left: 3px solid var(--error); }
+.health-tcm-item.dry { border-left: 3px solid var(--warning); }
+.health-tcm-item.wet { border-left: 3px solid #6b8cce; }
+
+.health-tcm-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-right: var(--space-2);
+}
+
+.health-tcm-desc {
+  margin-top: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-health-disease-card {
+  padding: var(--space-5);
+}
+
+.health-disease-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.health-disease-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.health-disease-item.level-high { border-left: 3px solid var(--error); }
+.health-disease-item.level-medium { border-left: 3px solid var(--warning); }
+.health-disease-item.level-low { border-left: 3px solid var(--success); }
+
+.health-disease-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.health-disease-organ {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.health-disease-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+.health-disease-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.bazi-health-diet-card {
+  padding: var(--space-5);
+}
+
+.health-diet-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.health-diet-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.health-diet-category {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.health-diet-reason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+.health-diet-section {
+  margin-bottom: var(--space-2);
+}
+
+.health-diet-section-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: var(--space-1);
+}
+
+.health-diet-section-label.recommend { color: var(--success); }
+.health-diet-section-label.avoid { color: var(--error); }
+
+.health-diet-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.bazi-health-exercise-card {
+  padding: var(--space-5);
+}
+
+.health-exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.health-exercise-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.health-exercise-reason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-health-regimen-card {
+  padding: var(--space-5);
+}
+
+.health-regimen-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.health-regimen-aspect {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold-500);
+  margin-bottom: var(--space-2);
+}
+
+.health-regimen-suggestions {
+  padding-left: var(--space-5);
+}
+
+.health-regimen-suggestions li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-1);
+}
+
+.bazi-health-summary-card {
+  padding: var(--space-5);
+}
+
+.health-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}

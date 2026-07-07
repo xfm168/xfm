@@ -4,12 +4,12 @@ import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult, analyzeCareer, type CareerAnalysisResult, analyzeWealth, type WealthAnalysisResult } from '../lib/bazi'
+import { calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory, analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower, analyzeDaYun, analyzeLiuNian, analyzeLiuYue, analyzeMarriage, type MarriageAnalysisResult, analyzeCareer, type CareerAnalysisResult, analyzeWealth, type WealthAnalysisResult, analyzeHealth, type HealthAnalysisResult } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'wealth' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'wealth' | 'health' | 'analysis'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
@@ -25,6 +25,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'marriage', label: '婚姻' },
   { key: 'career', label: '事业' },
   { key: 'wealth', label: '财富' },
+  { key: 'health', label: '健康' },
   { key: 'analysis', label: '解析' },
 ]
 
@@ -208,6 +209,12 @@ export default function BaziChart() {
     shenShiAnalysis,
     liuNian,
     geJu,
+  )
+
+  const health = analyzeHealth(
+    sixLines,
+    dayMaster.dayGan,
+    fiveElementPower,
   )
 
   function handleSave() {
@@ -1375,6 +1382,143 @@ export default function BaziChart() {
               <Card className="bazi-wealth-summary-card">
                 <h3 className="card-title">财富总结</h3>
                 <p className="wealth-summary-text">{wealth.summary}</p>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'health' && (
+            <div className="bazi-health-analysis">
+              <Card className="bazi-health-score-card">
+                <h3 className="card-title">健康评分</h3>
+                <div className="health-score-main">
+                  <ScoreRing score={health.score} size={160} />
+                  <p className="health-score-label">健康综合指数</p>
+                </div>
+                <div className="health-score-level">
+                  {health.score >= 80 ? '健康状况良好' :
+                   health.score >= 60 ? '健康需关注' : '健康需重点调养'}
+                </div>
+              </Card>
+
+              <Card className="bazi-health-constitution-card">
+                <h3 className="card-title">体质类型</h3>
+                <div className="health-constitution-main">
+                  <Badge variant="gold" size="md">{health.constitution.type}</Badge>
+                </div>
+                <p className="health-constitution-desc">{health.constitution.description}</p>
+                <div className="health-constitution-chars">
+                  {health.constitution.characteristics.map((c, idx) => (
+                    <span key={idx} className="health-char-tag">{c}</span>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-health-tcm-card">
+                <h3 className="card-title">寒热燥湿</h3>
+                <div className="health-tcm-grid">
+                  <div className={`health-tcm-item ${health.temperature.type === '寒' ? 'cold' : health.temperature.type === '热' ? 'hot' : ''}`}>
+                    <span className="health-tcm-label">寒热</span>
+                    <Badge variant={health.temperature.type === '寒' ? 'default' : health.temperature.type === '热' ? 'error' : 'success'} size="sm">
+                      {health.temperature.type}
+                    </Badge>
+                    <p className="health-tcm-desc">{health.temperature.description}</p>
+                  </div>
+                  <div className={`health-tcm-item ${health.moisture.type === '燥' ? 'dry' : health.moisture.type === '湿' ? 'wet' : ''}`}>
+                    <span className="health-tcm-label">燥湿</span>
+                    <Badge variant={health.moisture.type === '燥' ? 'warning' : health.moisture.type === '湿' ? 'default' : 'success'} size="sm">
+                      {health.moisture.type}
+                    </Badge>
+                    <p className="health-tcm-desc">{health.moisture.description}</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="bazi-health-disease-card">
+                <h3 className="card-title">易患疾病</h3>
+                <div className="health-disease-list">
+                  {health.diseaseRisks.map((item, idx) => (
+                    <div key={idx} className={`health-disease-item level-${item.riskLevel}`}>
+                      <div className="health-disease-header">
+                        <span className="health-disease-organ">{item.organ}</span>
+                        <Badge
+                          variant={item.riskLevel === 'high' ? 'error' : item.riskLevel === 'medium' ? 'warning' : 'success'}
+                          size="sm"
+                        >
+                          {item.riskLevel === 'high' ? '高风险' : item.riskLevel === 'medium' ? '中风险' : '低风险'}
+                        </Badge>
+                      </div>
+                      <p className="health-disease-desc">{item.description}</p>
+                      <div className="health-disease-tags">
+                        {item.diseases.map((d, didx) => (
+                          <Badge key={didx} variant="default" size="sm">{d}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-health-diet-card">
+                <h3 className="card-title">饮食建议</h3>
+                <div className="health-diet-list">
+                  {health.dietSuggestions.map((item, idx) => (
+                    <div key={idx} className="health-diet-item">
+                      <div className="health-diet-header">
+                        <span className="health-diet-category">{item.category}</span>
+                      </div>
+                      <p className="health-diet-reason">{item.reason}</p>
+                      <div className="health-diet-section">
+                        <span className="health-diet-section-label recommend">宜食：</span>
+                        <div className="health-diet-tags">
+                          {item.recommend.map((r, ridx) => (
+                            <Badge key={ridx} variant="success" size="sm">{r}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="health-diet-section">
+                        <span className="health-diet-section-label avoid">忌食：</span>
+                        <div className="health-diet-tags">
+                          {item.avoid.map((a, aidx) => (
+                            <Badge key={aidx} variant="error" size="sm">{a}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-health-exercise-card">
+                <h3 className="card-title">运动建议</h3>
+                <div className="health-exercise-list">
+                  {health.exerciseSuggestions.map((item, idx) => (
+                    <div key={idx} className="health-exercise-item">
+                      <Badge variant="success" size="sm">{item.type}</Badge>
+                      <p className="health-exercise-reason">{item.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-health-regimen-card">
+                <h3 className="card-title">调理方案</h3>
+                <div className="health-regimen-list">
+                  {health.regimens.map((item, idx) => (
+                    <div key={idx} className="health-regimen-item">
+                      <h4 className="health-regimen-aspect">{item.aspect}</h4>
+                      <ul className="health-regimen-suggestions">
+                        {item.suggestions.map((s, sidx) => (
+                          <li key={sidx}>{s}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="bazi-health-summary-card">
+                <h3 className="card-title">健康总结</h3>
+                <p className="health-summary-text">{health.summary}</p>
               </Card>
             </div>
           )}

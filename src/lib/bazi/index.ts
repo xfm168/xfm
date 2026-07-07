@@ -107,5 +107,9 @@ export type { CareerAnalysisResult, CareerShiShenScore, CareerDirection, Industr
 export { analyzeWealth } from './wealthAnalysis'
 export type { WealthAnalysisResult, WealthShiShen, CaiKu, WealthRiskYear, InvestmentDirection } from './wealthAnalysis'
 
+// Health Analysis (健康分析 P5)
+export { analyzeHealth } from './healthAnalysis'
+export type { HealthAnalysisResult, BodyConstitution, DiseaseRisk, DietSuggestion, ExerciseSuggestion, HealthRegimen } from './healthAnalysis'
+
 // P0-② 子时换日模块
 export * from './zishi'
