@@ -16,6 +16,7 @@ import {
   analyzeFengShui, type FengShuiAnalysisResult,
   generateFullReport, type FullReportResult,
   type FiveElementPowerResult,
+  exportMarkdown, exportWord, exportPdf,
 } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
@@ -1785,55 +1786,35 @@ export default function BaziChart() {
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => {
-                      const blob = new Blob([`# ${fullReport.title}\n\n${fullReport.subtitle}\n\n---\n\n` + fullReport.chapters.map(c => c.content).join('\n\n')], { type: 'text/markdown;charset=utf-8' })
-                      const url = URL.createObjectURL(blob)
-                      const a = document.createElement('a')
-                      a.href = url
-                      a.download = `${fullReport.title}.md`
-                      a.click()
-                      URL.revokeObjectURL(url)
-                    }}
+                    onClick={() => exportMarkdown(fullReport, {
+                      birthDate: chartBirth.birthDate,
+                      birthTime: chartBirth.birthTime,
+                      gender: chartBirth.gender,
+                    })}
                   >
-                    导出 Markdown
+                    导出命书 Markdown
                   </Button>
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => {
-                      const html = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>${fullReport.title}</title>
-<style>
-body{font-family:"Noto Sans CJK SC",sans-serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.8;color:#333}
-h1{text-align:center;color:#8B4513}h2{color:#8B4513;border-bottom:2px solid #D4AF37;padding-bottom:8px}
-.subtitle{text-align:center;color:#666;margin-bottom:30px}
-.wordcount{text-align:center;color:#999;font-size:0.9em;margin-bottom:40px}
-</style></head>
-<body>
-<h1>${fullReport.title}</h1>
-<p class="subtitle">${fullReport.subtitle}</p>
-<p class="wordcount">共 ${fullReport.wordCount.toLocaleString()} 字</p>
-${fullReport.chapters.map(c => `<h2>${c.title}</h2>\n${c.content.replace(/\n/g, '<br>')}`).join('<br><br>')}
-</body></html>`
-                      const blob = new Blob(['\ufeff' + html], { type: 'application/msword;charset=utf-8' })
-                      const url = URL.createObjectURL(blob)
-                      const a = document.createElement('a')
-                      a.href = url
-                      a.download = `${fullReport.title}.doc`
-                      a.click()
-                      URL.revokeObjectURL(url)
-                    }}
+                    onClick={() => exportWord(fullReport, {
+                      birthDate: chartBirth.birthDate,
+                      birthTime: chartBirth.birthTime,
+                      gender: chartBirth.gender,
+                    })}
                   >
-                    导出 Word
+                    导出命书 Word
                   </Button>
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => window.print()}
+                    onClick={() => exportPdf(fullReport, {
+                      birthDate: chartBirth.birthDate,
+                      birthTime: chartBirth.birthTime,
+                      gender: chartBirth.gender,
+                    })}
                   >
-                    打印 / PDF
+                    导出命书 PDF
                   </Button>
                 </div>
               </Card>

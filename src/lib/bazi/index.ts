@@ -119,5 +119,8 @@ export type { FengShuiAnalysisResult, ColorAdvice, LuckyNumber, DirectionAdvice,
 export { generateFullReport } from './fullReport'
 export type { FullReportResult, ReportChapter, FullReportInput } from './fullReport'
 
+// Report Export (V3.0 商业版导出)
+export { exportMarkdown, exportWord, exportPdf } from './reportExport'
+
 // P0-② 子时换日模块
 export * from './zishi'
