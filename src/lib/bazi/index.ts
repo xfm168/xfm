@@ -119,6 +119,7 @@ export type { FengShuiAnalysisResult, ColorAdvice, LuckyNumber, DirectionAdvice,
 // Full Report (P7 AI解读)
 export { generateFullReport } from './fullReport'
 export type { FullReportResult, ReportChapter, FullReportInput } from './fullReport'
+export type { WangShuaiResult } from './types'
 
 // Report Export (V3.0 商业版导出)
 export { exportMarkdown, exportWord, exportPdf } from './reportExport'

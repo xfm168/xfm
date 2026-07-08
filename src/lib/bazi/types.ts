@@ -48,6 +48,7 @@ export interface BirthInfo {
   timezone?: string
   region?: string
   solarTime?: boolean
+  ziShiStrategy?: ZiShiStrategyType
 }
 
 export interface GanZhi {
@@ -131,3 +132,17 @@ export type SolarTermName =
 
 // P0-② 子时换日策略类型
 export type ZiShiStrategyType = 'late' | 'early' | 'gregorian'
+
+/** 旺衰分析结果 */
+export interface WangShuaiResult {
+  wangShuai: WuXingWangShuai
+  strengthScore: number
+  deLing: boolean
+  deDi: boolean
+  deShi: boolean
+  tongGen: boolean
+  yueLing: string
+  bestElement?: FiveElement
+  avoidedElements?: FiveElement[]
+  level?: string
+}

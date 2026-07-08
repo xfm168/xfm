@@ -1,12 +1,12 @@
 import type {
   SixLines, HeavenlyStem, EarthlyBranch,
-  FiveElement, ShenShi, BaZiAnalysis
+  FiveElement, ShenShi, BaZiChart
 } from './types'
+import type { WangShuaiResult } from './types'
 import type { GeJuResult } from './geju'
 import type { ShenShiAnalysisResult } from './shishenAnalysis'
 import type { FiveElementPowerResult } from './fiveElementPower'
 import type { ShenShaCategory } from './shensha'
-import type { WangShuaiResult } from './wangshuai'
 import type { MarriageAnalysisResult } from './marriageAnalysis'
 import type { CareerAnalysisResult } from './careerAnalysis'
 import type { WealthAnalysisResult } from './wealthAnalysis'
@@ -30,7 +30,7 @@ export interface FullReportResult {
 }
 
 export interface FullReportInput {
-  chart: BaZiAnalysis
+  chart: BaZiChart
   sixLines: SixLines
   dayMaster: { dayGan: HeavenlyStem; dayGanElement: FiveElement; wangShuai: string; strengthScore: number }
   geJu: GeJuResult
@@ -54,7 +54,7 @@ function generateChapter1_overview(input: FullReportInput): string {
   const lines = [
     `## 一、命局概况`,
     ``,
-    `命主生于${chart.sixLines.year.gan}${chart.sixLines.year.zhi}年、${chart.sixLines.month.gan}${chart.sixLines.month.zhi}月、${chart.sixLines.day.gan}${chart.sixLines.day.zhi}日、${chart.sixLines.hour.gan}${chart.sixLines.hour.zhi}时。`,
+    `命主生于${sixLines.year.gan}${sixLines.year.zhi}年、${sixLines.month.gan}${sixLines.month.zhi}月、${sixLines.day.gan}${sixLines.day.zhi}日、${sixLines.hour.gan}${sixLines.hour.zhi}时。`,
     ``,
     `日主为${dayMaster.dayGan}，五行属${dayMaster.dayGanElement}。${dayMaster.dayGanElement}主仁、主礼、主信、主义、主智，${getElementPersonality(dayMaster.dayGanElement)}。`,
     ``,
@@ -100,11 +100,11 @@ function generateChapter3_geju(input: FullReportInput): string {
     ``,
     `${geJu.description}`,
     ``,
-    `**成格条件**：${geJu.chengGe.join('、')}。`,
+    `**成格条件**：${geJu.reasons.join('、')}。`,
     ``,
-    `**破格因素**：${geJu.poGe ? geJu.poGeReasons.join('、') : '无破格因素，格局清纯。'}`,
+    `**破格因素**：${geJu.poGe ? geJu.poGeReason : '无破格因素，格局清纯。'}`,
     ``,
-    `**格局层次**：${geJu.level === 'high' ? '上格，格局高，富贵可期' : geJu.level === 'medium' ? '中格，格局尚可，努力可成' : '下格，格局普通，需后天努力'}。`,
+    `**格局层次**：${['S+', 'S', 'A+'].includes(geJu.grade) ? '上格，格局高，富贵可期' : ['A', 'B'].includes(geJu.grade) ? '中格，格局尚可，努力可成' : '下格，格局普通，需后天努力'}。`,
   ]
   return lines.join('\n')
 }
@@ -114,21 +114,21 @@ function generateChapter4_shishen(input: FullReportInput): string {
   const lines = [
     `## 四、十神分析`,
     ``,
-    `主导十神：**${shenShiAnalysis.dominant}**。`,
+    `主导十神：**${shenShiAnalysis.dominantShenShi.join('、')}**。`,
     ``,
     `**十神力量详表**：`,
   ]
   for (const d of shenShiAnalysis.details) {
-    lines.push(`- ${d.name}：${d.power}分 ${d.touGan ? '【透干】' : ''}${d.deLing ? '【得令】' : ''}${d.deDi ? '【得地】' : ''}${d.tongGen ? '【通根】' : ''}${d.shouZhi ? '【受制】' : ''}`)
+    lines.push(`- ${d.name}：${d.power}分 ${d.touGan ? '【透干】' : ''}${d.deLing ? '【得令】' : ''}${d.deDi ? '【得地】' : ''}${d.youGen ? '【通根】' : ''}${d.shouZhi ? '【受制】' : ''}`)
   }
   lines.push(``)
   lines.push(`**人格特质**：${shenShiAnalysis.personality}`)
   lines.push(``)
-  lines.push(`**性格倾向**：${shenShiAnalysis.character}`)
+  lines.push(`**性格倾向**：${shenShiAnalysis.personalityTraits?.join('、')}`)
   lines.push(``)
-  lines.push(`**职业倾向**：${shenShiAnalysis.career}`)
+  lines.push(`**职业倾向**：${shenShiAnalysis.careerTendency}`)
   lines.push(``)
-  lines.push(`**婚恋特点**：${shenShiAnalysis.marriage}`)
+  lines.push(`**婚恋特点**：${shenShiAnalysis.relationshipTraits}`)
   return lines.join('\n')
 }
 
@@ -143,7 +143,7 @@ function generateChapter5_shensha(input: FullReportInput): string {
   for (const cat of shenSha) {
     const hitItems = cat.items.filter(i => i.inPosition)
     if (hitItems.length > 0) {
-      lines.push(`**${cat.category}**：${hitItems.map(i => i.name).join('、')}`)
+      lines.push(`**${cat.name}**：${hitItems.map(i => i.name).join('、')}`)
       for (const item of hitItems) {
         lines.push(`- ${item.name}：${item.description}`)
       }
@@ -155,6 +155,7 @@ function generateChapter5_shensha(input: FullReportInput): string {
 
 function generateChapter6_xiyong(input: FullReportInput): string {
   const { xiYongShen, fiveElementPower } = input
+  const powerMap = Object.fromEntries(fiveElementPower.elements.map(e => [e.element, e.percentage])) as Record<FiveElement, number>
   const lines = [
     `## 六、喜用神`,
     ``,
@@ -163,11 +164,11 @@ function generateChapter6_xiyong(input: FullReportInput): string {
     `**忌神**：${xiYongShen.avoidedElements.join('、')}。`,
     ``,
     `**五行力量分布**：`,
-    `- 木：${fiveElementPower.powerMap['木']?.toFixed(1) || 0}`,
-    `- 火：${fiveElementPower.powerMap['火']?.toFixed(1) || 0}`,
-    `- 土：${fiveElementPower.powerMap['土']?.toFixed(1) || 0}`,
-    `- 金：${fiveElementPower.powerMap['金']?.toFixed(1) || 0}`,
-    `- 水：${fiveElementPower.powerMap['水']?.toFixed(1) || 0}`,
+    `- 木：${powerMap['木']?.toFixed(1) || 0}`,
+    `- 火：${powerMap['火']?.toFixed(1) || 0}`,
+    `- 土：${powerMap['土']?.toFixed(1) || 0}`,
+    `- 金：${powerMap['金']?.toFixed(1) || 0}`,
+    `- 水：${powerMap['水']?.toFixed(1) || 0}`,
     ``,
     `喜用神${xiYongShen.bestElement}为命局所喜，能补命局之不足，增福添寿。日常生活中多接触${xiYongShen.bestElement}行相关的事物，有助于提升运势。`,
   ]
@@ -783,7 +784,7 @@ export function generateFullReport(input: FullReportInput): FullReportResult {
 
   return {
     title: `${input.dayMaster.dayGan}${input.dayMaster.dayGanElement}日主完整命书`,
-    subtitle: `${input.chart.sixLines.year.gan}${input.chart.sixLines.year.zhi}年 ${input.chart.sixLines.month.gan}${input.chart.sixLines.month.zhi}月 ${input.chart.sixLines.day.gan}${input.chart.sixLines.day.zhi}日 ${input.chart.sixLines.hour.gan}${input.chart.sixLines.hour.zhi}时`,
+    subtitle: `${input.sixLines.year.gan}${input.sixLines.year.zhi}年 ${input.sixLines.month.gan}${input.sixLines.month.zhi}月 ${input.sixLines.day.gan}${input.sixLines.day.zhi}日 ${input.sixLines.hour.gan}${input.sixLines.hour.zhi}时`,
     chapters,
     wordCount,
   }

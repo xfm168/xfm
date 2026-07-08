@@ -153,8 +153,9 @@ function determineConstitution(fiveElementPower: FiveElementPowerResult): BodyCo
 function analyzeTemperature(
   fiveElementPower: FiveElementPowerResult
 ): { type: '寒' | '热' | '平'; level: number; description: string } {
-  const fire = fiveElementPower.powerMap['火'] || 0
-  const water = fiveElementPower.powerMap['水'] || 0
+  const powerMap = Object.fromEntries(fiveElementPower.elements.map(e => [e.element, e.percentage])) as Record<FiveElement, number>
+  const fire = powerMap['火'] || 0
+  const water = powerMap['水'] || 0
 
   if (fire > water + 15) {
     return {
@@ -180,9 +181,10 @@ function analyzeTemperature(
 function analyzeMoisture(
   fiveElementPower: FiveElementPowerResult
 ): { type: '燥' | '湿' | '平'; level: number; description: string } {
-  const earth = fiveElementPower.powerMap['土'] || 0
-  const metal = fiveElementPower.powerMap['金'] || 0
-  const water = fiveElementPower.powerMap['水'] || 0
+  const powerMap = Object.fromEntries(fiveElementPower.elements.map(e => [e.element, e.percentage])) as Record<FiveElement, number>
+  const earth = powerMap['土'] || 0
+  const metal = powerMap['金'] || 0
+  const water = powerMap['水'] || 0
 
   if (earth > water + metal - 10) {
     return {
@@ -206,10 +208,11 @@ function analyzeMoisture(
 }
 
 function analyzeDiseaseRisks(fiveElementPower: FiveElementPowerResult): DiseaseRisk[] {
+  const powerMap = Object.fromEntries(fiveElementPower.elements.map(e => [e.element, e.percentage])) as Record<FiveElement, number>
   const risks: DiseaseRisk[] = []
 
   for (const element of ['木', '火', '土', '金', '水'] as FiveElement[]) {
-    const power = fiveElementPower.powerMap[element] || 0
+    const power = powerMap[element] || 0
     const info = ELEMENT_ORGAN_MAP[element]
 
     let riskLevel: 'high' | 'medium' | 'low'
@@ -246,6 +249,7 @@ function analyzeDietSuggestions(
   fiveElementPower: FiveElementPowerResult,
   temperature: { type: '寒' | '热' | '平' }
 ): DietSuggestion[] {
+  const powerMap = Object.fromEntries(fiveElementPower.elements.map(e => [e.element, e.percentage])) as Record<FiveElement, number>
   const suggestions: DietSuggestion[] = []
 
   // 根据喜用五行推荐饮食
@@ -255,7 +259,7 @@ function analyzeDietSuggestions(
       category: `补益${element}行（${ELEMENT_ORGAN_MAP[element].organs.join('/')}）`,
       recommend: diet.recommend,
       avoid: diet.avoid,
-      reason: `${element}行${fiveElementPower.powerMap[element] > 25 ? '偏旺' : '需补益'}，宜多食${element}行对应食材。`,
+      reason: `${element}行${powerMap[element] > 25 ? '偏旺' : '需补益'}，宜多食${element}行对应食材。`,
     })
   }
 

@@ -5,6 +5,7 @@ export type CardVariant = 'default' | 'highlight' | 'ghost' | 'feature'
 export type CardPadding = 'sm' | 'md' | 'lg'
 
 export interface CardProps {
+  id?: string
   variant?: CardVariant
   padding?: CardPadding
   hoverable?: boolean
@@ -14,6 +15,7 @@ export interface CardProps {
 }
 
 export default function Card({
+  id,
   variant = 'default',
   padding = 'md',
   hoverable = false,
@@ -33,7 +35,7 @@ export default function Card({
   const Component = onClick ? 'button' : 'div'
 
   return (
-    <Component className={classes} onClick={onClick}>
+    <Component id={id} className={classes} onClick={onClick}>
       {children}
     </Component>
   )

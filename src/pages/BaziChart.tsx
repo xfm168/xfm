@@ -128,10 +128,10 @@ export default function BaziChart() {
 
   // 分步 Loading：将所有同步计算拆分为异步步骤，避免白屏
   useEffect(() => {
-    if (!chart || analysisReady) return
+    if (!chart || analysisReady) return undefined
 
     const timeoutIds: ReturnType<typeof setTimeout>[] = []
-    const { sixLines, fiveElementCount, dayMaster, xiYongShen, birthInfo: chartBirth, wangShuai: _ws } = chart
+    const { sixLines, fiveElementCount, dayMaster, xiYongShen, birthInfo: chartBirth } = chart
     const birthDate = new Date(`${chartBirth.birthDate}T${chartBirth.birthTime}`)
     const currentYear = new Date().getFullYear()
 
@@ -174,24 +174,36 @@ export default function BaziChart() {
         setLoadingStep(7)
       },
       () => {
+        const cur = analysisRef.current!
         const r = generateFullReport({
           chart, sixLines, dayMaster,
-          geJu: analysisRef.current!.geJu,
-          wangShuai: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements, level: dayMaster.wangShuai },
-          shenShiAnalysis: analysisRef.current!.shenShiAnalysis,
-          fiveElementPower: analysisRef.current!.fiveElementPower,
-          shenSha: analysisRef.current!.shenSha,
+          geJu: cur.geJu,
+          wangShuai: {
+            wangShuai: dayMaster.wangShuai,
+            strengthScore: dayMaster.strengthScore,
+            deLing: ['旺', '相'].includes(dayMaster.wangShuai),
+            deDi: dayMaster.strengthScore >= 50,
+            deShi: dayMaster.strengthScore >= 60,
+            tongGen: dayMaster.strengthScore >= 40,
+            yueLing: sixLines.month.zhi,
+            bestElement: xiYongShen.bestElement,
+            avoidedElements: xiYongShen.avoidedElements,
+            level: dayMaster.wangShuai,
+          },
+          shenShiAnalysis: cur.shenShiAnalysis,
+          fiveElementPower: cur.fiveElementPower,
+          shenSha: cur.shenSha,
           xiYongShen: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements },
-          marriage: analysisRef.current!.marriage,
-          career: analysisRef.current!.career,
-          wealth: analysisRef.current!.wealth,
-          health: analysisRef.current!.health,
-          fengshui: analysisRef.current!.fengshui,
-          daYun: analysisRef.current!.daYun,
-          liuNian: analysisRef.current!.liuNian,
-          liuYue: analysisRef.current!.liuYue,
+          marriage: cur.marriage,
+          career: cur.career,
+          wealth: cur.wealth,
+          health: cur.health,
+          fengshui: cur.fengshui,
+          daYun: cur.daYun,
+          liuNian: cur.liuNian,
+          liuYue: cur.liuYue,
         })
-        analysisRef.current = { ...analysisRef.current!, fullReport: r } as any
+        analysisRef.current = { ...cur, fullReport: r }
         setLoadingStep(8)
       },
       () => {
@@ -255,7 +267,7 @@ export default function BaziChart() {
           icon="☯"
           label="玄风命理"
           title="命盘推演"
-          subtitle={`${chartBirth.birthDate} ${chartBirth.birthTime} ${chartBirth.gender === 'male' ? '男命' : '女命'}`}
+          subtitle={`${chart.birthInfo.birthDate} ${chart.birthInfo.birthTime} ${chart.birthInfo.gender === 'male' ? '男命' : '女命'}`}
         />
         <div className="container bazi-chart-content">
           <div className="bazi-loading-container">
@@ -871,8 +883,8 @@ export default function BaziChart() {
                 <p><strong>强弱得分：</strong>{dayMaster.strengthScore} 分</p>
               </div>
               <p className="wangshuai-desc">
-                日主{dayMaster.wangShuai === '旺' ? '偏旺' : dayMaster.wangShuai === '弱' ? '偏弱' : dayMaster.wangShuai}，
-                {dayMaster.wangShuai === '旺' ? '需克制泄耗，宜用克泄耗五行' : dayMaster.wangShuai === '弱' ? '需生扶助力，宜用生助五行' : '五行相对平衡，喜用神选择需综合判断'}。
+                日主{dayMaster.wangShuai === '旺' ? '偏旺' : ['囚', '死'].includes(dayMaster.wangShuai) ? '偏弱' : dayMaster.wangShuai}，
+                {dayMaster.wangShuai === '旺' ? '需克制泄耗，宜用克泄耗五行' : ['囚', '死'].includes(dayMaster.wangShuai) ? '需生扶助力，宜用生助五行' : '五行相对平衡，喜用神选择需综合判断'}。
               </p>
             </Card>
           )}

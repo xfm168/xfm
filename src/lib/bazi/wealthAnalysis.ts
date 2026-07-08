@@ -48,10 +48,18 @@ export interface WealthAnalysisResult {
 const CAIS: ShenShi[] = ['正财', '偏财']
 
 const CAI_KU_MAP: Record<EarthlyBranch, string> = {
-  '辰': '水库',
-  '戌': '火库',
+  '子': '',
   '丑': '金库',
+  '寅': '',
+  '卯': '',
+  '辰': '水库',
+  '巳': '',
+  '午': '',
   '未': '木库',
+  '申': '',
+  '酉': '',
+  '戌': '火库',
+  '亥': '',
 }
 
 function getCaiElement(cai: ShenShi, dayGan: HeavenlyStem): FiveElement {

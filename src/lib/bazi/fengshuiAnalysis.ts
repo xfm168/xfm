@@ -195,6 +195,7 @@ function analyzeDirections(
   fiveElementPower: FiveElementPowerResult
 ): DirectionAdvice[] {
   const xiyong = toView(xiyongRaw)
+  const powerMap = Object.fromEntries(fiveElementPower.elements.map(e => [e.element, e.percentage])) as Record<FiveElement, number>
   const directions: DirectionAdvice[] = []
 
   for (const el of ['木', '火', '土', '金', '水'] as FiveElement[]) {
@@ -208,7 +209,7 @@ function analyzeDirections(
     else score = 55
 
     // 根据五行力量微调
-    const power = fiveElementPower.powerMap[el] || 0
+    const power = powerMap[el] || 0
     if (isXi && power > 20) score += 5
     if (isJi && power > 30) score -= 5
 

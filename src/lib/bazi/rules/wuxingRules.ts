@@ -14,6 +14,49 @@ import type {
   CangGan,
 } from '../types'
 
+export interface WuXingContext {
+  sixLines: SixLines
+  dayGan: HeavenlyStem
+  dayElement: FiveElement
+  dayYinYang: YinYang
+  monthZhi: EarthlyBranch
+  monthElement: FiveElement
+  cangGanData: Record<EarthlyBranch, CangGan>
+}
+
+export interface WuXingRule {
+  id: string
+  name: string
+  category: string
+  priority: number
+  weight: number
+  description: string
+  reference: string
+  condition: (ctx: WuXingContext) => boolean
+  result: { scoreAdjustment: number; reason: string }
+}
+
+export interface StrengthBreakdown {
+  yueLingWeight: number
+  touGanWeight: number
+  cangGanWeight: number
+  tongGenDepth: number
+  sameParty: number
+  diffParty: number
+  heHuaChongKe: number
+}
+
+export interface StrengthResult {
+  strengthScore: number
+  level: '极弱' | '偏弱' | '中和' | '偏强' | '极强'
+  wangShuai: WuXingWangShuai
+  fiveElementScores: Record<FiveElement, number>
+  reasons: string[]
+  matchedRules: string[]
+  confidence: number
+  breakdown: StrengthBreakdown
+}
+
 // ─── 统一从 Core 导入基础常量 ───
 import {
   STEM_ELEMENT,
