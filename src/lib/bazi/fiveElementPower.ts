@@ -25,6 +25,8 @@ export interface FiveElementPowerResult {
   totalScore: number
   mostWang: FiveElement
   mostShuai: FiveElement
+  // 旺衰定性判断
+  wangShuaiLevel: '极旺' | '旺' | '偏旺' | '中和' | '偏弱' | '弱' | '极弱'
   // 旺衰三得
   deLing: boolean
   deDi: boolean
@@ -32,8 +34,11 @@ export interface FiveElementPowerResult {
   deLingScore: number
   deDiScore: number
   deShiScore: number
-  // 十二长生状态
-  changShengStates: Record<string, { zhi: string; state: string; bonus: number }>
+  deLingReason: string
+  deDiReason: string
+  deShiReason: string
+  // 十二长生状态（参考，不直接决定旺衰）
+  changShengStates: Record<string, { zhi: string; state: string; description: string }>
   // 地支合局
   heJu: string[]
 }
@@ -176,21 +181,25 @@ export function calculateFiveElementPower(
   const dominant = sortedByPower[0]
   const weakest = sortedByPower[sortedByPower.length - 1]
 
-  // ===== 十二长生力量加成 =====
-  const CHANG_SHENG_BONUS: Record<string, number> = {
-    '帝旺': 15, '临官': 12, '长生': 10, '冠带': 8,
-    '养': 5, '胎': 3, '沐浴': 0,
-    '衰': -5, '病': -8, '死': -10, '墓': -10, '绝': -12,
+  // ===== 十二长生状态（参考，不直接决定旺衰） =====
+  const CHANG_SHENG_DESC: Record<string, string> = {
+    '长生': '初生之气，日主得生',
+    '沐浴': '气息初生，力量尚弱',
+    '冠带': '日渐壮盛，力量渐长',
+    '临官': '得禄之位，日主有力',
+    '帝旺': '极盛之位，力量最强',
+    '衰': '由盛转衰，力量减退',
+    '病': '气息受损，力量衰弱',
+    '死': '气息已绝，力量极弱',
+    '墓': '入墓归藏，力量潜伏',
+    '绝': '气息断绝，力量最弱',
+    '胎': '受气之初，力量微弱',
+    '养': '渐有生机，力量微长',
   }
-  const changShengStates: Record<string, { zhi: string; state: string; bonus: number }> = {}
+  const changShengStates: Record<string, { zhi: string; state: string; description: string }> = {}
   for (const pillar of pillars) {
     const state = getChangSheng(dayGan as HeavenlyStem, pillar.zhi as EarthlyBranch)
-    const bonus = CHANG_SHENG_BONUS[state] || 0
-    changShengStates[pillar.zhi] = { zhi: pillar.zhi, state, bonus }
-    if (bonus !== 0) {
-      scores[dayElement].total += bonus
-      totalScore += bonus
-    }
+    changShengStates[pillar.zhi] = { zhi: pillar.zhi, state, description: CHANG_SHENG_DESC[state] || '' }
   }
 
   // ===== 地支合局检测 =====
@@ -226,32 +235,101 @@ export function calculateFiveElementPower(
     }
   }
 
-  // ===== 得令/得地/得势计算 =====
-  // 得令：月令五行与日主相同或相生
+  // ===== 得令/得地/得势综合定性判断 =====
   const GENERATE: Record<FiveElement, FiveElement> = { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' }
-  const isDeLing = monthElement === dayElement || GENERATE[monthElement] === dayElement
-  const deLingScore = monthElement === dayElement ? 90 : GENERATE[monthElement] === dayElement ? 70 : 30
 
-  // 得地：地支中有日主之根（本气/中气/余气）
+  // 得令：月令五行与日主关系
+  let isDeLing = false
+  let deLingScore = 0
+  let deLingReason = ''
+  if (monthElement === dayElement) {
+    isDeLing = true
+    deLingScore = 90
+    deLingReason = `月令${monthZhi}五行属${monthElement}，与日主${dayGan}（${dayElement}）同五行，日主当令而旺`
+  } else if (GENERATE[monthElement] === dayElement) {
+    isDeLing = true
+    deLingScore = 70
+    deLingReason = `月令${monthZhi}五行属${monthElement}，生助日主${dayGan}（${dayElement}），日主得令`
+  } else {
+    isDeLing = false
+    deLingScore = 30
+    deLingReason = `月令${monthZhi}五行属${monthElement}，与日主${dayGan}（${dayElement}）既不同行也不相生，日主失令`
+  }
+
+  // 得地：地支通根情况
   const dayRootCount = Object.values(changShengStates).filter(cs =>
     cs.state === '帝旺' || cs.state === '临官' || cs.state === '长生' || cs.state === '冠带'
   ).length
-  const isDeDi = dayRootCount >= 1
-  const deDiScore = Math.min(100, dayRootCount * 25 + (scores[dayElement].fromTongGen > 0 ? 20 : 0))
+  const tongGenPillars = pillars.filter(p => {
+    const cg = CANG_GAN_TABLE[p.zhi]
+    if (!cg) return false
+    return getStemElement(cg.ben as HeavenlyStem) === dayElement ||
+      (cg.zhong && getStemElement(cg.zhong as HeavenlyStem) === dayElement) ||
+      (cg.yao && getStemElement(cg.yao as HeavenlyStem) === dayElement)
+  }).map(p => p.zhi)
+  let isDeDi = dayRootCount >= 1 || tongGenPillars.length >= 1
+  let deDiScore = Math.min(100, dayRootCount * 20 + tongGenPillars.length * 15)
+  let deDiReason = ''
+  if (tongGenPillars.length >= 2 && dayRootCount >= 2) {
+    deDiReason = `地支${tongGenPillars.join('、')}中藏有日主之根，且十二长生中${dayRootCount}处得地，根基深厚`
+  } else if (tongGenPillars.length >= 1 || dayRootCount >= 1) {
+    deDiReason = `地支${tongGenPillars.length > 0 ? tongGenPillars.join('、') + '中藏有日主之根' : '十二长生中有得地之位'}，有一定根基`
+  } else {
+    deDiReason = '地支中无日主之根，十二长生亦不得地，根基浅薄'
+  }
 
-  // 得势：天干中同党数量（比肩、劫财、正印、偏印）
+  // 得势：天干同党情况
   const stems = pillars.map(p => p.gan)
-  const SHENG_WO: Record<string, boolean> = {}
+  const tongDangList: string[] = []
+  const keXieList: string[] = []
   for (const g of stems) {
     const el = getStemElement(g as HeavenlyStem)
-    // 同党 = 同五行（比劫）或生我五行（印星）
-    if (el === dayElement || GENERATE[el] === dayElement) {
-      SHENG_WO[g] = true
+    if (el === dayElement) {
+      tongDangList.push(`${g}（比肩/劫财）`)
+    } else if (GENERATE[el] === dayElement) {
+      tongDangList.push(`${g}（印）`)
+    } else if (el !== dayElement) {
+      keXieList.push(`${g}（克泄）`)
     }
   }
-  const tongDangCount = Object.keys(SHENG_WO).length
+  const tongDangCount = tongDangList.length
   const isDeShi = tongDangCount >= 2
-  const deShiScore = Math.min(100, tongDangCount * 20 + (tongDangCount >= 3 ? 15 : 0))
+  let deShiScore = Math.min(100, tongDangCount * 20 + (tongDangCount >= 3 ? 15 : 0))
+  let deShiReason = ''
+  if (tongDangCount >= 3) {
+    deShiReason = `天干中${tongDangList.join('、')}皆为日主同党，得势有力`
+  } else if (tongDangCount >= 2) {
+    deShiReason = `天干中${tongDangList.join('、')}为日主同党，略有得势`
+  } else if (tongDangCount >= 1) {
+    deShiReason = `天干中仅${tongDangList.join('、')}为日主同党，势单力薄`
+  } else {
+    deShiReason = '天干中无比劫印星帮身，完全不得势'
+  }
+
+  // ===== 综合旺衰定性判断 =====
+  // 综合得令、得地、得势、通根、透干、十二长生、生扶克泄耗
+  let wangShuaiLevel: '极旺' | '旺' | '偏旺' | '中和' | '偏弱' | '弱' | '极弱' = '中和'
+
+  const youGen = scores[dayElement].fromTongGen > 0
+  const touGan = stems.some(g => getStemElement(g as HeavenlyStem) === dayElement)
+  const shengFuCount = tongDangCount
+  const keXieCount = keXieList.length
+
+  if (isDeLing && isDeDi && isDeShi && youGen && touGan) {
+    wangShuaiLevel = '极旺'
+  } else if (isDeLing && (isDeDi || isDeShi) && youGen) {
+    wangShuaiLevel = '旺'
+  } else if ((isDeLing || isDeDi) && (isDeShi || youGen || touGan)) {
+    wangShuaiLevel = '偏旺'
+  } else if ((!isDeLing && !isDeDi && !isDeShi) || (keXieCount >= 3 && shengFuCount <= 1)) {
+    wangShuaiLevel = '极弱'
+  } else if (!isDeLing && !isDeDi && shengFuCount <= 1) {
+    wangShuaiLevel = '弱'
+  } else if ((!isDeLing && !isDeDi) || (keXieCount >= 2 && shengFuCount <= 2)) {
+    wangShuaiLevel = '偏弱'
+  } else {
+    wangShuaiLevel = '中和'
+  }
 
   const wangOrder: WuXingWangShuai[] = ['旺', '相', '休', '囚', '死']
   const sortedByWangShuai = [...elements].sort((a, b) => {
@@ -270,12 +348,16 @@ export function calculateFiveElementPower(
     totalScore,
     mostWang,
     mostShuai,
+    wangShuaiLevel,
     deLing: isDeLing,
     deDi: isDeDi,
     deShi: isDeShi,
     deLingScore,
     deDiScore,
     deShiScore,
+    deLingReason,
+    deDiReason,
+    deShiReason,
     changShengStates,
     heJu,
   }

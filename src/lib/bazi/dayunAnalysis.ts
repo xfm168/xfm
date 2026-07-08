@@ -21,7 +21,7 @@ export interface DaYunAnalysisStep {
   summary: string
   detail: string
   // 应期分析
-  yingQiYears: { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低' }[]
+  yingQiYears: { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低'; implications: string[] }[]
   // 大运与命局关系
   vsMingJu: {
     chong: string[]
@@ -168,45 +168,140 @@ function checkHai(zhi: EarthlyBranch, mingZhis: EarthlyBranch[]): string[] {
   return result
 }
 
-// 应期分析：找出大运中冲太岁、合太岁等关键年份
+// 地支六穿（相穿）
+const LIU_CHUAN: [EarthlyBranch, EarthlyBranch][] = [
+  ['子', '未'], ['丑', '午'], ['寅', '巳'], ['卯', '辰'], ['申', '亥'], ['酉', '戌'],
+]
+
+// 地支六破
+const LIU_PO: [EarthlyBranch, EarthlyBranch][] = [
+  ['子', '酉'], ['丑', '辰'], ['寅', '亥'], ['卯', '午'], ['巳', '申'], ['戌', '未'],
+]
+
+function checkChuan(zhi: EarthlyBranch, targetZhis: EarthlyBranch[]): string[] {
+  const result: string[] = []
+  for (const [a, b] of LIU_CHUAN) {
+    if (zhi === a && targetZhis.includes(b)) result.push(`穿${b}`)
+    if (zhi === b && targetZhis.includes(a)) result.push(`穿${a}`)
+  }
+  return result
+}
+
+function checkPo(zhi: EarthlyBranch, targetZhis: EarthlyBranch[]): string[] {
+  const result: string[] = []
+  for (const [a, b] of LIU_PO) {
+    if (zhi === a && targetZhis.includes(b)) result.push(`破${b}`)
+    if (zhi === b && targetZhis.includes(a)) result.push(`破${a}`)
+  }
+  return result
+}
+
+// 应期分析：流年与命局+大运共同分析
 function analyzeYingQi(
   startYear: number,
   endYear: number,
   dayZhi: EarthlyBranch,
   stepGanZhi: GanZhi,
-): { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低' }[] {
-  const yingQi: { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低' }[] = []
+  mingZhis: EarthlyBranch[],
+): { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低'; implications: string[] }[] {
+  const yingQi: { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低'; implications: string[] }[] = []
   for (let y = startYear; y <= endYear; y++) {
     const yearGanZhi = getYearGanZhi(y)
     const gzStr = `${yearGanZhi.gan}${yearGanZhi.zhi}`
+    const yearZhi = yearGanZhi.zhi as EarthlyBranch
 
     // 冲太岁（流年支冲日支）
     for (const [a, b] of LIU_CHONG) {
-      if ((yearGanZhi.zhi === a && dayZhi === b) || (yearGanZhi.zhi === b && dayZhi === a)) {
-        yingQi.push({ year: y, ganZhi: gzStr, event: '冲太岁（日支逢冲）', intensity: '高' })
+      if ((yearZhi === a && dayZhi === b) || (yearZhi === b && dayZhi === a)) {
+        yingQi.push({
+          year: y, ganZhi: gzStr, event: '冲太岁（日支逢冲）', intensity: '高',
+          implications: ['冲夫妻宫，婚姻感情有波动', '事业环境有变动', '注意健康，防意外'],
+        })
       }
     }
     // 合太岁（流年支合日支）
     for (const [a, b] of LIU_HE) {
-      if ((yearGanZhi.zhi === a && dayZhi === b) || (yearGanZhi.zhi === b && dayZhi === a)) {
-        yingQi.push({ year: y, ganZhi: gzStr, event: '合太岁（日支逢合）', intensity: '中' })
+      if ((yearZhi === a && dayZhi === b) || (yearZhi === b && dayZhi === a)) {
+        yingQi.push({
+          year: y, ganZhi: gzStr, event: '合太岁（日支逢合）', intensity: '中',
+          implications: ['人际关系和谐，有合作机会', '婚姻感情有进展'],
+        })
       }
+    }
+    // 流年与大运冲
+    for (const [a, b] of LIU_CHONG) {
+      if ((yearZhi === a && stepGanZhi.zhi === b) || (yearZhi === b && stepGanZhi.zhi === a)) {
+        yingQi.push({
+          year: y, ganZhi: gzStr, event: '流年冲大运', intensity: '高',
+          implications: ['大运与流年相冲，变动加剧', '事业、居住环境可能变化'],
+        })
+      }
+    }
+    // 流年与大运合
+    for (const [a, b] of LIU_HE) {
+      if ((yearZhi === a && stepGanZhi.zhi === b) || (yearZhi === b && stepGanZhi.zhi === a)) {
+        yingQi.push({
+          year: y, ganZhi: gzStr, event: '流年合大运', intensity: '中',
+          implications: ['大运与流年相合，机遇增多', '适合合作、签约'],
+        })
+      }
+    }
+    // 流年与命局刑
+    const xingWithMing = checkXing(yearZhi, mingZhis)
+    if (xingWithMing.length > 0) {
+      yingQi.push({
+        year: y, ganZhi: gzStr, event: '流年刑命局', intensity: '高',
+        implications: ['官非口舌，注意法律风险', '人际关系紧张'],
+      })
+    }
+    // 流年与命局害
+    const haiWithMing = checkHai(yearZhi, mingZhis)
+    if (haiWithMing.length > 0) {
+      yingQi.push({
+        year: y, ganZhi: gzStr, event: '流年害命局', intensity: '中',
+        implications: ['小人暗害，注意防范', '健康有损'],
+      })
+    }
+    // 流年与命局穿
+    const chuanWithMing = checkChuan(yearZhi, mingZhis)
+    if (chuanWithMing.length > 0) {
+      yingQi.push({
+        year: y, ganZhi: gzStr, event: '流年穿命局', intensity: '高',
+        implications: ['暗伤暗藏，防突发变故', '注意内部矛盾'],
+      })
+    }
+    // 流年与命局破
+    const poWithMing = checkPo(yearZhi, mingZhis)
+    if (poWithMing.length > 0) {
+      yingQi.push({
+        year: y, ganZhi: gzStr, event: '流年破命局', intensity: '中',
+        implications: ['破财耗损，注意理财', '合作关系破裂'],
+      })
     }
     // 大运天干与流年天干相同（伏吟）
     if (stepGanZhi.gan === yearGanZhi.gan) {
-      yingQi.push({ year: y, ganZhi: gzStr, event: '天干伏吟', intensity: '中' })
+      yingQi.push({
+        year: y, ganZhi: gzStr, event: '天干伏吟', intensity: '中',
+        implications: ['事情反复，宜守不宜攻', '情绪易波动'],
+      })
     }
     // 大运地支与流年地支相同（伏吟）
     if (stepGanZhi.zhi === yearGanZhi.zhi) {
-      yingQi.push({ year: y, ganZhi: gzStr, event: '地支伏吟', intensity: '中' })
+      yingQi.push({
+        year: y, ganZhi: gzStr, event: '地支伏吟', intensity: '中',
+        implications: ['事情拖延，进展缓慢', '注意旧事重提'],
+      })
     }
   }
-  // 去重（同年多事件取最高强度）
-  const yearMap = new Map<number, { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低' }>()
+  // 去重（同年多事件取最高强度，合并影响）
+  const yearMap = new Map<number, { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低'; implications: string[] }>()
   for (const yq of yingQi) {
     const existing = yearMap.get(yq.year)
     if (!existing || (yq.intensity === '高' && existing.intensity !== '高') || (yq.intensity === '中' && existing.intensity === '低')) {
       yearMap.set(yq.year, yq)
+    } else if (existing && yq.intensity === existing.intensity) {
+      existing.implications = [...new Set([...existing.implications, ...yq.implications])]
+      existing.event = existing.event + '、' + yq.event
     }
   }
   return Array.from(yearMap.values()).sort((a, b) => a.year - b.year)
@@ -295,7 +390,7 @@ export function analyzeDaYun(
     }
 
     // 应期分析
-    const yingQiYears = analyzeYingQi(step.startYear, step.endYear, dayZhi, step.ganZhi)
+    const yingQiYears = analyzeYingQi(step.startYear, step.endYear, dayZhi, step.ganZhi, mingZhis)
 
     if (currentAge >= step.startAge && currentAge < step.endAge) {
       currentStepIndex = idx

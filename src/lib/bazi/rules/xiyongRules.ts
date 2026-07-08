@@ -43,6 +43,8 @@ export interface XiYongResult {
   reasons: string[]
   matchedRules: string[]
   explanation: string
+  // 推导步骤（调候→病药→格局→扶抑→通关）
+  derivationSteps: { step: string; result: string; reason: string }[]
 }
 
 // ========== 辅助函数 ==========
@@ -895,6 +897,7 @@ function mergeXiYongResult(
     reasons: [...new Set(reasons)],
     matchedRules,
     explanation,
+    derivationSteps: [],
   }
 }
 
@@ -922,6 +925,7 @@ function buildDefaultResult(ctx: XiYongContext): XiYongResult {
       reasons: ['身强宜泄宜克', '食伤泄秀为上'],
       matchedRules: ['默认规则'],
       explanation: '身强旺者，宜泄宜克，以食伤财官为用。',
+      derivationSteps: [],
     }
   } else if (ctx.strengthScore <= 40) {
     return {
@@ -937,6 +941,7 @@ function buildDefaultResult(ctx: XiYongContext): XiYongResult {
       reasons: ['身弱宜生宜扶', '印星生身为上'],
       matchedRules: ['默认规则'],
       explanation: '身衰弱者，宜生宜扶，以印比为用。',
+      derivationSteps: [],
     }
   } else {
     return {
@@ -952,6 +957,7 @@ function buildDefaultResult(ctx: XiYongContext): XiYongResult {
       reasons: ['中和之局，顺势而为'],
       matchedRules: ['默认规则'],
       explanation: '身中和者，顺势为吉，食伤泄秀为喜。',
+      derivationSteps: [],
     }
   }
 }
@@ -1003,13 +1009,116 @@ export function determineXiYongShen(
 ): XiYongResult {
   const { bestMatch, allMatches } = executeXiYongRules(ctx)
 
+  let result: XiYongResult
   if (bestMatch) {
-    return bestMatch.result
+    result = bestMatch.result
+  } else if (allMatches.length > 0) {
+    result = mergeXiYongResult(ctx, allMatches)
+  } else {
+    result = buildDefaultResult(ctx)
   }
 
-  if (allMatches.length > 0) {
-    return mergeXiYongResult(ctx, allMatches)
+  // 生成推导步骤
+  result.derivationSteps = buildDerivationSteps(ctx, result, allMatches)
+  return result
+}
+
+function buildDerivationSteps(
+  ctx: XiYongContext,
+  result: XiYongResult,
+  matches: { rule: { id: string; name: string; category: string; priority: number }; result: Partial<XiYongResult> }[],
+): { step: string; result: string; reason: string }[] {
+  const steps: { step: string; result: string; reason: string }[] = []
+  const dayEl = ctx.dayElement
+
+  // ① 调候
+  const tiaoHouMatch = matches.find(m => m.rule.category === '调候优先')
+  if (tiaoHouMatch) {
+    steps.push({
+      step: '① 调候',
+      result: `调候用神为${tiaoHouMatch.result.firstHappy || result.firstHappy}`,
+      reason: tiaoHouMatch.result.reasons[0] || '根据月令寒暖燥湿判断',
+    })
+  } else {
+    steps.push({
+      step: '① 调候',
+      result: '月令不寒不燥，调候非急',
+      reason: `${ctx.monthZhi}月气候适中，无需特别调候`,
+    })
   }
 
-  return buildDefaultResult(ctx)
+  // ② 病药
+  const bingYaoMatch = matches.find(m => m.rule.category === '病药格')
+  if (bingYaoMatch || ctx.hasBingYao) {
+    steps.push({
+      step: '② 病药',
+      result: `病药用神为${result.firstUsage || result.firstHappy}`,
+      reason: '命局有病，取药为用神',
+    })
+  } else {
+    steps.push({
+      step: '② 病药',
+      result: '命局无明显偏枯之病',
+      reason: '五行相对平衡，病药非主要考量',
+    })
+  }
+
+  // ③ 格局
+  const geJuMatch = matches.find(m => m.rule.category === '格局喜用' || m.rule.category === '特殊格局')
+  if (geJuMatch) {
+    steps.push({
+      step: '③ 格局',
+      result: `格局用神为${geJuMatch.result.firstHappy || result.firstHappy}`,
+      reason: `${ctx.geJuName}，${geJuMatch.result.reasons[0] || '依格局喜忌而定'}`,
+    })
+  } else {
+    steps.push({
+      step: '③ 格局',
+      result: `${ctx.geJuName}，依格局喜忌取用`,
+      reason: '格局未入特殊格，按正格喜忌判断',
+    })
+  }
+
+  // ④ 扶抑
+  const fuYiMatch = matches.find(m => m.rule.category === '身强身弱扶抑')
+  if (fuYiMatch || ctx.strengthScore >= 70 || ctx.strengthScore <= 30) {
+    const isQiang = ctx.strengthScore >= 70
+    const isRuo = ctx.strengthScore <= 30
+    steps.push({
+      step: '④ 扶抑',
+      result: isQiang ? '身强宜泄宜克' : isRuo ? '身弱宜生宜扶' : '身中和，顺势为吉',
+      reason: `日主${dayEl}，身${isQiang ? '强' : isRuo ? '弱' : '中和'}（${ctx.strengthScore}分），${isQiang ? '喜克泄耗' : isRuo ? '喜印比生扶' : '不宜强克强补'}`,
+    })
+  } else {
+    steps.push({
+      step: '④ 扶抑',
+      result: '身中和，扶抑非急',
+      reason: `日主${dayEl}，身强弱适中（${ctx.strengthScore}分）`,
+    })
+  }
+
+  // ⑤ 通关
+  const tongGuanMatch = matches.find(m => m.rule.category === '通关格')
+  if (tongGuanMatch) {
+    steps.push({
+      step: '⑤ 通关',
+      result: `通关用神为${tongGuanMatch.result.firstHappy || result.firstHappy}`,
+      reason: '两神相战，取通关为和解之道',
+    })
+  } else {
+    steps.push({
+      step: '⑤ 通关',
+      result: '命局无两神相战之局',
+      reason: '五行流通，无需通关',
+    })
+  }
+
+  // 最终结论
+  steps.push({
+    step: '→ 最终结论',
+    result: `喜神：${result.firstHappy || '无'}${result.secondHappy ? '、' + result.secondHappy : ''}；用神：${result.firstUsage || '无'}${result.secondUsage ? '、' + result.secondUsage : ''}；忌神：${result.avoidedElements.join('、') || '无'}`,
+    reason: result.explanation || '综合以上各层次判断',
+  })
+
+  return steps
 }

@@ -33,6 +33,8 @@ export interface XiYongShenResult {
   confidence: number        // 0-100
   reasons: string[]         // 判断依据
   matchedRules: string[]    // 命中的规则
+  // 推导步骤（调候→病药→格局→扶抑→通关）
+  derivationSteps: { step: string; result: string; reason: string }[]
 }
 
 /**
@@ -82,5 +84,6 @@ export function determineXiYongShen(
     confidence: result.confidence,
     reasons: result.reasons,
     matchedRules: result.matchedRules,
+    derivationSteps: result.derivationSteps || [],
   }
 }

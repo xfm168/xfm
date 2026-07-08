@@ -38,7 +38,11 @@ export interface FullReportInput {
   shenShiAnalysis: ShenShiAnalysisResult
   fiveElementPower: FiveElementPowerResult
   shenSha: ShenShaCategory[]
-  xiYongShen: { bestElement: FiveElement; avoidedElements: FiveElement[] }
+  xiYongShen: {
+    bestElement: FiveElement
+    avoidedElements: FiveElement[]
+    derivationSteps?: { step: string; result: string; reason: string }[]
+  }
   marriage: MarriageAnalysisResult
   career: CareerAnalysisResult
   wealth: WealthAnalysisResult
@@ -78,23 +82,25 @@ function generateChapter2_wangshuai(input: FullReportInput): string {
     ``,
     `旺衰力量评分：**${dayMaster.strengthScore}分**。`,
     ``,
-    `**得令分析**：${wangShuai.deLing ? '得令' : '不得令'}（${fiveElementPower.deLingScore}分）。月令为${wangShuai.yueLing}，${dayMaster.dayGanElement}在${wangShuai.yueLing}月${wangShuai.deLing ? '当令而旺' : '失令而弱'}。`,
+    `**综合旺衰**：${fiveElementPower.wangShuaiLevel}。`,
     ``,
-    `**得地分析**：${wangShuai.deDi ? '得地' : '不得地'}（${fiveElementPower.deDiScore}分）。`,
+    `**得令分析**：${wangShuai.deLing ? '得令' : '不得令'}（${fiveElementPower.deLingScore}分）。${fiveElementPower.deLingReason}。`,
     ``,
-    `**得势分析**：${wangShuai.deShi ? '得势' : '不得势'}（${fiveElementPower.deShiScore}分）。`,
+    `**得地分析**：${wangShuai.deDi ? '得地' : '不得地'}（${fiveElementPower.deDiScore}分）。${fiveElementPower.deDiReason}。`,
+    ``,
+    `**得势分析**：${wangShuai.deShi ? '得势' : '不得势'}（${fiveElementPower.deShiScore}分）。${fiveElementPower.deShiReason}。`,
     ``,
     `**通根分析**：${wangShuai.tongGen ? '有根' : '无根'}。`,
-    ``,
+    ` `,
   ]
 
   // 十二长生状态
   const csStates = fiveElementPower.changShengStates
   if (csStates && Object.keys(csStates).length > 0) {
-    lines.push(`**十二长生状态**：`)
+    lines.push(`**十二长生状态**（参考，不单独决定旺衰）：`)
     lines.push(``)
-    lines.push(`| 地支 | 长生状态 | 力量加成 |`)
-    lines.push(`|:---:|:---:|:---:|`)
+    lines.push(`| 地支 | 长生状态 | 说明 |`)
+    lines.push(`|:---:|:---:|:---|`)
     const pillarNames: Record<string, string> = {
       [input.sixLines.year.zhi]: '年支',
       [input.sixLines.month.zhi]: '月支',
@@ -103,7 +109,7 @@ function generateChapter2_wangshuai(input: FullReportInput): string {
     }
     for (const [zhi, info] of Object.entries(csStates)) {
       const name = pillarNames[zhi] || zhi
-      lines.push(`| ${name}（${zhi}） | ${info.state} | ${info.bonus > 0 ? '+' + info.bonus : info.bonus} |`)
+      lines.push(`| ${name}（${zhi}） | ${info.state} | ${info.description} |`)
     }
     lines.push(``)
   }
@@ -137,13 +143,34 @@ function generateChapter3_geju(input: FullReportInput): string {
     ``,
     `${geJu.description}`,
     ``,
-    `**成格条件**：${geJu.reasons.join('、')}。`,
-    ``,
-    `**破格因素**：${geJu.poGe ? geJu.poGeReason : '无破格因素，格局清纯。'}`,
-    ``,
-    `**格局层次**：${['S+', 'S', 'A+'].includes(geJu.grade) ? '上格，格局高，富贵可期' : ['A', 'B'].includes(geJu.grade) ? '中格，格局尚可，努力可成' : '下格，格局普通，需后天努力'}。`,
+    `**成格依据**：`,
     ``,
   ]
+
+  // 详细解释成格原因
+  if (geJu.reasons && geJu.reasons.length > 0) {
+    for (const reason of geJu.reasons) {
+      lines.push(`- ${reason}`)
+    }
+    lines.push(``)
+  }
+
+  lines.push(`**破格分析**：${geJu.poGe ? geJu.poGeReason : '无破格因素，格局清纯。'}`)
+  lines.push(``)
+
+  // 层次判断依据
+  let gradeReason = ''
+  if (geJu.grade === '上格') {
+    gradeReason = '格局清纯，官星/财星/印星透干得令，配合有情，无破格因素，故属上格。'
+  } else if (geJu.grade === '中格') {
+    gradeReason = '格局基本成立，但略有瑕疵（如力量稍弱、配合不够完美），故属中格。'
+  } else if (geJu.grade === '下格') {
+    gradeReason = '格局力量薄弱，或配合不佳，或存在轻微破格，故属下格。'
+  } else if (geJu.grade === '败格') {
+    gradeReason = '格局被严重破格（如伤官见官、官杀混杂、枭神夺食等），格局难成，故属败格。'
+  }
+  lines.push(`**格局层次**：${geJu.grade}。${gradeReason}`)
+  lines.push(``)
 
   // 格局细项评分
   if (typeof geJu.pureScore === 'number') {
@@ -188,16 +215,34 @@ function generateChapter4_shishen(input: FullReportInput): string {
   const lines = [
     `## 四、十神分析`,
     ``,
-    `主导十神：**${shenShiAnalysis.dominantShenShi.join('、')}**。`,
-    ``,
     `**十神力量详表**：`,
   ]
+
+  // 十神力量详表（含星级）
+  lines.push(`| 十神 | 力量 | 星级 | 状态 |`)
+  lines.push(`|:---:|:---:|:---:|:---|`)
   for (const d of shenShiAnalysis.details) {
-    lines.push(`- ${d.name}：${d.power}分 ${d.touGan ? '【透干】' : ''}${d.deLing ? '【得令】' : ''}${d.deDi ? '【得地】' : ''}${d.youGen ? '【通根】' : ''}${d.shouZhi ? '【受制】' : ''}`)
+    const stars = shenShiAnalysis.starRatings?.[d.name] || ''
+    const status = `${d.touGan ? '透干 ' : ''}${d.deLing ? '得令 ' : ''}${d.deDi ? '得地 ' : ''}${d.youGen ? '通根 ' : ''}${d.shouZhi ? '受制' : ''}`
+    lines.push(`| ${d.name} | ${d.power}分 | ${stars} | ${status || '无特殊状态'} |`)
   }
   lines.push(``)
 
-  // 十神生克链
+  // 十神主次分类
+  lines.push(`**十神主次**：`)
+  lines.push(``)
+  if (shenShiAnalysis.primaryShenShi && shenShiAnalysis.primaryShenShi.length > 0) {
+    lines.push(`- **主导十神**：${shenShiAnalysis.primaryShenShi.join('、')} —— 主导命主性格与人生走向`)
+  }
+  if (shenShiAnalysis.secondaryShenShi && shenShiAnalysis.secondaryShenShi.length > 0) {
+    lines.push(`- **辅助十神**：${shenShiAnalysis.secondaryShenShi.join('、')} —— 辅助主导十神发挥作用`)
+  }
+  if (shenShiAnalysis.tertiaryShenShi && shenShiAnalysis.tertiaryShenShi.length > 0) {
+    lines.push(`- **次要十神**：${shenShiAnalysis.tertiaryShenShi.join('、')} —— 影响力较弱`)
+  }
+  lines.push(``)
+
+  // 十神生克链分析
   if (shenShiAnalysis.shengKeLinks && shenShiAnalysis.shengKeLinks.length > 0) {
     lines.push(`**十神生克链**：`)
     lines.push(``)
@@ -206,6 +251,11 @@ function generateChapter4_shishen(input: FullReportInput): string {
     for (const link of shenShiAnalysis.shengKeLinks.slice(0, 8)) {
       lines.push(`| ${link.from} ${link.type} ${link.to} | ${link.strength} | ${link.description} |`)
     }
+    lines.push(``)
+  }
+
+  if (shenShiAnalysis.shengKeAnalysis) {
+    lines.push(`**生克链综合分析**：${shenShiAnalysis.shengKeAnalysis}`)
     lines.push(``)
   }
 
@@ -260,15 +310,28 @@ function generateChapter6_xiyong(input: FullReportInput): string {
     ``,
     `**忌神**：${xiYongShen.avoidedElements.join('、')}。`,
     ``,
-    `**五行力量分布**：`,
-    `- 木：${powerMap['木']?.toFixed(1) || 0}`,
-    `- 火：${powerMap['火']?.toFixed(1) || 0}`,
-    `- 土：${powerMap['土']?.toFixed(1) || 0}`,
-    `- 金：${powerMap['金']?.toFixed(1) || 0}`,
-    `- 水：${powerMap['水']?.toFixed(1) || 0}`,
-    ``,
-    `喜用神${xiYongShen.bestElement}为命局所喜，能补命局之不足，增福添寿。日常生活中多接触${xiYongShen.bestElement}行相关的事物，有助于提升运势。`,
   ]
+
+  // 推导步骤
+  if (xiYongShen.derivationSteps && xiYongShen.derivationSteps.length > 0) {
+    lines.push(`**喜用神推导过程**：`)
+    lines.push(``)
+    for (const step of xiYongShen.derivationSteps) {
+      lines.push(`**${step.step}**：${step.result}`)
+      lines.push(`→ ${step.reason}`)
+      lines.push(``)
+    }
+  }
+
+  lines.push(`**五行力量分布**：`)
+  lines.push(`- 木：${powerMap['木']?.toFixed(1) || 0}%`)
+  lines.push(`- 火：${powerMap['火']?.toFixed(1) || 0}%`)
+  lines.push(`- 土：${powerMap['土']?.toFixed(1) || 0}%`)
+  lines.push(`- 金：${powerMap['金']?.toFixed(1) || 0}%`)
+  lines.push(`- 水：${powerMap['水']?.toFixed(1) || 0}%`)
+  lines.push(``)
+
+  lines.push(`喜用神${xiYongShen.bestElement}为命局所喜，能补命局之不足，增福添寿。日常生活中多接触${xiYongShen.bestElement}行相关的事物，有助于提升运势。`)
   return lines.join('\n')
 }
 
@@ -612,10 +675,11 @@ function generateChapter11_dayun(input: FullReportInput): string {
     if (step.yingQiYears && step.yingQiYears.length > 0) {
       lines.push(`**【应期年份】**此运中以下年份为关键节点：`)
       lines.push(``)
-      lines.push(`| 年份 | 干支 | 事件 | 强度 |`)
-      lines.push(`|:---:|:---:|:---|:---:|`)
+      lines.push(`| 年份 | 干支 | 事件 | 强度 | 影响 |`)
+      lines.push(`|:---:|:---:|:---|:---:|:---|`)
       for (const yq of step.yingQiYears.slice(0, 6)) {
-        lines.push(`| ${yq.year} | ${yq.ganZhi} | ${yq.event} | ${yq.intensity} |`)
+        const impl = yq.implications?.slice(0, 2).join('；') || ''
+        lines.push(`| ${yq.year} | ${yq.ganZhi} | ${yq.event} | ${yq.intensity} | ${impl} |`)
       }
       lines.push(``)
     }

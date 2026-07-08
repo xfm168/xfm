@@ -28,6 +28,12 @@ export interface ShenShiAnalysisResult {
   details: ShenShiDetail[]
   sortedByPower: ShenShi[]
   dominantShenShi: ShenShi[]
+  // 十神主次分类
+  primaryShenShi: ShenShi[]   // 主导十神
+  secondaryShenShi: ShenShi[] // 辅助十神
+  tertiaryShenShi: ShenShi[]  // 次要十神
+  // 十神力量星级
+  starRatings: Record<ShenShi, string>
   personality: string
   personalityTraits: string[]
   careerTendency: string
@@ -37,6 +43,7 @@ export interface ShenShiAnalysisResult {
   relationshipChallenges: string[]
   combinations: ShenShiCombination[]
   shengKeLinks: ShenShiShengKeLink[] // 十神生克链
+  shengKeAnalysis: string // 生克链完整分析文本
 }
 
 const STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
@@ -370,11 +377,34 @@ export function analyzeShenShi(
 
   const combinations = analyzeCombinations(sixLines, dayGan, cangGanData, powers)
   const shengKeLinks = analyzeShengKeLinks(sortedByPower, details)
+  const shengKeAnalysis = generateShengKeAnalysis(shengKeLinks, sortedByPower)
+
+  // 十神力量星级
+  const maxPowerVal = Math.max(...details.map(d => d.power), 1)
+  const starRatings: Record<ShenShi, string> = {} as Record<ShenShi, string>
+  for (const d of details) {
+    const ratio = d.power / maxPowerVal
+    if (ratio >= 0.9) starRatings[d.name] = '★★★★★'
+    else if (ratio >= 0.7) starRatings[d.name] = '★★★★☆'
+    else if (ratio >= 0.5) starRatings[d.name] = '★★★☆☆'
+    else if (ratio >= 0.3) starRatings[d.name] = '★★☆☆☆'
+    else if (ratio > 0) starRatings[d.name] = '★☆☆☆☆'
+    else starRatings[d.name] = '☆☆☆☆☆'
+  }
+
+  // 十神主次分类
+  const primaryShenShi = sortedByPower.slice(0, 2)
+  const secondaryShenShi = sortedByPower.slice(2, 5)
+  const tertiaryShenShi = sortedByPower.slice(5)
 
   return {
     details,
     sortedByPower,
     dominantShenShi: dominantShenShi.length > 0 ? dominantShenShi : [topShen],
+    primaryShenShi,
+    secondaryShenShi,
+    tertiaryShenShi,
+    starRatings,
     personality,
     personalityTraits,
     careerTendency,
@@ -384,6 +414,7 @@ export function analyzeShenShi(
     relationshipChallenges,
     combinations,
     shengKeLinks,
+    shengKeAnalysis,
   }
 }
 
@@ -511,6 +542,52 @@ function analyzeShengKeLinks(
   }
 
   return links.sort((a, b) => b.strength - a.strength)
+}
+
+function generateShengKeAnalysis(links: ShenShiShengKeLink[], sorted: ShenShi[]): string {
+  if (links.length === 0) return '命局十神力量较为均衡，生克关系不显著。'
+
+  const shengLinks = links.filter(l => l.type === '生')
+  const keLinks = links.filter(l => l.type === '克')
+
+  let analysis = ''
+
+  if (shengLinks.length > 0) {
+    analysis += '命局中十神相生关系如下：'
+    const topSheng = shengLinks.slice(0, 3)
+    for (const link of topSheng) {
+      analysis += `${link.from}生${link.to}，${link.description}；`
+    }
+    analysis += '生链流通，气机顺畅。'
+  }
+
+  if (keLinks.length > 0) {
+    if (analysis) analysis += '\n'
+    analysis += '命局中十神相克关系如下：'
+    const topKe = keLinks.slice(0, 2)
+    for (const link of topKe) {
+      analysis += `${link.from}克${link.to}，${link.description}；`
+    }
+    analysis += '克泄适度，方能成器。'
+  }
+
+  // 分析主导十神的生克流向
+  if (sorted.length >= 2) {
+    const main = sorted[0]
+    const mainSheng = shengLinks.filter(l => l.from === main)
+    const mainKe = keLinks.filter(l => l.from === main)
+    if (mainSheng.length > 0 || mainKe.length > 0) {
+      analysis += `\n主导十神${main}的流向：`
+      if (mainSheng.length > 0) {
+        analysis += `生${mainSheng.map(l => l.to).join('、')}；`
+      }
+      if (mainKe.length > 0) {
+        analysis += `克${mainKe.map(l => l.to).join('、')}。`
+      }
+    }
+  }
+
+  return analysis
 }
 
 function analyzeCombinations(
