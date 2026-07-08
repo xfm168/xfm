@@ -1,5 +1,6 @@
 import type { SixLines, FiveElement, HeavenlyStem, EarthlyBranch, CangGan, WuXingWangShuai } from './types'
 import { getStemElement, getBranchElement, WANG_SHUAI_TABLE } from '@/lib/core'
+import { getChangSheng } from './changsheng'
 
 export interface ElementPowerDetail {
   element: FiveElement
@@ -24,6 +25,17 @@ export interface FiveElementPowerResult {
   totalScore: number
   mostWang: FiveElement
   mostShuai: FiveElement
+  // 旺衰三得
+  deLing: boolean
+  deDi: boolean
+  deShi: boolean
+  deLingScore: number
+  deDiScore: number
+  deShiScore: number
+  // 十二长生状态
+  changShengStates: Record<string, { zhi: string; state: string; bonus: number }>
+  // 地支合局
+  heJu: string[]
 }
 
 const CANG_GAN_TABLE: Record<string, { ben: string; zhong: string | null; yao: string | null }> = {
@@ -164,6 +176,83 @@ export function calculateFiveElementPower(
   const dominant = sortedByPower[0]
   const weakest = sortedByPower[sortedByPower.length - 1]
 
+  // ===== 十二长生力量加成 =====
+  const CHANG_SHENG_BONUS: Record<string, number> = {
+    '帝旺': 15, '临官': 12, '长生': 10, '冠带': 8,
+    '养': 5, '胎': 3, '沐浴': 0,
+    '衰': -5, '病': -8, '死': -10, '墓': -10, '绝': -12,
+  }
+  const changShengStates: Record<string, { zhi: string; state: string; bonus: number }> = {}
+  for (const pillar of pillars) {
+    const state = getChangSheng(dayGan as HeavenlyStem, pillar.zhi as EarthlyBranch)
+    const bonus = CHANG_SHENG_BONUS[state] || 0
+    changShengStates[pillar.zhi] = { zhi: pillar.zhi, state, bonus }
+    if (bonus !== 0) {
+      scores[dayElement].total += bonus
+      totalScore += bonus
+    }
+  }
+
+  // ===== 地支合局检测 =====
+  const zhiList = pillars.map(p => p.zhi)
+  const heJu: string[] = []
+  const SAN_HE: Record<string, EarthlyBranch[]> = {
+    '水局': ['申', '子', '辰'] as EarthlyBranch[],
+    '火局': ['寅', '午', '戌'] as EarthlyBranch[],
+    '金局': ['巳', '酉', '丑'] as EarthlyBranch[],
+    '木局': ['亥', '卯', '未'] as EarthlyBranch[],
+  }
+  for (const [juName, required] of Object.entries(SAN_HE)) {
+    const matched = required.filter(z => zhiList.includes(z)).length
+    if (matched >= 2) {
+      heJu.push(`${juName}(${matched}/3)`)
+      // 半合或三合增强对应五行
+      const heElement: Record<string, FiveElement> = { '水局': '水', '火局': '火', '金局': '金', '木局': '木' }
+      const el = heElement[juName]
+      if (el) {
+        const bonus = matched >= 3 ? 15 : 8
+        scores[el].total += bonus
+        totalScore += bonus
+      }
+    }
+  }
+
+  // 重新计算百分比
+  for (const el of elements) {
+    const detail = elementDetails.find(d => d.element === el)
+    if (detail) {
+      detail.total = scores[el].total
+      detail.percentage = totalScore > 0 ? Math.round((scores[el].total / totalScore) * 100) : 0
+    }
+  }
+
+  // ===== 得令/得地/得势计算 =====
+  // 得令：月令五行与日主相同或相生
+  const GENERATE: Record<FiveElement, FiveElement> = { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' }
+  const isDeLing = monthElement === dayElement || GENERATE[monthElement] === dayElement
+  const deLingScore = monthElement === dayElement ? 90 : GENERATE[monthElement] === dayElement ? 70 : 30
+
+  // 得地：地支中有日主之根（本气/中气/余气）
+  const dayRootCount = Object.values(changShengStates).filter(cs =>
+    cs.state === '帝旺' || cs.state === '临官' || cs.state === '长生' || cs.state === '冠带'
+  ).length
+  const isDeDi = dayRootCount >= 1
+  const deDiScore = Math.min(100, dayRootCount * 25 + (scores[dayElement].fromTongGen > 0 ? 20 : 0))
+
+  // 得势：天干中同党数量（比肩、劫财、正印、偏印）
+  const stems = pillars.map(p => p.gan)
+  const SHENG_WO: Record<string, boolean> = {}
+  for (const g of stems) {
+    const el = getStemElement(g as HeavenlyStem)
+    // 同党 = 同五行（比劫）或生我五行（印星）
+    if (el === dayElement || GENERATE[el] === dayElement) {
+      SHENG_WO[g] = true
+    }
+  }
+  const tongDangCount = Object.keys(SHENG_WO).length
+  const isDeShi = tongDangCount >= 2
+  const deShiScore = Math.min(100, tongDangCount * 20 + (tongDangCount >= 3 ? 15 : 0))
+
   const wangOrder: WuXingWangShuai[] = ['旺', '相', '休', '囚', '死']
   const sortedByWangShuai = [...elements].sort((a, b) => {
     const wsA = WANG_SHUAI_TABLE[monthElement][a]
@@ -181,6 +270,14 @@ export function calculateFiveElementPower(
     totalScore,
     mostWang,
     mostShuai,
+    deLing: isDeLing,
+    deDi: isDeDi,
+    deShi: isDeShi,
+    deLingScore,
+    deDiScore,
+    deShiScore,
+    changShengStates,
+    heJu,
   }
 }
 

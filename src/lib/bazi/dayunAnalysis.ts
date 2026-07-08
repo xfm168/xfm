@@ -20,6 +20,15 @@ export interface DaYunAnalysisStep {
   score: number
   summary: string
   detail: string
+  // 应期分析
+  yingQiYears: { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低' }[]
+  // 大运与命局关系
+  vsMingJu: {
+    chong: string[]
+    he: string[]
+    xing: string[]
+    hai: string[]
+  }
 }
 
 export interface DaYunAnalysisResult {
@@ -106,6 +115,114 @@ const DAYUN_SUMMARIES: Record<ShenShi, string[]> = {
   正印: ['正印运，学业有成，贵人多', '事业稳定，名声好', '福气深厚，健康平安'],
 }
 
+// 大运与命局刑冲合害
+const LIU_CHONG: [EarthlyBranch, EarthlyBranch][] = [
+  ['子', '午'], ['丑', '未'], ['寅', '申'], ['卯', '酉'], ['辰', '戌'], ['巳', '亥'],
+]
+const LIU_HE: [EarthlyBranch, EarthlyBranch][] = [
+  ['子', '丑'], ['寅', '亥'], ['卯', '戌'], ['辰', '酉'], ['巳', '申'], ['午', '未'],
+]
+const SAN_XING: EarthlyBranch[][] = [
+  ['寅', '巳', '申'],
+  ['丑', '戌', '未'],
+]
+const LIU_HAI: [EarthlyBranch, EarthlyBranch][] = [
+  ['子', '未'], ['丑', '午'], ['寅', '巳'], ['卯', '辰'], ['申', '亥'], ['酉', '戌'],
+]
+
+function checkChong(zhi: EarthlyBranch, mingZhis: EarthlyBranch[]): string[] {
+  const result: string[] = []
+  for (const [a, b] of LIU_CHONG) {
+    if (zhi === a && mingZhis.includes(b)) result.push(`冲${b}`)
+    if (zhi === b && mingZhis.includes(a)) result.push(`冲${a}`)
+  }
+  return result
+}
+
+function checkHe(zhi: EarthlyBranch, mingZhis: EarthlyBranch[]): string[] {
+  const result: string[] = []
+  for (const [a, b] of LIU_HE) {
+    if (zhi === a && mingZhis.includes(b)) result.push(`合${b}`)
+    if (zhi === b && mingZhis.includes(a)) result.push(`合${a}`)
+  }
+  return result
+}
+
+function checkXing(zhi: EarthlyBranch, mingZhis: EarthlyBranch[]): string[] {
+  const result: string[] = []
+  for (const combo of SAN_XING) {
+    if (combo.includes(zhi)) {
+      const count = combo.filter(z => z === zhi || mingZhis.includes(z)).length
+      if (count >= 2) result.push('三刑')
+    }
+  }
+  return result
+}
+
+function checkHai(zhi: EarthlyBranch, mingZhis: EarthlyBranch[]): string[] {
+  const result: string[] = []
+  for (const [a, b] of LIU_HAI) {
+    if (zhi === a && mingZhis.includes(b)) result.push(`害${b}`)
+    if (zhi === b && mingZhis.includes(a)) result.push(`害${a}`)
+  }
+  return result
+}
+
+// 应期分析：找出大运中冲太岁、合太岁等关键年份
+function analyzeYingQi(
+  startYear: number,
+  endYear: number,
+  dayZhi: EarthlyBranch,
+  stepGanZhi: GanZhi,
+): { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低' }[] {
+  const yingQi: { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低' }[] = []
+  for (let y = startYear; y <= endYear; y++) {
+    const yearGanZhi = getYearGanZhi(y)
+    const gzStr = `${yearGanZhi.gan}${yearGanZhi.zhi}`
+
+    // 冲太岁（流年支冲日支）
+    for (const [a, b] of LIU_CHONG) {
+      if ((yearGanZhi.zhi === a && dayZhi === b) || (yearGanZhi.zhi === b && dayZhi === a)) {
+        yingQi.push({ year: y, ganZhi: gzStr, event: '冲太岁（日支逢冲）', intensity: '高' })
+      }
+    }
+    // 合太岁（流年支合日支）
+    for (const [a, b] of LIU_HE) {
+      if ((yearGanZhi.zhi === a && dayZhi === b) || (yearGanZhi.zhi === b && dayZhi === a)) {
+        yingQi.push({ year: y, ganZhi: gzStr, event: '合太岁（日支逢合）', intensity: '中' })
+      }
+    }
+    // 大运天干与流年天干相同（伏吟）
+    if (stepGanZhi.gan === yearGanZhi.gan) {
+      yingQi.push({ year: y, ganZhi: gzStr, event: '天干伏吟', intensity: '中' })
+    }
+    // 大运地支与流年地支相同（伏吟）
+    if (stepGanZhi.zhi === yearGanZhi.zhi) {
+      yingQi.push({ year: y, ganZhi: gzStr, event: '地支伏吟', intensity: '中' })
+    }
+  }
+  // 去重（同年多事件取最高强度）
+  const yearMap = new Map<number, { year: number; ganZhi: string; event: string; intensity: '高' | '中' | '低' }>()
+  for (const yq of yingQi) {
+    const existing = yearMap.get(yq.year)
+    if (!existing || (yq.intensity === '高' && existing.intensity !== '高') || (yq.intensity === '中' && existing.intensity === '低')) {
+      yearMap.set(yq.year, yq)
+    }
+  }
+  return Array.from(yearMap.values()).sort((a, b) => a.year - b.year)
+}
+
+function getYearGanZhi(year: number): { gan: HeavenlyStem; zhi: EarthlyBranch } {
+  const stems: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
+  const branches: EarthlyBranch[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+  const stemIndex = ((year - 4) % 10 + 10) % 10
+  const branchIndex = ((year - 4) % 12 + 12) % 12
+  return {
+    gan: stems[stemIndex],
+    zhi: branches[branchIndex],
+  }
+}
+
 const DAYUN_DETAILS: Record<ShenShi, string> = {
   比肩: '此十年为比肩运，命主自我意识增强，有主见，做事有担当。朋友缘好，易得同辈相助，但也易因朋友之事破财。事业上竞争较大，需靠实力取胜。感情中易有竞争者出现，需多加注意。财运平稳，不宜大笔投资，宜守不宜攻。',
   劫财: '此十年为劫财运，命主竞争意识强烈，凡事都要争个高低。事业上竞争激烈，小人较多，易有口舌是非。财运起伏大，易有破财之事发生，不宜投资创业，不宜借钱给他人。感情中易有第三者插足，需用心经营。',
@@ -136,6 +253,14 @@ export function analyzeDaYun(
   const now = new Date()
   const currentAge = now.getFullYear() - birthDate.getFullYear()
 
+  const mingZhis = [
+    sixLines.year.zhi as EarthlyBranch,
+    sixLines.month.zhi as EarthlyBranch,
+    sixLines.day.zhi as EarthlyBranch,
+    sixLines.hour.zhi as EarthlyBranch,
+  ]
+  const dayZhi = sixLines.day.zhi as EarthlyBranch
+
   let currentStepIndex = -1
   const steps: DaYunAnalysisStep[] = rawSteps.map((step, idx) => {
     const ganShen = shenShiMap[step.ganZhi.gan as HeavenlyStem]
@@ -160,6 +285,18 @@ export function analyzeDaYun(
     const summary = summaries[idx % summaries.length]
     const detail = DAYUN_DETAILS[ganShen] || DAYUN_DETAILS.比肩
 
+    // 大运与命局关系
+    const stepZhi = step.ganZhi.zhi as EarthlyBranch
+    const vsMingJu = {
+      chong: checkChong(stepZhi, mingZhis),
+      he: checkHe(stepZhi, mingZhis),
+      xing: checkXing(stepZhi, mingZhis),
+      hai: checkHai(stepZhi, mingZhis),
+    }
+
+    // 应期分析
+    const yingQiYears = analyzeYingQi(step.startYear, step.endYear, dayZhi, step.ganZhi)
+
     if (currentAge >= step.startAge && currentAge < step.endAge) {
       currentStepIndex = idx
     }
@@ -182,6 +319,8 @@ export function analyzeDaYun(
       score,
       summary,
       detail,
+      yingQiYears,
+      vsMingJu,
     }
   })
 

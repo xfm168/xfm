@@ -665,6 +665,102 @@ export const XIYONG_RULES: BaseRule<XiYongContext, Partial<XiYongResult>>[] = [
     },
   },
 
+  // ===== 湿燥土调候细分（Priority 111-112） =====
+  {
+    id: 'tiaohou-shi-tu',
+    name: '湿土调候',
+    category: '调候',
+    priority: 112,
+    weight: 72,
+    description: '辰丑月湿重，喜火燥土调候',
+    reference: '《滴天髓》燥湿',
+    condition: (ctx) => {
+      return ['辰', '丑'].includes(ctx.monthZhi || '') && !ctx.isSpecialGe
+    },
+    result: {
+      firstHappy: '火',
+      secondHappy: '土',
+      thirdHappy: '木',
+      firstUsage: '火',
+      avoidedElements: ['水'],
+      enemyElements: ['水'],
+      idleElements: ['金', '木'],
+      reasons: ['辰丑月湿重，命局偏湿'],
+      explanation: '辰丑月湿重，命局偏湿，喜火暖局、燥土止水。',
+    },
+  },
+  {
+    id: 'tiaohou-zao-tu',
+    name: '燥土调候',
+    category: '调候',
+    priority: 111,
+    weight: 72,
+    description: '戌未月燥重，喜水润局',
+    reference: '《滴天髓》燥湿',
+    condition: (ctx) => {
+      return ['戌', '未'].includes(ctx.monthZhi || '') && !ctx.isSpecialGe
+    },
+    result: {
+      firstHappy: '水',
+      secondHappy: '金',
+      thirdHappy: '木',
+      firstUsage: '水',
+      avoidedElements: ['火'],
+      enemyElements: ['火'],
+      idleElements: ['金', '土'],
+      reasons: ['戌未月燥重，命局偏燥'],
+      explanation: '戌未月燥重，命局偏燥，喜水润局、金生水。',
+    },
+  },
+
+  // ===== 身强身弱精确分段（Priority 96-97） =====
+  {
+    id: 'fushen-ji-wang',
+    name: '扶抑-极旺',
+    category: '扶抑',
+    priority: 97,
+    weight: 88,
+    description: '日主极旺，需强力泄耗克制',
+    reference: '《滴天髓》旺者宜泄',
+    condition: (ctx) => {
+      return !ctx.isSpecialGe && ctx.strengthScore >= 80
+    },
+    result: {
+      firstHappy: '金',
+      secondHappy: '火',
+      thirdHappy: '土',
+      firstUsage: '金',
+      avoidedElements: ['水', '木'],
+      enemyElements: ['水'],
+      idleElements: ['木'],
+      reasons: ['日主极旺，宜泄不宜扶'],
+      explanation: '日主极旺，宜泄不宜扶，金泄土气、火生土但也可泄秀。',
+    },
+  },
+  {
+    id: 'fushen-ji-ruo',
+    name: '扶抑-极弱',
+    category: '扶抑',
+    priority: 96,
+    weight: 88,
+    description: '日主极弱，需强力生扶',
+    reference: '《滴天髓》弱者宜扶',
+    condition: (ctx) => {
+      return !ctx.isSpecialGe && ctx.strengthScore <= 20
+    },
+    result: {
+      firstHappy: '水',
+      secondHappy: '木',
+      thirdHappy: '金',
+      firstUsage: '水',
+      avoidedElements: ['火', '土'],
+      enemyElements: ['火'],
+      idleElements: ['土'],
+      reasons: ['日主极弱，宜扶不宜泄'],
+      explanation: '日主极弱，宜扶不宜泄，水生木、木生火但首要生扶日主。',
+    },
+  },
+
   // ===== 默认规则 =====
 
   {

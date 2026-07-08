@@ -16,6 +16,14 @@ export interface ShenShiDetail {
   position: string[]
 }
 
+export interface ShenShiShengKeLink {
+  from: ShenShi
+  to: ShenShi
+  type: '生' | '克'
+  strength: number
+  description: string
+}
+
 export interface ShenShiAnalysisResult {
   details: ShenShiDetail[]
   sortedByPower: ShenShi[]
@@ -28,6 +36,7 @@ export interface ShenShiAnalysisResult {
   relationshipStrengths: string[]
   relationshipChallenges: string[]
   combinations: ShenShiCombination[]
+  shengKeLinks: ShenShiShengKeLink[] // 十神生克链
 }
 
 const STEMS: HeavenlyStem[] = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
@@ -360,6 +369,7 @@ export function analyzeShenShi(
   const relationshipChallenges = SHENSHI_PERSONALITY[topShen].negative.split('，').slice(0, 3)
 
   const combinations = analyzeCombinations(sixLines, dayGan, cangGanData, powers)
+  const shengKeLinks = analyzeShengKeLinks(sortedByPower, details)
 
   return {
     details,
@@ -373,6 +383,7 @@ export function analyzeShenShi(
     relationshipStrengths,
     relationshipChallenges,
     combinations,
+    shengKeLinks,
   }
 }
 
@@ -419,6 +430,87 @@ function generateRelationship(sorted: ShenShi[], gender: string): string {
   const r = SHENSHI_RELATIONSHIP[top]
   const pronoun = gender === 'male' ? '他' : '她'
   return `在感情中，${pronoun}${r.strengths[0]}，${r.strengths[1]}。但需注意${r.challenges[0]}，${r.challenges[1]}。`
+}
+
+// 十神生克链分析
+function analyzeShengKeLinks(
+  sorted: ShenShi[],
+  details: ShenShiDetail[],
+): ShenShiShengKeLink[] {
+  const links: ShenShiShengKeLink[] = []
+  const powerMap = new Map<ShenShi, number>()
+  for (const d of details) powerMap.set(d.name, d.power)
+
+  const SHENG_MAP: Record<ShenShi, ShenShi[]> = {
+    '比肩': ['食神', '伤官'],
+    '劫财': ['食神', '伤官'],
+    '食神': ['偏财', '正财'],
+    '伤官': ['偏财', '正财'],
+    '偏财': ['正官', '偏官'],
+    '正财': ['正官', '偏官'],
+    '偏官': ['正印', '偏印'],
+    '正官': ['正印', '偏印'],
+    '偏印': ['比肩', '劫财'],
+    '正印': ['比肩', '劫财'],
+  }
+
+  const KE_MAP: Record<ShenShi, ShenShi[]> = {
+    '比肩': ['偏财', '正财'],
+    '劫财': ['偏财', '正财'],
+    '食神': ['偏官', '正官'],
+    '伤官': ['偏官', '正官'],
+    '偏财': ['正印', '偏印'],
+    '正财': ['正印', '偏印'],
+    '偏官': ['比肩', '劫财'],
+    '正官': ['比肩', '劫财'],
+    '偏印': ['食神', '伤官'],
+    '正印': ['食神', '伤官'],
+  }
+
+  const SHENG_DESC: Record<string, string> = {
+    '比劫生食伤': '才华泄秀，创造力强',
+    '食伤生财': '财源有源，求财有道',
+    '财生官杀': '财官相生，贵气流通',
+    '官杀生印': '杀印相生，化煞为权',
+    '印生比劫': '比劫有根，自身有力',
+  }
+
+  for (const shen of sorted.slice(0, 5)) {
+    const fromPower = powerMap.get(shen) || 0
+    if (fromPower <= 0) continue
+
+    // 生链
+    for (const target of SHENG_MAP[shen]) {
+      const toPower = powerMap.get(target) || 0
+      if (toPower > 0) {
+        const key = `${shen}生${target}`
+        const groupKey = `${shen.includes('比肩') || shen.includes('劫财') ? '比劫' : shen.includes('食神') || shen.includes('伤官') ? '食伤' : shen.includes('偏财') || shen.includes('正财') ? '财' : shen.includes('偏官') || shen.includes('正官') ? '官杀' : '印'}生${target.includes('食神') || target.includes('伤官') ? '食伤' : target.includes('偏财') || target.includes('正财') ? '财' : target.includes('偏官') || target.includes('正官') ? '官杀' : target.includes('偏印') || target.includes('正印') ? '印' : '比劫'}`
+        links.push({
+          from: shen,
+          to: target,
+          type: '生',
+          strength: Math.min(100, Math.round((fromPower + toPower) / 2)),
+          description: SHENG_DESC[groupKey] || `${shen}生${target}，力量流通`,
+        })
+      }
+    }
+
+    // 克链（只取主要克制关系）
+    for (const target of KE_MAP[shen]) {
+      const toPower = powerMap.get(target) || 0
+      if (toPower > 0 && fromPower > toPower * 1.5) {
+        links.push({
+          from: shen,
+          to: target,
+          type: '克',
+          strength: Math.min(100, Math.round(fromPower - toPower)),
+          description: `${shen}克${target}，制约有力`,
+        })
+      }
+    }
+  }
+
+  return links.sort((a, b) => b.strength - a.strength)
 }
 
 function analyzeCombinations(
