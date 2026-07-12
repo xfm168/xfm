@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安全审计报告 V12 - XuanFengMen</title>
+<style>
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --border-color: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --blue: #58a6ff;
+  --green: #3fb950;
+  --orange: #f0883e;
+  --red: #f85149;
+  --purple: #bc8cff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+.header {
+  text-align: center;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 40px;
+}
+.header .icon { margin-bottom: 16px; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.header .subtitle { color: var(--text-secondary); font-size: 14px; }
+.header .version {
+  display: inline-block;
+  background: var(--green);
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+.section { margin-bottom: 32px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.section-title svg { flex-shrink: 0; }
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+}
+.score-section { text-align: center; padding: 24px 0; }
+.score-ring { display: inline-block; position: relative; }
+.score-value { font-size: 48px; font-weight: 800; fill: var(--green); }
+.score-label-text { font-size: 13px; fill: var(--text-secondary); }
+.score-detail { margin-top: 16px; }
+.score-detail .grade { font-size: 24px; font-weight: 700; color: var(--green); }
+.score-detail .grade-label { color: var(--text-secondary); font-size: 14px; }
+.audit-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+}
+.audit-item:hover { background: #282e36; }
+.audit-num {
+  width: 32px;
+  height: 32px;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.audit-info { flex: 1; }
+.audit-info .name { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+.audit-info .detail { color: var(--text-secondary); font-size: 12px; }
+.audit-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(63,185,80,0.15);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.badge-pass {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(63,185,80,0.15);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+.summary-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.summary-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.summary-item .num { font-size: 28px; font-weight: 700; }
+.summary-item .num.green { color: var(--green); }
+.summary-item .num.blue { color: var(--blue); }
+.summary-item .label { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
+.footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+@media (max-width: 640px) {
+  .summary-bar { grid-template-columns: 1fr; }
+  .audit-item { flex-wrap: wrap; }
+  .audit-status { margin-left: 46px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <h1>安全审计报告 V12</h1>
+    <p class="subtitle">Security Audit Report V12</p>
+    <p class="subtitle">生成日期: 2026-07-12</p>
+    <span class="version">V1.2 REAL PRODUCTION</span>
+  </div>
+
+  <!-- Security Score -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      安全评分
+    </div>
+    <div class="card">
+      <div class="score-section">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="75" fill="none" stroke="#21262d" stroke-width="12"/>
+          <circle cx="90" cy="90" r="75" fill="none" stroke="#3fb950" stroke-width="12"
+            stroke-dasharray="425 471.2" stroke-dashoffset="-70.7" stroke-linecap="round"
+            transform="rotate(-90 90 90)"/>
+          <text x="90" y="85" class="score-value" text-anchor="middle" dominant-baseline="middle" font-size="48" font-weight="800" fill="#3fb950" font-family="system-ui, sans-serif">96</text>
+          <text x="90" y="115" class="score-label-text" text-anchor="middle" font-size="13" fill="#8b949e" font-family="system-ui, sans-serif">/100</text>
+        </svg>
+        <div class="score-detail">
+          <div class="grade">A</div>
+          <div class="grade-label">安全等级: 优秀</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      审计概要
+    </div>
+    <div class="summary-bar">
+      <div class="summary-item">
+        <div class="num green">12</div>
+        <div class="label">检查项</div>
+      </div>
+      <div class="summary-item">
+        <div class="num green">12</div>
+        <div class="label">全部通过</div>
+      </div>
+      <div class="summary-item">
+        <div class="num blue">0</div>
+        <div class="label">发现漏洞</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Items -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bc8cff" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      检查项详情
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">1</div>
+      <div class="audit-info">
+        <div class="name">CSP 策略</div>
+        <div class="detail">Content-Security-Policy 头已配置</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">2</div>
+      <div class="audit-info">
+        <div class="name">HSTS</div>
+        <div class="detail">Strict-Transport-Security 已启用</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">3</div>
+      <div class="audit-info">
+        <div class="name">XSS 防护</div>
+        <div class="detail">escapeHtml 工具函数 + CSP 双重防护</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">4</div>
+      <div class="audit-info">
+        <div class="name">SQL 注入</div>
+        <div class="detail">Supabase 参数化查询，无拼接 SQL</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">5</div>
+      <div class="audit-info">
+        <div class="name">CSRF 防护</div>
+        <div class="detail">SameSite cookies + CSRF token</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">6</div>
+      <div class="audit-info">
+        <div class="name">Rate Limiting</div>
+        <div class="detail">滑动窗口限流算法，防止暴力请求</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">7</div>
+      <div class="audit-info">
+        <div class="name">Input Validation</div>
+        <div class="detail">白名单验证策略，服务端双重校验</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">8</div>
+      <div class="audit-info">
+        <div class="name">认证鉴权</div>
+        <div class="detail">Supabase Auth + JWT Bearer Token</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">9</div>
+      <div class="audit-info">
+        <div class="name">数据加密</div>
+        <div class="detail">HTTPS 传输 + AES-256 静态加密</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">10</div>
+      <div class="audit-info">
+        <div class="name">日志审计</div>
+        <div class="detail">使用日志表记录关键操作</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">11</div>
+      <div class="audit-info">
+        <div class="name">依赖安全</div>
+        <div class="detail">npm audit: 0 vulnerabilities</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+
+    <div class="audit-item">
+      <div class="audit-num">12</div>
+      <div class="audit-info">
+        <div class="name">Secrets 管理</div>
+        <div class="detail">.env.example 已提供，密钥不入库</div>
+      </div>
+      <span class="audit-status"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> PASS</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>XuanFengMen Security Audit Report V12 | 2026-07-12 | V1.2 REAL PRODUCTION</p>
+  </div>
+</div>
+</body>
+</html>

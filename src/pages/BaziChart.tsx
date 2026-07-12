@@ -5,6 +5,8 @@ import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
 import BaziPoster from '../components/business/BaziPoster'
+import { ReportExperience } from '../components/business/ReportExperience/ReportExperience'
+import { determineXiYongShen, type XiYongShenResult } from '../lib/bazi/xiyongshen'
 import {
   calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, type BaZiChart,
   determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory,
@@ -24,7 +26,7 @@ import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
 import './BaziChart.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'wealth' | 'health' | 'fengshui' | 'analysis'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'wealth' | 'health' | 'fengshui' | 'analysis' | 'report'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
@@ -43,6 +45,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'health', label: '健康' },
   { key: 'fengshui', label: '风水' },
   { key: 'analysis', label: '解析' },
+  { key: 'report', label: '报告' },
 ]
 
 function getRadarPoints(scale: number): string {
@@ -151,7 +154,8 @@ export default function BaziChart() {
       },
       () => {
         const dy = analyzeDaYun(sixLines, birthDate, dayMaster.dayGan, chartBirth.gender, [xiYongShen.bestElement], xiYongShen.avoidedElements)
-        const ln = analyzeLiuNian(sixLines, dayMaster.dayGan, currentYear, 100)
+        const daYunSteps = dy.steps.map(s => ({ ganZhi: s.ganZhi, startYear: s.startYear, endYear: s.endYear }))
+        const ln = analyzeLiuNian(sixLines, dayMaster.dayGan, currentYear, 100, daYunSteps)
         analysisRef.current = { ...analysisRef.current, daYun: dy, liuNian: ln }
         setLoadingStep(4)
       },
@@ -193,7 +197,7 @@ export default function BaziChart() {
           shenShiAnalysis: cur.shenShiAnalysis,
           fiveElementPower: cur.fiveElementPower,
           shenSha: cur.shenSha,
-          xiYongShen: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements },
+          xiYongShen: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements, idleElements: xiYongShen.idleElements, enemyElements: xiYongShen.enemyElements },
           marriage: cur.marriage,
           career: cur.career,
           wealth: cur.wealth,
@@ -1111,33 +1115,30 @@ export default function BaziChart() {
                         </div>
                       </div>
                       <div className="liunian-item-relations">
-                        {year.chong.length > 0 && (
+                        {year.vsMingJu.chong.length > 0 && (
                           <Badge variant="error" size="sm">冲</Badge>
                         )}
-                        {year.he.length > 0 && (
+                        {year.vsMingJu.he.length > 0 && (
                           <Badge variant="success" size="sm">合</Badge>
                         )}
-                        {year.xing.length > 0 && (
+                        {year.vsMingJu.xing.length > 0 && (
                           <Badge variant="warning" size="sm">刑</Badge>
                         )}
-                        {year.hai.length > 0 && (
+                        {year.vsMingJu.hai.length > 0 && (
                           <Badge variant="error" size="sm">害</Badge>
                         )}
-                        {year.po.length > 0 && (
+                        {year.vsMingJu.chuan.length > 0 && (
+                          <Badge variant="warning" size="sm">穿</Badge>
+                        )}
+                        {year.vsMingJu.po.length > 0 && (
                           <Badge variant="default" size="sm">破</Badge>
                         )}
-                      </div>
-                      <div className="liunian-item-score">
-                        <div className="liunian-score-bar">
-                          <div
-                            className="liunian-score-fill"
-                            style={{
-                              width: `${year.score}%`,
-                              background: year.score >= 70 ? 'var(--success)' : year.score >= 50 ? 'var(--gold-500)' : 'var(--error)'
-                            }}
-                          />
-                        </div>
-                        <span className="liunian-score-value">{year.score}分</span>
+                        {year.vsDaYun.chong.length > 0 && (
+                          <Badge variant="error" size="sm">冲运</Badge>
+                        )}
+                        {year.vsDaYun.he.length > 0 && (
+                          <Badge variant="success" size="sm">合运</Badge>
+                        )}
                       </div>
                       <div className="liunian-item-summary">
                         {year.summary}
@@ -1145,20 +1146,38 @@ export default function BaziChart() {
                       {expandedLiunian === year.year && (
                         <div className="liunian-item-detail">
                           <p>{year.detail}</p>
-                          {year.chong.length > 0 && (
-                            <p><strong>冲：</strong>{year.chong.join('、')}</p>
+                          {year.yingQi.length > 0 && (
+                            <div className="liunian-yingqi">
+                              <p><strong>应期事件：</strong></p>
+                              {year.yingQi.map((yq, idx) => (
+                                <div key={idx} className="yingqi-item">
+                                  <p>• {yq.event}（强度：{yq.intensity}）</p>
+                                  <p>　原因：{yq.reason}</p>
+                                  <p>　影响：{yq.implications.join('、')}</p>
+                                </div>
+                              ))}
+                            </div>
                           )}
-                          {year.he.length > 0 && (
-                            <p><strong>合：</strong>{year.he.join('、')}</p>
+                          {year.vsMingJu.chong.length > 0 && (
+                            <p><strong>流年冲命局：</strong>{year.vsMingJu.chong.join('、')}</p>
                           )}
-                          {year.xing.length > 0 && (
-                            <p><strong>刑：</strong>{year.xing.join('、')}</p>
+                          {year.vsMingJu.he.length > 0 && (
+                            <p><strong>流年合命局：</strong>{year.vsMingJu.he.join('、')}</p>
                           )}
-                          {year.hai.length > 0 && (
-                            <p><strong>害：</strong>{year.hai.join('、')}</p>
+                          {year.vsMingJu.xing.length > 0 && (
+                            <p><strong>流年刑命局：</strong>{year.vsMingJu.xing.join('、')}</p>
                           )}
-                          {year.po.length > 0 && (
-                            <p><strong>破：</strong>{year.po.join('、')}</p>
+                          {year.vsMingJu.hai.length > 0 && (
+                            <p><strong>流年害命局：</strong>{year.vsMingJu.hai.join('、')}</p>
+                          )}
+                          {year.vsMingJu.chuan.length > 0 && (
+                            <p><strong>流年穿命局：</strong>{year.vsMingJu.chuan.join('、')}</p>
+                          )}
+                          {year.vsMingJu.po.length > 0 && (
+                            <p><strong>流年破命局：</strong>{year.vsMingJu.po.join('、')}</p>
+                          )}
+                          {(year.vsDaYun.chong.length > 0 || year.vsDaYun.he.length > 0 || year.vsDaYun.xing.length > 0 || year.vsDaYun.hai.length > 0 || year.vsDaYun.chuan.length > 0 || year.vsDaYun.po.length > 0 || year.vsDaYun.fuYin.length > 0) && (
+                            <p><strong>流年与大运：</strong>{[...year.vsDaYun.chong, ...year.vsDaYun.he, ...year.vsDaYun.xing, ...year.vsDaYun.hai, ...year.vsDaYun.chuan, ...year.vsDaYun.po, ...year.vsDaYun.fuYin].join('、')}</p>
                           )}
                         </div>
                       )}
@@ -2023,6 +2042,43 @@ export default function BaziChart() {
                 )
               })}
             </div>
+          )}
+
+          {activeTab === 'report' && (
+            <ReportExperience
+              data={{
+                dayGan: sixLines.day.gan,
+                dayZhi: sixLines.day.zhi,
+                monthGan: sixLines.month.gan,
+                monthZhi: sixLines.month.zhi,
+                yearGan: sixLines.year.gan,
+                yearZhi: sixLines.year.zhi,
+                hourGan: sixLines.hour.gan,
+                hourZhi: sixLines.hour.zhi,
+                dayElement: dayMaster.dayGanElement,
+                overallScore: overallScore,
+                gender: chartBirth.gender,
+                birthDate: chartBirth.birthDate + ' ' + chartBirth.birthTime,
+                geJu: geJu,
+                xiYong: determineXiYongShen(
+                  dayMaster.strengthScore,
+                  dayMaster.wangShuai,
+                  geJu.name as any,
+                  dayMaster.dayGanElement,
+                  dayMaster.heHuaResults,
+                ) as XiYongShenResult,
+                strength: dayMaster,
+                marriage: marriage,
+                career: career,
+                wealth: wealth,
+                health: health,
+                daYun: daYun,
+                liuNian: liuNian,
+                fengshui: fengshui,
+                fullReport: fullReport,
+              }}
+              onSave={function() { handleSave() }}
+            />
           )}
         </div>
 

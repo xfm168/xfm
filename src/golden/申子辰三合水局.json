@@ -1,0 +1,75 @@
+{
+  "name": "申子辰三合水局",
+  "dayElement": "水",
+  "wangShuai": "旺",
+  "strengthScore": 72,
+  "finalHash": "0fddef48",
+  "finalElementScores": {
+    "木": 13,
+    "火": 1,
+    "土": 23,
+    "金": 19,
+    "水": 46
+  },
+  "finalSourceScores": {
+    "天干": 43,
+    "本气": 41,
+    "中气": 12,
+    "余气": 6
+  },
+  "stepCount": 2,
+  "validationErrors": [],
+  "diffs": [
+    {
+      "step": "Step0-Original",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "SeasonModifier",
+      "diffCount": 4,
+      "entries": [
+        {
+          "nodeId": "year-zhong-壬",
+          "field": "strength",
+          "before": 3,
+          "after": 6,
+          "cause": [
+            "SeasonModifier",
+            "水得令（月令子为水），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "month-ben-癸",
+          "field": "strength",
+          "before": 20,
+          "after": 23,
+          "cause": [
+            "SeasonModifier",
+            "水得令（月令子为水），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "day-gan-壬",
+          "field": "strength",
+          "before": 10,
+          "after": 13,
+          "cause": [
+            "SeasonModifier",
+            "水得令（月令子为水），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "hour-yao-癸",
+          "field": "strength",
+          "before": 1,
+          "after": 4,
+          "cause": [
+            "SeasonModifier",
+            "水得令（月令子为水），季节性加权+3"
+          ]
+        }
+      ]
+    }
+  ]
+}

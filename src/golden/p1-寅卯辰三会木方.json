@@ -1,0 +1,149 @@
+{
+  "name": "寅卯辰三会木方",
+  "tags": [
+    "三会",
+    "木方",
+    "寅卯辰",
+    "成化"
+  ],
+  "dayElement": "火",
+  "wangShuai": "相",
+  "strengthScore": 81,
+  "finalHash": "de2bfab3",
+  "finalElementScores": {
+    "木": 81,
+    "火": 20,
+    "土": 1,
+    "金": 0,
+    "水": 1
+  },
+  "finalSourceScores": {
+    "天干": 101,
+    "本气": 0,
+    "中气": 0,
+    "余气": 2
+  },
+  "stepCount": 8,
+  "conflictTypes": [
+    "害"
+  ],
+  "heHuaTypes": [
+    "地支三会化木",
+    "地支三合化木",
+    "地支六合化木"
+  ],
+  "validationErrors": [],
+  "diffs": [
+    {
+      "step": "Step0-Original",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "SeasonModifier",
+      "diffCount": 7,
+      "entries": [
+        {
+          "nodeId": "year-gan-甲",
+          "field": "strength",
+          "before": 10,
+          "after": 13,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令卯为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "year-ben-甲",
+          "field": "strength",
+          "before": 6,
+          "after": 9,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令卯为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "month-gan-乙",
+          "field": "strength",
+          "before": 10,
+          "after": 13,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令卯为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "month-ben-乙",
+          "field": "strength",
+          "before": 20,
+          "after": 23,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令卯为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "day-ben-戊",
+          "field": "strength",
+          "before": 6,
+          "after": 4,
+          "cause": [
+            "SeasonModifier",
+            "土被月令卯(木)所克，季节性削弱-2"
+          ]
+        },
+        {
+          "nodeId": "day-zhong-乙",
+          "field": "strength",
+          "before": 3,
+          "after": 6,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令卯为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "hour-zhong-甲",
+          "field": "strength",
+          "before": 3,
+          "after": 6,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令卯为木），季节性加权+3"
+          ]
+        }
+      ]
+    },
+    {
+      "step": "SeasonCommander",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "ConflictDetect",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "HeHuaDetect",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "CompetitionEvaluate",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "SeasonTransform",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "P1Transform",
+      "diffCount": 0,
+      "entries": []
+    }
+  ]
+}

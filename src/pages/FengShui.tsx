@@ -475,20 +475,30 @@ function getScoreLevel(score: number): { text: string; key: string } {
   return { text: '较差', key: 'poor' }
 }
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function markdownToHtml(md: string): string {
-  return md
+  var escaped = escapeHtml(md)
+  return escaped
     .replace(/^### (.*$)/gm, '<h3>$1</h3>')
     .replace(/^## (.*$)/gm, '<h2>$1</h2>')
     .replace(/^# (.*$)/gm, '<h1>$1</h1>')
     .replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>')
     .replace(/^- (.*$)/gm, '<li>$1</li>')
     .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-    .replace(/^\|(.*)\|$/gm, (_, content) => {
-      const cells = content.split('|').map((c: string) => c.trim())
-      return '<tr>' + cells.map((c: string) => `<td>${c}</td>`).join('') + '</tr>'
+    .replace(/^\|(.*)\|$/gm, function(_, content: string) {
+      var cells = content.split('|').map(function(c: string) { return c.trim() })
+      return '<tr>' + cells.map(function(c: string) { return '<td>' + c + '</td>' }).join('') + '</tr>'
     })
     .replace(/(<tr>.*<\/tr>\n?)+/g, '<table>$&</table>')
-    .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+    .replace(/^&gt; (.*$)/gm, '<blockquote>$1</blockquote>')
     .replace(/\n\n/g, '<br/><br/>')
     .replace(/\n/g, '<br/>')
 }

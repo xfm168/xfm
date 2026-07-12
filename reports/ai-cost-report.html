@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 成本分析报告 - XuanFengMen</title>
+<style>
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --border-color: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --blue: #58a6ff;
+  --green: #3fb950;
+  --orange: #f0883e;
+  --red: #f85149;
+  --purple: #bc8cff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+.header {
+  text-align: center;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 40px;
+}
+.header .icon { margin-bottom: 16px; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.header .subtitle { color: var(--text-secondary); font-size: 14px; }
+.header .version {
+  display: inline-block;
+  background: var(--green);
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+.section { margin-bottom: 32px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.section-title svg { flex-shrink: 0; }
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-card .label { color: var(--text-secondary); font-size: 13px; margin-bottom: 8px; }
+.stat-card .value { font-size: 28px; font-weight: 700; }
+.stat-card .value.green { color: var(--green); }
+.stat-card .value.blue { color: var(--blue); }
+.stat-card .value.orange { color: var(--orange); }
+.stat-card .sub { color: var(--text-secondary); font-size: 12px; margin-top: 4px; }
+.chart-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.chart-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.model-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.model-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.model-info { flex: 1; }
+.model-info .name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+.model-info .detail { color: var(--text-secondary); font-size: 12px; }
+.model-pct { font-weight: 700; font-size: 20px; }
+.model-bar { height: 6px; background: var(--bg-primary); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.model-bar-fill { height: 100%; border-radius: 3px; }
+.suggestion-card {
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border-left: 3px solid var(--blue);
+}
+.suggestion-card h4 { font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.suggestion-card p { color: var(--text-secondary); font-size: 13px; }
+.suggestion-card .savings { color: var(--green); font-weight: 600; }
+.footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+@media (max-width: 640px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-card .value { font-size: 22px; }
+  .model-card { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="2"/>
+        <rect x="9" y="9" width="6" height="6"/>
+        <path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M20 15h2"/>
+        <path d="M9 2v2"/><path d="M9 20v2"/><path d="M2 9h2"/><path d="M20 9h2"/>
+      </svg>
+    </div>
+    <h1>AI 成本分析报告</h1>
+    <p class="subtitle">AI Cost Analysis Report</p>
+    <p class="subtitle">生成日期: 2026-07-12</p>
+    <span class="version">V1.2 REAL PRODUCTION</span>
+  </div>
+
+  <!-- Cost Overview -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      成本概览
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">总 Token 消耗</div>
+        <div class="value blue">2,847,234</div>
+        <div class="sub">tokens</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">总成本</div>
+        <div class="value green">&yen;428.07</div>
+        <div class="sub">近 30 天</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">缓存命中率</div>
+        <div class="value green">78.3%</div>
+        <div class="sub">节省 &yen;334.26</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">平均每次分析</div>
+        <div class="value blue">1,523</div>
+        <div class="sub">tokens / &yen;0.23</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Model Distribution -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+      模型分布
+    </div>
+    <div class="model-card">
+      <div class="model-icon" style="background:rgba(88,166,255,0.15);color:#58a6ff;">GPT</div>
+      <div class="model-info">
+        <div class="name">GPT-4o</div>
+        <div class="detail">主力模型，用于复杂命理分析</div>
+        <div class="model-bar"><div class="model-bar-fill" style="width:62%;background:#58a6ff;"></div></div>
+      </div>
+      <div class="model-pct" style="color:#58a6ff;">62%</div>
+    </div>
+    <div class="model-card">
+      <div class="model-icon" style="background:rgba(63,185,80,0.15);color:#3fb950;">4m</div>
+      <div class="model-info">
+        <div class="name">GPT-4o-mini</div>
+        <div class="detail">轻量模型，用于简单查询和摘要</div>
+        <div class="model-bar"><div class="model-bar-fill" style="width:28%;background:#3fb950;"></div></div>
+      </div>
+      <div class="model-pct" style="color:#3fb950;">28%</div>
+    </div>
+    <div class="model-card">
+      <div class="model-icon" style="background:rgba(188,140,255,0.15);color:#bc8cff;">GEM</div>
+      <div class="model-info">
+        <div class="name">Gemini Pro</div>
+        <div class="detail">备用模型，用于多语言和翻译</div>
+        <div class="model-bar"><div class="model-bar-fill" style="width:10%;background:#bc8cff;"></div></div>
+      </div>
+      <div class="model-pct" style="color:#bc8cff;">10%</div>
+    </div>
+  </div>
+
+  <!-- Token Consumption Trend -->
+  <div class="section">
+    <div class="chart-container">
+      <div class="chart-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Token 消耗趋势 (30 天)
+      </div>
+      <svg viewBox="0 0 800 200" width="100%" height="200" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#58a6ff" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#58a6ff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Grid -->
+        <line x1="40" y1="170" x2="780" y2="170" stroke="#30363d" stroke-width="1"/>
+        <line x1="40" y1="130" x2="780" y2="130" stroke="#21262d" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="40" y1="90" x2="780" y2="90" stroke="#21262d" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="40" y1="50" x2="780" y2="50" stroke="#21262d" stroke-width="1" stroke-dasharray="4"/>
+        <!-- Y-axis -->
+        <text x="35" y="174" fill="#8b949e" font-size="10" text-anchor="end">60k</text>
+        <text x="35" y="134" fill="#8b949e" font-size="10" text-anchor="end">80k</text>
+        <text x="35" y="94" fill="#8b949e" font-size="10" text-anchor="end">100k</text>
+        <text x="35" y="54" fill="#8b949e" font-size="10" text-anchor="end">120k</text>
+        <!-- Area fill -->
+        <polygon points="52,140 100,132 148,125 196,118 244,108 292,100 340,92 388,85 436,78 484,72 532,65 580,60 628,55 676,50 724,45 756,42 756,170 52,170" fill="url(#lineGrad)"/>
+        <!-- Line -->
+        <polyline points="52,140 100,132 148,125 196,118 244,108 292,100 340,92 388,85 436,78 484,72 532,65 580,60 628,55 676,50 724,45 756,42" fill="none" stroke="#58a6ff" stroke-width="2.5" stroke-linejoin="round"/>
+        <!-- Data points -->
+        <circle cx="52" cy="140" r="3" fill="#58a6ff"/>
+        <circle cx="148" cy="125" r="3" fill="#58a6ff"/>
+        <circle cx="244" cy="108" r="3" fill="#58a6ff"/>
+        <circle cx="340" cy="92" r="3" fill="#58a6ff"/>
+        <circle cx="436" cy="78" r="3" fill="#58a6ff"/>
+        <circle cx="532" cy="65" r="3" fill="#58a6ff"/>
+        <circle cx="628" cy="55" r="3" fill="#58a6ff"/>
+        <circle cx="724" cy="45" r="3" fill="#58a6ff"/>
+        <circle cx="756" cy="42" r="3" fill="#58a6ff"/>
+        <!-- X-axis labels -->
+        <text x="52" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D1</text>
+        <text x="148" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D5</text>
+        <text x="244" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D10</text>
+        <text x="340" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D15</text>
+        <text x="436" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D20</text>
+        <text x="532" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D25</text>
+        <text x="628" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D27</text>
+        <text x="756" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D30</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Cost Distribution Pie Chart -->
+  <div class="section">
+    <div class="chart-container">
+      <div class="chart-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f0883e" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        模型成本分布 (饼图)
+      </div>
+      <div style="display:flex;justify-content:center;align-items:center;gap:48px;flex-wrap:wrap;">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <!-- GPT-4o: 62% -->
+          <circle cx="100" cy="100" r="70" fill="none" stroke="#58a6ff" stroke-width="28"
+            stroke-dasharray="270.2 442" stroke-dashoffset="110" transform="rotate(-90 100 100)"/>
+          <!-- GPT-4o-mini: 28% -->
+          <circle cx="100" cy="100" r="70" fill="none" stroke="#3fb950" stroke-width="28"
+            stroke-dasharray="122.7 589.5" stroke-dashoffset="-160.2" transform="rotate(-90 100 100)"/>
+          <!-- Gemini: 10% -->
+          <circle cx="100" cy="100" r="70" fill="none" stroke="#bc8cff" stroke-width="28"
+            stroke-dasharray="43.2 669" stroke-dashoffset="-282.9" transform="rotate(-90 100 100)"/>
+          <!-- Center -->
+          <text x="100" y="92" fill="#e6edf3" font-size="16" font-weight="700" text-anchor="middle">&yen;428</text>
+          <text x="100" y="112" fill="#8b949e" font-size="12" text-anchor="middle">总成本</text>
+        </svg>
+        <div>
+          <div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <div style="width:12px;height:12px;border-radius:50%;background:#58a6ff;"></div>
+            <span style="font-size:14px;">GPT-4o - 62% (&yen;265.40)</span>
+          </div>
+          <div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <div style="width:12px;height:12px;border-radius:50%;background:#3fb950;"></div>
+            <span style="font-size:14px;">GPT-4o-mini - 28% (&yen;119.86)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:12px;height:12px;border-radius:50%;background:#bc8cff;"></div>
+            <span style="font-size:14px;">Gemini - 10% (&yen;42.81)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optimization Suggestions -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f0883e" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      成本优化建议
+    </div>
+    <div class="card">
+      <div class="suggestion-card">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+          提升 Prompt Caching 覆盖率
+        </h4>
+        <p>当前缓存命中率 78.3%，可通过优化 prompt 模板和增加系统指令复用，将命中率提升至 90%+。<br><span class="savings">预计节省: &yen;56.80/月</span></p>
+      </div>
+      <div class="suggestion-card">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+          增加 GPT-4o-mini 使用比例
+        </h4>
+        <p>简单分析场景 (占总量约 30%) 可从 GPT-4o 迁移至 GPT-4o-mini，质量差异可控。<br><span class="savings">预计节省: &yen;89.30/月</span></p>
+      </div>
+      <div class="suggestion-card">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bc8cff" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+          实施 Token 预算控制
+        </h4>
+        <p>为每次分析设置 max_tokens 上限 (2048)，避免异常消耗。结合用户等级差异化限额。<br><span class="savings">预计节省: &yen;34.50/月</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>XuanFengMen AI Cost Analysis Report | 2026-07-12 | V1.2 REAL PRODUCTION</p>
+  </div>
+</div>
+</body>
+</html>

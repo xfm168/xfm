@@ -1,0 +1,138 @@
+{
+  "name": "丑戌未恃势之刑",
+  "tags": [
+    "刑",
+    "恃势之刑",
+    "丑戌未"
+  ],
+  "dayElement": "土",
+  "wangShuai": "旺",
+  "strengthScore": 79,
+  "finalHash": "58e8824b",
+  "finalElementScores": {
+    "木": 11,
+    "火": 14,
+    "土": 27,
+    "金": 21,
+    "水": 2
+  },
+  "finalSourceScores": {
+    "天干": 43,
+    "本气": 16,
+    "中气": 9,
+    "余气": 7
+  },
+  "stepCount": 8,
+  "conflictTypes": [
+    "冲",
+    "刑",
+    "刑",
+    "刑",
+    "破"
+  ],
+  "heHuaTypes": [],
+  "validationErrors": [],
+  "diffs": [
+    {
+      "step": "Step0-Original",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "SeasonModifier",
+      "diffCount": 6,
+      "entries": [
+        {
+          "nodeId": "year-ben-己",
+          "field": "strength",
+          "before": 6,
+          "after": 9,
+          "cause": [
+            "SeasonModifier",
+            "土得令（月令戌为土），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "month-ben-戊",
+          "field": "strength",
+          "before": 20,
+          "after": 23,
+          "cause": [
+            "SeasonModifier",
+            "土得令（月令戌为土），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "day-gan-戊",
+          "field": "strength",
+          "before": 10,
+          "after": 13,
+          "cause": [
+            "SeasonModifier",
+            "土得令（月令戌为土），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "day-ben-己",
+          "field": "strength",
+          "before": 6,
+          "after": 9,
+          "cause": [
+            "SeasonModifier",
+            "土得令（月令戌为土），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "hour-zhong-壬",
+          "field": "strength",
+          "before": 3,
+          "after": 1,
+          "cause": [
+            "SeasonModifier",
+            "水被月令戌(土)所克，季节性削弱-2"
+          ]
+        },
+        {
+          "nodeId": "hour-yao-戊",
+          "field": "strength",
+          "before": 1,
+          "after": 4,
+          "cause": [
+            "SeasonModifier",
+            "土得令（月令戌为土），季节性加权+3"
+          ]
+        }
+      ]
+    },
+    {
+      "step": "SeasonCommander",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "ConflictDetect",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "HeHuaDetect",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "CompetitionEvaluate",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "SeasonTransform",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "P1Transform",
+      "diffCount": 0,
+      "entries": []
+    }
+  ]
+}

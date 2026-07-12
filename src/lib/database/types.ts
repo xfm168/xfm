@@ -213,3 +213,92 @@ export interface PaymentInsert {
   status?: PaymentStatus
   metadata?: Record<string, unknown> | null
 }
+
+// ────────────────────────────────────────────────
+//  V1.1 订单与支付表
+// ────────────────────────────────────────────────
+export type OrderProductType = 'membership' | 'report' | 'addon' | 'credits'
+export type OrderStatus = 'pending' | 'paid' | 'cancelled' | 'expired' | 'refunded'
+export type V11PaymentMethod = 'wechat' | 'alipay' | 'stripe'
+export type V11PaymentStatus = 'pending' | 'processing' | 'success' | 'failed' | 'expired'
+export type RefundStatus = 'pending' | 'processing' | 'success' | 'failed'
+export type TransactionType = 'payment' | 'refund' | 'credits_purchase' | 'credits_spend' | 'points_earn' | 'points_spend' | 'invitation_reward'
+export type MembershipTierV11 = 'free' | 'pro' | 'master'
+
+export interface Order {
+  id: string
+  user_id: string
+  order_no: string
+  product_type: OrderProductType
+  product_id: string | null
+  product_name: string
+  amount_cents: number
+  discount_cents: number
+  final_amount_cents: number
+  currency: string
+  payment_method: V11PaymentMethod | null
+  status: OrderStatus
+  paid_at: string | null
+  expires_at: string
+  created_at: string
+  updated_at: string
+}
+
+export interface V11Payment {
+  id: string
+  order_id: string
+  user_id: string
+  payment_method: V11PaymentMethod
+  provider_payment_id: string | null
+  provider_order_id: string | null
+  amount_cents: number
+  currency: string
+  status: V11PaymentStatus
+  paid_at: string | null
+  error_message: string | null
+  metadata: Record<string, unknown>
+  created_at: string
+  updated_at: string
+}
+
+export interface Refund {
+  id: string
+  payment_id: string
+  order_id: string
+  user_id: string
+  refund_no: string
+  amount_cents: number
+  reason: string
+  status: RefundStatus
+  processed_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface Transaction {
+  id: string
+  user_id: string
+  type: TransactionType
+  amount_cents: number
+  balance_after: number
+  reference_id: string
+  description: string
+  metadata: Record<string, unknown>
+  created_at: string
+}
+
+export interface UserProfile {
+  id: string
+  display_name: string | null
+  avatar_url: string | null
+  membership_tier: MembershipTierV11
+  membership_expires_at: string | null
+  points_balance: number
+  total_spent_cents: number
+  total_charts: number
+  total_analyses: number
+  invitation_code: string | null
+  invited_by: string | null
+  created_at: string
+  updated_at: string
+}

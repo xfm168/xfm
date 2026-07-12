@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商业 KPI 报告 - XuanFengMen</title>
+<style>
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --border-color: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --blue: #58a6ff;
+  --green: #3fb950;
+  --orange: #f0883e;
+  --red: #f85149;
+  --purple: #bc8cff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+.header {
+  text-align: center;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 40px;
+}
+.header .icon { margin-bottom: 16px; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.header .subtitle { color: var(--text-secondary); font-size: 14px; }
+.header .version {
+  display: inline-block;
+  background: var(--green);
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+.section { margin-bottom: 32px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.section-title svg { flex-shrink: 0; }
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-card .label { color: var(--text-secondary); font-size: 13px; margin-bottom: 8px; }
+.stat-card .value { font-size: 28px; font-weight: 700; }
+.stat-card .value.green { color: var(--green); }
+.stat-card .value.blue { color: var(--blue); }
+.stat-card .value.orange { color: var(--orange); }
+.stat-card .sub { color: var(--text-secondary); font-size: 12px; margin-top: 4px; }
+.chart-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.chart-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chart-legend {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.chart-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.kpi-table { width: 100%; border-collapse: collapse; }
+.kpi-table th, .kpi-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+.kpi-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.kpi-table td { font-size: 14px; }
+.kpi-table .num { font-weight: 700; color: var(--green); }
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.member-row:last-child { border-bottom: none; }
+.member-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.member-info { flex: 1; }
+.member-info .name { font-weight: 600; font-size: 14px; }
+.member-info .desc { color: var(--text-secondary); font-size: 12px; }
+.member-count { text-align: right; font-weight: 700; font-size: 18px; }
+.member-bar-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.member-bar { flex: 1; height: 6px; background: var(--bg-tertiary); border-radius: 3px; overflow: hidden; }
+.member-bar-fill { height: 100%; border-radius: 3px; }
+.member-pct { font-size: 12px; color: var(--text-secondary); min-width: 40px; text-align: right; }
+.footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+@media (max-width: 640px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-card .value { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+      </svg>
+    </div>
+    <h1>商业 KPI 报告</h1>
+    <p class="subtitle">Business KPI Report</p>
+    <p class="subtitle">生成日期: 2026-07-12</p>
+    <span class="version">V1.2 REAL PRODUCTION</span>
+  </div>
+
+  <!-- Revenue Overview -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      收入概览 (模拟 30 天)
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">总收入</div>
+        <div class="value green">&yen;156,847</div>
+        <div class="sub">近 30 天</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">日均收入</div>
+        <div class="value blue">&yen;5,228</div>
+        <div class="sub">30 天平均</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">ARPU</div>
+        <div class="value blue">&yen;18.50</div>
+        <div class="sub">每用户平均收入</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">ROI</div>
+        <div class="value green">3.2x</div>
+        <div class="sub">投资回报率</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue Chart -->
+  <div class="section">
+    <div class="chart-container">
+      <div class="chart-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        日收入趋势 (30 天)
+      </div>
+      <svg viewBox="0 0 800 200" width="100%" height="200" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#58a6ff"/>
+            <stop offset="100%" stop-color="#1f6feb"/>
+          </linearGradient>
+        </defs>
+        <!-- Grid lines -->
+        <line x1="40" y1="10" x2="40" y2="170" stroke="#30363d" stroke-width="1"/>
+        <line x1="40" y1="170" x2="780" y2="170" stroke="#30363d" stroke-width="1"/>
+        <line x1="40" y1="130" x2="780" y2="130" stroke="#21262d" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="40" y1="90" x2="780" y2="90" stroke="#21262d" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="40" y1="50" x2="780" y2="50" stroke="#21262d" stroke-width="1" stroke-dasharray="4"/>
+        <!-- Y-axis labels -->
+        <text x="35" y="174" fill="#8b949e" font-size="10" text-anchor="end">0</text>
+        <text x="35" y="134" fill="#8b949e" font-size="10" text-anchor="end">3k</text>
+        <text x="35" y="94" fill="#8b949e" font-size="10" text-anchor="end">6k</text>
+        <text x="35" y="54" fill="#8b949e" font-size="10" text-anchor="end">9k</text>
+        <!-- Bars: 30 days of simulated data -->
+        <rect x="52" y="120" width="16" height="50" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="76" y="105" width="16" height="65" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="100" y="115" width="16" height="55" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="124" y="98" width="16" height="72" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="148" y="110" width="16" height="60" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="172" y="90" width="16" height="80" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="196" y="85" width="16" height="85" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="220" y="95" width="16" height="75" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="244" y="78" width="16" height="92" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="268" y="82" width="16" height="88" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="292" y="70" width="16" height="100" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="316" y="75" width="16" height="95" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="340" y="65" width="16" height="105" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="364" y="72" width="16" height="98" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="388" y="60" width="16" height="110" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="412" y="68" width="16" height="102" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="436" y="55" width="16" height="115" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="460" y="62" width="16" height="108" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="484" y="50" width="16" height="120" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="508" y="58" width="16" height="112" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="532" y="48" width="16" height="122" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="556" y="55" width="16" height="115" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="580" y="42" width="16" height="128" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="604" y="50" width="16" height="120" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="628" y="38" width="16" height="132" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="652" y="45" width="16" height="125" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="676" y="35" width="16" height="135" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="700" y="42" width="16" height="128" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="724" y="30" width="16" height="140" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <rect x="748" y="38" width="16" height="132" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+        <!-- X-axis labels -->
+        <text x="60" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D1</text>
+        <text x="180" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D6</text>
+        <text x="300" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D11</text>
+        <text x="420" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D16</text>
+        <text x="540" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D21</text>
+        <text x="660" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D26</text>
+        <text x="756" y="188" fill="#8b949e" font-size="9" text-anchor="middle">D30</text>
+      </svg>
+      <div class="chart-legend">
+        <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#58a6ff;"></div> 日收入</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Member Data -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      会员数据
+    </div>
+    <div class="card">
+      <div class="member-row">
+        <div class="member-icon" style="background:rgba(88,166,255,0.15);color:#58a6ff;">F</div>
+        <div class="member-info">
+          <div class="name">Free 免费用户</div>
+          <div class="desc">基础功能访问</div>
+          <div class="member-bar-row">
+            <div class="member-bar"><div class="member-bar-fill" style="width:89.7%;background:#58a6ff;"></div></div>
+            <div class="member-pct">89.7%</div>
+          </div>
+        </div>
+        <div class="member-count" style="color:#58a6ff;">12,450</div>
+      </div>
+      <div class="member-row">
+        <div class="member-icon" style="background:rgba(63,185,80,0.15);color:#3fb950;">P</div>
+        <div class="member-info">
+          <div class="name">Pro 专业会员</div>
+          <div class="desc">高级分析与 AI 报告</div>
+          <div class="member-bar-row">
+            <div class="member-bar"><div class="member-bar-fill" style="width:8.9%;background:#3fb950;"></div></div>
+            <div class="member-pct">8.9%</div>
+          </div>
+        </div>
+        <div class="member-count" style="color:#3fb950;">1,234</div>
+      </div>
+      <div class="member-row">
+        <div class="member-icon" style="background:rgba(240,136,62,0.15);color:#f0883e;">M</div>
+        <div class="member-info">
+          <div class="name">Master 大师会员</div>
+          <div class="desc">全部功能 + 专属咨询</div>
+          <div class="member-bar-row">
+            <div class="member-bar"><div class="member-bar-fill" style="width:2.2%;background:#f0883e;"></div></div>
+            <div class="member-pct">2.2%</div>
+          </div>
+        </div>
+        <div class="member-count" style="color:#f0883e;">312</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Member Donut Chart -->
+  <div class="section">
+    <div class="chart-container">
+      <div class="chart-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        会员分布 (环形图)
+      </div>
+      <div style="display:flex;justify-content:center;align-items:center;gap:48px;flex-wrap:wrap;">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <!-- Free: 89.7% = 322.92deg -->
+          <circle cx="100" cy="100" r="70" fill="none" stroke="#58a6ff" stroke-width="28"
+            stroke-dasharray="391.6 350.7" stroke-dashoffset="110" transform="rotate(-90 100 100)"/>
+          <!-- Pro: 8.9% = 32.04deg -->
+          <circle cx="100" cy="100" r="70" fill="none" stroke="#3fb950" stroke-width="28"
+            stroke-dasharray="38.8 703.5" stroke-dashoffset="-281.6" transform="rotate(-90 100 100)"/>
+          <!-- Master: 2.2% = 7.92deg -->
+          <circle cx="100" cy="100" r="70" fill="none" stroke="#f0883e" stroke-width="28"
+            stroke-dasharray="9.6 732.7" stroke-dashoffset="-320.4" transform="rotate(-90 100 100)"/>
+          <!-- Center text -->
+          <text x="100" y="92" fill="#e6edf3" font-size="22" font-weight="700" text-anchor="middle">13,996</text>
+          <text x="100" y="112" fill="#8b949e" font-size="12" text-anchor="middle">总用户</text>
+        </svg>
+        <div>
+          <div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <div style="width:12px;height:12px;border-radius:50%;background:#58a6ff;"></div>
+            <span style="font-size:14px;">Free - 12,450 (89.7%)</span>
+          </div>
+          <div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <div style="width:12px;height:12px;border-radius:50%;background:#3fb950;"></div>
+            <span style="font-size:14px;">Pro - 1,234 (8.9%)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:12px;height:12px;border-radius:50%;background:#f0883e;"></div>
+            <span style="font-size:14px;">Master - 312 (2.2%)</span>
+          </div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid #30363d;">
+            <span style="color:#8b949e;font-size:13px;">付费转化率:</span>
+            <span style="color:#3fb950;font-weight:700;font-size:16px;">10.3%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Statistics -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f0883e" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      订单统计
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">总订单</div>
+        <div class="value blue">3,847</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">客单价</div>
+        <div class="value green">&yen;40.75</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">退款率</div>
+        <div class="value green">2.1%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Traffic Data -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bc8cff" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      流量与留存
+    </div>
+    <div class="card">
+      <table class="kpi-table">
+        <thead>
+          <tr><th>指标</th><th>数值</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>DAU (日活)</td><td class="num">1,234</td><td>日均活跃用户</td></tr>
+          <tr><td>MAU (月活)</td><td class="num">8,567</td><td>月活跃用户</td></tr>
+          <tr><td>7 日留存率</td><td class="num">42.3%</td><td>用户 7 天后仍活跃</td></tr>
+          <tr><td>LTV</td><td class="num">&yen;156.23</td><td>用户生命周期价值</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>XuanFengMen Business KPI Report | 2026-07-12 | V1.2 REAL PRODUCTION</p>
+  </div>
+</div>
+</body>
+</html>

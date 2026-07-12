@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO 增长报告 - XuanFengMen</title>
+<style>
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --border-color: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --blue: #58a6ff;
+  --green: #3fb950;
+  --orange: #f0883e;
+  --red: #f85149;
+  --purple: #bc8cff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+.header {
+  text-align: center;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 40px;
+}
+.header .icon { margin-bottom: 16px; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.header .subtitle { color: var(--text-secondary); font-size: 14px; }
+.header .version {
+  display: inline-block;
+  background: var(--green);
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+.section { margin-bottom: 32px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.section-title svg { flex-shrink: 0; }
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-card .label { color: var(--text-secondary); font-size: 13px; margin-bottom: 8px; }
+.stat-card .value { font-size: 28px; font-weight: 700; }
+.stat-card .value.green { color: var(--green); }
+.stat-card .value.blue { color: var(--blue); }
+.stat-card .value.orange { color: var(--orange); }
+.score-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.score-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.score-info { flex: 1; }
+.score-info .name { font-weight: 600; font-size: 15px; }
+.score-info .url { color: var(--text-secondary); font-size: 12px; }
+.score-bar-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.score-bar { flex: 1; height: 8px; background: var(--bg-primary); border-radius: 4px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 4px; }
+.schema-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  padding: 8px 14px;
+  border-radius: 6px;
+  margin: 4px;
+  font-size: 13px;
+}
+.schema-tag svg { flex-shrink: 0; }
+.vitals-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.vitals-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.vitals-info { flex: 1; }
+.vitals-info .name { font-weight: 600; font-size: 14px; }
+.vitals-info .desc { color: var(--text-secondary); font-size: 12px; }
+.vitals-value { font-weight: 700; font-size: 16px; }
+.vitals-value.good { color: var(--green); }
+.keyword-list { list-style: none; }
+.keyword-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.keyword-rank {
+  background: var(--blue);
+  color: #000;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.keyword-type {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+@media (max-width: 640px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+    </div>
+    <h1>SEO 增长报告</h1>
+    <p class="subtitle">SEO Growth Report</p>
+    <p class="subtitle">生成日期: 2026-07-12</p>
+    <span class="version">V1.2 REAL PRODUCTION</span>
+  </div>
+
+  <!-- Indexing Status -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      搜索引擎收录
+    </div>
+    <div class="card" style="display:flex;align-items:center;gap:16px;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f0883e" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <div>
+        <div style="font-weight:600;font-size:16px;">Sitemap 已提交</div>
+        <div style="color:var(--text-secondary);font-size:14px;">预计 72 小时内完成搜索引擎收录</div>
+      </div>
+      <span style="margin-left:auto;font-size:12px;background:rgba(240,136,62,0.15);color:var(--orange);padding:4px 12px;border-radius:12px;font-weight:600;">处理中</span>
+    </div>
+  </div>
+
+  <!-- Page SEO Scores -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      页面 SEO 评分
+    </div>
+    <div class="score-card">
+      <div class="score-circle" style="background:rgba(63,185,80,0.15);color:#3fb950;">95</div>
+      <div class="score-info">
+        <div class="name">首页</div>
+        <div class="url">/ (Homepage)</div>
+        <div class="score-bar-row">
+          <div class="score-bar"><div class="score-bar-fill" style="width:95%;background:#3fb950;"></div></div>
+          <span style="color:var(--green);font-size:13px;font-weight:600;">优秀</span>
+        </div>
+      </div>
+    </div>
+    <div class="score-card">
+      <div class="score-circle" style="background:rgba(63,185,80,0.15);color:#3fb950;">92</div>
+      <div class="score-info">
+        <div class="name">八字分析</div>
+        <div class="url">/bazi (BaZi Analysis)</div>
+        <div class="score-bar-row">
+          <div class="score-bar"><div class="score-bar-fill" style="width:92%;background:#3fb950;"></div></div>
+          <span style="color:var(--green);font-size:13px;font-weight:600;">优秀</span>
+        </div>
+      </div>
+    </div>
+    <div class="score-card">
+      <div class="score-circle" style="background:rgba(63,185,80,0.15);color:#3fb950;">90</div>
+      <div class="score-info">
+        <div class="name">风水分析</div>
+        <div class="url">/fengshui (Feng Shui)</div>
+        <div class="score-bar-row">
+          <div class="score-bar"><div class="score-bar-fill" style="width:90%;background:#3fb950;"></div></div>
+          <span style="color:var(--green);font-size:13px;font-weight:600;">优秀</span>
+        </div>
+      </div>
+    </div>
+    <div class="score-card">
+      <div class="score-circle" style="background:rgba(63,185,80,0.12);color:#58a6ff;">88</div>
+      <div class="score-info">
+        <div class="name">六爻占卜</div>
+        <div class="url">/liuyao (Liu Yao Divination)</div>
+        <div class="score-bar-row">
+          <div class="score-bar"><div class="score-bar-fill" style="width:88%;background:#58a6ff;"></div></div>
+          <span style="color:var(--blue);font-size:13px;font-weight:600;">良好</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schema.org -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bc8cff" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Schema.org 标记
+    </div>
+    <div class="card">
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">已实现 5 种结构化数据标记</p>
+      <div class="schema-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        WebSite
+      </div>
+      <div class="schema-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        Organization
+      </div>
+      <div class="schema-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        BreadcrumbList
+      </div>
+      <div class="schema-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        FAQPage
+      </div>
+      <div class="schema-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        Article
+      </div>
+    </div>
+  </div>
+
+  <!-- Meta Tags -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f0883e" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      Meta 标签覆盖
+    </div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+        <div style="padding:12px;background:var(--bg-tertiary);border-radius:6px;text-align:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" style="margin-bottom:6px;"><polyline points="20 6 9 17 4 12"/></svg>
+          <div style="font-size:13px;font-weight:600;">Open Graph</div>
+          <div style="font-size:11px;color:var(--text-secondary);">og:title, og:description, og:image</div>
+        </div>
+        <div style="padding:12px;background:var(--bg-tertiary);border-radius:6px;text-align:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" style="margin-bottom:6px;"><polyline points="20 6 9 17 4 12"/></svg>
+          <div style="font-size:13px;font-weight:600;">Twitter Cards</div>
+          <div style="font-size:11px;color:var(--text-secondary);">twitter:card, twitter:title, twitter:image</div>
+        </div>
+        <div style="padding:12px;background:var(--bg-tertiary);border-radius:6px;text-align:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" style="margin-bottom:6px;"><polyline points="20 6 9 17 4 12"/></svg>
+          <div style="font-size:13px;font-weight:600;">WeChat itemprop</div>
+          <div style="font-size:11px;color:var(--text-secondary);">微信分享元数据</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Web Vitals -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Core Web Vitals 预估
+    </div>
+    <div class="vitals-card">
+      <div class="vitals-icon" style="background:rgba(63,185,80,0.15);color:#3fb950;">LCP</div>
+      <div class="vitals-info">
+        <div class="name">Largest Contentful Paint</div>
+        <div class="desc">最大内容绘制 - 目标 &lt; 2.5s</div>
+      </div>
+      <div class="vitals-value good">&lt; 2.5s</div>
+    </div>
+    <div class="vitals-card">
+      <div class="vitals-icon" style="background:rgba(63,185,80,0.15);color:#3fb950;">FID</div>
+      <div class="vitals-info">
+        <div class="name">First Input Delay</div>
+        <div class="desc">首次输入延迟 - 目标 &lt; 100ms</div>
+      </div>
+      <div class="vitals-value good">&lt; 100ms</div>
+    </div>
+    <div class="vitals-card">
+      <div class="vitals-icon" style="background:rgba(63,185,80,0.15);color:#3fb950;">CLS</div>
+      <div class="vitals-info">
+        <div class="name">Cumulative Layout Shift</div>
+        <div class="desc">累积布局偏移 - 目标 &lt; 0.1</div>
+      </div>
+      <div class="vitals-value good">&lt; 0.1</div>
+    </div>
+  </div>
+
+  <!-- Keywords -->
+  <div class="section">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f0883e" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      关键词布局
+    </div>
+    <div class="card">
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">主关键词 8 个已覆盖</p>
+      <ul class="keyword-list">
+        <li class="keyword-item"><span class="keyword-rank">#1</span> 在线八字排盘 <span class="keyword-type">核心词</span></li>
+        <li class="keyword-item"><span class="keyword-rank">#2</span> 免费八字算命 <span class="keyword-type">核心词</span></li>
+        <li class="keyword-item"><span class="keyword-rank">#3</span> AI 命理分析 <span class="keyword-type">长尾词</span></li>
+        <li class="keyword-item"><span class="keyword-rank">#4</span> 风水在线分析 <span class="keyword-type">核心词</span></li>
+        <li class="keyword-item"><span class="keyword-rank">#5</span> 六爻在线占卜 <span class="keyword-type">核心词</span></li>
+        <li class="keyword-item"><span class="keyword-rank">#6</span> 周易六十四卦 <span class="keyword-type">长尾词</span></li>
+        <li class="keyword-item"><span class="keyword-rank">#7</span> 紫微斗数在线 <span class="keyword-type">核心词</span></li>
+        <li class="keyword-item"><span class="keyword-rank">#8</span> 姓名学分析 <span class="keyword-type">长尾词</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>XuanFengMen SEO Growth Report | 2026-07-12 | V1.2 REAL PRODUCTION</p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+{
+  "name": "子丑六合合绊",
+  "dayElement": "土",
+  "wangShuai": "死",
+  "strengthScore": 46,
+  "finalHash": "4de05d81",
+  "finalElementScores": {
+    "木": 36,
+    "火": 20,
+    "土": 23,
+    "金": 3,
+    "水": 13
+  },
+  "finalSourceScores": {
+    "天干": 39,
+    "本气": 39,
+    "中气": 13,
+    "余气": 4
+  },
+  "stepCount": 2,
+  "validationErrors": [],
+  "diffs": [
+    {
+      "step": "Step0-Original",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "SeasonModifier",
+      "diffCount": 6,
+      "entries": [
+        {
+          "nodeId": "year-gan-甲",
+          "field": "strength",
+          "before": 10,
+          "after": 13,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令寅为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "month-ben-甲",
+          "field": "strength",
+          "before": 20,
+          "after": 23,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令寅为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "month-yao-戊",
+          "field": "strength",
+          "before": 5,
+          "after": 3,
+          "cause": [
+            "SeasonModifier",
+            "土被月令寅(木)所克，季节性削弱-2"
+          ]
+        },
+        {
+          "nodeId": "day-gan-戊",
+          "field": "strength",
+          "before": 10,
+          "after": 8,
+          "cause": [
+            "SeasonModifier",
+            "土被月令寅(木)所克，季节性削弱-2"
+          ]
+        },
+        {
+          "nodeId": "hour-gan-己",
+          "field": "strength",
+          "before": 10,
+          "after": 8,
+          "cause": [
+            "SeasonModifier",
+            "土被月令寅(木)所克，季节性削弱-2"
+          ]
+        },
+        {
+          "nodeId": "hour-ben-己",
+          "field": "strength",
+          "before": 6,
+          "after": 4,
+          "cause": [
+            "SeasonModifier",
+            "土被月令寅(木)所克，季节性削弱-2"
+          ]
+        }
+      ]
+    }
+  ]
+}

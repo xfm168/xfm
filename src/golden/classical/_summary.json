@@ -1,0 +1,254 @@
+{
+  "stats": {
+    "滴天髓": 3,
+    "子平真诠": 2,
+    "穷通宝鉴": 1,
+    "三命通会": 4,
+    "渊海子平": 2
+  },
+  "results": [
+    {
+      "name": "任铁樵自造（滴天髓作者）",
+      "book": "滴天髓",
+      "dayElement": "火",
+      "wangShuai": "旺",
+      "strengthScore": 83,
+      "finalHash": "7782393f",
+      "elementScores": {
+        "木": 3,
+        "火": 60,
+        "土": 16,
+        "金": 1,
+        "水": 11
+      },
+      "conflictCount": 1,
+      "heHuaCount": 1,
+      "seasonStatus": "得令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "乾隆帝御造",
+      "book": "滴天髓",
+      "dayElement": "金",
+      "wangShuai": "旺",
+      "strengthScore": 75,
+      "finalHash": "4629938a",
+      "elementScores": {
+        "木": 1,
+        "火": 20,
+        "土": 2,
+        "金": 35,
+        "水": 1
+      },
+      "conflictCount": 5,
+      "heHuaCount": 1,
+      "seasonStatus": "得令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "翰院之命（滴天髓甲木例）",
+      "book": "滴天髓",
+      "dayElement": "木",
+      "wangShuai": "死",
+      "strengthScore": 58,
+      "finalHash": "ef655439",
+      "elementScores": {
+        "木": 25,
+        "火": 1,
+        "土": 21,
+        "金": 13,
+        "水": 13
+      },
+      "conflictCount": 3,
+      "heHuaCount": 1,
+      "seasonStatus": "普通",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "薛相公命（正官格）",
+      "book": "子平真诠",
+      "dayElement": "木",
+      "wangShuai": "囚",
+      "strengthScore": 70,
+      "finalHash": "641cd644",
+      "elementScores": {
+        "木": 20,
+        "火": 7,
+        "土": 18,
+        "金": 33,
+        "水": 22
+      },
+      "conflictCount": 6,
+      "heHuaCount": 1,
+      "seasonStatus": "失令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "杂气正官格",
+      "book": "子平真诠",
+      "dayElement": "土",
+      "wangShuai": "旺",
+      "strengthScore": 83,
+      "finalHash": "b4820f92",
+      "elementScores": {
+        "木": 17,
+        "火": 15,
+        "土": 44,
+        "金": 9,
+        "水": 7
+      },
+      "conflictCount": 2,
+      "heHuaCount": 3,
+      "seasonStatus": "得令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "明詹承相命（九月甲木）",
+      "book": "穷通宝鉴",
+      "dayElement": "木",
+      "wangShuai": "死",
+      "strengthScore": 64,
+      "finalHash": "259c1d73",
+      "elementScores": {
+        "木": 10,
+        "火": 19,
+        "土": 32,
+        "金": 27,
+        "水": 8
+      },
+      "conflictCount": 1,
+      "heHuaCount": 1,
+      "seasonStatus": "普通",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "万民英自造（三命通会作者）",
+      "book": "三命通会",
+      "dayElement": "金",
+      "wangShuai": "相",
+      "strengthScore": 80,
+      "finalHash": "959cffc8",
+      "elementScores": {
+        "木": 4,
+        "火": 17,
+        "土": 37,
+        "金": 22,
+        "水": 19
+      },
+      "conflictCount": 2,
+      "heHuaCount": 1,
+      "seasonStatus": "退令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "李太后命（明神宗生母）",
+      "book": "三命通会",
+      "dayElement": "水",
+      "wangShuai": "旺",
+      "strengthScore": 81,
+      "finalHash": "6f0d70ea",
+      "elementScores": {
+        "木": 5,
+        "火": 11,
+        "土": 4,
+        "金": 14,
+        "水": 48
+      },
+      "conflictCount": 3,
+      "heHuaCount": 1,
+      "seasonStatus": "得令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "大富之命（鬼在墓中格）",
+      "book": "三命通会",
+      "dayElement": "土",
+      "wangShuai": "旺",
+      "strengthScore": 80,
+      "finalHash": "41e099aa",
+      "elementScores": {
+        "木": 13,
+        "火": 22,
+        "土": 34,
+        "金": 0,
+        "水": 10
+      },
+      "conflictCount": 1,
+      "heHuaCount": 2,
+      "seasonStatus": "得令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "仇鸾命（咸宁侯）",
+      "book": "三命通会",
+      "dayElement": "水",
+      "wangShuai": "休",
+      "strengthScore": 70,
+      "finalHash": "741cc4fe",
+      "elementScores": {
+        "木": 9,
+        "火": 24,
+        "土": 23,
+        "金": 2,
+        "水": 20
+      },
+      "conflictCount": 2,
+      "heHuaCount": 0,
+      "seasonStatus": "失令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "蒋介石命造",
+      "book": "渊海子平",
+      "dayElement": "土",
+      "wangShuai": "旺",
+      "strengthScore": 83,
+      "finalHash": "e300ddfe",
+      "elementScores": {
+        "木": 2,
+        "火": 21,
+        "土": 38,
+        "金": 29,
+        "水": 3
+      },
+      "conflictCount": 1,
+      "heHuaCount": 1,
+      "seasonStatus": "得令",
+      "validationErrors": [],
+      "hasNeg": false
+    },
+    {
+      "name": "袁世凯命造",
+      "book": "渊海子平",
+      "dayElement": "木",
+      "wangShuai": "囚",
+      "strengthScore": 65,
+      "finalHash": "1232dc0f",
+      "elementScores": {
+        "木": 8,
+        "火": 16,
+        "土": 20,
+        "金": 24,
+        "水": 11
+      },
+      "conflictCount": 2,
+      "heHuaCount": 1,
+      "seasonStatus": "失令",
+      "validationErrors": [],
+      "hasNeg": false
+    }
+  ],
+  "passed": 12,
+  "failed": 0,
+  "total": 12
+}

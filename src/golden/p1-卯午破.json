@@ -1,0 +1,137 @@
+{
+  "name": "卯午破",
+  "tags": [
+    "破",
+    "卯午"
+  ],
+  "dayElement": "土",
+  "wangShuai": "死",
+  "strengthScore": 63,
+  "finalHash": "525a60fd",
+  "finalElementScores": {
+    "木": 38,
+    "火": 21,
+    "土": 12,
+    "金": 16,
+    "水": 3
+  },
+  "finalSourceScores": {
+    "天干": 41,
+    "本气": 35,
+    "中气": 11,
+    "余气": 3
+  },
+  "stepCount": 8,
+  "conflictTypes": [
+    "冲",
+    "刑",
+    "破"
+  ],
+  "heHuaTypes": [
+    "地支三合合绊"
+  ],
+  "validationErrors": [],
+  "diffs": [
+    {
+      "step": "Step0-Original",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "SeasonModifier",
+      "diffCount": 6,
+      "entries": [
+        {
+          "nodeId": "year-gan-甲",
+          "field": "strength",
+          "before": 10,
+          "after": 13,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令寅为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "year-ben-乙",
+          "field": "strength",
+          "before": 6,
+          "after": 9,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令寅为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "month-ben-甲",
+          "field": "strength",
+          "before": 20,
+          "after": 23,
+          "cause": [
+            "SeasonModifier",
+            "木得令（月令寅为木），季节性加权+3"
+          ]
+        },
+        {
+          "nodeId": "month-yao-戊",
+          "field": "strength",
+          "before": 5,
+          "after": 3,
+          "cause": [
+            "SeasonModifier",
+            "土被月令寅(木)所克，季节性削弱-2"
+          ]
+        },
+        {
+          "nodeId": "day-gan-戊",
+          "field": "strength",
+          "before": 10,
+          "after": 8,
+          "cause": [
+            "SeasonModifier",
+            "土被月令寅(木)所克，季节性削弱-2"
+          ]
+        },
+        {
+          "nodeId": "day-zhong-己",
+          "field": "strength",
+          "before": 3,
+          "after": 1,
+          "cause": [
+            "SeasonModifier",
+            "土被月令寅(木)所克，季节性削弱-2"
+          ]
+        }
+      ]
+    },
+    {
+      "step": "SeasonCommander",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "ConflictDetect",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "HeHuaDetect",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "CompetitionEvaluate",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "SeasonTransform",
+      "diffCount": 0,
+      "entries": []
+    },
+    {
+      "step": "P1Transform",
+      "diffCount": 0,
+      "entries": []
+    }
+  ]
+}

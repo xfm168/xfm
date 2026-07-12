@@ -1,0 +1,270 @@
+/* ============================================
+   Feedback 反馈页面样式
+   暗色主题 + 金色强调
+   ============================================ */
+
+:root {
+  --fb-bg: #071629;
+  --fb-surface: rgba(11, 31, 59, 0.85);
+  --fb-surface-hover: rgba(17, 40, 69, 0.9);
+  --fb-border: rgba(212, 175, 55, 0.2);
+  --fb-border-light: rgba(212, 175, 55, 0.08);
+  --fb-text: #F5F1E8;
+  --fb-text-secondary: #B8C4D6;
+  --fb-text-muted: #6B7D94;
+  --fb-gold: #D4AF37;
+  --fb-gold-light: #E8C56A;
+  --fb-gold-dim: #B8860B;
+  --fb-red: #C46060;
+  --fb-green: #6B9E7A;
+  --fb-yellow: #C4A24A;
+  --fb-radius: 12px;
+  --fb-radius-sm: 8px;
+  --fb-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --fb-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 页面容器 */
+.feedback-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  font-family: var(--fb-font);
+  color: var(--fb-text);
+  min-height: 100vh;
+}
+
+.feedback-page h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--fb-gold);
+  margin-bottom: 8px;
+}
+
+.feedback-subtitle {
+  font-size: 14px;
+  color: var(--fb-text-secondary);
+  margin-bottom: 32px;
+}
+
+/* 反馈表单卡片 */
+.feedback-form-card {
+  background: var(--fb-surface);
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius);
+  padding: 32px;
+  box-shadow: var(--fb-shadow);
+  margin-bottom: 24px;
+}
+
+.feedback-form-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fb-text);
+  margin-bottom: 24px;
+}
+
+/* 表单字段 */
+.feedback-field {
+  margin-bottom: 20px;
+}
+
+.feedback-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fb-text-secondary);
+  margin-bottom: 8px;
+}
+
+.feedback-select,
+.feedback-input,
+.feedback-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--fb-text);
+  background: rgba(17, 40, 69, 0.6);
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius-sm);
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: var(--fb-font);
+  box-sizing: border-box;
+}
+
+.feedback-select::placeholder,
+.feedback-input::placeholder,
+.feedback-textarea::placeholder {
+  color: var(--fb-text-muted);
+}
+
+.feedback-select:focus,
+.feedback-input:focus,
+.feedback-textarea:focus {
+  border-color: var(--fb-gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.feedback-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='%236B7D94'%3E%3Cpath d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.feedback-select option {
+  background: #0B1F3B;
+  color: var(--fb-text);
+}
+
+.feedback-textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* ============================================
+   五星评分
+   ============================================ */
+.feedback-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-stars {
+  display: flex;
+  gap: 6px;
+}
+
+.feedback-star {
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--fb-text-muted);
+  transition: color 0.15s, transform 0.15s;
+  user-select: none;
+  line-height: 1;
+}
+
+.feedback-star:hover {
+  transform: scale(1.15);
+}
+
+.feedback-star.filled {
+  color: var(--fb-gold);
+}
+
+.feedback-star.hovered {
+  color: var(--fb-gold-light);
+}
+
+.feedback-rating-label {
+  font-size: 14px;
+  color: var(--fb-text-secondary);
+  margin-left: 8px;
+}
+
+/* 提交按钮 */
+.feedback-submit {
+  display: inline-block;
+  padding: 14px 36px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #071629;
+  background: linear-gradient(135deg, var(--fb-gold-light), var(--fb-gold));
+  border: none;
+  border-radius: var(--fb-radius-sm);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: 4px;
+}
+
+.feedback-submit:hover {
+  opacity: 0.85;
+}
+
+.feedback-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 成功消息 */
+.feedback-success {
+  text-align: center;
+  padding: 48px 20px;
+  background: var(--fb-surface);
+  border: 1px solid var(--fb-border);
+  border-radius: var(--fb-radius);
+  box-shadow: var(--fb-shadow);
+}
+
+.feedback-success-icon {
+  font-size: 48px;
+  color: var(--fb-green);
+  margin-bottom: 16px;
+}
+
+.feedback-success h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--fb-text);
+  margin-bottom: 8px;
+}
+
+.feedback-success p {
+  font-size: 14px;
+  color: var(--fb-text-secondary);
+  margin-bottom: 24px;
+}
+
+.feedback-another-btn {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fb-gold);
+  background: transparent;
+  border: 1px solid var(--fb-gold-dim);
+  border-radius: var(--fb-radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.feedback-another-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+}
+
+/* 错误 */
+.feedback-error {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--fb-red);
+  background: rgba(196, 96, 96, 0.1);
+  border: 1px solid rgba(196, 96, 96, 0.2);
+  border-radius: var(--fb-radius-sm);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+@media (max-width: 768px) {
+  .feedback-page {
+    padding: 16px 12px 40px;
+  }
+
+  .feedback-page h1 {
+    font-size: 22px;
+  }
+
+  .feedback-form-card {
+    padding: 24px 16px;
+  }
+
+  .feedback-star {
+    font-size: 24px;
+  }
+}

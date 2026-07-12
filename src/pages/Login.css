@@ -1,0 +1,308 @@
+/* ============================================
+   Login 登录页面样式
+   暗色主题 + 金色强调
+   ============================================ */
+
+:root {
+  --login-bg: #071629;
+  --login-surface: rgba(11, 31, 59, 0.9);
+  --login-surface-hover: rgba(17, 40, 69, 0.95);
+  --login-border: rgba(212, 175, 55, 0.2);
+  --login-border-light: rgba(212, 175, 55, 0.08);
+  --login-text: #F5F1E8;
+  --login-text-secondary: #B8C4D6;
+  --login-text-muted: #6B7D94;
+  --login-gold: #D4AF37;
+  --login-gold-light: #E8C56A;
+  --login-gold-dim: #B8860B;
+  --login-red: #C46060;
+  --login-green: #6B9E7A;
+  --login-radius: 12px;
+  --login-radius-sm: 8px;
+  --login-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --login-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 页面容器 */
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  padding: 24px 20px;
+  font-family: var(--login-font);
+  background: var(--login-bg);
+}
+
+/* 登录卡片 */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--login-surface);
+  border: 1px solid var(--login-border);
+  border-radius: var(--login-radius);
+  padding: 40px 32px;
+  box-shadow: var(--login-shadow);
+}
+
+.login-card h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--login-gold);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  font-size: 14px;
+  color: var(--login-text-secondary);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+/* 登录模式切换 */
+.login-mode-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(17, 40, 69, 0.6);
+  border: 1px solid var(--login-border-light);
+  border-radius: var(--login-radius-sm);
+  margin-bottom: 24px;
+}
+
+.login-mode-tab {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--login-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.login-mode-tab:hover {
+  color: var(--login-text);
+}
+
+.login-mode-tab.active {
+  color: #071629;
+  background: linear-gradient(135deg, var(--login-gold-light), var(--login-gold));
+  font-weight: 600;
+}
+
+/* 表单 */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--login-text-secondary);
+}
+
+.login-input {
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--login-text);
+  background: rgba(17, 40, 69, 0.6);
+  border: 1px solid var(--login-border);
+  border-radius: var(--login-radius-sm);
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: var(--login-font);
+}
+
+.login-input::placeholder {
+  color: var(--login-text-muted);
+}
+
+.login-input:focus {
+  border-color: var(--login-gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* 提交按钮 */
+.login-submit {
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #071629;
+  background: linear-gradient(135deg, var(--login-gold-light), var(--login-gold));
+  border: none;
+  border-radius: var(--login-radius-sm);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: 4px;
+}
+
+.login-submit:hover {
+  opacity: 0.85;
+}
+
+.login-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 分隔线 */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--login-border);
+}
+
+.login-divider span {
+  font-size: 13px;
+  color: var(--login-text-muted);
+  white-space: nowrap;
+}
+
+/* 社交登录按钮 */
+.login-social-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--login-text);
+  background: rgba(17, 40, 69, 0.6);
+  border: 1px solid var(--login-border);
+  border-radius: var(--login-radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--login-font);
+}
+
+.login-social-btn:hover {
+  background: var(--login-surface-hover);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.login-social-btn .social-icon {
+  font-size: 18px;
+}
+
+.login-social-btn.wechat:hover {
+  border-color: rgba(7, 193, 96, 0.5);
+  color: #07C160;
+}
+
+.login-social-btn.google:hover {
+  border-color: rgba(66, 133, 244, 0.5);
+  color: #4285F4;
+}
+
+.login-social-btn.apple:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+/* 底部切换 */
+.login-switch {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--login-text-secondary);
+}
+
+.login-switch-link {
+  color: var(--login-gold);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-switch-link:hover {
+  text-decoration: underline;
+}
+
+/* 错误信息 */
+.login-error {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--login-red);
+  background: rgba(196, 96, 96, 0.1);
+  border: 1px solid rgba(196, 96, 96, 0.2);
+  border-radius: var(--login-radius-sm);
+  text-align: center;
+}
+
+/* OTP 行 */
+.login-otp-row {
+  display: flex;
+  gap: 12px;
+}
+
+.login-otp-row .login-input {
+  flex: 1;
+}
+
+.login-send-otp {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--login-gold);
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid var(--login-gold-dim);
+  border-radius: var(--login-radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.login-send-otp:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.login-send-otp:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 32px 20px;
+  }
+
+  .login-card h1 {
+    font-size: 22px;
+  }
+
+  .login-otp-row {
+    flex-direction: column;
+  }
+}

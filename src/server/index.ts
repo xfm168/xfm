@@ -21,6 +21,8 @@ import analyzeRoutes from './routes/analyze'
 import compatibilityRoutes from './routes/compatibility'
 import historyRoutes from './routes/history'
 import userRoutes from './routes/user'
+import paymentRoutes from './routes/payment'
+import authRoutes from './routes/auth'
 import { errorHandler } from './middleware/error'
 
 const app = new Hono()
@@ -37,6 +39,8 @@ app.route('/api/analyze', analyzeRoutes)
 app.route('/api/compatibility', compatibilityRoutes)
 app.route('/api/history', historyRoutes)
 app.route('/api/user', userRoutes)
+app.route('/api/payment', paymentRoutes)
+app.route('/api/auth', authRoutes)
 
 // 健康检查
 app.get('/api/health', (c) =>

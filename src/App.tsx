@@ -1,17 +1,26 @@
+import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import Home from './pages/Home'
-import FengShui from './pages/FengShui'
-import Analysis from './pages/Analysis'
-import PremiumReport from './pages/PremiumReport'
-import Daily from './pages/Daily'
-import History from './pages/History'
-import Divination from './pages/Divination'
-import BaziInput from './pages/BaziInput'
-import BaziChart from './pages/BaziChart'
-import BaziHistory from './pages/BaziHistory'
+import AuthGuard from './components/AuthGuard'
 import './App.css'
+
+const Home = React.lazy(function() { return import('./pages/Home') })
+const FengShui = React.lazy(function() { return import('./pages/FengShui') })
+const Analysis = React.lazy(function() { return import('./pages/Analysis') })
+const PremiumReport = React.lazy(function() { return import('./pages/PremiumReport') })
+const Daily = React.lazy(function() { return import('./pages/Daily') })
+const History = React.lazy(function() { return import('./pages/History') })
+const Divination = React.lazy(function() { return import('./pages/Divination') })
+const BaziInput = React.lazy(function() { return import('./pages/BaziInput') })
+const BaziChart = React.lazy(function() { return import('./pages/BaziChart') })
+const BaziHistory = React.lazy(function() { return import('./pages/BaziHistory') })
+const Membership = React.lazy(function() { return import('./pages/Membership') })
+const Dashboard = React.lazy(function() { return import('./pages/Dashboard') })
+const AICostDashboard = React.lazy(function() { return import('./pages/AICostDashboard') })
+const Login = React.lazy(function() { return import('./pages/Login') })
+const UserCenter = React.lazy(function() { return import('./pages/UserCenter') })
+const Feedback = React.lazy(function() { return import('./pages/Feedback') })
 
 function App() {
   return (
@@ -19,18 +28,26 @@ function App() {
       <div className="app">
         <Header />
         <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/fengshui" element={<FengShui />} />
-            <Route path="/analysis" element={<Analysis />} />
-            <Route path="/premium-report" element={<PremiumReport />} />
-            <Route path="/daily" element={<Daily />} />
-            <Route path="/bazi" element={<BaziInput />} />
-            <Route path="/bazi/chart" element={<BaziChart />} />
-            <Route path="/bazi/history" element={<BaziHistory />} />
-            <Route path="/liuyao" element={<Divination />} />
-            <Route path="/records" element={<History />} />
-          </Routes>
+          <React.Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/fengshui" element={<FengShui />} />
+              <Route path="/analysis" element={<Analysis />} />
+              <Route path="/premium-report" element={<PremiumReport />} />
+              <Route path="/daily" element={<Daily />} />
+              <Route path="/bazi" element={<BaziInput />} />
+              <Route path="/bazi/chart" element={<BaziChart />} />
+              <Route path="/bazi/history" element={<BaziHistory />} />
+              <Route path="/liuyao" element={<Divination />} />
+              <Route path="/records" element={<History />} />
+              <Route path="/membership" element={<Membership />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/user-center" element={<AuthGuard><UserCenter /></AuthGuard>} />
+              <Route path="/feedback" element={<Feedback />} />
+              <Route path="/admin" element={<AuthGuard requireAdmin={true}><Dashboard /></AuthGuard>} />
+              <Route path="/admin/ai-cost" element={<AuthGuard requireAdmin={true}><AICostDashboard /></AuthGuard>} />
+            </Routes>
+          </React.Suspense>
         </main>
         <Footer />
       </div>

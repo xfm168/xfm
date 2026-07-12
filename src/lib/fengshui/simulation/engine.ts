@@ -72,7 +72,7 @@ export class SimulationEngine {
     context: FengShuiContext,
     _changes: SimulationChange[]
   ): FengShuiContext {
-    const modified = JSON.parse(JSON.stringify(context)) as FengShuiContext
+    const modified = structuredClone(context) as FengShuiContext
     return modified
   }
 }
