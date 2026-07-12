@@ -183,7 +183,7 @@ function analyzeRiskYears(
       desc = '比劫之年易破财，不宜借贷或大额投资。'
     }
     // 冲太岁年
-    if (year.chong.length > 0) {
+    if (year.vsMingJu.chong.length > 0) {
       riskLevel = riskLevel || 'medium'
       riskType = riskType || '冲太岁'
       desc = desc || '流年冲克，财务波动较大，需谨慎理财。'

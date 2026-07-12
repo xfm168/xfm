@@ -121,7 +121,7 @@ export interface GeJuContext extends RuleContext {
   monthZhi: string
   monthElement: FiveElement
   monthGanShen: ShenShi
-  monthZhiShen: ShenShi     // 月令地支主气十神
+  monthZhiShen: ShenShi     // 月令地支主气十神（即传统命理中的"司令"，月令当令之神）
   monthZhiZhongShen: ShenShi | null  // 月令地支中气十神
   monthZhiYaoShen: ShenShi | null    // 月令地支余气十神
   strengthScore: number      // 日主强度 0-100

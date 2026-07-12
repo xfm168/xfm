@@ -277,13 +277,19 @@ export function calculateBaZi(
     hour: { ...sixLines.hour, shenShi: relatedShens[sixLines.hour.gan], changSheng: getChangSheng(dayGanZhi.gan, sixLines.hour.zhi) },
   }
 
-  // 五行统计
-  const fiveElementCount = calculateFiveElementCount(enrichedSixLines)
+  // 五行统计（原始）
+  const fiveElementCountRaw = calculateFiveElementCount(enrichedSixLines)
 
-  // 旺衰
+  // 旺衰（含合化重分配）
   const strengthResult = calculateStrength(enrichedSixLines, dayGanZhi.gan, monthGanZhi.zhi)
 
-  // 格局
+  // V3.3.1: 用合化后的 fiveElementScores 更新五行统计
+  const fiveElementCount: Record<FiveElement, number> = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 }
+  for (const s of strengthResult.scores) {
+    fiveElementCount[s.element] = s.total
+  }
+
+  // 格局（使用合化后的 strengthScore 和 fiveElementCount）
   const geJuResult = determineGeJu(
     enrichedSixLines,
     relatedShens,
@@ -301,14 +307,16 @@ export function calculateBaZi(
     relatedShens,
     wangShuai: strengthResult.wangShuai,
     strengthScore: strengthResult.strengthScore,
+    heHuaResults: strengthResult.heHuaResults,
   }
 
-  // 喜用神
+  // 喜用神（使用合化后的数据）
   const xiYongResult = determineXiYongShen(
     strengthResult.strengthScore,
     strengthResult.wangShuai,
     geJuResult.name,
     dayGanZhi.element as FiveElement,
+    strengthResult.heHuaResults,
   )
 
   const xiYongShen: XiYongShen = {
@@ -316,6 +324,8 @@ export function calculateBaZi(
     happiness: xiYongResult.description,
     usage: `喜${xiYongResult.bestElement}，忌${xiYongResult.avoidedElements.join('、')}。`,
     avoidedElements: xiYongResult.avoidedElements,
+    idleElements: xiYongResult.idleElements,
+    enemyElements: xiYongResult.enemyElements,
   }
 
   const analysis: BaZiAnalysis = { ...DEFAULT_BAZI_ANALYSIS }
@@ -389,9 +399,15 @@ export function calculateBaZiFromBirthData(
     hour: { ...sixLines.hour, shenShi: relatedShens[sixLines.hour.gan], changSheng: getChangSheng(dayGanZhi.gan, sixLines.hour.zhi) },
   }
 
-  const fiveElementCount = calculateFiveElementCount(enrichedSixLines)
+  const fiveElementCountRaw = calculateFiveElementCount(enrichedSixLines)
 
   const strengthResult = calculateStrength(enrichedSixLines, dayGanZhi.gan, monthGanZhi.zhi)
+
+  // V3.3.1: 用合化后的 fiveElementScores 更新五行统计
+  const fiveElementCount: Record<FiveElement, number> = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 }
+  for (const s of strengthResult.scores) {
+    fiveElementCount[s.element] = s.total
+  }
 
   const geJuResult = determineGeJu(
     enrichedSixLines,
@@ -409,6 +425,7 @@ export function calculateBaZiFromBirthData(
     relatedShens,
     wangShuai: strengthResult.wangShuai,
     strengthScore: strengthResult.strengthScore,
+    heHuaResults: strengthResult.heHuaResults,
   }
 
   const xiYongResult = determineXiYongShen(
@@ -416,6 +433,7 @@ export function calculateBaZiFromBirthData(
     strengthResult.wangShuai,
     geJuResult.name,
     dayGanZhi.element as FiveElement,
+    strengthResult.heHuaResults,
   )
 
   const xiYongShen: XiYongShen = {
@@ -423,6 +441,8 @@ export function calculateBaZiFromBirthData(
     happiness: xiYongResult.description,
     usage: `喜${xiYongResult.bestElement}，忌${xiYongResult.avoidedElements.join('、')}。`,
     avoidedElements: xiYongResult.avoidedElements,
+    idleElements: xiYongResult.idleElements,
+    enemyElements: xiYongResult.enemyElements,
   }
 
   const analysis: BaZiAnalysis = { ...DEFAULT_BAZI_ANALYSIS }

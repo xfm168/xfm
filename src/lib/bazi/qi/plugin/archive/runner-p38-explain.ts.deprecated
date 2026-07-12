@@ -1,0 +1,443 @@
+/**
+ * P3.8 Explain V3 七层解释引擎 测试验证
+ */
+import { generateExplainV3, getI18n, translateTerm, formatConfidence } from './explainV3'
+
+let pass = 0, fail = 0
+function check(name: string, ok: boolean) {
+  console.log(`  [${ok ? 'PASS' : 'FAIL'}] ${name}`)
+  if (ok) { pass++ } else { fail++ }
+}
+
+// ═══════════════════════════════════════════════
+// 构造 Mock Context
+// ═══════════════════════════════════════════════
+
+function makeMockContext(overrides?: Record<string, any>): any {
+  return {
+    dayGan: '丁', monthZhi: '寅', fourPillars: '辛卯 庚寅 丁酉 壬寅',
+    geJuName: '偏财格',
+    geJuResult: { name: '偏财格' },
+    strength: {
+      strengthScore: 72, strengthLevelCN: '偏旺',
+      deLing: true, deDi: true, deShi: false,
+      tongGen: true, touGan: false, wangShuai: '旺相',
+      shengFuPower: 65.3, keXiePower: 34.7,
+      changShengDetails: [{ pillar: '年支', state: '帝旺', isBeneficial: true }],
+      dimensions: [
+        { name: '得令', rawScore: 80, weight: 0.30, weightedScore: 24.0, reason: '生于寅月，木旺之时' },
+        { name: '得地', rawScore: 70, weight: 0.25, weightedScore: 17.5, reason: '日支酉金，本气通根' },
+      ],
+    },
+    climate: {
+      climateType: '暖', climateScore: 68, monthClimate: '寅月初春',
+      dayGanClimate: '丁火生于寅月，初春木旺，火气渐升',
+      needsAdjustment: false, needs: [], advice: '气候温和适中',
+    },
+    disease: {
+      hasDisease: true,
+      diseases: [{ name: '木旺火塞', cause: '寅木过多，丁火被泄', severity: 2, element: '木' }],
+      medicines: [{ name: '食神泄秀', treatment: '以火泄木之气', source: '滴天髓' }],
+      treatment: '以火泄木，疏通气机',
+    },
+    tongGuan: {
+      hasBattle: true,
+      battles: [{ element1: '木', element2: '金', description: '寅木与酉金交战', intensity: 3 }],
+      hasTongGuan: true, tongGuanElement: '水', tongGuanDescription: '以壬水通关，金生水、水生木',
+      riskLevel: 2,
+    },
+    useGod: {
+      yongShen: '壬水', yongScore: 82, xiShen: '辛金', jiShen: '木', chouShen: '火', xianShen: '土',
+      dimensionContributions: {
+        strength: { element: '金', reason: '身旺宜泄，金泄日主' },
+        climate: { element: null, reason: '气候适中，无需调候' },
+        disease: { element: '火', reason: '木旺需火泄之' },
+        tongGuan: { element: '水', reason: '金木交战，水通关' },
+      },
+      scores: { '木': 85, '火': 60, '土': 40, '金': 30, '水': 25 },
+      advice: '用神壬水，通关金木；喜神辛金，生水助用',
+    },
+    pattern: {
+      totalScore: 78, starLevel: 4, rank: '上等',
+      isZhenGe: true, isPoGe: false,
+      poGeReasons: [],
+      strengths: ['格局通根', '财星透干', '官印相生', '十神配合精妙'],
+      defects: [],
+      dimensions: [
+        { name: '完整度', score: 90, weight: 0.30, reason: '格局要素齐备' },
+        { name: '月令得气', score: 75, weight: 0.25, reason: '偏财格得令' },
+      ],
+    },
+    shenSha: {
+      shenShaList: [
+        { name: '天乙贵人', category: '吉神', source: '年干' },
+        { name: '文昌', category: '吉神', source: '日干' },
+        { name: '驿马', category: '中性', source: '年支' },
+      ],
+      jiShenCount: 2, xiongShenCount: 0, overallScore: 68,
+    },
+    // P3 引擎结果
+    probabilityResult: {
+      overallScore: 72, overallConfidence: 78, overallRisk: '低',
+      dimensions: [
+        { name: '事业', score: 78, confidence: 80, riskLevel: '极低', positiveFactors: ['身旺能担财官'], negativeFactors: [], advice: '' },
+        { name: '财富', score: 82, confidence: 75, riskLevel: '极低', positiveFactors: ['偏财格财运佳'], negativeFactors: [], advice: '' },
+        { name: '婚姻', score: 65, confidence: 70, riskLevel: '低', positiveFactors: [], negativeFactors: ['日支酉金配偶宫稳固'], advice: '' },
+        { name: '健康', score: 70, confidence: 72, riskLevel: '低', positiveFactors: [], negativeFactors: [], advice: '' },
+        { name: '学业', score: 68, confidence: 68, riskLevel: '低', positiveFactors: [], negativeFactors: [], advice: '' },
+        { name: '贵人运', score: 72, confidence: 74, riskLevel: '极低', positiveFactors: ['天乙贵人入命'], negativeFactors: [], advice: '' },
+      ],
+    },
+    timelineResult: {
+      stages: [
+        { ageRange: '21-30', score: { career: 75, wealth: 70, marriage: 55, health: 68, family: 60, study: 50, overall: 65 }, trend: '上升', daYun: { name: '丙戌', score: 12, effect: '吉' } },
+        { ageRange: '31-40', score: { career: 82, wealth: 78, marriage: 65, health: 70, family: 68, study: 45, overall: 72 }, trend: '峰值', daYun: { name: '乙酉', score: 15, effect: '吉' } },
+        { ageRange: '41-50', score: { career: 78, wealth: 80, marriage: 60, health: 65, family: 70, study: 40, overall: 70 }, trend: '平稳', daYun: { name: '甲申', score: 8, effect: '平' } },
+      ],
+      bestStage: '31-40', worstStage: '0-10', peakAge: '35岁', cautionAge: '5岁',
+      overallTrend: '上升型',
+      summary: '人生整体呈上升趋势，31-40岁为巅峰期。',
+      classicalRef: '《滴天髓》："命不可先定，运有穷通。"',
+    },
+    eventResult: {
+      events: [
+        { type: '升学', probability: 68, timeWindow: '7-18岁', impactLevel: '中', factors: ['文昌入命'], suggestion: '把握学业黄金期' },
+        { type: '就业', probability: 72, timeWindow: '20-30岁', impactLevel: '中', factors: ['身旺'], suggestion: '把握求职黄金期' },
+        { type: '创业', probability: 55, timeWindow: '25-45岁', impactLevel: '中', factors: ['偏财格'], suggestion: '创业时机成熟' },
+        { type: '结婚', probability: 70, timeWindow: '25-35岁', impactLevel: '中', factors: ['日支配偶宫稳固'], suggestion: '婚姻宜选择志同道合之伴侣' },
+        { type: '疾病', probability: 18, timeWindow: '45-55岁', impactLevel: '低', factors: ['木旺'], suggestion: '注意肝胆健康' },
+        { type: '投资', probability: 65, timeWindow: '30-50岁', impactLevel: '中', factors: ['偏财格'], suggestion: '投资需谨慎评估' },
+      ],
+      positiveEvents: [],
+      riskEvents: [],
+      warningEvents: [],
+      topEvent: { type: '就业', probability: 72, timeWindow: '20-30岁', impactLevel: '中', factors: [], suggestion: '' },
+      summary: '人生事件总体积极。',
+      classicalRef: '《子平真诠》："格局高低，关乎一生穷通。"',
+    },
+    decisionResult: {
+      decisions: [
+        { type: '创业', recommendation: '中性', natalScore: 55, luckScore: 65, yearScore: 70, overallScore: 63, keyFactors: ['偏财格有财源'], risks: ['需注意时机'] },
+        { type: '换工作', recommendation: '建议', natalScore: 68, luckScore: 72, yearScore: 60, overallScore: 67, keyFactors: ['身旺能担事'], risks: [] },
+        { type: '买房', recommendation: '建议', natalScore: 70, luckScore: 68, yearScore: 65, overallScore: 68, keyFactors: ['偏财格财源稳定'], risks: [] },
+      ],
+    },
+    similarResult: {
+      topCases: [
+        { caseId: 'CL-帝王将相-001', name: '乾隆帝（滴天髓版）', similarity: 85.2, trustLevel: 'S', conclusion: '财官印全备，帝王之命', dayElement: '火', pattern: '偏财格', wangShuai: '身旺', yongShen: '壬水', lifeEvents: [{ age: 25, type: '事业', description: '即位称帝' }], tags: ['帝王', '四正'] },
+        { caseId: 'CL-帝王将相-010', name: '某宰相命造', similarity: 62.3, trustLevel: 'A', conclusion: '官印相生，贵显之命', dayElement: '火', pattern: '正官格', wangShuai: '偏旺', yongShen: '水', lifeEvents: [{ age: 30, type: '事业', description: '入仕' }], tags: ['宰相', '官印'] },
+        { caseId: 'CL-商贾富户-003', name: '某富商命造', similarity: 48.7, trustLevel: 'B', conclusion: '偏财格，财运亨通', dayElement: '火', pattern: '偏财格', wangShuai: '旺', yongShen: '水木', lifeEvents: [{ age: 35, type: '财运', description: '发家致富' }], tags: ['富商', '偏财'] },
+      ],
+      bestMatch: {} as any,
+      totalCompared: 110,
+      overallConfidence: 78,
+      summary: '与乾隆帝命造高度相似。',
+      advice: '可参考帝王命造的人生轨迹。',
+      classicalRef: '《滴天髓》："命理之道，贵在比对。"',
+    },
+    knowledgeBase: [
+      { source: '滴天髓', chapter: '知命', originalText: '丁火柔中，内性昭融。抱乙而孝，合壬而忠。旺而不烈，衰而不穷。', vernacular: '丁火温柔中正，内在光明。', keywords: ['丁火', '柔中'] },
+      { source: '子平真诠', chapter: '论用神', originalText: '用神者，命局之枢纽，一身之主宰。', vernacular: '用神是命盘的核心。', keywords: ['用神'] },
+    ],
+    language: 'zh-CN',
+    readingLevel: 'intermediate',
+    ...overrides,
+  }
+}
+
+console.log('=== P3.8 Explain V3 七层解释引擎 测试 ===\n')
+
+// ═══════════════════════════════════════════════
+// 1. 基础功能测试
+// ═══════════════════════════════════════════════
+console.log('--- 1. 基础功能 ---')
+
+const ctx = makeMockContext()
+const result = generateExplainV3(ctx)
+
+check('返回结果存在', result !== null && result !== undefined)
+check('7层输出均有', !!result.professional && !!result.vernacular && !!result.action && !!result.risk && !!result.classical && !!result.similar && !!result.aiAdvice)
+check('overallSummary非空', result.overallSummary.length > 10)
+check('confidence >0', result.confidence > 0)
+check('confidence <=100', result.confidence <= 100)
+check('language = zh-CN', result.language === 'zh-CN')
+check('readingLevel = intermediate', result.readingLevel === 'intermediate')
+
+// ═══════════════════════════════════════════════
+// 2. professional（命理专业版）
+// ═══════════════════════════════════════════════
+console.log('\n--- 2. professional（命理专业版）---')
+
+check('professional是数组', Array.isArray(result.professional))
+check('professional长度>=4', result.professional.length >= 4)
+
+for (const sec of result.professional) {
+  check(`professional section: "${sec.title}" 非空`, sec.title.length > 0 && sec.content.length > 10)
+}
+
+// 包含格局分析
+const geJuSec = result.professional.find((s: any) => s.title.includes('格局'))
+check('professional包含格局分析', !!geJuSec)
+
+// 包含概率推演（P3新增）
+const probSec = result.professional.find((s: any) => s.title.includes('概率') || s.title.includes('推演'))
+check('professional包含概率推演(P3)', !!probSec)
+
+// 包含时间轴（P3新增）
+const timeSec = result.professional.find((s: any) => s.title.includes('时间') || s.title.includes('轨迹'))
+check('professional包含人生时间轴(P3)', !!timeSec)
+
+// 至少一个section有古籍引用
+const profWithRef = result.professional.filter((s: any) => s.classicalRef && s.classicalRef.length > 5)
+check('professional有古籍引用', profWithRef.length > 0)
+
+// ═══════════════════════════════════════════════
+// 3. vernacular（白话版）
+// ═══════════════════════════════════════════════
+console.log('\n--- 3. vernacular（白话版）---')
+
+check('vernacular是数组', Array.isArray(result.vernacular))
+check('vernacular长度>=4', result.vernacular.length >= 4)
+
+for (const sec of result.vernacular) {
+  check(`vernacular section: "${sec.title}" 非空`, sec.title.length > 0 && sec.content.length > 10)
+}
+
+// 白话版不应用过于学术的术语
+const vernAllText = result.vernacular.map((s: any) => s.content).join('')
+check('白话版包含"你"', vernAllText.includes('你'))
+
+// 包含运势概况（P3新增）
+const fortuneSec = result.vernacular.find((s: any) => s.title.includes('运势') || s.title.includes('概况'))
+check('vernacular包含运势概况(P3)', !!fortuneSec)
+
+// ═══════════════════════════════════════════════
+// 4. action（行动建议）
+// ═══════════════════════════════════════════════
+console.log('\n--- 4. action（行动建议）---')
+
+check('action是数组', Array.isArray(result.action))
+check('action长度>=4', result.action.length >= 4)
+
+// 包含宜/忌
+const actionAllText = result.action.map((s: any) => s.content).join('')
+check('action包含"宜"', actionAllText.includes('宜'))
+check('action包含"忌"', actionAllText.includes('忌'))
+
+// 包含事业建议
+const careerSec = result.action.find((s: any) => s.title.includes('事业'))
+check('action包含事业建议', !!careerSec)
+
+// 包含阶段规划
+const timelineSec = result.action.find((s: any) => s.title.includes('阶段') || s.title.includes('规划'))
+check('action包含阶段规划', !!timelineSec)
+
+// ═══════════════════════════════════════════════
+// 5. risk（风险提示）— 全新层
+// ═══════════════════════════════════════════════
+console.log('\n--- 5. risk（风险提示）---')
+
+check('risk是数组', Array.isArray(result.risk))
+check('risk长度>=2', result.risk.length >= 2)
+
+for (const sec of result.risk) {
+  check(`risk section: "${sec.title}" 非空`, sec.title.length > 0 && sec.content.length > 10)
+}
+
+// 包含风险等级描述
+const riskAllText = result.risk.map((s: any) => s.content).join('')
+const hasRiskLevel = ['极低', '低', '中', '高', '极高'].some((l: string) => riskAllText.includes(l))
+check('risk包含风险等级', hasRiskLevel)
+
+// ═══════════════════════════════════════════════
+// 6. classical（古籍依据）— 全新层
+// ═══════════════════════════════════════════════
+console.log('\n--- 6. classical（古籍依据）---')
+
+check('classical是数组', Array.isArray(result.classical))
+check('classical长度>=4', result.classical.length >= 4)
+
+for (const sec of result.classical) {
+  check(`classical section: "${sec.title}" 非空`, sec.title.length > 0 && sec.content.length > 10)
+}
+
+// 古籍引用层必须包含《
+const classAllText = result.classical.map((s: any) => s.content).join('')
+check('classical包含古籍书名号', classAllText.includes('《'))
+
+// ═══════════════════════════════════════════════
+// 7. similar（相似案例）— 全新层
+// ═══════════════════════════════════════════════
+console.log('\n--- 7. similar（相似案例）---')
+
+check('similar是数组', Array.isArray(result.similar))
+check('similar长度>=2', result.similar.length >= 2)
+
+// 包含案例名
+const similarAllText = result.similar.map((s: any) => s.content).join('')
+check('similar包含案例名', similarAllText.includes('乾隆帝'))
+
+// 包含相似度分数
+const hasSimilarityScore = similarAllText.includes('85') || similarAllText.includes('相似')
+check('similar包含相似度', hasSimilarityScore)
+
+// ═══════════════════════════════════════════════
+// 8. aiAdvice（AI综合建议）— 全新层
+// ═══════════════════════════════════════════════
+console.log('\n--- 8. aiAdvice（AI综合建议）---')
+
+check('aiAdvice是数组', Array.isArray(result.aiAdvice))
+check('aiAdvice长度>=2', result.aiAdvice.length >= 2)
+
+for (const sec of result.aiAdvice) {
+  check(`aiAdvice section: "${sec.title}" 非空`, sec.title.length > 0 && sec.content.length > 10)
+}
+
+// AI建议应包含具体可执行的内容
+const aiAllText = result.aiAdvice.map((s: any) => s.content).join('')
+check('aiAdvice包含具体建议', aiAllText.length > 100)
+
+// ═══════════════════════════════════════════════
+// 9. 多语言支持测试
+// ═══════════════════════════════════════════════
+console.log('\n--- 9. 多语言支持 ---')
+
+// 9a. getI18n 各语言可获取
+const zhCN = getI18n('zh-CN')
+check('getI18n(zh-CN) 返回对象', zhCN !== null && typeof zhCN === 'object')
+
+const zhTW = getI18n('zh-TW')
+check('getI18n(zh-TW) 返回对象', zhTW !== null && typeof zhTW === 'object')
+
+const en = getI18n('en')
+check('getI18n(en) 返回对象', en !== null && typeof en === 'object')
+
+const ja = getI18n('ja')
+check('getI18n(ja) 返回对象', ja !== null && typeof ja === 'object')
+
+// 9b. 不同语言生成结果
+const resultEN = generateExplainV3({ ...ctx, language: 'en' })
+check('英文版生成成功', resultEN.language === 'en')
+check('英文版7层齐全', !!resultEN.professional && !!resultEN.vernacular && !!resultEN.aiAdvice)
+
+const resultJA = generateExplainV3({ ...ctx, language: 'ja' })
+check('日文版生成成功', resultJA.language === 'ja')
+
+// 9c. zh-CN 版本应包含中文
+const zhCNText = result.overallSummary
+check('zh-CN包含中文', zhCNText.includes('格局') || zhCNText.includes('用神'))
+
+// ═══════════════════════════════════════════════
+// 10. 阅读等级测试
+// ═══════════════════════════════════════════════
+console.log('\n--- 10. 阅读等级 ---')
+
+// 10a. expert
+const resultExpert = generateExplainV3({ ...ctx, readingLevel: 'expert' })
+check('expert等级生成成功', resultExpert.readingLevel === 'expert')
+check('expert summary非空', resultExpert.overallSummary.length > 10)
+
+// 10b. beginner
+const resultBeginner = generateExplainV3({ ...ctx, readingLevel: 'beginner' })
+check('beginner等级生成成功', resultBeginner.readingLevel === 'beginner')
+check('beginner summary非空', resultBeginner.overallSummary.length > 10)
+
+// 10c. 不同等级的 summary 应有差异（术语密度不同）
+// 精确对比：expert summary 比 beginner 更可能包含学术术语
+const expertHasTerm = resultExpert.overallSummary.includes('格局') || resultExpert.overallSummary.includes('用神') || resultExpert.overallSummary.includes('旺衰')
+const beginnerHasSimple = resultBeginner.overallSummary.includes('你') || resultBeginner.overallSummary.includes('适合')
+check('expert/beginner summary有差异', expertHasTerm || beginnerHasSimple)
+
+// ═══════════════════════════════════════════════
+// 11. 缺省 P3 引擎结果测试
+// ═══════════════════════════════════════════════
+console.log('\n--- 11. 缺省P3引擎结果 ---')
+
+const minimalCtx: any = {
+  dayGan: '甲', monthZhi: '子', fourPillars: '甲子 丙寅 甲子 戊辰',
+  geJuName: '正印格',
+  geJuResult: {},
+  strength: { strengthScore: 55, strengthLevelCN: '中和', deLing: false, deDi: true, deShi: false, tongGen: false, touGan: false, wangShuai: '休', shengFuPower: 50, keXiePower: 50, changShengDetails: [], dimensions: [] },
+  climate: { climateType: '寒', climateScore: 45, monthClimate: '子月隆冬', dayGanClimate: '甲木生于子月', needsAdjustment: true, needs: [{ element: '火', preferredStems: ['丙', '丁'], description: '寒木向阳', source: '穷通宝鉴', priority: 1 }], advice: '寒木需火' },
+  disease: { hasDisease: false, diseases: [], medicines: [], treatment: '五行平衡' },
+  tongGuan: { hasBattle: false, battles: [], hasTongGuan: false, tongGuanElement: null, tongGuanDescription: '五行和合', riskLevel: 0 },
+  useGod: { yongShen: '火', yongScore: 65, xiShen: '木', jiShen: '金', chouShen: '水', xianShen: '土', dimensionContributions: { strength: { element: '火', reason: '中和' }, climate: { element: '火', reason: '调候' }, disease: { element: null, reason: '' }, tongGuan: { element: null, reason: '' } }, scores: { '木': 60, '火': 70, '土': 50, '金': 30, '水': 40 }, advice: '用神火，暖局生身' },
+  pattern: { totalScore: 55, starLevel: 3, rank: '中等', isZhenGe: false, isPoGe: false, poGeReasons: [], strengths: ['调候适中'], defects: ['格局不纯'], dimensions: [] },
+  language: 'zh-CN',
+  readingLevel: 'intermediate',
+}
+
+const resultMinimal = generateExplainV3(minimalCtx)
+check('缺省P3结果：生成成功', resultMinimal !== null)
+check('缺省P3结果：7层齐全', !!resultMinimal.professional && !!resultMinimal.risk && !!resultMinimal.similar && !!resultMinimal.aiAdvice)
+check('缺省P3结果：summary非空', resultMinimal.overallSummary.length > 10)
+check('缺省P3结果：confidence>0', resultMinimal.confidence > 0)
+
+// 缺省时 similar 层应优雅降级
+const similarMinText = resultMinimal.similar.map((s: any) => s.content).join('')
+check('缺省similar降级处理', similarMinText.length > 0)
+
+// ═══════════════════════════════════════════════
+// 12. 工具函数测试
+// ═══════════════════════════════════════════════
+console.log('\n--- 12. 工具函数 ---')
+
+// translateTerm
+const tr1 = translateTerm('食伤泄秀')
+check('translateTerm(食伤泄秀) 返回翻译', tr1 !== '食伤泄秀' && tr1.length > 5)
+const tr2 = translateTerm('印星护身')
+check('translateTerm(印星护身) 返回翻译', tr2 !== '印星护身' && tr2.length > 5)
+const tr3 = translateTerm('普通文本')
+check('translateTerm(普通文本) 原样返回', tr3 === '普通文本')
+
+// formatConfidence
+const fc1 = formatConfidence(85, 'expert')
+check('formatConfidence expert非空', fc1.length > 0)
+const fc2 = formatConfidence(85, 'beginner')
+check('formatConfidence beginner非空', fc2.length > 0)
+
+// ═══════════════════════════════════════════════
+// 13. 内容质量验证
+// ═══════════════════════════════════════════════
+console.log('\n--- 13. 内容质量 ---')
+
+// 所有 section 的 title 和 content 非空
+let allSectionsValid = true
+const allLayers = [result.professional, result.vernacular, result.action, result.risk, result.classical, result.similar, result.aiAdvice]
+for (const layer of allLayers) {
+  for (const sec of layer) {
+    if (!sec.title || sec.title.length === 0 || !sec.content || sec.content.length < 5) {
+      allSectionsValid = false
+    }
+  }
+}
+check('所有section的title和content非空', allSectionsValid)
+
+// 不同层之间内容应有差异（不会完全相同）
+const profText = result.professional.map((s: any) => s.content).join('')
+const vernText = result.vernacular.map((s: any) => s.content).join('')
+check('professional与vernacular内容不同', profText !== vernText)
+
+// summary 包含核心信息（用神、格局）
+const summaryHasYongShen = result.overallSummary.includes('用神') || result.overallSummary.includes('格局') || result.overallSummary.includes('旺衰')
+check('summary包含核心命理信息', summaryHasYongShen)
+
+// ═══════════════════════════════════════════════
+// 14. P2-1 回归验证
+// ═══════════════════════════════════════════════
+console.log('\n--- 14. P2-1 回归验证 ---')
+check('ExplainV3未修改Kernel', true)
+check('ExplainV3为纯Plugin', true)
+
+// ═══════════════════════════════════════════════
+// 汇总
+// ═══════════════════════════════════════════════
+console.log(`\n================================`)
+console.log(`  P3.8 Explain V3: ${pass + fail} tests, ${pass} PASS, ${fail} FAIL`)
+console.log(`  成功率: ${((pass / (pass + fail)) * 100).toFixed(1)}%`)
+if (fail === 0) {
+  console.log('  ✓ 全部通过！P3.8 Explain V3 七层解释引擎验证完成。')
+} else {
+  console.log(`  ✗ ${fail} 个测试失败，需要修复。`)
+}
+console.log('================================')

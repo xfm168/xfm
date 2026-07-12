@@ -6,7 +6,7 @@
  * 本文件仅负责流程编排和对外暴露接口
  */
 
-import type { FiveElement, GanZhi, WuXingWangShuai } from './types'
+import type { FiveElement, GanZhi, WuXingWangShuai, HeHuaResult } from './types'
 import {
   calculateStrengthV2,
   type StrengthResult,
@@ -15,7 +15,7 @@ import {
   WUXING_RULES,
 } from './rules/wuxingRules'
 
-export type { WuXingWangShuai, StrengthResult, StrengthBreakdown, WuXingContext }
+export type { WuXingWangShuai, StrengthResult, StrengthBreakdown, HeHuaResult, WuXingContext }
 export { WUXING_RULES }
 
 // 地支主气五行
@@ -50,7 +50,10 @@ export interface OldStrengthResult {
   wangShuai: WuXingWangShuai
   strengthScore: number
   scores: FiveElementScore[]
+  // V3.3.1: 合化前原始分数
+  originalScores: FiveElementScore[]
   analysis: string
+  heHuaResults: HeHuaResult[]
 }
 
 /**
@@ -118,12 +121,24 @@ export function calculateStrength(
     total: v2Result.fiveElementScores[el],
   }))
 
+  // V3.3.1: 合化前原始分数
+  const originalScores: FiveElementScore[] = (Object.keys(v2Result.originalFiveElementScores) as FiveElement[]).map(el => ({
+    element: el,
+    score: v2Result.originalFiveElementScores[el],
+    fromStems: 0,
+    fromBranches: 0,
+    fromCangGan: 0,
+    total: v2Result.originalFiveElementScores[el],
+  }))
+
   return {
     dayElement,
     wangShuai,
     strengthScore: v2Result.strengthScore,
     scores,
+    originalScores,
     analysis: v2Result.reasons.join('；'),
+    heHuaResults: v2Result.heHuaResults,
   }
 }
 

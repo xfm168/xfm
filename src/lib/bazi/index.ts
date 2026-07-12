@@ -33,7 +33,13 @@
  * })
  */
 
-export * from './types'
+export type {
+  HeavenlyStem, EarthlyBranch, FiveElement, YinYang, ShenShi, NaYin,
+  ShiErChangSheng, WuXingWangShuai, SolarTermName, ZiShiStrategyType,
+  BirthInfo, GanZhi, SixLines, FiveElementCount, CangGan,
+  HeHuaDeduction, HeHuaAddition, HeHuaResult,
+  DayMasterAnalysis, XiYongShen, BaZiAnalysis, BaZiChart, WangShuaiResult,
+} from './types'
 export { calculateBaZi, calculateBaZiFromBirthData, HEAVENLY_STEMS, EARTHLY_BRANCHES, getDayGanZhi, getYearGanZhi, getMonthGanZhi, getHourGanZhi, getSolarTermDate, getYearSolarTerms } from './calculator'
 
 // Rule Engine (统一入口)
@@ -126,3 +132,13 @@ export { exportMarkdown, exportWord, exportPdf } from './reportExport'
 
 // P0-② 子时换日模块
 export * from './zishi'
+
+// ═══════════════════════════════════════════════════════════
+// P5 Integration — 大师推演流水线（推荐入口）
+// 流水线：用户输入 → 排盘 → ConsensusEngine → ShenShaFilter →
+//         DynastySimulation → ShiShenGraph → EnergyFlow →
+//         Confidence → ExplainEvidence → MasterTone → ExplainV4 → 最终大师报告
+// ═══════════════════════════════════════════════════════════
+
+export { XuanFengPipelineEngine, runMasterAnalysis } from './qi/plugin'
+export type { PipelineInput, PipelineReport, PipelineStepResult, MasterReportSection } from './qi/plugin'

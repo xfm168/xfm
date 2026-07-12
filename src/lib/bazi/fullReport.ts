@@ -41,6 +41,8 @@ export interface FullReportInput {
   xiYongShen: {
     bestElement: FiveElement
     avoidedElements: FiveElement[]
+    idleElements: FiveElement[]
+    enemyElements: FiveElement[]
     derivationSteps?: { step: string; result: string; reason: string }[]
   }
   marriage: MarriageAnalysisResult
@@ -91,6 +93,9 @@ function generateChapter2_wangshuai(input: FullReportInput): string {
     `**得势分析**：${wangShuai.deShi ? '得势' : '不得势'}（${fiveElementPower.deShiScore}分）。${fiveElementPower.deShiReason}。`,
     ``,
     `**通根分析**：${wangShuai.tongGen ? '有根' : '无根'}。`,
+    `**透干分析**：${fiveElementPower.touGan ? '日主透干' : '日主不透'}。${fiveElementPower.touGanReason}`,
+    `**生扶力量**：${fiveElementPower.shengFuPower}分。${fiveElementPower.shengFuReason}`,
+    `**克泄耗力量**：${fiveElementPower.keXiePower}分。${fiveElementPower.keXieReason}`,
     ` `,
   ]
 
@@ -330,6 +335,18 @@ function generateChapter6_xiyong(input: FullReportInput): string {
   lines.push(`- 金：${powerMap['金']?.toFixed(1) || 0}%`)
   lines.push(`- 水：${powerMap['水']?.toFixed(1) || 0}%`)
   lines.push(``)
+
+  // 闲神
+  if (xiYongShen.idleElements && xiYongShen.idleElements.length > 0) {
+    lines.push(`**闲神**：${xiYongShen.idleElements.join('、')}。闲神对命局影响不大，既不为喜也不为忌，运势中可顺其自然。`)
+    lines.push(``)
+  }
+
+  // 仇神
+  if (xiYongShen.enemyElements && xiYongShen.enemyElements.length > 0) {
+    lines.push(`**仇神**：${xiYongShen.enemyElements.join('、')}。仇神生助忌神，对命主不利，日常生活中应尽量避免接触仇神五行相关的事物。`)
+    lines.push(``)
+  }
 
   lines.push(`喜用神${xiYongShen.bestElement}为命局所喜，能补命局之不足，增福添寿。日常生活中多接触${xiYongShen.bestElement}行相关的事物，有助于提升运势。`)
   return lines.join('\n')
@@ -705,21 +722,26 @@ function generateChapter11_dayun(input: FullReportInput): string {
 
 function getLiuNianNotice(year: LiuNianYear): string {
   const parts: string[] = []
-  if (year.chong.length > 0) parts.push(`有冲（${year.chong.join('、')}），宜防变动与冲突`)
-  if (year.xing.length > 0) parts.push(`犯三刑，需防官非口舌`)
-  if (year.hai.length > 0) parts.push(`有相害（${year.hai.join('、')}），人际需谨慎`)
-  if (year.po.length > 0) parts.push(`有破（${year.po.join('、')}），注意财物破损`)
-  if (year.he.length > 0) parts.push(`有合（${year.he.join('、')}），利合作与感情`)
+  if (year.vsMingJu.chong.length > 0) parts.push(`有冲（${year.vsMingJu.chong.join('、')}），宜防变动与冲突`)
+  if (year.vsMingJu.xing.length > 0) parts.push(`犯三刑，需防官非口舌`)
+  if (year.vsMingJu.hai.length > 0) parts.push(`有相害（${year.vsMingJu.hai.join('、')}），人际需谨慎`)
+  if (year.vsMingJu.chuan.length > 0) parts.push(`有穿（${year.vsMingJu.chuan.join('、')}），防暗伤`)
+  if (year.vsMingJu.po.length > 0) parts.push(`有破（${year.vsMingJu.po.join('、')}），注意财物破损`)
+  if (year.vsMingJu.he.length > 0) parts.push(`有合（${year.vsMingJu.he.join('、')}），利合作与感情`)
   if (parts.length === 0) parts.push('四柱平和，无冲合刑害，稳中向好')
   return parts.join('；')
 }
 
 function getLiuNianSuggestion(year: LiuNianYear): string {
-  if (year.score >= 75) return `${year.year}年为命主大吉之年，流年天干${year.ganZhi.gan}化${year.shenShi.gan}，运势旺盛，宜积极进取、把握机遇，在事业和财运上大胆开拓。`
-  if (year.score >= 60) return `${year.year}年运势向好，流年${year.ganZhi.gan}${year.ganZhi.zhi}，整体顺遂，宜稳中求进，把握贵人助力，避免贪多嚼不烂。`
-  if (year.score >= 45) return `${year.year}年运势平淡，流年${year.ganZhi.gan}${year.ganZhi.zhi}，吉凶参半，宜保持平常心，不宜冒进，做好本职工作为上。`
-  if (year.score >= 30) return `${year.year}年运势偏凶，流年天干化${year.shenShi.gan}不利，需多加谨慎，保守稳健，减少不必要开支和社交，注意健康与安全。`
-  return `${year.year}年为凶年，流年多冲多刑，大运不利叠加流年不佳，需格外小心。宜修身养性、积蓄力量，切忌冲动行事，凡事三思而后行。`
+  const hasHigh = year.yingQi.some(yq => yq.intensity === '高')
+  const hasEvent = year.yingQi.length > 0
+  if (!hasEvent) {
+    return `${year.year}年运势平稳，流年${year.ganZhi.gan}${year.ganZhi.zhi}无显著刑冲合害，宜保持平常心，做好本职工作。`
+  }
+  if (hasHigh) {
+    return `${year.year}年为变动之年，流年${year.ganZhi.gan}${year.ganZhi.zhi}有${year.yingQi.map(y => y.event).join('、')}，需格外谨慎。宜修身养性、积蓄力量，切忌冲动行事，凡事三思而后行。`
+  }
+  return `${year.year}年有变化，流年${year.ganZhi.gan}${year.ganZhi.zhi}出现${year.yingQi.map(y => y.event).join('、')}，宜稳中求进，把握贵人助力，避免贪多嚼不烂。`
 }
 
 function generateChapter12_liunian(input: FullReportInput): string {
@@ -733,23 +755,23 @@ function generateChapter12_liunian(input: FullReportInput): string {
     ``,
     `**分析范围**：${liuNian.startYear}年 ～ ${liuNian.endYear}年，共${liuNian.years.length}年。`,
     ``,
-    `以下逐年分析（仅展示评分极端年份及当前年附近），其余年份概览列于文末：`,
+    `以下逐年分析（仅展示有应期事件的年份及当前年附近），其余年份概览列于文末：`,
     ``,
   ]
 
-  // 分类：大吉年、凶年、当前年附近 ±3年
-  const extremeYears = liuNian.years.filter(y => y.score >= 80 || y.score <= 25)
+  // 分类：有应期事件的年份、当前年附近 ±3年
+  const eventYears = liuNian.years.filter(y => y.yingQi.length > 0)
   const nearbyYears = liuNian.years.filter(y => Math.abs(y.year - liuNian.currentYear) <= 3)
   const highlightSet = new Set<number>()
-  for (const y of extremeYears) highlightSet.add(y.year)
+  for (const y of eventYears) highlightSet.add(y.year)
   for (const y of nearbyYears) highlightSet.add(y.year)
 
   // 输出高亮年份的详细分析
   const sortedHighlights = liuNian.years.filter(y => highlightSet.has(y.year)).sort((a, b) => a.year - b.year)
   for (const year of sortedHighlights) {
     const ganZhiStr = `${year.ganZhi.gan}${year.ganZhi.zhi}`
-    const jiXiLabel = year.score >= 70 ? '吉' : year.score <= 35 ? '凶' : '平'
-    const jiXiEmoji = year.score >= 80 ? '★ 大吉' : year.score >= 65 ? '☆ 吉' : year.score >= 45 ? '— 平' : year.score >= 30 ? '▼ 凶' : '✕ 大凶'
+    const hasHigh = year.yingQi.some(yq => yq.intensity === '高')
+    const jiXiEmoji = year.yingQi.length === 0 ? '— 平' : hasHigh ? '▼ 变动' : '☆ 有变'
     const isCurrent = year.isCurrentYear
 
     lines.push(`### ${year.year}年（${ganZhiStr}）`)
@@ -761,19 +783,45 @@ function generateChapter12_liunian(input: FullReportInput): string {
     lines.push(`| 流年干支 | ${ganZhiStr} |`)
     lines.push(`| 天干十神 | ${year.shenShi.gan} |`)
     lines.push(`| 地支十神 | ${year.shenShi.zhi} |`)
-    lines.push(`| 吉凶 | ${jiXiEmoji}（${year.score}分）|`)
+    lines.push(`| 状态 | ${jiXiEmoji} |`)
     lines.push(``)
+
+    // 应期事件
+    if (year.yingQi.length > 0) {
+      lines.push(`**【应期事件】**`)
+      for (const yq of year.yingQi) {
+        lines.push(`- ${yq.event}（强度：${yq.intensity}）`)
+        lines.push(`  - 原因：${yq.reason}`)
+        lines.push(`  - 影响：${yq.implications.join('、')}`)
+      }
+      lines.push(``)
+    }
 
     // 冲合刑害
     const relations: string[] = []
-    if (year.chong.length > 0) relations.push(`**冲**：${year.chong.join('、')}`)
-    if (year.he.length > 0) relations.push(`**合**：${year.he.join('、')}`)
-    if (year.xing.length > 0) relations.push(`**刑**：${year.xing.join('、')}`)
-    if (year.hai.length > 0) relations.push(`**害**：${year.hai.join('、')}`)
-    if (year.po.length > 0) relations.push(`**破**：${year.po.join('、')}`)
+    if (year.vsMingJu.chong.length > 0) relations.push(`**冲**：${year.vsMingJu.chong.join('、')}`)
+    if (year.vsMingJu.he.length > 0) relations.push(`**合**：${year.vsMingJu.he.join('、')}`)
+    if (year.vsMingJu.xing.length > 0) relations.push(`**刑**：${year.vsMingJu.xing.join('、')}`)
+    if (year.vsMingJu.hai.length > 0) relations.push(`**害**：${year.vsMingJu.hai.join('、')}`)
+    if (year.vsMingJu.chuan.length > 0) relations.push(`**穿**：${year.vsMingJu.chuan.join('、')}`)
+    if (year.vsMingJu.po.length > 0) relations.push(`**破**：${year.vsMingJu.po.join('、')}`)
     if (relations.length === 0) relations.push('无冲合刑害')
-    lines.push(`**【冲合刑害】** ${relations.join('；')}`)
+    lines.push(`**【流年与命局关系】** ${relations.join('；')}`)
     lines.push(``)
+
+    // 流年与大运关系
+    const dyRelations: string[] = []
+    if (year.vsDaYun.chong.length > 0) dyRelations.push(`冲大运`)
+    if (year.vsDaYun.he.length > 0) dyRelations.push(`合大运`)
+    if (year.vsDaYun.xing.length > 0) dyRelations.push(`刑大运`)
+    if (year.vsDaYun.hai.length > 0) dyRelations.push(`害大运`)
+    if (year.vsDaYun.chuan.length > 0) dyRelations.push(`穿大运`)
+    if (year.vsDaYun.po.length > 0) dyRelations.push(`破大运`)
+    if (year.vsDaYun.fuYin.length > 0) dyRelations.push(...year.vsDaYun.fuYin)
+    if (dyRelations.length > 0) {
+      lines.push(`**【流年与大运关系】** ${dyRelations.join('、')}`)
+      lines.push(``)
+    }
 
     // 神煞
     lines.push(`**【流年神煞】** ${year.shenSha.length > 0 ? year.shenSha.join('、') : '无特殊神煞'}`)
@@ -799,22 +847,24 @@ function generateChapter12_liunian(input: FullReportInput): string {
   if (otherYears.length > 0) {
     lines.push(`### 其余年份概览`)
     lines.push(``)
-    lines.push(`| 年份 | 干支 | 十神（干/支） | 冲合刑害 | 评分 |`)
-    lines.push(`|:---:|:---:|:---:|:---:|:---:|`)
+    lines.push(`| 年份 | 干支 | 十神（干/支） | 与命局关系 | 与大运关系 |`)
+    lines.push(`|:---:|:---:|:---:|:---|:---|`)
     for (const year of otherYears) {
       const ganZhiStr = `${year.ganZhi.gan}${year.ganZhi.zhi}`
-      const relations = [...year.chong, ...year.he, ...year.xing, ...year.hai, ...year.po]
-      const relStr = relations.length > 0 ? relations.join('、') : '无'
-      lines.push(`| ${year.year} | ${ganZhiStr} | ${year.shenShi.gan} / ${year.shenShi.zhi} | ${relStr} | ${year.score} |`)
+      const mingRelations = [...year.vsMingJu.chong, ...year.vsMingJu.he, ...year.vsMingJu.xing, ...year.vsMingJu.hai, ...year.vsMingJu.chuan, ...year.vsMingJu.po]
+      const mingStr = mingRelations.length > 0 ? mingRelations.join('、') : '无'
+      const dyRelations = [...year.vsDaYun.chong, ...year.vsDaYun.he, ...year.vsDaYun.xing, ...year.vsDaYun.hai, ...year.vsDaYun.chuan, ...year.vsDaYun.po, ...year.vsDaYun.fuYin]
+      const dyStr = dyRelations.length > 0 ? dyRelations.join('、') : '无'
+      lines.push(`| ${year.year} | ${ganZhiStr} | ${year.shenShi.gan} / ${year.shenShi.zhi} | ${mingStr} | ${dyStr} |`)
     }
     lines.push(``)
   }
 
   lines.push(`**流年总结**`)
   lines.push(``)
-  const jiCount = liuNian.years.filter(y => y.score >= 60).length
-  const xiongCount = liuNian.years.filter(y => y.score < 45).length
-  lines.push(`命主${liuNian.startYear}至${liuNian.endYear}年共${liuNian.years.length}年中，吉年约${jiCount}年，凶年约${xiongCount}年，平年约${liuNian.years.length - jiCount - xiongCount}年。吉年应把握机遇、乘势而上；凶年应韬光养晦、稳扎稳打。结合大运走势，在吉年逢吉运时全力出击，凶年逢凶运时保守为上。`)
+  const eventCount = liuNian.years.filter(y => y.yingQi.length > 0).length
+  const highCount = liuNian.years.filter(y => y.yingQi.some(yq => yq.intensity === '高')).length
+  lines.push(`命主${liuNian.startYear}至${liuNian.endYear}年共${liuNian.years.length}年中，有应期事件的年份约${eventCount}年，其中高强度变动年份约${highCount}年。有应期事件的年份需特别注意冲合刑害穿破的影响，结合大运走势判断吉凶程度；无显著事件的年份运势相对平稳，宜保持平常心。`)
 
   return lines.join('\n')
 }
@@ -930,7 +980,7 @@ function generateChapter13_suggestions(input: FullReportInput): string {
     ``,
     `---`,
     ``,
-    `*本报告由玄风 AI 命理系统自动生成，仅供参考。命理之说，信则有，不信则无。最重要的是保持积极的心态，努力奋斗，创造美好人生。*`,
+    '*玄风门命理推演报告。命理之说，信则有，不信则无。宜修德积善，以天时地利人和为本。*',
   ]
   return lines.join('\n')
 }

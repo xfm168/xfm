@@ -12,6 +12,9 @@ import type {
   YinYang,
   WuXingWangShuai,
   CangGan,
+  HeHuaResult,
+  HeHuaDeduction,
+  HeHuaAddition,
 } from '../types'
 
 export interface WuXingContext {
@@ -51,10 +54,14 @@ export interface StrengthResult {
   level: '极弱' | '偏弱' | '中和' | '偏强' | '极强'
   wangShuai: WuXingWangShuai
   fiveElementScores: Record<FiveElement, number>
+  // V3.3.1: 保留合化前原始分数，用于前后对比
+  originalFiveElementScores: Record<FiveElement, number>
   reasons: string[]
   matchedRules: string[]
   confidence: number
   breakdown: StrengthBreakdown
+  // V3.3: 合化结果
+  heHuaResults: HeHuaResult[]
 }
 
 // ─── 统一从 Core 导入基础常量 ───
@@ -914,6 +921,415 @@ export const WUXING_RULES: WuXingRule[] = [
   },
 ]
 
+// ========== V3.3.1 五行引擎重构版（Professional Engine）==========
+
+// 天干五合表
+const TIAN_GAN_WU_HE_MAP: [HeavenlyStem, HeavenlyStem, FiveElement][] = [
+  ['甲', '己', '土'], ['乙', '庚', '金'], ['丙', '辛', '水'],
+  ['丁', '壬', '木'], ['戊', '癸', '火'],
+]
+
+// 地支六合表
+const DI_ZHI_LIU_HE_MAP: [EarthlyBranch, EarthlyBranch, FiveElement][] = [
+  ['子', '丑', '土'], ['寅', '亥', '木'], ['卯', '戌', '火'],
+  ['辰', '酉', '金'], ['巳', '申', '水'], ['午', '未', '土'],
+]
+
+// 地支三合表
+const DI_ZHI_SAN_HE_MAP: [EarthlyBranch, EarthlyBranch, EarthlyBranch, FiveElement][] = [
+  ['申', '子', '辰', '水'], ['寅', '午', '戌', '火'],
+  ['巳', '酉', '丑', '金'], ['亥', '卯', '未', '木'],
+]
+
+// 地支三会表
+const DI_ZHI_SAN_HUI_MAP: [EarthlyBranch, EarthlyBranch, EarthlyBranch, FiveElement][] = [
+  ['寅', '卯', '辰', '木'], ['巳', '午', '未', '火'],
+  ['申', '酉', '戌', '金'], ['亥', '子', '丑', '水'],
+]
+
+/** V3.3.1 每个地支的五行贡献明细 */
+interface PillarContribution {
+  name: string
+  gan: HeavenlyStem
+  zhi: EarthlyBranch
+  ganElement: FiveElement
+  ganScore: number
+  cangGan: {
+    ben?: { gan: string; element: FiveElement; score: number }
+    zhong?: { gan: string; element: FiveElement; score: number }
+    yao?: { gan: string; element: FiveElement; score: number }
+  }
+  totalByElement: Record<FiveElement, number>
+}
+
+/** V3.3.1 计算每个地支对各五行的贡献明细 */
+function calculatePillarContributions(ctx: WuXingContext): PillarContribution[] {
+  const result: PillarContribution[] = []
+  const pillarNames = ['年柱', '月柱', '日柱', '时柱']
+  const pillars = [ctx.sixLines.year, ctx.sixLines.month, ctx.sixLines.day, ctx.sixLines.hour]
+
+  for (let i = 0; i < pillars.length; i++) {
+    const p = pillars[i]
+    const isMonth = p.zhi === ctx.monthZhi
+    const cg = ctx.cangGanData[p.zhi]
+    const contrib: PillarContribution = {
+      name: pillarNames[i],
+      gan: p.gan,
+      zhi: p.zhi,
+      ganElement: getGanElement(p.gan),
+      ganScore: 10,
+      cangGan: {},
+      totalByElement: { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 },
+    }
+
+    // 天干贡献
+    contrib.totalByElement[contrib.ganElement] += contrib.ganScore
+
+    // 藏干贡献
+    if (cg) {
+      const benScore = isMonth ? 20 : 6
+      const zhongScore = isMonth ? 10 : 3
+      const yaoScore = isMonth ? 5 : 1
+
+      const benEl = getGanElement(cg.ben)
+      contrib.cangGan.ben = { gan: cg.ben, element: benEl, score: benScore }
+      contrib.totalByElement[benEl] += benScore
+
+      if (cg.zhong) {
+        const zhongEl = getGanElement(cg.zhong)
+        contrib.cangGan.zhong = { gan: cg.zhong, element: zhongEl, score: zhongScore }
+        contrib.totalByElement[zhongEl] += zhongScore
+      }
+      if (cg.yao) {
+        const yaoEl = getGanElement(cg.yao)
+        contrib.cangGan.yao = { gan: cg.yao, element: yaoEl, score: yaoScore }
+        contrib.totalByElement[yaoEl] += yaoScore
+      }
+    }
+
+    result.push(contrib)
+  }
+
+  return result
+}
+
+/** V3.3.1 从指定地支中抽取藏干力量 */
+function extractFromPillar(
+  pillar: PillarContribution,
+  benRate: number,
+  zhongRate: number,
+  yaoRate: number,
+): { deductions: HeHuaDeduction[]; totalExtracted: number } {
+  const deductions: HeHuaDeduction[] = []
+  let total = 0
+
+  if (pillar.cangGan.ben && benRate > 0) {
+    const amount = Math.round(pillar.cangGan.ben.score * benRate)
+    if (amount > 0) {
+      deductions.push({
+        source: `${pillar.name}${pillar.zhi}`,
+        element: pillar.cangGan.ben.element,
+        amount,
+        detail: `${pillar.name}${pillar.zhi}本气${pillar.cangGan.ben.gan}(${pillar.cangGan.ben.element})被抽 ${Math.round(benRate * 100)}% => ${amount}分`,
+      })
+      total += amount
+    }
+  }
+  if (pillar.cangGan.zhong && zhongRate > 0) {
+    const amount = Math.round(pillar.cangGan.zhong.score * zhongRate)
+    if (amount > 0) {
+      deductions.push({
+        source: `${pillar.name}${pillar.zhi}`,
+        element: pillar.cangGan.zhong.element,
+        amount,
+        detail: `${pillar.name}${pillar.zhi}中气${pillar.cangGan.zhong.gan}(${pillar.cangGan.zhong.element})被抽 ${Math.round(zhongRate * 100)}% => ${amount}分`,
+      })
+      total += amount
+    }
+  }
+  if (pillar.cangGan.yao && yaoRate > 0) {
+    const amount = Math.round(pillar.cangGan.yao.score * yaoRate)
+    if (amount > 0) {
+      deductions.push({
+        source: `${pillar.name}${pillar.zhi}`,
+        element: pillar.cangGan.yao.element,
+        amount,
+        detail: `${pillar.name}${pillar.zhi}余气${pillar.cangGan.yao.gan}(${pillar.cangGan.yao.element})被抽 ${Math.round(yaoRate * 100)}% => ${amount}分`,
+      })
+      total += amount
+    }
+  }
+
+  return { deductions, totalExtracted: total }
+}
+
+/** V3.3.1 从天干中抽取力量 */
+function extractFromGan(
+  pillar: PillarContribution,
+  rate: number,
+): { deductions: HeHuaDeduction[]; totalExtracted: number } {
+  const amount = Math.round(pillar.ganScore * rate)
+  if (amount <= 0) return { deductions: [], totalExtracted: 0 }
+  return {
+    deductions: [{
+      source: `${pillar.name}天干${pillar.gan}`,
+      element: pillar.ganElement,
+      amount,
+      detail: `${pillar.name}天干${pillar.gan}(${pillar.ganElement})被抽 ${Math.round(rate * 100)}% => ${amount}分`,
+    }],
+    totalExtracted: amount,
+  }
+}
+
+/** V3.3.1 执行合化抽气重分配 */
+function applyHeHuaAdjustments(
+  results: HeHuaResult[],
+  elementScores: Record<FiveElement, ElementScoreDetail>,
+): void {
+  for (const hh of results) {
+    // 执行扣除
+    for (const d of hh.deductions) {
+      elementScores[d.element].total -= d.amount
+    }
+    // 执行增加
+    for (const a of hh.additions) {
+      elementScores[a.element].total += a.amount
+    }
+  }
+}
+
+/**
+ * V3.3.1 检测全部合化，返回含抽气明细的合化结果
+ * 三合/三会/六合/天干五合均按专业命理规则执行抽气重分配
+ */
+function detectHeHua(ctx: WuXingContext): HeHuaResult[] {
+  const results: HeHuaResult[] = []
+  const pillars = [ctx.sixLines.year, ctx.sixLines.month, ctx.sixLines.day, ctx.sixLines.hour]
+  const zhiList = pillars.map(p => p.zhi)
+  const ganList = pillars.map(p => p.gan)
+  const pillarContribs = calculatePillarContributions(ctx)
+
+  const GENERATE_MAP: Record<FiveElement, FiveElement> = { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' }
+  const OVERCOME_MAP: Record<FiveElement, FiveElement> = { '木': '土', '土': '水', '水': '火', '火': '金', '金': '木' }
+
+  // ===== 1. 地支三合成化 =====
+  for (const [a, b, c, huaElement] of DI_ZHI_SAN_HE_MAP) {
+    const count = [a, b, c].filter(z => zhiList.includes(z)).length
+    if (count < 3) continue
+    const isMonthSupport = ctx.monthElement === huaElement || GENERATE_MAP[ctx.monthElement] === huaElement
+    if (!isMonthSupport) {
+      // 合而不化：三合局未成化，但仍有"合绊"效应——三支藏干力量被牵制
+      const allDeductions: HeHuaDeduction[] = []
+      let totalExtracted = 0
+      for (const z of [a, b, c]) {
+        const pc = pillarContribs.find(p => p.zhi === z)
+        if (!pc) continue
+        const { deductions, totalExtracted: te } = extractFromPillar(pc, 0.40, 0.20, 0.10)
+        allDeductions.push(...deductions)
+        totalExtracted += te
+      }
+      results.push({
+        type: '地支三合',
+        sources: [a, b, c],
+        huaElement,
+        success: false,
+        isHeBan: true,
+        reason: `${a}${b}${c}三合${huaElement}局，但月令${ctx.monthZhi}(${ctx.monthElement})不生助化神${huaElement}，合而不化，三合绊住，各支藏干力量被牵制`,
+        deductions: allDeductions,
+        additions: [],
+      })
+      continue
+    }
+    // 成化：从三支藏干中抽气，转入化神
+    const allDeductions: HeHuaDeduction[] = []
+    let totalExtracted = 0
+    for (const z of [a, b, c]) {
+      const pc = pillarContribs.find(p => p.zhi === z)
+      if (!pc) continue
+      const { deductions, totalExtracted: te } = extractFromPillar(pc, 0.70, 0.40, 0.20)
+      allDeductions.push(...deductions)
+      totalExtracted += te
+    }
+    results.push({
+      type: '地支三合',
+      sources: [a, b, c],
+      huaElement,
+      success: true,
+      isHeBan: false,
+      reason: `${a}${b}${c}三合${huaElement}局，月令${ctx.monthZhi}生助化神，合化成功，三支藏干力量转入${huaElement}`,
+      deductions: allDeductions,
+      additions: [{
+        element: huaElement,
+        amount: totalExtracted,
+        detail: `${a}${b}${c}三合化${huaElement}，化神${huaElement}获得${totalExtracted}分`,
+      }],
+    })
+  }
+
+  // ===== 2. 地支三会成化 =====
+  for (const [a, b, c, huaElement] of DI_ZHI_SAN_HUI_MAP) {
+    const count = [a, b, c].filter(z => zhiList.includes(z)).length
+    if (count < 3) continue
+    const isMonthSupport = ctx.monthElement === huaElement || GENERATE_MAP[ctx.monthElement] === huaElement
+    if (!isMonthSupport) {
+      const allDeductions: HeHuaDeduction[] = []
+      for (const z of [a, b, c]) {
+        const pc = pillarContribs.find(p => p.zhi === z)
+        if (!pc) continue
+        const { deductions } = extractFromPillar(pc, 0.45, 0.25, 0.12)
+        allDeductions.push(...deductions)
+      }
+      results.push({
+        type: '地支三会',
+        sources: [a, b, c],
+        huaElement,
+        success: false,
+        isHeBan: true,
+        reason: `${a}${b}${c}三会${huaElement}方，月令${ctx.monthZhi}不生助化神，会而不化，三会绊住`,
+        deductions: allDeductions,
+        additions: [],
+      })
+      continue
+    }
+    // 会化成功
+    const allDeductions: HeHuaDeduction[] = []
+    let totalExtracted = 0
+    for (const z of [a, b, c]) {
+      const pc = pillarContribs.find(p => p.zhi === z)
+      if (!pc) continue
+      const { deductions, totalExtracted: te } = extractFromPillar(pc, 0.80, 0.50, 0.30)
+      allDeductions.push(...deductions)
+      totalExtracted += te
+    }
+    results.push({
+      type: '地支三会',
+      sources: [a, b, c],
+      huaElement,
+      success: true,
+      isHeBan: false,
+      reason: `${a}${b}${c}三会${huaElement}方，月令${ctx.monthZhi}生助化神，会化成功`,
+      deductions: allDeductions,
+      additions: [{
+        element: huaElement,
+        amount: totalExtracted,
+        detail: `${a}${b}${c}三会化${huaElement}，化神${huaElement}获得${totalExtracted}分`,
+      }],
+    })
+  }
+
+  // ===== 3. 地支六合 =====
+  for (const [a, b, huaElement] of DI_ZHI_LIU_HE_MAP) {
+    if (!zhiList.includes(a) || !zhiList.includes(b)) continue
+    const isMonthSupport = ctx.monthElement === huaElement || GENERATE_MAP[ctx.monthElement] === huaElement
+    const huaShenTouGan = ganList.some(g => getGanElement(g) === huaElement)
+
+    if (isMonthSupport && huaShenTouGan) {
+      // 六合成化
+      const allDeductions: HeHuaDeduction[] = []
+      let totalExtracted = 0
+      for (const z of [a, b]) {
+        const pc = pillarContribs.find(p => p.zhi === z)
+        if (!pc) continue
+        const { deductions, totalExtracted: te } = extractFromPillar(pc, 0.60, 0.35, 0.15)
+        allDeductions.push(...deductions)
+        totalExtracted += te
+      }
+      results.push({
+        type: '地支六合',
+        sources: [a, b],
+        huaElement,
+        success: true,
+        isHeBan: false,
+        reason: `${a}${b}六合化${huaElement}，月令支持且化神透干，合化成功`,
+        deductions: allDeductions,
+        additions: [{
+          element: huaElement,
+          amount: totalExtracted,
+          detail: `${a}${b}六合化${huaElement}，化神${huaElement}获得${totalExtracted}分`,
+        }],
+      })
+    } else {
+      // 合绊：合而不化，两枝失去原有力量
+      const allDeductions: HeHuaDeduction[] = []
+      for (const z of [a, b]) {
+        const pc = pillarContribs.find(p => p.zhi === z)
+        if (!pc) continue
+        const { deductions } = extractFromPillar(pc, 0.50, 0.30, 0.10)
+        allDeductions.push(...deductions)
+      }
+      results.push({
+        type: '地支六合',
+        sources: [a, b],
+        huaElement,
+        success: false,
+        isHeBan: true,
+        reason: `${a}${b}六合，成化条件不足（月令${isMonthSupport ? '支持' : '不支持'}、化神${huaShenTouGan ? '透干' : '不透'}），合绊，两枝藏干力量被牵制`,
+        deductions: allDeductions,
+        additions: [],
+      })
+    }
+  }
+
+  // ===== 4. 天干五合 =====
+  for (const [a, b, huaElement] of TIAN_GAN_WU_HE_MAP) {
+    const hasA = ganList.includes(a)
+    const hasB = ganList.includes(b)
+    if (!hasA || !hasB) continue
+    const isMonthSupport = ctx.monthElement === huaElement || GENERATE_MAP[ctx.monthElement] === huaElement
+    const huaShenTouGan = ganList.some(g => getGanElement(g) === huaElement)
+    const keHuaShen = OVERCOME_MAP[huaElement]
+    const huaShenShouKe = ganList.some(g => getGanElement(g) === keHuaShen)
+
+    if (isMonthSupport && huaShenTouGan && !huaShenShouKe) {
+      // 天干五合成化
+      const allDeductions: HeHuaDeduction[] = []
+      let totalExtracted = 0
+      for (const gan of [a, b]) {
+        const pc = pillarContribs.find(p => p.gan === gan)
+        if (!pc) continue
+        const { deductions, totalExtracted: te } = extractFromGan(pc, 0.70)
+        allDeductions.push(...deductions)
+        totalExtracted += te
+      }
+      results.push({
+        type: '天干五合',
+        sources: [a, b],
+        huaElement,
+        success: true,
+        isHeBan: false,
+        reason: `${a}${b}五合化${huaElement}，月令支持、化神透干无克，合化成功`,
+        deductions: allDeductions,
+        additions: [{
+          element: huaElement,
+          amount: totalExtracted,
+          detail: `${a}${b}五合化${huaElement}，化神${huaElement}获得${totalExtracted}分`,
+        }],
+      })
+    } else {
+      // 天干五合不合：合绊效应，两干失去部分力量
+      const allDeductions: HeHuaDeduction[] = []
+      for (const gan of [a, b]) {
+        const pc = pillarContribs.find(p => p.gan === gan)
+        if (!pc) continue
+        const { deductions } = extractFromGan(pc, 0.30)
+        allDeductions.push(...deductions)
+      }
+      results.push({
+        type: '天干五合',
+        sources: [a, b],
+        huaElement,
+        success: false,
+        isHeBan: true,
+        reason: `${a}${b}五合，成化条件不足（月令${isMonthSupport ? '支持' : '不支持'}、化神${huaShenTouGan ? '透干' : '不透'}、${huaShenShouKe ? '化神受克' : '化神无克'}），合绊，两干被牵制`,
+        deductions: allDeductions,
+        additions: [],
+      })
+    }
+  }
+
+  return results
+}
+
 // ========== 核心计算函数 ==========
 
 /**
@@ -1008,14 +1424,60 @@ export function calculateStrengthV2(
     }
   }
 
+  // ===== V3.3.1 合化检测与五行重分配 =====
+  // 保存合化前原始分数
+  const originalFiveElementScores: Record<FiveElement, number> = {
+    木: fiveElementScores.木,
+    火: fiveElementScores.火,
+    土: fiveElementScores.土,
+    金: fiveElementScores.金,
+    水: fiveElementScores.水,
+  }
+
+  const heHuaResults = detectHeHua(ctx)
+
+  // 执行抽气重分配
+  applyHeHuaAdjustments(heHuaResults, elementScores)
+
+  // 合化/合绊后更新各五行分数
+  for (const el of ['木', '火', '土', '金', '水'] as FiveElement[]) {
+    fiveElementScores[el] = elementScores[el].total
+  }
+
+  // 合化导致的旺衰调整
+  let heHuaScoreAdjust = 0
+  for (const hh of heHuaResults) {
+    if (hh.success) {
+      // 成化成功：化神获得的力量影响旺衰
+      const added = hh.additions.reduce((sum, a) => sum + a.amount, 0)
+      if (getSamePartyElements(dayElement).includes(hh.huaElement)) {
+        heHuaScoreAdjust += Math.round(added * 0.6)
+      }
+      if (getDiffPartyElements(dayElement).includes(hh.huaElement)) {
+        heHuaScoreAdjust -= Math.round(added * 0.6)
+      }
+      breakdown.heHuaChongKe += added
+    } else if (hh.isHeBan) {
+      // 合绊：被扣除的力量影响旺衰（反向）
+      for (const d of hh.deductions) {
+        if (getSamePartyElements(dayElement).includes(d.element)) {
+          heHuaScoreAdjust -= Math.round(d.amount * 0.4)
+        }
+        if (getDiffPartyElements(dayElement).includes(d.element)) {
+          heHuaScoreAdjust += Math.round(d.amount * 0.4)
+        }
+      }
+    }
+  }
+
   // 5. 归一化到 0-100
   // 理论最高分：天干40 + 月令35 + 其他地支24 + 通根40 = 约139
   // 基准分 50 为中和，上下浮动
   const maxTheoretical = 140
   const baseScore = (dayScore.total / maxTheoretical) * 60 + 20
 
-  // 加上规则调整
-  let finalScore = baseScore + ruleAdjustment
+  // 加上规则调整 + 合化调整
+  let finalScore = baseScore + ruleAdjustment + heHuaScoreAdjust
 
   // 加入旺相休囚死调整
   const wangShuaiAdjust: Record<WuXingWangShuai, number> = {
@@ -1054,9 +1516,11 @@ export function calculateStrengthV2(
     level,
     wangShuai,
     fiveElementScores,
+    originalFiveElementScores,
     reasons,
     matchedRules,
     confidence,
     breakdown,
+    heHuaResults,
   }
 }

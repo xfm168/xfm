@@ -6,7 +6,7 @@
  * 本文件仅负责流程编排和对外暴露接口
  */
 
-import type { FiveElement, WuXingWangShuai } from './types'
+import type { FiveElement, WuXingWangShuai, HeHuaResult } from './types'
 import type { GeJuName } from './geju'
 import {
   determineXiYongShen as runXiYongRules,
@@ -46,6 +46,7 @@ export function determineXiYongShen(
   wangShuai: WuXingWangShuai,
   geJuName: GeJuName,
   dayElement: FiveElement,
+  heHuaResults: HeHuaResult[] = [],
 ): XiYongShenResult {
   // 简化上下文（完整上下文需要更多参数，后续扩展）
   const ctx: Partial<XiYongContext> = {
@@ -59,6 +60,7 @@ export function determineXiYongShen(
       : '正格',
     isSpecialGe: geJuName.includes('从') || geJuName === '化气格'
       || ['曲直格', '炎上格', '稼穑格', '从革格', '润下格'].includes(geJuName),
+    heHuaResults,
   }
 
   const result = runXiYongRules(ctx as XiYongContext)

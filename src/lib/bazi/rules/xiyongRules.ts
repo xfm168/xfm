@@ -4,7 +4,7 @@
  */
 
 import { executeRules, type BaseRule, type RuleContext } from './engine'
-import type { FiveElement, WuXingWangShuai } from '../types'
+import type { FiveElement, WuXingWangShuai, HeHuaResult } from '../types'
 import type { GeJuName, GeJuCategory } from './gejuRules'
 
 // ========== 类型定义 ==========
@@ -28,6 +28,8 @@ export interface XiYongContext extends RuleContext {
   samePartyCount: number
   diffPartyCount: number
   geJuScore: number
+  // V3.3.1: 合化结果
+  heHuaResults: HeHuaResult[]
 }
 
 export interface XiYongResult {

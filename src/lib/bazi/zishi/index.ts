@@ -8,7 +8,8 @@
  * - gregorian（公历换日）：00:00 换日，与 early 行为相同
  */
 
-export * from './strategies'
+export type { ZiShiStrategy, ChartDateResult } from './strategies'
+export { computeHourIndex, LateZiShiStrategy, EarlyZiShiStrategy, GregorianStrategy } from './strategies'
 
 import { LateZiShiStrategy, EarlyZiShiStrategy, GregorianStrategy } from './strategies'
 import type { ZiShiStrategy, ChartDateResult } from './strategies'

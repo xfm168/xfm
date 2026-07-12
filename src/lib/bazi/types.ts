@@ -82,6 +82,32 @@ export interface CangGan {
   yao: HeavenlyStem | null
 }
 
+/** V3.3.1 合化抽气明细 */
+export interface HeHuaDeduction {
+  source: string         // 如 '年支申'
+  element: FiveElement   // 被抽的五行
+  amount: number         // 抽走的分数
+  detail: string         // 如 '本气庚金被抽 70% => 14分'
+}
+
+export interface HeHuaAddition {
+  element: FiveElement
+  amount: number
+  detail: string
+}
+
+/** V3.3.1 单次合化结果（含抽气重分配） */
+export interface HeHuaResult {
+  type: '天干五合' | '地支六合' | '地支三合' | '地支三会'
+  sources: string[]         // 参与合化的干支
+  huaElement: FiveElement   // 化出的五行
+  success: boolean          // 是否成化
+  isHeBan: boolean         // 是否合绊（合而不化时失去力量）
+  reason: string            // 成化/不成化原因
+  deductions: HeHuaDeduction[]  // 被抽走的五行力量明细
+  additions: HeHuaAddition[]     // 化神获得的力量明细
+}
+
 export interface DayMasterAnalysis {
   dayGan: HeavenlyStem
   dayGanElement: FiveElement
@@ -89,6 +115,8 @@ export interface DayMasterAnalysis {
   relatedShens: Record<HeavenlyStem, ShenShi>
   wangShuai: WuXingWangShuai
   strengthScore: number
+  // V3.3.1: 合化结果
+  heHuaResults: HeHuaResult[]
 }
 
 export interface XiYongShen {
@@ -96,6 +124,8 @@ export interface XiYongShen {
   happiness: string
   usage: string
   avoidedElements: FiveElement[]
+  idleElements: FiveElement[]
+  enemyElements: FiveElement[]
 }
 
 export interface BaZiAnalysis {

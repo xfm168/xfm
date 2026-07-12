@@ -1,0 +1,254 @@
+// ─── DEPRECATED ────────────────────────────────────────────
+// 此文件已被 ExplainV4 (explainV4.ts) 完全替代。
+// 保留仅供参考，禁止在新代码中引用。
+// 归档时间：2026-07-11
+// ─────────────────────────────────────────────────────────────
+/**
+ * P2-1 交互式格局测试入口
+ * 
+ * 用法：npx tsx src/lib/bazi/qi/plugin/interactiveTest.ts <年柱> <月柱> <日柱> <时柱>
+ * 
+ * 示例：
+ *   npx tsx src/lib/bazi/qi/plugin/interactiveTest.ts 辛卯 庚寅 丁酉 壬寅
+ *   npx tsx src/lib/bazi/qi/plugin/interactiveTest.ts 甲寅 丁卯 甲寅 丙寅
+ *   npx tsx src/lib/bazi/qi/plugin/interactiveTest.ts 庚子 戊子 甲子 丙寅
+ */
+
+import { runP21Engine } from '../runP21Engine'
+import { generateFullReport } from '../reasoning/explainEngine'
+import { getAllQuotes } from './rules/zipingZhengLunRules'
+import { getAllDiTianSuiQuotes } from './rules/diTianSuiRules'
+import { getAllQiongTongQuotes } from './rules/qiongTongBaoJianRules'
+import { calculateDayMasterStrength, type DayMasterStrengthResult } from './dayMasterStrengthEngine'
+import { calculateClimateAdjustment, type ClimateAdjustmentResult } from './climateAdjustmentEngine'
+import { analyzeDiseaseMedicine, type DiseaseMedicineResult } from './diseaseMedicineEngine'
+import { analyzeTongGuan, type TongGuanResult } from './tongGuanEngine'
+import { calculateUseGod, type UseGodResult } from './useGodEngine'
+
+// 合并所有古籍引用
+const ALL_CLASSICAL_QUOTES = [...getAllQuotes(), ...getAllDiTianSuiQuotes(), ...getAllQiongTongQuotes()]
+
+function parsePillars(args: string[]) {
+  if (args.length < 4) {
+    console.error('用法: npx tsx src/lib/bazi/qi/plugin/interactiveTest.ts <年柱> <月柱> <日柱> <时柱>')
+    console.error('示例: npx tsx src/lib/bazi/qi/plugin/interactiveTest.ts 辛卯 庚寅 丁酉 壬寅')
+    process.exit(1)
+  }
+  const fourPillars = args.slice(0, 4)
+  const parsed = fourPillars.map(p => ({
+    gan: p[0] as any,
+    zhi: p[1] as any,
+    element: '' as any,
+    yinYang: '' as any,
+    naYin: '',
+  }))
+  return {
+    year: parsed[0],
+    month: parsed[1],
+    day: parsed[2],
+    hour: parsed[3],
+  }
+}
+
+function formatStructureOutput(geju: any) {
+  const lines: string[] = []
+  lines.push('━'.repeat(50))
+  lines.push(`  格局：${geju.name}`)
+  lines.push(`  类别：${geju.category}（${geju.isSpecial ? '特殊格' : '普通格'}）`)
+  lines.push(`  品级：${geju.grade}（评分 ${geju.score}）`)
+  lines.push(`  纯清度：${geju.pureScore}`)
+  lines.push(`  贵气指数：${geju.nobilityScore}`)
+  lines.push(`  富气指数：${geju.wealthScore}`)
+  lines.push(`  可信度：${(geju.confidence / 100 * 100).toFixed(0)}%`)
+  lines.push('─'.repeat(50))
+  lines.push(`  成格原因：`)
+  for (const r of geju.reasons) {
+    lines.push(`    · ${r}`)
+  }
+  if (geju.poGe) {
+    lines.push(`  ⚠ 破格：${geju.poGeReason}`)
+  }
+  if (geju.assistGeJu.length > 0) {
+    lines.push(`  副格：${geju.assistGeJu.map((a: any) => `${a.name}(${a.score})`).join('、')}`)
+  }
+  if (geju.conflictGeJu.length > 0) {
+    lines.push(`  冲突格：${geju.conflictGeJu.map((c: any) => `${c.name}(${c.score})`).join('、')}`)
+  }
+
+  // 古籍原文（含建禄/月刃别名映射）
+  const ALIAS_MAP: Record<string, string> = {
+    '比肩格': '建禄格', '劫财格': '月刃格',
+    '专旺格': '曲直格',
+  }
+  const lookupName = ALIAS_MAP[geju.name] || geju.name
+  const quote = ALL_CLASSICAL_QUOTES.find(q => q.structure === lookupName || q.structure === geju.name)
+  if (quote) {
+    lines.push('─'.repeat(50))
+    lines.push(`  📖 古籍出处：《子平真诠》${quote.chapter}`)
+    lines.push(`  原文：${quote.originalText}`)
+    lines.push(`  白话：${quote.vernacular}`)
+  }
+  
+  lines.push('━'.repeat(50))
+  return lines.join('\n')
+}
+
+function formatExplainOutput(geju: any, explainCount: number, eventCount: number, stateLen: number) {
+  const lines: string[] = []
+  lines.push('')
+  lines.push('【七段式 Explain 输出】')
+  
+  const ALIAS_MAP2: Record<string, string> = {
+    '比肩格': '建禄格', '劫财格': '月刃格',
+    '专旺格': '曲直格',
+  }
+  const lookupName2 = ALIAS_MAP2[geju.name] || geju.name
+  const quote = ALL_CLASSICAL_QUOTES.find(q => q.structure === lookupName2 || q.structure === geju.name)
+  
+  lines.push(`  ① 判断依据：月令十神取格，命局${geju.reasons.join('；')}`)
+  lines.push(`  ② 古籍出处：《子平真诠》${quote?.chapter || '格局总论'}`)
+  if (quote) {
+    lines.push(`  ③ 原文：${quote.originalText}`)
+    lines.push(`  ④ 白话解释：${quote.vernacular}`)
+  }
+  lines.push(`  ⑤ 为什么成立：${geju.matchedRules.join('、') || geju.reasons.join('、')}`)
+  lines.push(`  ⑥ 为什么击败其它格局：成格评分${geju.score}，可信度${geju.confidence}%`)
+  lines.push(`  ⑦ Confidence：${(geju.confidence / 100 * 100).toFixed(0)}%`)
+  lines.push('')
+  lines.push(`  推演统计：${explainCount} 条 Explain / ${eventCount} 个 Event / ${stateLen} 阶段`)
+  lines.push('')
+  return lines.join('\n')
+}
+
+// ─── 主函数 ───
+
+const args = process.argv.slice(2)
+const parsed = parsePillars(args)
+const dayGan = parsed.day.gan
+const monthZhi = parsed.month.zhi
+
+const sixLines = {
+  year: parsed.year,
+  month: parsed.month,
+  day: parsed.day,
+  hour: parsed.hour,
+}
+
+console.log(`\n🔍 分析四柱：${[parsed.year, parsed.month, parsed.day, parsed.hour].map((p: any) => p.gan + p.zhi).join(' ')}`)
+console.log(`   日主：${dayGan}  月令：${monthZhi}\n`)
+
+// P2-2 旺衰分析
+console.log('━'.repeat(50))
+const strengthResult = calculateDayMasterStrength(sixLines, dayGan as any, monthZhi as any)
+console.log(`  📊 旺衰分析（P2-2 权重模型）`)
+console.log(`  旺衰分值：${strengthResult.strengthScore}/100 → ${strengthResult.strengthLevelCN}（${strengthResult.strengthLevel}）`)
+console.log(`  旺相休囚死：${strengthResult.wangShuai}`)
+console.log(`  得令：${strengthResult.deLing ? '✓' : '✗'} | 得地：${strengthResult.deDi ? '✓' : '✗'} | 得势：${strengthResult.deShi ? '✓' : '✗'} | 通根：${strengthResult.tongGen ? '✓' : '✗'} | 透干：${strengthResult.touGan ? '✓' : '✗'}`)
+console.log(`  维度分析：`)
+for (const dim of strengthResult.dimensions) {
+  console.log(`    ${dim.name}：${dim.rawScore} × ${(dim.weight * 100).toFixed(0)}% = ${dim.weightedScore.toFixed(1)}`)
+}
+console.log(`  十二长生：${strengthResult.changShengDetails.map(d => `${d.zhi}→${d.state}${d.isBeneficial ? '✓' : ''}`).join(' ')}`)
+console.log(`  生扶：${strengthResult.shengFuPower} vs 克泄耗：${strengthResult.keXiePower}`)
+console.log('━'.repeat(50))
+console.log('')
+
+// P2-2 调候分析
+console.log('━'.repeat(50))
+const climateResult = calculateClimateAdjustment(sixLines, dayGan as any, monthZhi as any)
+console.log(`  🌡️ 调候分析（P2-2）`)
+console.log(`  气候类型：${climateResult.climateType}  评分：${climateResult.climateScore}/100  需调候：${climateResult.needsAdjustment ? '是' : '否'}`)
+if (climateResult.needs.length > 0) {
+  console.log(`  调候用神：${climateResult.needs.map(n => `${n.element}(${n.preferredStems.join('/')})`).join('、')}`)
+}
+console.log(`  建议：${climateResult.advice}`)
+console.log('━'.repeat(50))
+console.log('')
+
+// P2-2 病药分析
+console.log('━'.repeat(50))
+const ELEMENT_MAP2: Record<string, string> = {
+  '甲': '木', '乙': '木', '丙': '火', '丁': '火',
+  '戊': '土', '己': '土', '庚': '金', '辛': '金',
+  '壬': '水', '癸': '水',
+}
+const CANG_GAN2: Record<string, { ben: string; zhong: string | null; yao: string | null }> = {
+  '子': { ben: '癸', zhong: null, yao: null }, '丑': { ben: '己', zhong: '辛', yao: '癸' },
+  '寅': { ben: '甲', zhong: '丙', yao: '戊' }, '卯': { ben: '乙', zhong: null, yao: null },
+  '辰': { ben: '戊', zhong: '乙', yao: '癸' }, '巳': { ben: '丙', zhong: '庚', yao: '戊' },
+  '午': { ben: '丁', zhong: '己', yao: null }, '未': { ben: '己', zhong: '丁', yao: '乙' },
+  '申': { ben: '庚', zhong: '壬', yao: '戊' }, '酉': { ben: '辛', zhong: null, yao: null },
+  '戌': { ben: '戊', zhong: '辛', yao: '丁' }, '亥': { ben: '壬', zhong: '甲', yao: null },
+}
+const elemCount: Record<string, number> = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 }
+const ALL_ELEMENTS: string[] = ['木', '火', '土', '金', '水']
+for (const pillar of [sixLines.year, sixLines.month, sixLines.day, sixLines.hour]) {
+  elemCount[ELEMENT_MAP2[pillar.gan] || '木']++
+  const cg = CANG_GAN2[pillar.zhi]
+  if (cg) {
+    elemCount[ELEMENT_MAP2[cg.ben] || '木']++
+    if (cg.zhong) elemCount[ELEMENT_MAP2[cg.zhong] || '木'] += 0.5
+    if (cg.yao) elemCount[ELEMENT_MAP2[cg.yao] || '木'] += 0.3
+  }
+}
+const dmResult = analyzeDiseaseMedicine(sixLines, dayGan as any, monthZhi as any, strengthResult.strengthScore, strengthResult.strengthLevelCN)
+console.log(`  💊 病药分析（P2-2）`)
+if (dmResult.hasDisease) {
+  console.log(`  病：${dmResult.diseases.map(d => d.name).join('、')}`)
+  console.log(`  药：${dmResult.medicines.map(m => m.element).join('、')}`)
+  console.log(`  治法：${dmResult.treatment}`)
+} else {
+  console.log(`  无大病，五行相对平衡`)
+}
+console.log('━'.repeat(50))
+console.log('')
+
+// P2-2 通关分析
+console.log('━'.repeat(50))
+const tgResult = analyzeTongGuan(elemCount as any)
+console.log(`  🔀 通关分析（P2-2）`)
+if (tgResult.hasBattle) {
+  console.log(`  交战：${tgResult.battles.map(b => b.description).join('；')}`)
+  console.log(`  通关：${tgResult.hasTongGuan ? tgResult.tongGuanDescription : '通关不畅'}`)
+  console.log(`  风险等级：${tgResult.riskLevel}/5`)
+} else {
+  console.log(`  五行和合，无交战`)
+}
+console.log('━'.repeat(50))
+console.log('')
+
+// P2-2 喜用神分析
+console.log('━'.repeat(50))
+const dayElement = (ELEMENT_MAP2[dayGan] || '木') as any
+const useGod = calculateUseGod(dayElement, strengthResult, climateResult, dmResult, tgResult)
+console.log(`  🎯 喜用神分析（P2-2 综合评分模型）`)
+console.log(`  用神：${useGod.yongShen}（${useGod.yongScore}分）| 喜神：${useGod.xiShen} | 忌神：${useGod.jiShen} | 仇神：${useGod.chouShen} | 闲神：${useGod.xianShen}`)
+console.log(`  建议：${useGod.advice}`)
+console.log(`  五行评分：${ALL_ELEMENTS.map(e => `${e}=${useGod.scores[e]}`).join(' ')}`)
+console.log('━'.repeat(50))
+console.log('')
+
+try {
+  const result = runP21Engine(sixLines, dayGan, monthZhi)
+
+  if (result.geJuResult) {
+    console.log(formatStructureOutput(result.geJuResult))
+    console.log(formatExplainOutput(
+      result.geJuResult,
+      result.reasoning?.explains.length ?? 0,
+      result.reasoning?.eventTimeline.length ?? 0,
+      result.reasoning?.stateTree.length ?? 0,
+    ))
+  } else {
+    console.log('❌ 未检测到格局')
+  }
+
+  // 可选：输出完整推演报告
+  if (result.reasoning && args.includes('--full')) {
+    console.log('\n' + generateFullReport(result.reasoning))
+  }
+} catch (e: any) {
+  console.error(`❌ 推演失败：${e.message}`)
+  console.error(e.stack)
+  process.exit(1)
+}

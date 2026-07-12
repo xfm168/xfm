@@ -1,0 +1,1370 @@
+// ─── DEPRECATED ────────────────────────────────────────────
+// 此文件已被 ExplainV4 (explainV4.ts) 完全替代。
+// 保留仅供参考，禁止在新代码中引用。
+// 归档时间：2026-07-11
+// ─────────────────────────────────────────────────────────────
+/**
+ * ExplainV2 — P2-3.5 四层解释引擎
+ *
+ * 根据同一命盘分析结果，生成四层不同深度的解释：
+ *   ① 专业版（professional）— 学术术语，引用古籍
+ *   ② 白话版（vernacular）— 日常语言，通俗易懂
+ *   ③ 新手版（beginner）— 零基础友好，比喻类比
+ *   ④ 行动建议版（action）— 按领域/时段，宜忌明确
+ *
+ * 特性：
+ *   - 每个章节至少一条古籍引用
+ *   - 模板变量 + 随机选择器避免机械重复
+ *   - 核心结论保持一致，表达方式多样
+ */
+
+import type { FiveElement } from '../../types'
+import type { PatternValidationResult } from './patternValidator'
+import type { DayMasterStrengthResult } from './dayMasterStrengthEngine'
+import type { ClimateAdjustmentResult } from './climateAdjustmentEngine'
+import type { UseGodResult } from './useGodEngine'
+import type { DiseaseMedicineResult } from './diseaseMedicineEngine'
+import type { TongGuanResult } from './tongGuanEngine'
+import type { ClassicKnowledgeEntry } from './classicKnowledgeBase'
+
+// ─── 类型导出 ───
+
+export type ExplainLayer = 'professional' | 'vernacular' | 'beginner' | 'action'
+
+export interface ExplainV2Section {
+  title: string
+  content: string
+  classicalRef?: string
+}
+
+export interface ExplainV2Result {
+  professional: ExplainV2Section[]
+  vernacular: ExplainV2Section[]
+  beginner: ExplainV2Section[]
+  action: ExplainV2Section[]
+  overallSummary: string
+  confidence: number
+}
+
+export interface ExplainV2Context {
+  dayGan: string
+  monthZhi: string
+  fourPillars: string       // 如"辛卯 庚寅 丁酉 壬寅"
+  geJuName: string
+  geJuResult: any           // GeJuResult
+  strength: DayMasterStrengthResult
+  climate: ClimateAdjustmentResult
+  disease: DiseaseMedicineResult
+  tongGuan: TongGuanResult
+  useGod: UseGodResult
+  pattern: PatternValidationResult
+  shenSha?: any             // ShenShaResult（可选）
+  knowledgeBase?: ClassicKnowledgeEntry[] // 相关古籍条目（可选）
+}
+
+// ─── 五行关系常量 ───
+
+const ELEMENT_MAP: Record<string, FiveElement> = {
+  '甲': '木', '乙': '木', '丙': '火', '丁': '火',
+  '戊': '土', '己': '土', '庚': '金', '辛': '金',
+  '壬': '水', '癸': '水',
+}
+
+const GENERATE: Record<FiveElement, FiveElement> = {
+  '木': '火', '火': '土', '土': '金', '金': '水', '水': '木',
+}
+
+const OVERCOME: Record<FiveElement, FiveElement> = {
+  '木': '土', '土': '水', '水': '火', '火': '金', '金': '木',
+}
+
+const ELEMENT_SEASON: Record<FiveElement, string> = {
+  '木': '春', '火': '夏', '土': '长夏/四季', '金': '秋', '水': '冬',
+}
+
+const SHI_SHEN_NAMES: Record<string, string> = {
+  '比肩': '比劫', '劫财': '比劫', '食神': '食伤', '伤官': '食伤',
+  '正财': '财星', '偏财': '财星', '正官': '官杀', '七杀': '官杀',
+  '正印': '印星', '偏印': '印星',
+}
+
+// ─── 默认古籍引用库 ───
+
+const DEFAULT_CLASSICAL_REFS: Record<string, string[]> = {
+  geJu: [
+    '《子平真诠》论格局："成格必有真机，破格必有实据。格之成败，关乎一生穷通。"',
+    '《子平真诠》："八字用神，专求月令，以日干配月令地支，而生克不同，格局分焉。"',
+    '《渊海子平》："格局之名，古人立言之体也。"',
+  ],
+  wangShuai: [
+    '《滴天髓》任铁樵注："旺者宜抑，衰者宜扶。扶抑得中，命局平和。"',
+    '《滴天髓》："得令者旺，得地者强，得势者壮。三者皆得，其旺不可挡也。"',
+    '《三命通会》："身旺则能任财官，身弱则财官反为累己之物。"',
+  ],
+  tiaoHou: [
+    '《穷通宝鉴》："寒甚用暖，暖甚用寒，方为中和之美。"',
+    '《滴天髓》："寒暖燥湿，四时之气。调候为要，不调则偏。"',
+    '《穷通宝鉴》徐乐吾注："调候者，调和气候之谓也。命局寒暖燥湿，皆需调候。"',
+  ],
+  bingYao: [
+    '《滴天髓》："有病方为贵，无伤不是奇。命局有病得药救之，即为贵格。"',
+    '《神峰通考》："病重药轻不济，药重病轻反伤。"',
+    '《滴天髓》："病之深者，药须猛；病之浅者，药宜缓。"',
+  ],
+  tongGuan: [
+    '《滴天髓》："通关者，两行相战，以中间通关之物解之。"',
+    '《滴天髓》："通关有情，格局自高。通关无情，命局多碍。"',
+  ],
+  yongShen: [
+    '《滴天髓》："旺者宜抑，衰者宜扶。扶抑得中，命局平和。"',
+    '《子平真诠》："用神者，命局之枢纽，一身之主宰。"',
+    '《穷通宝鉴》："用神得力，则一生亨通；用神失力，则一生蹇滞。"',
+  ],
+}
+
+// ─── 随机选择器工具 ───
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
+
+function pickN<T>(arr: T[], n: number): T[] {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, Math.min(n, arr.length))
+}
+
+/** 获取古籍引用，优先使用 knowledgeBase，否则使用内置默认 */
+function getClassicalRef(
+  category: string,
+  keyword: string,
+  knowledgeBase?: ClassicKnowledgeEntry[],
+): string {
+  // 优先从传入的 knowledgeBase 中查找
+  if (knowledgeBase && knowledgeBase.length > 0) {
+    const matches = knowledgeBase.filter(e =>
+      e.originalText.includes(keyword) ||
+      e.vernacular.includes(keyword) ||
+      e.keywords.some(k => k.includes(keyword.toLowerCase()))
+    )
+    if (matches.length > 0) {
+      const entry = pick(matches)
+      return `《${entry.source}》${entry.chapter}："${entry.originalText}"`
+    }
+  }
+  // 回退到内置默认引用
+  const defaults = DEFAULT_CLASSICAL_REFS[category]
+  return defaults ? pick(defaults) : ''
+}
+
+// ─── 四层生成函数 ───
+
+/**
+ * 核心入口：生成四层解释
+ */
+export function generateExplainV2(context: ExplainV2Context): ExplainV2Result {
+  const {
+    dayGan, monthZhi, fourPillars, geJuName, geJuResult,
+    strength, climate, disease, tongGuan, useGod, pattern,
+    knowledgeBase,
+  } = context
+
+  const dayElement = ELEMENT_MAP[dayGan] || '木'
+  const kb = knowledgeBase
+
+  // 可信度基于格局评分 + 旺衰平衡度 + 调候完成度
+  const confidence = calcConfidence(pattern, strength, climate)
+
+  // ① 专业版
+  const professional = buildProfessional(context, dayElement, kb)
+
+  // ② 白话版
+  const vernacular = buildVernacular(context, dayElement, kb)
+
+  // ③ 新手版
+  const beginner = buildBeginner(context, dayElement, kb)
+
+  // ④ 行动建议版
+  const action = buildAction(context, dayElement, kb)
+
+  // 总评
+  const overallSummary = buildOverallSummary(context, dayElement, kb, confidence)
+
+  return {
+    professional,
+    vernacular,
+    beginner,
+    action,
+    overallSummary,
+    confidence,
+  }
+}
+
+// ─── 可信度计算 ───
+
+function calcConfidence(
+  pattern: PatternValidationResult,
+  strength: DayMasterStrengthResult,
+  climate: ClimateAdjustmentResult,
+): number {
+  let score = 50
+
+  // 格局越清晰可信度越高
+  score += pattern.totalScore * 0.25
+
+  // 旺衰越接近中和可信度越高
+  const balance = 100 - Math.abs(strength.strengthScore - 50) * 2
+  score += balance * 0.15
+
+  // 调候完成度
+  score += climate.climateScore * 0.1
+
+  return Math.round(Math.max(30, Math.min(95, score)))
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ① 专业版（professional）— 学术术语，引用古籍
+// ══════════════════════════════════════════════════════════════════════
+
+function buildProfessional(
+  ctx: ExplainV2Context,
+  dayElement: FiveElement,
+  kb?: ClassicKnowledgeEntry[],
+): ExplainV2Section[] {
+  const sections: ExplainV2Section[] = []
+  const { geJuName, strength, climate, disease, tongGuan, useGod, pattern } = ctx
+
+  // ─── 1. 格局分析 ───
+  const geJuOpeners = [
+    `日主${ctx.dayGan}（${dayElement}）生于${ctx.monthZhi}月，取${geJuName || '正格'}论命。`,
+    `本造以${ctx.dayGan}日主立极，月令${ctx.monthZhi}，${geJuName || '取正格'}为宗。`,
+    `观此四柱"${ctx.fourPillars}"，日主${ctx.dayGan}生于${ctx.monthZhi}月，定格局为${geJuName || '正格'}。`,
+  ]
+  const geJuContent = buildGeJuProfessional(ctx, pattern)
+  sections.push({
+    title: '一、格局分析',
+    content: pick(geJuOpeners) + geJuContent,
+    classicalRef: getClassicalRef('geJu', geJuName || '格局', kb),
+  })
+
+  // ─── 2. 旺衰分析 ───
+  const wsContent = buildWangShuaiProfessional(ctx, strength, dayElement)
+  sections.push({
+    title: '二、日主旺衰',
+    content: wsContent,
+    classicalRef: getClassicalRef('wangShuai', strength.strengthLevelCN, kb),
+  })
+
+  // ─── 3. 调候分析 ───
+  const thContent = buildTiaoHouProfessional(ctx, climate, dayElement)
+  sections.push({
+    title: '三、调候分析',
+    content: thContent,
+    classicalRef: getClassicalRef('tiaoHou', climate.climateType, kb),
+  })
+
+  // ─── 4. 病药分析 ───
+  const byContent = buildBingYaoProfessional(ctx, disease, dayElement)
+  sections.push({
+    title: '四、病药分析',
+    content: byContent,
+    classicalRef: getClassicalRef('bingYao', disease.hasDisease ? '病' : '五行', kb),
+  })
+
+  // ─── 5. 通关分析 ───
+  const tgContent = buildTongGuanProfessional(ctx, tongGuan)
+  sections.push({
+    title: '五、通关分析',
+    content: tgContent,
+    classicalRef: getClassicalRef('tongGuan', tongGuan.tongGuanElement || '通关', kb),
+  })
+
+  // ─── 6. 喜用神 ───
+  const ysContent = buildYongShenProfessional(ctx, useGod, dayElement)
+  sections.push({
+    title: '六、喜用神综合',
+    content: ysContent,
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  return sections
+}
+
+function buildGeJuProfessional(ctx: ExplainV2Context, pattern: PatternValidationResult): string {
+  const parts: string[] = []
+
+  // 格局评级
+  parts.push(`格局评级：${'★'.repeat(pattern.starLevel)}（${pattern.rank}，${pattern.totalScore}分）。`)
+
+  // 是否真格/破格
+  if (pattern.isZhenGe) {
+    parts.push('经辨真正格成格局，格局清纯有力。')
+  }
+  if (pattern.isPoGe) {
+    parts.push(`然格局有破，破格原因：${pattern.poGeReasons.join('；')}。`)
+  }
+
+  // 格局优势
+  if (pattern.strengths.length > 0) {
+    const strengthNames = pickN(pattern.strengths, 3).join('、')
+    parts.push(`格局优势在于${strengthNames}。`)
+  }
+
+  // 格局缺陷
+  if (pattern.defects.length > 0) {
+    const defectNames = pickN(pattern.defects, 3).join('、')
+    parts.push(`需注意${defectNames}。`)
+  }
+
+  // 维度详情
+  if (pattern.dimensions.length > 0) {
+    parts.push('\n各维度评分：')
+    for (const dim of pattern.dimensions) {
+      parts.push(`  - ${dim.name}：${dim.score}分（权重${(dim.weight * 100).toFixed(0)}%）— ${dim.reason}`)
+    }
+  }
+
+  return parts.join('\n')
+}
+
+function buildWangShuaiProfessional(
+  ctx: ExplainV2Context,
+  strength: DayMasterStrengthResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  parts.push(`日主${ctx.dayGan}（${dayElement}），旺衰综合评定：${strength.strengthLevelCN}（${strength.strengthScore}/100分）。`)
+
+  // 得令得地得势
+  const deList: string[] = []
+  if (strength.deLing) deList.push('得令')
+  if (strength.deDi) deList.push('得地')
+  if (strength.deShi) deList.push('得势')
+  if (deList.length > 0) {
+    parts.push(`三才条件：${deList.join('、')}。`)
+  } else {
+    parts.push('三才皆不得，日主根基浅薄。')
+  }
+
+  // 通根/透干
+  if (strength.tongGen) parts.push('日主通根有力。')
+  if (strength.touGan) parts.push('日主透干显达。')
+
+  // 旺相休囚死
+  parts.push(`月令旺衰状态：${strength.wangShuai}。`)
+
+  // 生扶 vs 克泄耗
+  parts.push(`生扶力量${strength.shengFuPower.toFixed(1)}，克泄耗力量${strength.keXiePower.toFixed(1)}。`)
+
+  // 十二长生
+  const beneficial = strength.changShengDetails.filter(d => d.isBeneficial)
+  if (beneficial.length > 0) {
+    const states = beneficial.map(d => `${d.pillar}${d.state}`).join('、')
+    parts.push(`十二长生得地：${states}。`)
+  }
+
+  // 维度分析
+  if (strength.dimensions.length > 0) {
+    parts.push('\n各维度加权分析：')
+    for (const dim of strength.dimensions) {
+      parts.push(`  - ${dim.name}：${dim.rawScore}分 × ${(dim.weight * 100).toFixed(0)}% = ${dim.weightedScore.toFixed(1)}`)
+      parts.push(`    ${dim.reason}`)
+    }
+  }
+
+  return parts.join('\n')
+}
+
+function buildTiaoHouProfessional(
+  ctx: ExplainV2Context,
+  climate: ClimateAdjustmentResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  parts.push(`日主${ctx.dayGan}（${dayElement}）生于${ctx.monthZhi}月，命局气候${climate.climateType}（评分${climate.climateScore}/100）。`)
+
+  if (climate.needsAdjustment) {
+    parts.push('命局需要调候。')
+    for (const need of climate.needs) {
+      parts.push(`  - 调候用神：${need.element}（${need.preferredStems.join('、')}），${need.description}。`)
+      parts.push(`    出处：${need.source}，优先级${need.priority}。`)
+    }
+    parts.push(`调候建议：${climate.advice}。`)
+  } else {
+    parts.push('命局寒暖适中，无需调候，为中和之美。')
+  }
+
+  parts.push(`月令气候属性：${climate.monthClimate}。`)
+  if (climate.dayGanClimate) {
+    parts.push(climate.dayGanClimate + '。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildBingYaoProfessional(
+  ctx: ExplainV2Context,
+  disease: DiseaseMedicineResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  if (disease.hasDisease) {
+    parts.push(`命局有病，经辨析共${disease.diseases.length}项病症：\n`)
+    for (const d of disease.diseases) {
+      parts.push(`  - 【${d.name}】${d.cause}（严重程度${'■'.repeat(d.severity)}${'□'.repeat(5 - d.severity)}）`)
+    }
+
+    parts.push(`\n对应药方：`)
+    for (const m of disease.medicines) {
+      parts.push(`  - 【${m.name}】${m.treatment}。出处：${m.source}`)
+    }
+
+    parts.push(`\n治法总结：${disease.treatment}`)
+  } else {
+    parts.push('命局五行相对平衡，无大病可论。正如古籍所言"无病不求药"，此为平顺之命的基础。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildTongGuanProfessional(ctx: ExplainV2Context, tongGuan: TongGuanResult): string {
+  const parts: string[] = []
+
+  if (tongGuan.hasBattle) {
+    parts.push(`命局存在五行交战，共${tongGuan.battles.length}处：\n`)
+    for (const b of tongGuan.battles) {
+      parts.push(`  - ${b.description}（强度${b.intensity}）`)
+    }
+
+    if (tongGuan.hasTongGuan && tongGuan.tongGuanElement) {
+      parts.push(`\n通关成功：以${tongGuan.tongGuanElement}通关。${tongGuan.tongGuanDescription}。`)
+    } else {
+      parts.push(`\n通关不畅：${tongGuan.tongGuanDescription || '五行交战而通关无力，需补通关之物。'}`)
+    }
+
+    parts.push(`风险等级：${'■'.repeat(tongGuan.riskLevel)}${'□'.repeat(5 - tongGuan.riskLevel)}（${tongGuan.riskLevel}/5）。`)
+  } else {
+    parts.push('命局五行和合，无交战之象，不需通关。此为平稳之象。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildYongShenProfessional(
+  ctx: ExplainV2Context,
+  useGod: UseGodResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  parts.push(`日主${ctx.dayGan}（${dayElement}）${ctx.strength.strengthLevelCN}，综合喜用神如下：`)
+  parts.push(`  - 用神：${useGod.yongShen}（得分${useGod.yongScore}）`)
+  parts.push(`  - 喜神：${useGod.xiShen}`)
+  parts.push(`  - 忌神：${useGod.jiShen}`)
+  parts.push(`  - 仇神：${useGod.chouShen}`)
+  parts.push(`  - 闲神：${useGod.xianShen}`)
+
+  // 各维度贡献
+  parts.push('\n各维度对用神选择的影响：')
+  const dims = useGod.dimensionContributions
+  parts.push(`  - 旺衰维度：喜${dims.strength.element}，${dims.strength.reason}`)
+  parts.push(`  - 调候维度：${dims.climate.element ? '喜' + dims.climate.element + '，' : ''}${dims.climate.reason}`)
+  parts.push(`  - 病药维度：${dims.disease.element ? '需' + dims.disease.element + '，' : ''}${dims.disease.reason}`)
+  parts.push(`  - 通关维度：${dims.tongGuan.element ? '喜' + dims.tongGuan.element + '，' : ''}${dims.tongGuan.reason}`)
+
+  parts.push(`\n综合建议：${useGod.advice}`)
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ② 白话版（vernacular）— 日常语言，通俗易懂
+// ══════════════════════════════════════════════════════════════════════
+
+function buildVernacular(
+  ctx: ExplainV2Context,
+  dayElement: FiveElement,
+  kb?: ClassicKnowledgeEntry[],
+): ExplainV2Section[] {
+  const sections: ExplainV2Section[] = []
+  const { geJuName, strength, climate, disease, tongGuan, useGod, pattern } = ctx
+
+  // ─── 1. 格局 → 你的先天底牌 ───
+  sections.push({
+    title: '一、你的先天格局',
+    content: buildGeJuVernacular(ctx, pattern, dayElement),
+    classicalRef: getClassicalRef('geJu', geJuName || '格局', kb),
+  })
+
+  // ─── 2. 旺衰 → 你的能量状态 ───
+  sections.push({
+    title: '二、你的能量状态',
+    content: buildWangShuaiVernacular(ctx, strength, dayElement),
+    classicalRef: getClassicalRef('wangShuai', strength.strengthLevelCN, kb),
+  })
+
+  // ─── 3. 调候 → 你的环境舒适度 ───
+  sections.push({
+    title: '三、你的环境舒适度',
+    content: buildTiaoHouVernacular(ctx, climate, dayElement),
+    classicalRef: getClassicalRef('tiaoHou', climate.climateType, kb),
+  })
+
+  // ─── 4. 病药 → 你的瓶颈和突破口 ───
+  sections.push({
+    title: '四、你的瓶颈与突破口',
+    content: buildBingYaoVernacular(ctx, disease, dayElement),
+    classicalRef: getClassicalRef('bingYao', disease.hasDisease ? '病' : '五行', kb),
+  })
+
+  // ─── 5. 通关 → 你的人际调和力 ───
+  sections.push({
+    title: '五、你的人际调和力',
+    content: buildTongGuanVernacular(ctx, tongGuan),
+    classicalRef: getClassicalRef('tongGuan', tongGuan.tongGuanElement || '通关', kb),
+  })
+
+  // ─── 6. 喜用神 → 什么对你最有利 ───
+  sections.push({
+    title: '六、什么对你最有利',
+    content: buildYongShenVernacular(ctx, useGod, dayElement),
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  return sections
+}
+
+function buildGeJuVernacular(ctx: ExplainV2Context, pattern: PatternValidationResult, dayElement: FiveElement): string {
+  const openers = [
+    `你（${ctx.dayGan}${dayElement}）生在${ctx.monthZhi}月，命理上叫做"${ctx.geJuName || '正格'}"格局。`,
+    `从八字来看，你的日主是${ctx.dayGan}，属于${dayElement}，生在${ctx.monthZhi}月，格局被定为"${ctx.geJuName || '正格'}"。`,
+  ]
+  const parts: string[] = [pick(openers)]
+
+  // 星级翻译
+  const starDesc: Record<number, string> = {
+    5: '这是非常难得的好格局，综合评分达到了极品水平，先天条件优越。',
+    4: '这是一个上等格局，综合评分很高，先天条件很好，比大多数人都要强。',
+    3: '这是一个中等格局，有优点也有不足，但整体来说还不错，属于中等偏上的水平。',
+    2: '这个格局比较普通，有一些明显的短板需要注意，但并非没有可取之处。',
+    1: '这个格局有较大的缺陷，但命理讲究"有病方为贵"，找到破解之道也能逆势翻盘。',
+  }
+  parts.push(starDesc[pattern.starLevel] || starDesc[3])
+
+  if (pattern.isPoGe) {
+    parts.push(`不过你的格局有些"破"的地方——${pattern.poGeReasons.slice(0, 2).join('，')}。这就像一张好牌里混了几张烂牌，需要靠后天的运势来弥补。`)
+  }
+
+  if (pattern.strengths.length > 0) {
+    parts.push(`你的先天优势在于：${pickN(pattern.strengths, 3).map(s => translateTerm(s)).join('、')}。`)
+  }
+
+  return parts.join('\n')
+}
+
+function buildWangShuaiVernacular(
+  ctx: ExplainV2Context,
+  strength: DayMasterStrengthResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  // 旺衰白话翻译
+  const wsDesc: Record<string, string> = {
+    '极弱': `你（${ctx.dayGan}）的能量非常弱，就像一棵幼苗，需要阳光和水分的滋养才能成长。`,
+    '偏弱': `你（${ctx.dayGan}）的能量偏弱一些，就像一个人体力不够充沛，需要外界的帮助和支撑。`,
+    '中和': `你（${ctx.dayGan}）的能量处于平衡状态，这是最理想的情况。不偏强也不偏弱，进退有度。`,
+    '偏强': `你（${ctx.dayGan}）的能量偏强，就像精力过剩的人，需要找到合适的发泄和施展渠道。`,
+    '极强': `你（${ctx.dayGan}）的能量非常强，力量充足，但过强则需要引导和释放，否则容易走向极端。`,
+  }
+  parts.push(wsDesc[strength.strengthLevelCN] || wsDesc['中和'])
+
+  // 得令得地得势的白话解释
+  const deDesc: string[] = []
+  if (strength.deLing) {
+    deDesc.push(pick([
+      '你出生的月份对你有利（得令），相当于占了天时。',
+      '你生在了对自己有利的月份，这是很好的先天条件。',
+    ]))
+  }
+  if (strength.deDi) {
+    deDesc.push(pick([
+      '你的八字中有坚实的根基（得地），就像有房有地有家底。',
+      '你在地支中有根，这是稳固的基础。',
+    ]))
+  }
+  if (strength.deShi) {
+    deDesc.push(pick([
+      '你身边有不少帮手（得势），有人缘有资源。',
+      '你的天干中有帮扶力量，说明贵人运不错。',
+    ]))
+  }
+  if (deDesc.length > 0) {
+    parts.push(deDesc.join(''))
+  }
+
+  return parts.join('\n')
+}
+
+function buildTiaoHouVernacular(
+  ctx: ExplainV2Context,
+  climate: ClimateAdjustmentResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  const climateDesc: Record<string, string> = {
+    '寒': '你的命局偏寒，就像冬天出生的人，天生怕冷，需要温暖的环境和阳光。',
+    '暖': '你的命局偏暖，就像春天里温暖舒适，但要注意别过于燥热。',
+    '燥': '你的命局偏燥，就像夏天烈日当空，需要水分来滋润降温。',
+    '湿': '你的命局偏湿，就像梅雨季节，有些阴郁，需要阳光来驱散潮湿。',
+    '中和': '你的命局寒暖适中，不冷不热，这是最舒适的状态，说明先天环境很均衡。',
+  }
+  parts.push(climateDesc[climate.climateType] || climateDesc['中和'])
+
+  if (climate.needsAdjustment) {
+    const needDesc = climate.needs.map(n => {
+      const elemDesc: Record<FiveElement, string> = {
+        '木': '多接触花草树木，用绿色装饰生活空间',
+        '火': '多晒太阳，用红色/暖色调，保持热情积极的心态',
+        '土': '亲近大地，保持稳定的生活节奏',
+        '金': '接触金属材质，保持果断和原则性',
+        '水': '多喝水，居住在靠近水源的地方',
+      }
+      return `需要${n.element}来调候——${elemDesc[n.element] || ''}`
+    })
+    parts.push(needDesc.join('；') + '。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildBingYaoVernacular(
+  ctx: ExplainV2Context,
+  disease: DiseaseMedicineResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  if (disease.hasDisease) {
+    parts.push(pick([
+      '每个命盘都有它的"病症"，找到病症才能对症下药。',
+      '命理上讲"有病方为贵"，有缺陷不一定是坏事，关键在于能否找到解决之道。',
+    ]))
+
+    for (const d of disease.diseases) {
+      parts.push(`你的一个"病症"是【${translateTerm(d.name)}】——${translateTerm(d.cause)}。`)
+    }
+
+    parts.push('\n不过不用担心，每个"病"都有对应的"药"：')
+    for (const m of disease.medicines) {
+      parts.push(`  - ${translateTerm(m.name)}：${translateTerm(m.treatment)}`)
+    }
+
+    parts.push(`\n总结来说：${disease.treatment}`)
+  } else {
+    parts.push('你的命盘五行比较平衡，没有明显的"病症"。这就像身体检查各项指标正常，是良好的先天基础。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildTongGuanVernacular(ctx: ExplainV2Context, tongGuan: TongGuanResult): string {
+  const parts: string[] = []
+
+  if (tongGuan.hasBattle) {
+    parts.push(pick([
+      '在你的八字中，有两种力量在"打架"，就像两个同事意见不合，需要一个调解人来化解矛盾。',
+      '命局中存在五行交战，这意味着你的生活中可能会有一些内在冲突，需要找到平衡点。',
+    ]))
+
+    for (const b of tongGuan.battles) {
+      parts.push(`  - ${b.element1}和${b.element2}在交战（${b.description}）`)
+    }
+
+    if (tongGuan.hasTongGuan && tongGuan.tongGuanElement) {
+      parts.push(`\n好消息是，你的命局中有了${tongGuan.tongGuanElement}来"通关"调停。这就像两个人吵架，有了一个会说两边话的中间人，矛盾就能化解。`)
+    } else {
+      parts.push(`\n不过目前缺少通关的力量，${tongGuan.tongGuanDescription || '建议在生活中多接触通关五行的相关事物来帮助调和。'}`)
+    }
+  } else {
+    parts.push(pick([
+      '你的五行之间相处和谐，没有明显的冲突。这说明你内在矛盾较少，性格比较统一协调。',
+      '命局中没有五行交战的迹象，这很好，说明你的先天能量分布比较均匀。',
+    ]))
+  }
+
+  return parts.join('\n')
+}
+
+function buildYongShenVernacular(
+  ctx: ExplainV2Context,
+  useGod: UseGodResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  const yongDesc: Record<FiveElement, string> = {
+    '木': pick([
+      '"木"是你的用神。木代表生长和拓展，你需要像树木一样不断成长和发展。',
+      '你最有利的五行是"木"。多接触绿色植物、春天去踏青、从事与教育或成长相关的事务，都会对你有帮助。',
+    ]),
+    '火': pick([
+      '"火"是你的用神。火代表热情和光明，你需要保持积极向上的心态。',
+      '你最有利的五行是"火"。多晒太阳、保持社交热情、从事创意类工作，都是对你有利的方向。',
+    ]),
+    '土': pick([
+      '"土"是你的用神。土代表稳定和厚实，你需要踏踏实实地积累。',
+      '你最有利的五行是"土"。保持生活规律、从事稳定行业、接触大地和自然，都是增强你运势的方式。',
+    ]),
+    '金': pick([
+      '"金"是你的用神。金代表果断和规则，你需要做事干脆利落、有原则。',
+      '你最有利的五行是"金"。从事金融、法律或需要果断决策的工作对你有利，同时注意保持自律。',
+    ]),
+    '水': pick([
+      '"水"是你的用神。水代表智慧和变通，你需要灵活应变、善于思考。',
+      '你最有利的五行是"水"。多读书学习、保持思维活跃、从事与智慧或流动性相关的事务，都是好选择。',
+    ]),
+  }
+
+  parts.push(yongDesc[useGod.yongShen] || `${useGod.yongShen}是你的用神。`)
+  parts.push(`对你有利的五行还有${useGod.xiShen}（喜神），而${useGod.jiShen}（忌神）和${useGod.chouShen}（仇神）则对你不利。`)
+  parts.push(`\n简单来说：宜补${useGod.yongShen}和${useGod.xiShen}，忌接触过多${useGod.jiShen}和${useGod.chouShen}的属性。`)
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ③ 新手版（beginner）— 零基础友好，比喻类比
+// ══════════════════════════════════════════════════════════════════════
+
+function buildBeginner(
+  ctx: ExplainV2Context,
+  dayElement: FiveElement,
+  kb?: ClassicKnowledgeEntry[],
+): ExplainV2Section[] {
+  const sections: ExplainV2Section[] = []
+  const { strength, climate, disease, tongGuan, useGod, pattern } = ctx
+
+  // ─── 1. 总体概述 ───
+  sections.push({
+    title: '你的八字概览',
+    content: buildBeginnerOverview(ctx, pattern, strength, dayElement),
+    classicalRef: getClassicalRef('geJu', ctx.geJuName || '格局', kb),
+  })
+
+  // ─── 2. 性格特点 ───
+  sections.push({
+    title: '你的性格画像',
+    content: buildBeginnerPersonality(ctx, strength, dayElement),
+    classicalRef: getClassicalRef('wangShuai', strength.strengthLevelCN, kb),
+  })
+
+  // ─── 3. 天赋与短板 ───
+  sections.push({
+    title: '你的天赋与短板',
+    content: buildBeginnerStrengthsWeaknesses(ctx, pattern, disease, dayElement),
+    classicalRef: getClassicalRef('bingYao', disease.hasDisease ? '病' : '五行', kb),
+  })
+
+  // ─── 4. 最适合你的方向 ───
+  sections.push({
+    title: '最适合你的方向',
+    content: buildBeginnerDirection(ctx, useGod, climate, dayElement),
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  return sections
+}
+
+function buildBeginnerOverview(
+  ctx: ExplainV2Context,
+  pattern: PatternValidationResult,
+  strength: DayMasterStrengthResult,
+  dayElement: FiveElement,
+): string {
+  // 日主五行比喻
+  const dayGanMetaphor: Record<string, Record<FiveElement, string>> = {
+    '强': {
+      '木': '你的性格就像一棵参天大树，枝繁叶茂、根基深厚，充满生命力和向上生长的力量。',
+      '火': '你就像一团熊熊烈火，热情似火、光芒四射，总能照亮身边的人。',
+      '土': '你就像一座大山，沉稳厚重、值得信赖，是朋友们最坚实的依靠。',
+      '金': '你就像一把锋利的宝剑，果敢有力、锐不可当，做事干脆利落。',
+      '水': '你就像一条奔腾的河流，灵活变通、无孔不入，总能找到前进的方向。',
+    },
+    '弱': {
+      '木': '你的性格像春天刚发芽的幼苗，充满生机但还很柔嫩，需要阳光和雨露的呵护。',
+      '火': '你的性格像夜空中的星星，虽然不算耀眼，但安静地散发着属于自己的光芒。',
+      '土': '你的性格像一块璞玉，外表朴实无华，但内心蕴含着珍贵的价值，需要时间和耐心来打磨。',
+      '金': '你的性格像一块含金的矿石，虽然还没有被提炼出来，但潜力十足。',
+      '水': '你的性格像山间的小溪，虽然流量不大，但清澈纯净、源源不断。',
+    },
+    '中': {
+      '木': '你的性格像庭院里修剪整齐的树木，恰到好处地展现着自己的风采。',
+      '火': '你的性格像壁炉中温暖的火苗，不急不躁、恰到好处地给人温暖。',
+      '土': '你的性格像一块耕种良好的田地，平实而富有滋养力。',
+      '金': '你的性格像一枚精心铸造的硬币，价值明确、品质稳定。',
+      '水': '你的性格像一池平静的湖水，波澜不惊却深不可测。',
+    },
+  }
+
+  const strengthKey = strength.strengthScore >= 65 ? '强' : strength.strengthScore < 45 ? '弱' : '中'
+  const metaphor = dayGanMetaphor[strengthKey]?.[dayElement] || dayGanMetaphor['中'][dayElement]
+
+  const starBeginner: Record<number, string> = {
+    5: '你的先天条件非常优越，可以用"天赋异禀"来形容。这是百里挑一的格局。',
+    4: '你的先天条件很不错，起点比大多数人都要高。只要顺势而为，前途光明。',
+    3: '你的先天条件处于中等水平，有优势也有短板，是一个比较均衡的起点。',
+    2: '你的先天条件有一些明显的短板，但别担心——"短跑不一定赢，长跑才见分晓"。',
+    1: '你的先天条件不算理想，但命理讲究"命由天定，运由己造"。找到方向，一样可以逆风翻盘。',
+  }
+
+  const parts: string[] = [
+    `你的日主是${ctx.dayGan}，代表你本质的五行是"${dayElement}"。`,
+    metaphor,
+    '',
+    starBeginner[pattern.starLevel] || starBeginner[3],
+  ]
+
+  return parts.join('\n')
+}
+
+function buildBeginnerPersonality(
+  ctx: ExplainV2Context,
+  strength: DayMasterStrengthResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  // 旺衰对应的性格描述
+  const personalityByStrength: Record<string, string[]> = {
+    '极弱': [
+      '你是一个心思细腻、敏感温和的人。你对外界的感知力很强，能察觉到别人忽略的细节。',
+      '你内心柔软，容易受到外界的影响。你适合在一个温暖、支持性的环境中成长。',
+    ],
+    '偏弱': [
+      '你性格温和，不喜欢与人正面冲突。你更倾向于以柔克刚的方式解决问题。',
+      '你在人际交往中比较谦虚低调，但内心有自己的坚持和原则。',
+    ],
+    '中和': [
+      '你性格稳重、处事得体，不会过于张扬也不会过于保守。在人群中，你常常扮演"稳定器"的角色。',
+      '你的情绪比较平和，不容易大起大落。这种平衡的特质让你在工作和人际关系中都很受欢迎。',
+    ],
+    '偏强': [
+      '你是一个意志坚定、行动力强的人。一旦决定了方向，就会全力以赴地去做。',
+      '你有领导才能，在团队中常常自然地成为核心人物。但要注意倾听他人的意见。',
+    ],
+    '极强': [
+      '你拥有极强的个人意志和决断力，是天生的领导者。你对自己有很高的要求。',
+      '你的能量很强，但要学会适时放松。张弛有度，才能走得更远。',
+    ],
+  }
+
+  const descs = personalityByStrength[strength.strengthLevelCN] || personalityByStrength['中和']
+  parts.push(...descs)
+
+  // 食伤泄秀 / 印星护身等特质
+  if (strength.strengthScore >= 65) {
+    parts.push('')
+    parts.push(pick([
+      `你的能量很强，适合从事能够发挥创造力和领导力的工作。${dayElement}是你的核心力量，发挥好了可以成就一番事业。`,
+      `你天生精力充沛，做事有魄力。不过要注意"过犹不及"的道理，学会在适当的时候放慢脚步。`,
+    ]))
+  } else if (strength.strengthScore < 45) {
+    parts.push('')
+    parts.push(pick([
+      `你天生需要来自家人和朋友的支持。在充满关爱的环境中，你能发挥出最好的自己。`,
+      `你的力量虽然不强，但"四两拨千斤"的力量有时候比蛮力更有效。善于借助外力是你的天赋。`,
+    ]))
+  }
+
+  return parts.join('\n')
+}
+
+function buildBeginnerStrengthsWeaknesses(
+  ctx: ExplainV2Context,
+  pattern: PatternValidationResult,
+  disease: DiseaseMedicineResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  parts.push('【你的天赋】')
+  if (pattern.strengths.length > 0) {
+    for (const s of pattern.strengths.slice(0, 3)) {
+      parts.push(`  - ${translateTerm(s)}`)
+    }
+  } else {
+    parts.push('  - 你的命盘比较均衡，没有特别突出的天赋，但这也意味着你在很多方面都有发展潜力。')
+  }
+
+  parts.push('\n【需要注意的地方】')
+  if (pattern.defects.length > 0) {
+    for (const d of pattern.defects.slice(0, 3)) {
+      parts.push(`  - ${translateTerm(d)}`)
+    }
+  } else if (disease.diseases.length > 0) {
+    for (const d of disease.diseases.slice(0, 3)) {
+      parts.push(`  - ${translateTerm(d.name)}：${translateTerm(d.cause)}`)
+    }
+  } else {
+    parts.push('  - 你的命盘没有明显的短板，这在八字中是比较难得的。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildBeginnerDirection(
+  ctx: ExplainV2Context,
+  useGod: UseGodResult,
+  climate: ClimateAdjustmentResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  const directionDesc: Record<FiveElement, string> = {
+    '木': '你最适合的方向是和教育、培训、出版、健康、环保相关的领域。多接触大自然，经常去公园散步或种花养草，会让你感到舒适和充能。',
+    '火': '你最适合的方向是和创意、表演、餐饮、互联网、传媒相关的领域。保持热情和好奇心，多参与社交活动，会让你更加闪耀。',
+    '土': '你最适合的方向是和房地产、建筑、农业、金融、管理相关的领域。保持脚踏实地的生活态度，稳定的环境是你发挥最好的土壤。',
+    '金': '你最适合的方向是和金融、法律、医疗、机械、科技相关的领域。保持果断和自律，做事情讲究规则和方法论，会让你事半功倍。',
+    '水': '你最适合的方向是和咨询、旅游、物流、艺术、学术相关的领域。保持思维灵活和学习的习惯，经常旅行或变换环境会给你带来灵感。',
+  }
+
+  parts.push(pick([
+    `你的用神五行是"${useGod.yongShen}"，这意味着以下方向最适合你：`,
+    `根据你的命盘分析，你在以下方向最容易获得成功和满足：`,
+  ]))
+  parts.push(directionDesc[useGod.yongShen] || directionDesc[dayElement])
+
+  if (climate.needsAdjustment) {
+    parts.push(`\n另外，你的命局需要调候，建议在生活中注意：`)
+    for (const need of climate.needs) {
+      const tips: Record<FiveElement, string> = {
+        '木': '多种绿植、多吃蔬菜、接触自然',
+        '火': '多晒太阳、穿暖色调衣服、保持运动习惯',
+        '土': '保持作息规律、亲近大地（散步/爬山）',
+        '金': '佩戴金属饰品、保持整洁有序',
+        '水': '多喝水、居住在有水景的地方、经常游泳或泡澡',
+      }
+      parts.push(`  - ${need.element}的调候：${tips[need.element] || ''}`)
+    }
+  }
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ④ 行动建议版（action）— 按领域/时段，宜忌明确
+// ══════════════════════════════════════════════════════════════════════
+
+function buildAction(
+  ctx: ExplainV2Context,
+  dayElement: FiveElement,
+  kb?: ClassicKnowledgeEntry[],
+): ExplainV2Section[] {
+  const sections: ExplainV2Section[] = []
+  const { strength, climate, disease, tongGuan, useGod, pattern } = ctx
+
+  // ─── 1. 事业建议 ───
+  sections.push({
+    title: '一、事业建议',
+    content: buildCareerAction(ctx, useGod, strength, dayElement),
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  // ─── 2. 财富建议 ───
+  sections.push({
+    title: '二、财富建议',
+    content: buildWealthAction(ctx, useGod, strength, dayElement),
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  // ─── 3. 感情建议 ───
+  sections.push({
+    title: '三、感情建议',
+    content: buildRelationshipAction(ctx, useGod, strength, dayElement),
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  // ─── 4. 健康建议 ───
+  sections.push({
+    title: '四、健康建议',
+    content: buildHealthAction(ctx, climate, disease, useGod, dayElement),
+    classicalRef: getClassicalRef('tiaoHou', climate.climateType, kb),
+  })
+
+  // ─── 5. 近/中/远期规划 ───
+  sections.push({
+    title: '五、阶段规划',
+    content: buildTimelineAction(ctx, useGod, pattern, dayElement),
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  return sections
+}
+
+function buildCareerAction(
+  ctx: ExplainV2Context,
+  useGod: UseGodResult,
+  strength: DayMasterStrengthResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  // 身旺 vs 身弱的不同建议
+  if (strength.strengthScore >= 65) {
+    parts.push(pick([
+      '你（身旺）适合开创性、领导性的工作。你的能量充足，能够承担较大的压力和责任。',
+      '你的能量偏强，适合做"开拓者"而非"守成者"。创业或接手新项目是你的强项。',
+    ]))
+    parts.push('\n宜：')
+    parts.push('  - 创业、带领团队、开拓新业务')
+    parts.push('  - 学习考试、展示才华、发表演讲')
+    parts.push('  - 从事${useGod.yongShen}和${useGod.xiShen}相关行业')
+    parts.push('\n忌：')
+    parts.push('  - 频繁跳槽、三分钟热度')
+    parts.push('  - 独断专行、不听他人意见')
+    parts.push('  - 过度消耗精力、不懂得休息')
+  } else if (strength.strengthScore < 45) {
+    parts.push(pick([
+      '你（身弱）适合在稳定的环境中稳扎稳打。先打好基础，再逐步发展。',
+      '你的能量偏弱，不宜冒进。选择一个好的平台和团队，借助团队的力量来成就自己。',
+    ]))
+    parts.push('\n宜：')
+    parts.push('  - 在大平台/稳定企业中积累经验')
+    parts.push('  - 多学习考证，提升自己的专业能力')
+    parts.push('  - 结交贵人，寻求mentor的指导')
+    parts.push('\n忌：')
+    parts.push('  - 盲目创业、过早独立')
+    parts.push('  - 频繁更换行业')
+    parts.push('  - 单打独斗、缺乏团队支持')
+  } else {
+    parts.push(pick([
+      '你（身中和）比较灵活，既能在稳定环境中发展，也具备一定开创能力。',
+      '你的能量比较均衡，事业发展路线比较灵活，可以根据兴趣和机缘来选择。',
+    ]))
+    parts.push('\n宜：')
+    parts.push('  - 综合发展、多条腿走路')
+    parts.push('  - 培养复合型技能')
+    parts.push('  - 从事${useGod.yongShen}相关行业')
+    parts.push('\n忌：')
+    parts.push('  - 长期犹豫不决、缺乏行动')
+    parts.push('  - 过于追求稳定而错过机会')
+  }
+
+  // 用神行业参考
+  parts.push(`\n你的用神是${useGod.yongShen}，以下行业方向对你特别有利：`)
+  const industryMap: Record<FiveElement, string> = {
+    '木': '教育、培训、出版、健康、环保、农业、林业、中医药、文具',
+    '火': '互联网、传媒、餐饮、创意设计、影视演艺、电商、新能源',
+    '土': '房地产、建筑、农业、矿业、物业管理、酒店、人力资源',
+    '金': '金融、法律、医疗、机械制造、科技、IT硬件、珠宝',
+    '水': '咨询、旅游、物流、航运、艺术、学术研究、贸易、酒水',
+  }
+  parts.push(`  - ${industryMap[useGod.yongShen] || '综合类'}`)
+
+  return parts.join('\n')
+}
+
+function buildWealthAction(
+  ctx: ExplainV2Context,
+  useGod: UseGodResult,
+  strength: DayMasterStrengthResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  const財StarElement = OVERCOME[dayElement] // 我克者为财星
+
+  if (strength.strengthScore >= 65) {
+    parts.push('你身旺能任财，天生具备"赚钱"的能力。只要用神到位，财富自然会向你聚集。')
+    parts.push('\n宜：')
+    parts.push('  - 稳健理财，长期投资')
+    parts.push('  - 利用专业技能创造收入')
+    parts.push('  - 财富积累后适当做慈善（泄财）')
+    parts.push('\n忌：')
+    parts.push('  - 过度保守、错失良机')
+    parts.push('  - 贪图暴利、投机冒险')
+  } else if (strength.strengthScore < 45) {
+    parts.push('你身弱不宜直接追求大财，"财多身弱反为财累"。应该先增强自身能力，财富自然会随之而来。')
+    parts.push('\n宜：')
+    parts.push('  - 储蓄为主，量入为出')
+    parts.push('  - 投资于自身学习和能力提升')
+    parts.push('  - 寻找合伙人，不要独自扛风险')
+    parts.push('\n忌：')
+    parts.push('  - 借贷投资、杠杆操作')
+    parts.push('  - 投机冒险、一夜暴富的心态')
+    parts.push('  - 一次性投入大额资金')
+  } else {
+    parts.push('你的财富运势比较平稳，适合稳健的理财方式。不会大起大落，细水长流。')
+    parts.push('\n宜：')
+    parts.push('  - 定期定额投资')
+    parts.push('  - 多元化配置资产')
+    parts.push('  - 重视现金流管理')
+    parts.push('\n忌：')
+    parts.push('  - 把鸡蛋放在一个篮子里')
+    parts.push('  - 跟风投资、盲目投机')
+  }
+
+  parts.push(`\n你的财星五行是${財StarElement}，在${ELEMENT_SEASON[財StarElement]}季和方位（${getDirection(財StarElement)}）可能会有额外的财运机遇。`)
+
+  return parts.join('\n')
+}
+
+function buildRelationshipAction(
+  ctx: ExplainV2Context,
+  useGod: UseGodResult,
+  strength: DayMasterStrengthResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  if (strength.strengthScore >= 65) {
+    parts.push('你性格主动强势，在感情中往往扮演主导角色。要注意给对方足够的空间和尊重。')
+    parts.push('\n宜：')
+    parts.push('  - 主动表达爱意和关心')
+    parts.push('  - 在关系中展现你的责任心和担当')
+    parts.push('  - 选择能包容你强势性格的伴侣')
+    parts.push('\n忌：')
+    parts.push('  - 控制欲过强、干涉对方')
+    parts.push('  - 在感情中冲动决定')
+  } else if (strength.strengthScore < 45) {
+    parts.push('你性格温柔细腻，在感情中容易付出很多。要懂得保护自己，选择真正对你好的人。')
+    parts.push('\n宜：')
+    parts.push('  - 主动沟通，表达自己的需求')
+    parts.push('  - 选择能给你安全感的伴侣')
+    parts.push('  - 在感情中保持自己的独立性')
+    parts.push('\n忌：')
+    parts.push('  - 过度付出、牺牲自己')
+    parts.push('  - 因为害怕孤独而将就')
+    parts.push('  - 冲动决定婚姻大事')
+  } else {
+    parts.push('你在感情中比较理性和平和，是一个懂得经营关系的类型。')
+    parts.push('\n宜：')
+    parts.push('  - 坦诚沟通，建立深层信任')
+    parts.push('  - 在感情中保持平等和尊重')
+    parts.push('  - 共同成长、互相支持')
+    parts.push('\n忌：')
+    parts.push('  - 冷暴力、回避问题')
+    parts.push('  - 在感情中过于计较得失')
+  }
+
+  parts.push(`\n你的喜神五行是${useGod.xiShen}，如果伴侣的八字中${useGod.xiShen}较多，你们会相处得更加融洽。`)
+
+  return parts.join('\n')
+}
+
+function buildHealthAction(
+  ctx: ExplainV2Context,
+  climate: ClimateAdjustmentResult,
+  disease: DiseaseMedicineResult,
+  useGod: UseGodResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  // 五行对应脏腑
+  const organMap: Record<FiveElement, string> = {
+    '木': '肝、胆、眼睛、筋腱',
+    '火': '心、小肠、舌、血管',
+    '土': '脾、胃、口、肌肉',
+    '金': '肺、大肠、鼻、皮肤',
+    '水': '肾、膀胱、耳、骨骼',
+  }
+
+  parts.push(`你的日主五行是${dayElement}，对应的脏腑是${organMap[dayElement]}，这些部位需要特别注意保养。`)
+
+  if (climate.needsAdjustment) {
+    parts.push(`\n你的命局${climate.climateType}，以下健康建议特别重要：`)
+    const healthTips: Record<string, string> = {
+      '寒': '注意保暖，尤其是腰腹和脚部。冬天不宜过度运动出汗，适合温泉、艾灸等温补方式。饮食宜温热，忌生冷。',
+      '燥': '注意滋阴润燥，多喝水、多吃水果。秋冬季节注意皮肤保湿。饮食忌辛辣，宜清淡滋润。',
+      '湿': '注意祛湿，保持居住环境干燥通风。运动出汗有助排湿。饮食忌油腻甜食，宜健脾利湿。',
+      '暖': '注意清热降火，避免过度熬夜。夏天注意防暑。饮食宜清淡，多吃清凉食物。',
+    }
+    parts.push(healthTips[climate.climateType] || '')
+  }
+
+  // 病药对应的健康提示
+  if (disease.hasDisease) {
+    parts.push('\n命局五行失衡可能影响的健康方面：')
+    for (const d of disease.diseases) {
+      if (d.element) {
+        parts.push(`  - ${d.element}行偏弱/偏旺 → 关注${organMap[d.element]}相关健康`)
+      }
+    }
+  }
+
+  parts.push('\n通用健康建议：')
+  parts.push('  - 宜：规律作息、适度运动、均衡饮食、定期体检')
+  parts.push('  - 忌：熬夜、暴饮暴食、过度劳累、忽视小毛病')
+  parts.push(`  - 适宜运动：${getSuitableExercise(useGod.yongShen)}`)
+
+  return parts.join('\n')
+}
+
+function buildTimelineAction(
+  ctx: ExplainV2Context,
+  useGod: UseGodResult,
+  pattern: PatternValidationResult,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  // 近期（1年内）
+  parts.push('【近期（1年内）】')
+  if (pattern.starLevel >= 4) {
+    parts.push('  - 你目前处于运势较好的阶段，适合大胆行动、推进重要计划。')
+  } else if (pattern.starLevel >= 3) {
+    parts.push('  - 运势平稳，适合稳扎稳打、积累实力。')
+  } else {
+    parts.push('  - 宜低调蓄力，多学习提升自己，为将来的机会做准备。')
+  }
+  parts.push(`  - 重点补足${useGod.yongShen}的能量：${getElementAction(useGod.yongShen)}`)
+
+  // 中期（1-3年）
+  parts.push('\n【中期（1-3年）】')
+  parts.push('  - 持续深耕${useGod.yongShen}相关的领域和能力。')
+  if (pattern.defects.length > 0) {
+    parts.push(`  - 有意识地补足自身短板：${pattern.defects.slice(0, 2).map(d => translateTerm(d)).join('、')}。`)
+  }
+  parts.push('  - 拓展人脉，寻找能给你带来${useGod.xiShen}能量的人和环境。')
+
+  // 远期（3年以上）
+  parts.push('\n【远期（3年以上）】')
+  if (pattern.starLevel >= 4) {
+    parts.push('  - 长期来看，你具备较高的成就潜力。在${useGod.yongShen}相关领域深耕，有望取得卓越成就。')
+  } else if (pattern.starLevel >= 3) {
+    parts.push('  - 稳步发展，中年后运势往往更佳。关键是保持耐心和持续学习。')
+  } else {
+    parts.push('  - "大器晚成"的命格居多。不要着急，积累够了，机会自然会来。')
+  }
+
+  return parts.join('\n')
+}
+
+// ─── 总评 ───
+
+function buildOverallSummary(
+  ctx: ExplainV2Context,
+  dayElement: FiveElement,
+  kb?: ClassicKnowledgeEntry[],
+  confidence: number,
+): string {
+  const { geJuName, strength, useGod, pattern, disease } = ctx
+
+  const parts: string[] = []
+
+  parts.push(pick([
+    `综合来看，${ctx.dayGan}日主生于${ctx.monthZhi}月，${geJuName || '正格'}格局，${strength.strengthLevelCN}之命。`,
+    `此造日主${ctx.dayGan}（${dayElement}），生于${ctx.monthZhi}，格局${geJuName || '正格'}，日主${strength.strengthLevelCN}。`,
+    `${ctx.dayGan}${dayElement}日主，${ctx.monthZhi}月建，取${geJuName || '正格'}论之。日主${strength.strengthLevelCN}，${pattern.totalScore}分。`,
+  ]))
+
+  // 核心结论（始终一致）
+  parts.push(`用神${useGod.yongShen}，喜神${useGod.xiShen}，忌神${useGod.jiShen}。`)
+
+  if (pattern.starLevel >= 4) {
+    parts.push(pick([
+      '格局清纯有力，先天优越，配合后天努力，前途可期。',
+      '此为上等格局，日主得令有力，喜用神到位，一生富贵可期。',
+    ]))
+  } else if (pattern.starLevel >= 3) {
+    parts.push(pick([
+      '格局中等，有优有劣。善用喜用神，趋吉避凶，可致小康。',
+      '此命格局中等偏上，贵在五行流通、用神有力。知命而行，可保安康。',
+    ]))
+  } else {
+    parts.push(pick([
+      '格局有缺陷，需后天补足。找到用神方向，持之以恒，亦可改善运势。',
+      '此命虽格局不完美，但"有病方为贵"，找到突破口后反而能逆势崛起。',
+    ]))
+  }
+
+  if (disease.hasDisease) {
+    parts.push(`命局有${disease.diseases.length}项病症需化解：${disease.diseases.map(d => d.name).join('、')}。药方：${disease.medicines.map(m => m.name).join('、')}。`)
+  } else {
+    parts.push('命局五行相对平衡，无需特别化解，顺势而为即可。')
+  }
+
+  parts.push(`\n（分析可信度：${confidence}%）`)
+
+  return parts.join('\n')
+}
+
+// ─── 术语翻译工具 ───
+
+/** 将命理学术语翻译为日常语言 */
+function translateTerm(text: string): string {
+  const translations: Record<string, string> = {
+    '食伤泄秀': '思维能力强，表达欲旺盛，善于用才华打动别人',
+    '印星护身': '有人会在关键时刻帮你，长辈缘好',
+    '建禄格': '自身能力强，靠自己的本领吃饭',
+    '月刃驾杀': '在压力和挑战中反而能激发潜能',
+    '比劫帮身': '朋友和同事是你的重要助力',
+    '财星耗身': '追求物质的过程中会消耗精力',
+    '官杀制劫': '有纪律和压力才能让你发挥最佳状态',
+    '食神制杀': '用自己的智慧和才华来化解危机',
+    '杀印相生': '压力反而能转化为你的动力和资源',
+    '伤官佩印': '有才华但需要约束，"佩印"就是找到约束你的力量',
+    '财官双美': '事业和财富两不误',
+    '食伤生财': '靠创意和技能赚钱',
+    '官印相生': '事业稳定上升，有贵人提拔',
+    '身弱财多': '想要的东西很多但精力不够，容易感到力不从心',
+    '杀旺无制': '来自外界的压力很大，需要找到化解方式',
+    '身旺无泄': '精力充沛但没有好的发挥渠道，需要找到出口',
+    '比劫过旺': '竞争者太多或者太固执己见',
+    '官杀混杂': '来自不同方向的压力让你难以取舍',
+    '五行偏枯': '某些方面的能力完全缺失，需要后天补足',
+    '格局通根': '基础扎实，有根有底',
+    '格局透干': '才能外显，容易被看到和认可',
+    '十神配合精妙': '各种性格特质之间搭配得很好',
+    '贵气充足': '社会地位和声望的先天条件好',
+    '调候适中': '生活环境舒适，不冷不热',
+    '月令得令': '出生的时机和环境对你很有利',
+    '真格成格': '格局纯正，是难得的好命',
+    '成格验证通过': '格局经得起考验，确实成立',
+    '格局上等': '格局品质很高',
+  }
+
+  for (const [key, value] of Object.entries(translations)) {
+    if (text.includes(key)) {
+      return text.replace(key, value)
+    }
+  }
+  return text
+}
+
+// ─── 辅助函数 ───
+
+function getDirection(element: FiveElement): string {
+  const map: Record<FiveElement, string> = {
+    '木': '东方', '火': '南方', '土': '中央/本地',
+    '金': '西方', '水': '北方',
+  }
+  return map[element] || '四方皆可'
+}
+
+function getSuitableExercise(yongShen: FiveElement): string {
+  const map: Record<FiveElement, string> = {
+    '木': '散步、瑜伽、太极、慢跑（舒缓型运动）',
+    '火': '跑步、游泳、骑行、球类运动（消耗型运动）',
+    '土': '徒步、登山、力量训练、农作（接地型运动）',
+    '金': '击剑、拳击、武术、器械健身（精准型运动）',
+    '水': '游泳、潜水、滑雪、冥想（流动型运动）',
+  }
+  return map[yongShen] || '根据个人喜好选择'
+}
+
+function getElementAction(element: FiveElement): string {
+  const map: Record<FiveElement, string> = {
+    '木': '多读书、学习新技能、亲近自然、穿绿色/青色衣物',
+    '火': '积极社交、展示才华、穿红色/紫色衣物、保持热情乐观',
+    '土': '保持稳定作息、脚踏实地做事、穿黄色/棕色衣物、注意饮食规律',
+    '金': '制定计划、按规则执行、穿白色/金色衣物、保持自律果断',
+    '水': '灵活变通、多旅行见世面、穿黑色/蓝色衣物、保持思维活跃',
+  }
+  return map[element] || ''
+}

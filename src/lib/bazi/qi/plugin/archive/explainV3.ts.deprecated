@@ -1,0 +1,2566 @@
+// ─── DEPRECATED ────────────────────────────────────────────
+// 此文件已被 ExplainV4 (explainV4.ts) 完全替代。
+// 保留仅供参考，禁止在新代码中引用。
+// 归档时间：2026-07-11
+// ─────────────────────────────────────────────────────────────
+/**
+ * ExplainV3 — P3.8 七层解释引擎
+ *
+ * 基于同一命盘的全部分析结果（V2 + P3 引擎），生成七层不同维度的解释：
+ *   ① professional — 命理专业版（学术术语，引用古籍）
+ *   ② vernacular   — 白话版（日常语言，通俗易懂）
+ *   ③ action       — 行动建议（按领域/时段，宜忌明确）
+ *   ④ risk         — 风险提示（基于概率引擎和事件预测的风险等级分析）
+ *   ⑤ classical    — 古籍依据（集中引用相关古籍原文+解读）
+ *   ⑥ similar      — 相似案例（基于 SimilarityEngine 的 TOP3 相似案例摘要）
+ *   ⑦ aiAdvice     — AI综合建议（跨引擎综合分析，给出务实建议）
+ *
+ * 特性：
+ *   - 纯 Plugin，不修改 Kernel
+ *   - import type 仅引入类型
+ *   - 所有输出内容中文字符串，保留多语言架构
+ *   - pick() / pickN() 随机选择器避免模板化
+ *   - 每层至少一条古籍引用
+ *   - 核心结论跨层一致，表达方式多样
+ *   - readingLevel 影响术语密度和解释深度
+ */
+
+import type { FiveElement } from '../../types'
+
+// ─── 类型导出 ───
+
+export type ExplainV3Language = 'zh-CN' | 'zh-TW' | 'en' | 'ja' | 'ko'
+
+export type ExplainV3ReadingLevel = 'expert' | 'intermediate' | 'beginner'
+
+export interface ExplainV3Section {
+  title: string
+  content: string
+  classicalRef?: string
+}
+
+export interface ExplainV3Result {
+  /** 7层输出 */
+  professional: ExplainV3Section[]
+  vernacular: ExplainV3Section[]
+  action: ExplainV3Section[]
+  risk: ExplainV3Section[]
+  classical: ExplainV3Section[]
+  similar: ExplainV3Section[]
+  aiAdvice: ExplainV3Section[]
+  /** 整体摘要（根据阅读等级自动调整） */
+  overallSummary: string
+  /** 置信度 */
+  confidence: number
+  /** 使用的语言 */
+  language: ExplainV3Language
+  /** 阅读等级 */
+  readingLevel: ExplainV3ReadingLevel
+}
+
+export interface ExplainV3Context {
+  // 基础四柱信息
+  dayGan: string
+  monthZhi: string
+  fourPillars: string
+  geJuName: string
+
+  // V2 层面的分析结果
+  geJuResult: any
+  strength: any  // DayMasterStrengthResult
+  climate: any  // ClimateAdjustmentResult
+  disease: any  // DiseaseMedicineResult
+  tongGuan: any  // TongGuanResult
+  useGod: any    // UseGodResult
+  pattern: any  // PatternValidationResult
+
+  // P3 引擎结果（可选但推荐）
+  probabilityResult?: any    // ProbabilityResult from probabilityEngine
+  timelineResult?: any       // TimelineResult from timelineEngine
+  eventResult?: any          // EventPredictionResult from eventPredictionEngine
+  decisionResult?: any       // DecisionResult or DecisionResultAll from decisionEngine
+  similarResult?: any       // SimilarityResult from similarityEngine
+
+  // 神煞（可选）
+  shenSha?: any              // ShenShaResult
+
+  // 古籍知识库（可选）
+  knowledgeBase?: any[]      // ClassicKnowledgeEntry[]
+
+  // 输出配置
+  language?: ExplainV3Language
+  readingLevel?: ExplainV3ReadingLevel
+}
+
+// ─── 多语言 I18n 接口 ───
+
+export interface ExplainV3I18n {
+  professional: string
+  vernacular: string
+  action: string
+  risk: string
+  classical: string
+  similar: string
+  aiAdvice: string
+  overallSummary: string
+  confidence: string
+  language: string
+  readingLevel: string
+  riskLevel: Record<string, string>
+  recommendation: Record<string, string>
+  dimensionNames: Record<string, string>
+  uiLabels: {
+    positive: string
+    negative: string
+    advice: string
+    source: string
+    credibility: string
+    keyEvents: string
+    doThis: string
+    avoidThis: string
+    riskLevelLabel: string
+    copingStrategy: string
+    classicalSource: string
+    vernacularInterpretation: string
+    caseName: string
+    similarity: string
+    trustLevel: string
+    traditionalConclusion: string
+    lifeEvents: string
+    commonPoints: string
+    differences: string
+    coreAdvice: string
+    sourceEngines: string
+    confidenceLabel: string
+  }
+}
+
+// ─── 五行关系常量 ───
+
+const ELEMENT_MAP: Record<string, FiveElement> = {
+  '甲': '木', '乙': '木', '丙': '火', '丁': '火',
+  '戊': '土', '己': '土', '庚': '金', '辛': '金',
+  '壬': '水', '癸': '水',
+}
+
+const GENERATE: Record<FiveElement, FiveElement> = {
+  '木': '火', '火': '土', '土': '金', '金': '水', '水': '木',
+}
+
+const OVERCOME: Record<FiveElement, FiveElement> = {
+  '木': '土', '土': '水', '水': '火', '火': '金', '金': '木',
+}
+
+const ELEMENT_SEASON: Record<FiveElement, string> = {
+  '木': '春', '火': '夏', '土': '长夏/四季', '金': '秋', '水': '冬',
+}
+
+// ─── 默认古籍引用库（扩充 V2，新增事业/财富/婚姻/健康分类） ───
+
+const DEFAULT_CLASSICAL_REFS: Record<string, string[]> = {
+  geJu: [
+    '《子平真诠》论格局："成格必有真机，破格必有实据。格之成败，关乎一生穷通。"',
+    '《子平真诠》："八字用神，专求月令，以日干配月令地支，而生克不同，格局分焉。"',
+    '《渊海子平》："格局之名，古人立言之体也。"',
+  ],
+  wangShuai: [
+    '《滴天髓》任铁樵注："旺者宜抑，衰者宜扶。扶抑得中，命局平和。"',
+    '《滴天髓》："得令者旺，得地者强，得势者壮。三者皆得，其旺不可挡也。"',
+    '《三命通会》："身旺则能任财官，身弱则财官反为累己之物。"',
+  ],
+  tiaoHou: [
+    '《穷通宝鉴》："寒甚用暖，暖甚用寒，方为中和之美。"',
+    '《滴天髓》："寒暖燥湿，四时之气。调候为要，不调则偏。"',
+    '《穷通宝鉴》徐乐吾注："调候者，调和气候之谓也。命局寒暖燥湿，皆需调候。"',
+  ],
+  bingYao: [
+    '《滴天髓》："有病方为贵，无伤不是奇。命局有病得药救之，即为贵格。"',
+    '《神峰通考》："病重药轻不济，药重病轻反伤。"',
+    '《滴天髓》："病之深者，药须猛；病之浅者，药宜缓。"',
+  ],
+  tongGuan: [
+    '《滴天髓》："通关者，两行相战，以中间通关之物解之。"',
+    '《滴天髓》："通关有情，格局自高。通关无情，命局多碍。"',
+  ],
+  yongShen: [
+    '《滴天髓》："旺者宜抑，衰者宜扶。扶抑得中，命局平和。"',
+    '《子平真诠》："用神者，命局之枢纽，一身之主宰。"',
+    '《穷通宝鉴》："用神得力，则一生亨通；用神失力，则一生蹇滞。"',
+  ],
+  career: [
+    '《三命通会》："青年重食伤，奋斗拼搏期。中年重财官，事业巅峰期。"',
+    '《滴天髓》："何知其人富，财气通门户。何知其人贵，官星有理会。"',
+    '《子平真诠》："论命以财官为重，官为禄，财为福。"',
+  ],
+  wealth: [
+    '《渊海子平》："财为养命之源，不可无。身强财旺，富贵双全。"',
+    '《滴天髓》："财气通门户，无人不富。"',
+    '《三命通会》："财旺生官，官卫财星。财官双全，富贵之命。"',
+  ],
+  marriage: [
+    '《三命通会》："男以财为妻，女以官为夫。"',
+    '《渊海子平》："日支为妻宫，宜静不宜动。"',
+    '《滴天髓》："夫妻宫与喜用相合，婚姻美满；与忌神相冲，则多波折。"',
+  ],
+  health: [
+    '《滴天髓》："五行和合，百病不生。五行偏枯，灾厄难免。"',
+    '《穷通宝鉴》："调候为养生之本，不调则疾。"',
+    '《三命通会》："五行失和，疾病丛生。水火不济，心肾不交。"',
+  ],
+}
+
+// ─── I18n 默认实现 ───
+
+const I18N_ZH_CN: ExplainV3I18n = {
+  professional: '命理专业版',
+  vernacular: '白话版',
+  action: '行动建议',
+  risk: '风险提示',
+  classical: '古籍依据',
+  similar: '相似案例',
+  aiAdvice: 'AI综合建议',
+  overallSummary: '整体摘要',
+  confidence: '置信度',
+  language: '语言',
+  readingLevel: '阅读等级',
+  riskLevel: {
+    '极低': '极低',
+    '低': '低',
+    '中': '中',
+    '高': '高',
+    '极高': '极高',
+  },
+  recommendation: {
+    '强烈建议': '强烈建议',
+    '建议': '建议',
+    '中性': '中性',
+    '不建议': '不建议',
+    '强烈不建议': '强烈不建议',
+  },
+  dimensionNames: {
+    career: '事业',
+    wealth: '财富',
+    marriage: '婚姻',
+    health: '健康',
+    study: '学业',
+    patron: '贵人运',
+  },
+  uiLabels: {
+    positive: '利好因素',
+    negative: '风险因素',
+    advice: '建议',
+    source: '来源引擎',
+    credibility: '可信度',
+    keyEvents: '关键人生事件',
+    doThis: '宜',
+    avoidThis: '忌',
+    riskLevelLabel: '风险等级',
+    copingStrategy: '应对策略',
+    classicalSource: '古籍原文',
+    vernacularInterpretation: '白话解读',
+    caseName: '案例名称',
+    similarity: '相似度',
+    trustLevel: '可信度等级',
+    traditionalConclusion: '传统结论',
+    lifeEvents: '关键人生事件',
+    commonPoints: '共同点',
+    differences: '差异点',
+    coreAdvice: '核心建议',
+    sourceEngines: '来源引擎',
+    confidenceLabel: '置信度',
+  },
+}
+
+function buildPlaceholderI18n(): ExplainV3I18n {
+  return {
+    professional: 'TODO: Professional',
+    vernacular: 'TODO: Vernacular',
+    action: 'TODO: Action',
+    risk: 'TODO: Risk',
+    classical: 'TODO: Classical',
+    similar: 'TODO: Similar',
+    aiAdvice: 'TODO: AI Advice',
+    overallSummary: 'TODO: Overall Summary',
+    confidence: 'TODO: Confidence',
+    language: 'TODO: Language',
+    readingLevel: 'TODO: Reading Level',
+    riskLevel: { '极低': 'Very Low', '低': 'Low', '中': 'Medium', '高': 'High', '极高': 'Very High' },
+    recommendation: { '强烈建议': 'Strongly Recommended', '建议': 'Recommended', '中性': 'Neutral', '不建议': 'Not Recommended', '强烈不建议': 'Strongly Not Recommended' },
+    dimensionNames: { career: 'Career', wealth: 'Wealth', marriage: 'Marriage', health: 'Health', study: 'Study', patron: 'Patron' },
+    uiLabels: {
+      positive: 'TODO: Positive',
+      negative: 'TODO: Negative',
+      advice: 'TODO: Advice',
+      source: 'TODO: Source',
+      credibility: 'TODO: Credibility',
+      keyEvents: 'TODO: Key Events',
+      doThis: 'TODO: Do',
+      avoidThis: 'TODO: Avoid',
+      riskLevelLabel: 'TODO: Risk Level',
+      copingStrategy: 'TODO: Coping',
+      classicalSource: 'TODO: Classical',
+      vernacularInterpretation: 'TODO: Interpretation',
+      caseName: 'TODO: Case',
+      similarity: 'TODO: Similarity',
+      trustLevel: 'TODO: Trust',
+      traditionalConclusion: 'TODO: Conclusion',
+      lifeEvents: 'TODO: Life Events',
+      commonPoints: 'TODO: Common',
+      differences: 'TODO: Differences',
+      coreAdvice: 'TODO: Core Advice',
+      sourceEngines: 'TODO: Source Engines',
+      confidenceLabel: 'TODO: Confidence',
+    },
+  }
+}
+
+export function getI18n(lang: ExplainV3Language): ExplainV3I18n {
+  if (lang === 'zh-CN') return I18N_ZH_CN
+  if (lang === 'zh-TW') {
+    return {
+      ...buildPlaceholderI18n(),
+      professional: '命理專業版',
+      vernacular: '白話版',
+      action: '行動建議',
+      risk: '風險提示',
+      classical: '古籍依據',
+      similar: '相似案例',
+      aiAdvice: 'AI綜合建議',
+      overallSummary: '整體摘要',
+      confidence: '置信度',
+      language: '語言',
+      readingLevel: '閱讀等級',
+      riskLevel: { '极低': '極低', '低': '低', '中': '中', '高': '高', '极高': '極高' },
+      recommendation: { '强烈建议': '強烈建議', '建议': '建議', '中性': '中性', '不建议': '不建議', '强烈不建议': '強烈不建議' },
+      dimensionNames: { career: '事業', wealth: '財富', marriage: '婚姻', health: '健康', study: '學業', patron: '貴人運' },
+    }
+  }
+  return buildPlaceholderI18n()
+}
+
+// ─── 随机选择器工具 ───
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
+
+function pickN<T>(arr: T[], n: number): T[] {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, Math.min(n, arr.length))
+}
+
+/** 获取古籍引用，优先使用 knowledgeBase，否则使用内置默认 */
+function getClassicalRef(
+  category: string,
+  keyword: string,
+  knowledgeBase?: any[],
+): string {
+  if (knowledgeBase && knowledgeBase.length > 0) {
+    const matches = knowledgeBase.filter(
+      (e: any) =>
+        (e.originalText && e.originalText.includes(keyword)) ||
+        (e.vernacular && e.vernacular.includes(keyword)) ||
+        (e.keywords && e.keywords.some((k: string) => k.includes(keyword.toLowerCase())))
+    )
+    if (matches.length > 0) {
+      const entry = pick(matches)
+      return `《${entry.source}》${entry.chapter ? entry.chapter + '：' : ''}"${entry.originalText}"`
+    }
+  }
+  const defaults = DEFAULT_CLASSICAL_REFS[category]
+  return defaults ? pick(defaults) : ''
+}
+
+/** 获取某分类的全部引用 */
+function getAllClassicalRefs(category: string): string[] {
+  return DEFAULT_CLASSICAL_REFS[category] || []
+}
+
+// ─── 辅助函数 ───
+
+function getDirection(element: FiveElement): string {
+  const map: Record<FiveElement, string> = {
+    '木': '东方', '火': '南方', '土': '中央/本地',
+    '金': '西方', '水': '北方',
+  }
+  return map[element] || '四方皆可'
+}
+
+function getSuitableExercise(yongShen: FiveElement): string {
+  const map: Record<FiveElement, string> = {
+    '木': '散步、瑜伽、太极、慢跑（舒缓型运动）',
+    '火': '跑步、游泳、骑行、球类运动（消耗型运动）',
+    '土': '徒步、登山、力量训练、农作（接地型运动）',
+    '金': '击剑、拳击、武术、器械健身（精准型运动）',
+    '水': '游泳、潜水、滑雪、冥想（流动型运动）',
+  }
+  return map[yongShen] || '根据个人喜好选择'
+}
+
+function getElementAction(element: FiveElement): string {
+  const map: Record<FiveElement, string> = {
+    '木': '多读书、学习新技能、亲近自然、穿绿色/青色衣物',
+    '火': '积极社交、展示才华、穿红色/紫色衣物、保持热情乐观',
+    '土': '保持稳定作息、脚踏实地做事、穿黄色/棕色衣物、注意饮食规律',
+    '金': '制定计划、按规则执行、穿白色/金色衣物、保持自律果断',
+    '水': '灵活变通、多旅行见世面、穿黑色/蓝色衣物、保持思维活跃',
+  }
+  return map[element] || ''
+}
+
+/** 术语翻译为日常语言 */
+export function translateTerm(text: string, lang?: ExplainV3Language): string {
+  if (lang && lang !== 'zh-CN' && lang !== 'zh-TW') return text
+
+  const translations: Record<string, string> = {
+    '食伤泄秀': '思维能力强，表达欲旺盛，善于用才华打动别人',
+    '印星护身': '有人会在关键时刻帮你，长辈缘好',
+    '建禄格': '自身能力强，靠自己的本领吃饭',
+    '月刃驾杀': '在压力和挑战中反而能激发潜能',
+    '比劫帮身': '朋友和同事是你的重要助力',
+    '财星耗身': '追求物质的过程中会消耗精力',
+    '官杀制劫': '有纪律和压力才能让你发挥最佳状态',
+    '食神制杀': '用自己的智慧和才华来化解危机',
+    '杀印相生': '压力反而能转化为你的动力和资源',
+    '伤官佩印': '有才华但需要约束，找到约束你的力量',
+    '财官双美': '事业和财富两不误',
+    '食伤生财': '靠创意和技能赚钱',
+    '官印相生': '事业稳定上升，有贵人提拔',
+    '身弱财多': '想要的东西很多但精力不够，容易感到力不从心',
+    '杀旺无制': '来自外界的压力很大，需要找到化解方式',
+    '身旺无泄': '精力充沛但没有好的发挥渠道，需要找到出口',
+    '比劫过旺': '竞争者太多或者太固执己见',
+    '官杀混杂': '来自不同方向的压力让你难以取舍',
+    '五行偏枯': '某些方面的能力完全缺失，需要后天补足',
+    '格局通根': '基础扎实，有根有底',
+    '格局透干': '才能外显，容易被看到和认可',
+    '十神配合精妙': '各种性格特质之间搭配得很好',
+    '贵气充足': '社会地位和声望的先天条件好',
+    '调候适中': '生活环境舒适，不冷不热',
+    '月令得令': '出生的时机和环境对你很有利',
+    '真格成格': '格局纯正，是难得的好命',
+    '成格验证通过': '格局经得起考验，确实成立',
+    '格局上等': '格局品质很高',
+  }
+
+  for (const [key, value] of Object.entries(translations)) {
+    if (text.includes(key)) {
+      return text.replace(key, value)
+    }
+  }
+  return text
+}
+
+/** 置信度格式化 */
+export function formatConfidence(value: number, level: ExplainV3ReadingLevel): string {
+  if (level === 'expert') return `${value}%（基于格局评分${Math.round(value * 0.4)}% + 旺衰平衡${Math.round(value * 0.25)}% + 调候${Math.round(value * 0.15)}% + 概率引擎${Math.round(value * 0.2)}%加权）`
+  if (level === 'intermediate') return `${value}%（综合格局、旺衰、调候及概率引擎多维度加权计算）`
+  return `${value}%（系统综合评估，数值越高说明分析结果越可靠）`
+}
+
+// ─── 置信度计算 ───
+
+function calcConfidenceV3(
+  ctx: ExplainV3Context,
+): number {
+  let score = 50
+
+  // V2 基础：格局评分
+  score += ctx.pattern.totalScore * 0.2
+
+  // V2 基础：旺衰平衡度
+  const balance = 100 - Math.abs(ctx.strength.strengthScore - 50) * 2
+  score += balance * 0.12
+
+  // V2 基础：调候完成度
+  score += ctx.climate.climateScore * 0.08
+
+  // P3 加权：概率引擎 overallConfidence
+  if (ctx.probabilityResult) {
+    score += ctx.probabilityResult.overallConfidence * 0.15
+  } else {
+    score += 5
+  }
+
+  // P3 加权：时间轴数据量
+  if (ctx.timelineResult && ctx.timelineResult.stages) {
+    score += ctx.timelineResult.stages.length > 0 ? 3 : 0
+  }
+
+  return Math.round(Math.max(30, Math.min(95, score)))
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  核心入口
+// ══════════════════════════════════════════════════════════════════════
+
+export function generateExplainV3(context: ExplainV3Context): ExplainV3Result {
+  const {
+    dayGan, monthZhi, fourPillars, geJuName,
+    geJuResult, strength, climate, disease, tongGuan, useGod, pattern,
+    probabilityResult, timelineResult, eventResult, decisionResult, similarResult,
+    shenSha, knowledgeBase,
+  } = context
+
+  const dayElement = ELEMENT_MAP[dayGan] || '木'
+  const lang = context.language || 'zh-CN'
+  const level = context.readingLevel || 'intermediate'
+  const kb = knowledgeBase
+
+  // 置信度
+  const confidence = calcConfidenceV3(context)
+
+  // ① 专业版
+  const professional = buildProfessional(context, dayElement, kb, level)
+
+  // ② 白话版
+  const vernacular = buildVernacular(context, dayElement, kb, level)
+
+  // ③ 行动建议
+  const action = buildAction(context, dayElement, kb, level)
+
+  // ④ 风险提示
+  const risk = buildRisk(context, dayElement, kb, level)
+
+  // ⑤ 古籍依据
+  const classical = buildClassical(context, dayElement, kb, level)
+
+  // ⑥ 相似案例
+  const similar = buildSimilar(context, dayElement, kb, level)
+
+  // ⑦ AI综合建议
+  const aiAdvice = buildAiAdvice(context, dayElement, kb, level, confidence)
+
+  // 整体摘要
+  const overallSummary = buildOverallSummary(context, dayElement, kb, confidence, level)
+
+  return {
+    professional,
+    vernacular,
+    action,
+    risk,
+    classical,
+    similar,
+    aiAdvice,
+    overallSummary,
+    confidence,
+    language: lang,
+    readingLevel: level,
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ① 专业版（professional）— 学术术语密集，引用古籍
+// ══════════════════════════════════════════════════════════════════════
+
+function buildProfessional(
+  ctx: ExplainV3Context,
+  dayElement: FiveElement,
+  kb?: any[],
+  level?: ExplainV3ReadingLevel,
+): ExplainV3Section[] {
+  const sections: ExplainV3Section[] = []
+  const { geJuName, strength, climate, disease, tongGuan, useGod, pattern } = ctx
+
+  // ─── 1. 格局分析 ───
+  const geJuOpeners = [
+    `日主${ctx.dayGan}（${dayElement}）生于${ctx.monthZhi}月，取${geJuName || '正格'}论命。`,
+    `本造以${ctx.dayGan}日主立极，月令${ctx.monthZhi}，${geJuName || '取正格'}为宗。`,
+    `观此四柱"${ctx.fourPillars}"，日主${ctx.dayGan}生于${ctx.monthZhi}月，定格局为${geJuName || '正格'}。`,
+  ]
+  sections.push({
+    title: '一、格局分析',
+    content: pick(geJuOpeners) + '\n' + buildGeJuProfessional(ctx, pattern),
+    classicalRef: getClassicalRef('geJu', geJuName || '格局', kb),
+  })
+
+  // ─── 2. 旺衰分析 ───
+  sections.push({
+    title: '二、日主旺衰',
+    content: buildWangShuaiProfessional(ctx, strength, dayElement),
+    classicalRef: getClassicalRef('wangShuai', strength.strengthLevelCN || strength.strengthLevel || '中和', kb),
+  })
+
+  // ─── 3. 调候分析 ───
+  sections.push({
+    title: '三、调候分析',
+    content: buildTiaoHouProfessional(ctx, climate, dayElement),
+    classicalRef: getClassicalRef('tiaoHou', climate.climateType, kb),
+  })
+
+  // ─── 4. 病药分析 ───
+  sections.push({
+    title: '四、病药分析',
+    content: buildBingYaoProfessional(ctx, disease, dayElement),
+    classicalRef: getClassicalRef('bingYao', disease.hasDisease ? '病' : '五行', kb),
+  })
+
+  // ─── 5. 通关分析 ───
+  sections.push({
+    title: '五、通关分析',
+    content: buildTongGuanProfessional(ctx, tongGuan),
+    classicalRef: getClassicalRef('tongGuan', tongGuan.tongGuanElement || '通关', kb),
+  })
+
+  // ─── 6. 喜用神综合 ───
+  sections.push({
+    title: '六、喜用神综合',
+    content: buildYongShenProfessional(ctx, useGod, dayElement),
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  // ─── 7. 概率引擎数据（P3新增） ───
+  if (ctx.probabilityResult) {
+    sections.push({
+      title: '七、概率推演',
+      content: buildProbabilityProfessional(ctx),
+      classicalRef: ctx.probabilityResult.classicalRef || getClassicalRef('yongShen', useGod.yongShen, kb),
+    })
+  }
+
+  // ─── 8. 人生时间轴（P3新增） ───
+  if (ctx.timelineResult) {
+    sections.push({
+      title: ctx.probabilityResult ? '八、人生时间轴' : '七、人生时间轴',
+      content: buildTimelineProfessional(ctx),
+      classicalRef: ctx.timelineResult.classicalRef || getClassicalRef('career', '事业', kb),
+    })
+  }
+
+  return sections
+}
+
+function buildGeJuProfessional(ctx: ExplainV3Context, pattern: any): string {
+  const parts: string[] = []
+
+  parts.push(`格局评级：${'★'.repeat(pattern.starLevel)}（${pattern.rank}，${pattern.totalScore}分）。`)
+
+  if (pattern.isZhenGe) {
+    parts.push('经辨真正格成格局，格局清纯有力。')
+  }
+  if (pattern.isPoGe) {
+    parts.push(`然格局有破，破格原因：${pattern.poGeReasons.join('；')}。`)
+  }
+
+  if (pattern.strengths.length > 0) {
+    const strengthNames = pickN(pattern.strengths, 3).join('、')
+    parts.push(`格局优势在于${strengthNames}。`)
+  }
+
+  if (pattern.defects.length > 0) {
+    const defectNames = pickN(pattern.defects, 3).join('、')
+    parts.push(`需注意${defectNames}。`)
+  }
+
+  if (pattern.dimensions && pattern.dimensions.length > 0) {
+    parts.push('\n各维度评分：')
+    for (const dim of pattern.dimensions) {
+      parts.push(`  - ${dim.name}：${dim.score}分（权重${(dim.weight * 100).toFixed(0)}%）— ${dim.reason}`)
+    }
+  }
+
+  return parts.join('\n')
+}
+
+function buildWangShuaiProfessional(ctx: ExplainV3Context, strength: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+  const levelCN = strength.strengthLevelCN || strength.strengthLevel || '中和'
+
+  parts.push(`日主${ctx.dayGan}（${dayElement}），旺衰综合评定：${levelCN}（${strength.strengthScore}/100分）。`)
+
+  const deList: string[] = []
+  if (strength.deLing) deList.push('得令')
+  if (strength.deDi) deList.push('得地')
+  if (strength.deShi) deList.push('得势')
+  if (deList.length > 0) {
+    parts.push(`三才条件：${deList.join('、')}。`)
+  } else {
+    parts.push('三才皆不得，日主根基浅薄。')
+  }
+
+  if (strength.tongGen) parts.push('日主通根有力。')
+  if (strength.touGan) parts.push('日主透干显达。')
+  parts.push(`月令旺衰状态：${strength.wangShuai}。`)
+  parts.push(`生扶力量${strength.shengFuPower.toFixed(1)}，克泄耗力量${strength.keXiePower.toFixed(1)}。`)
+
+  if (strength.changShengDetails) {
+    const beneficial = strength.changShengDetails.filter((d: any) => d.isBeneficial)
+    if (beneficial.length > 0) {
+      const states = beneficial.map((d: any) => `${d.pillar}${d.state}`).join('、')
+      parts.push(`十二长生得地：${states}。`)
+    }
+  }
+
+  if (strength.dimensions && strength.dimensions.length > 0) {
+    parts.push('\n各维度加权分析：')
+    for (const dim of strength.dimensions) {
+      parts.push(`  - ${dim.name}：${dim.rawScore}分 × ${(dim.weight * 100).toFixed(0)}% = ${dim.weightedScore.toFixed(1)}`)
+      parts.push(`    ${dim.reason}`)
+    }
+  }
+
+  return parts.join('\n')
+}
+
+function buildTiaoHouProfessional(ctx: ExplainV3Context, climate: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  parts.push(`日主${ctx.dayGan}（${dayElement}）生于${ctx.monthZhi}月，命局气候${climate.climateType}（评分${climate.climateScore}/100）。`)
+
+  if (climate.needsAdjustment) {
+    parts.push('命局需要调候。')
+    for (const need of climate.needs) {
+      parts.push(`  - 调候用神：${need.element}（${need.preferredStems.join('、')}），${need.description}。`)
+      parts.push(`    出处：${need.source}，优先级${need.priority}。`)
+    }
+    parts.push(`调候建议：${climate.advice}。`)
+  } else {
+    parts.push('命局寒暖适中，无需调候，为中和之美。')
+  }
+
+  parts.push(`月令气候属性：${climate.monthClimate}。`)
+  if (climate.dayGanClimate) {
+    parts.push(climate.dayGanClimate + '。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildBingYaoProfessional(ctx: ExplainV3Context, disease: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  if (disease.hasDisease) {
+    parts.push(`命局有病，经辨析共${disease.diseases.length}项病症：\n`)
+    for (const d of disease.diseases) {
+      parts.push(`  - 【${d.name}】${d.cause}（严重程度${'■'.repeat(d.severity)}${'□'.repeat(5 - d.severity)}）`)
+    }
+
+    parts.push(`\n对应药方：`)
+    for (const m of disease.medicines) {
+      parts.push(`  - 【${m.name}】${m.treatment}。出处：${m.source}`)
+    }
+
+    parts.push(`\n治法总结：${disease.treatment}`)
+  } else {
+    parts.push('命局五行相对平衡，无大病可论。正如古籍所言"无病不求药"，此为平顺之命的基础。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildTongGuanProfessional(ctx: ExplainV3Context, tongGuan: any): string {
+  const parts: string[] = []
+
+  if (tongGuan.hasBattle) {
+    parts.push(`命局存在五行交战，共${tongGuan.battles.length}处：\n`)
+    for (const b of tongGuan.battles) {
+      parts.push(`  - ${b.description}（强度${b.intensity}）`)
+    }
+
+    if (tongGuan.hasTongGuan && tongGuan.tongGuanElement) {
+      parts.push(`\n通关成功：以${tongGuan.tongGuanElement}通关。${tongGuan.tongGuanDescription}。`)
+    } else {
+      parts.push(`\n通关不畅：${tongGuan.tongGuanDescription || '五行交战而通关无力，需补通关之物。'}`)
+    }
+
+    parts.push(`风险等级：${'■'.repeat(tongGuan.riskLevel)}${'□'.repeat(5 - tongGuan.riskLevel)}（${tongGuan.riskLevel}/5）。`)
+  } else {
+    parts.push('命局五行和合，无交战之象，不需通关。此为平稳之象。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildYongShenProfessional(ctx: ExplainV3Context, useGod: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  parts.push(`日主${ctx.dayGan}（${dayElement}）${ctx.strength.strengthLevelCN || ctx.strength.strengthLevel || '中和'}，综合喜用神如下：`)
+  parts.push(`  - 用神：${useGod.yongShen}（得分${useGod.yongScore}）`)
+  parts.push(`  - 喜神：${useGod.xiShen}`)
+  parts.push(`  - 忌神：${useGod.jiShen}`)
+  parts.push(`  - 仇神：${useGod.chouShen}`)
+  parts.push(`  - 闲神：${useGod.xianShen}`)
+
+  if (useGod.dimensionContributions) {
+    const dims = useGod.dimensionContributions
+    parts.push('\n各维度对用神选择的影响：')
+    parts.push(`  - 旺衰维度：喜${dims.strength.element}，${dims.strength.reason}`)
+    parts.push(`  - 调候维度：${dims.climate.element ? '喜' + dims.climate.element + '，' : ''}${dims.climate.reason}`)
+    parts.push(`  - 病药维度：${dims.disease.element ? '需' + dims.disease.element + '，' : ''}${dims.disease.reason}`)
+    parts.push(`  - 通关维度：${dims.tongGuan.element ? '喜' + dims.tongGuan.element + '，' : ''}${dims.tongGuan.reason}`)
+  }
+
+  parts.push(`\n综合建议：${useGod.advice}`)
+
+  return parts.join('\n')
+}
+
+function buildProbabilityProfessional(ctx: ExplainV3Context): string {
+  const pr = ctx.probabilityResult
+  const parts: string[] = []
+
+  parts.push(`综合人生评分：${pr.overallScore}/100（置信度${pr.overallConfidence}%，风险等级：${pr.overallRisk}）。`)
+  parts.push(`人生阶段判断：${pr.lifePhase}。最佳年龄区间：${pr.peakAge}；需谨慎区间：${pr.cautionAge}。`)
+
+  parts.push('\n各维度概率分析：')
+  for (const dim of pr.dimensions) {
+    parts.push(`  - ${dim.name}：${dim.score}分（置信度${dim.confidence}%，风险${dim.riskLevel}）`)
+    if (dim.positiveFactors.length > 0) {
+      parts.push(`    利好：${pickN(dim.positiveFactors, 2).join('；')}`)
+    }
+    if (dim.negativeFactors.length > 0) {
+      parts.push(`    风险：${pickN(dim.negativeFactors, 2).join('；')}`)
+    }
+  }
+
+  parts.push(`\n总评：${pr.summary}`)
+
+  return parts.join('\n')
+}
+
+function buildTimelineProfessional(ctx: ExplainV3Context): string {
+  const tr = ctx.timelineResult
+  const parts: string[] = []
+
+  parts.push(`人生整体趋势：${tr.overallTrend}。巅峰年龄：${tr.peakAge}；谨慎年龄：${tr.cautionAge}。`)
+
+  parts.push('\n各阶段评分：')
+  for (const stage of tr.stages) {
+    const s = stage.score
+    parts.push(`  - ${stage.ageRange}岁（${stage.trend}）：综合${s.overall}分，事业${s.career}，财富${s.wealth}，婚姻${s.marriage}，健康${s.health}。`)
+    if (stage.keyEvents && stage.keyEvents.length > 0) {
+      parts.push(`    关键事件：${pickN(stage.keyEvents, 2).join('、')}`)
+    }
+  }
+
+  parts.push(`\n总评：${tr.summary}`)
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ② 白话版（vernacular）— 日常语言，通俗易懂
+// ══════════════════════════════════════════════════════════════════════
+
+function buildVernacular(
+  ctx: ExplainV3Context,
+  dayElement: FiveElement,
+  kb?: any[],
+  level?: ExplainV3ReadingLevel,
+): ExplainV3Section[] {
+  const sections: ExplainV3Section[] = []
+  const { geJuName, strength, climate, disease, tongGuan, useGod, pattern } = ctx
+
+  // ─── 1. 先天格局 ───
+  sections.push({
+    title: '一、你的先天格局',
+    content: buildGeJuVernacular(ctx, pattern, dayElement),
+    classicalRef: getClassicalRef('geJu', geJuName || '格局', kb),
+  })
+
+  // ─── 2. 能量状态 ───
+  sections.push({
+    title: '二、你的能量状态',
+    content: buildWangShuaiVernacular(ctx, strength, dayElement),
+    classicalRef: getClassicalRef('wangShuai', strength.strengthLevelCN || strength.strengthLevel || '中和', kb),
+  })
+
+  // ─── 3. 环境舒适度 ───
+  sections.push({
+    title: '三、你的环境舒适度',
+    content: buildTiaoHouVernacular(ctx, climate, dayElement),
+    classicalRef: getClassicalRef('tiaoHou', climate.climateType, kb),
+  })
+
+  // ─── 4. 瓶颈与突破口 ───
+  sections.push({
+    title: '四、你的瓶颈与突破口',
+    content: buildBingYaoVernacular(ctx, disease, dayElement),
+    classicalRef: getClassicalRef('bingYao', disease.hasDisease ? '病' : '五行', kb),
+  })
+
+  // ─── 5. 什么对你最有利 ───
+  sections.push({
+    title: '五、什么对你最有利',
+    content: buildYongShenVernacular(ctx, useGod, dayElement),
+    classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+  })
+
+  // ─── 6. 概率数据的白话解读（P3新增） ───
+  if (ctx.probabilityResult) {
+    sections.push({
+      title: '六、各领域运势概况',
+      content: buildProbabilityVernacular(ctx),
+      classicalRef: ctx.probabilityResult.classicalRef || getClassicalRef('career', '事业', kb),
+    })
+  }
+
+  // ─── 7. 人生轨迹描述（P3新增） ───
+  if (ctx.timelineResult) {
+    sections.push({
+      title: ctx.probabilityResult ? '七、你的人生轨迹' : '六、你的人生轨迹',
+      content: buildTimelineVernacular(ctx),
+      classicalRef: ctx.timelineResult.classicalRef || getClassicalRef('career', '事业', kb),
+    })
+  }
+
+  return sections
+}
+
+function buildGeJuVernacular(ctx: ExplainV3Context, pattern: any, dayElement: FiveElement): string {
+  const openers = [
+    `你（${ctx.dayGan}${dayElement}）生在${ctx.monthZhi}月，命理上叫做"${ctx.geJuName || '正格'}"格局。`,
+    `从八字来看，你的日主是${ctx.dayGan}，属于${dayElement}，生在${ctx.monthZhi}月，格局被定为"${ctx.geJuName || '正格'}"。`,
+  ]
+  const parts: string[] = [pick(openers)]
+
+  const starDesc: Record<number, string> = {
+    5: '这是非常难得的好格局，综合评分达到了极品水平，先天条件优越。',
+    4: '这是一个上等格局，综合评分很高，先天条件很好，比大多数人都要强。',
+    3: '这是一个中等格局，有优点也有不足，但整体来说还不错，属于中等偏上的水平。',
+    2: '这个格局比较普通，有一些明显的短板需要注意，但并非没有可取之处。',
+    1: '这个格局有较大的缺陷，但命理讲究"有病方为贵"，找到破解之道也能逆势翻盘。',
+  }
+  parts.push(starDesc[pattern.starLevel] || starDesc[3])
+
+  if (pattern.isPoGe) {
+    parts.push(`不过你的格局有些"破"的地方——${pattern.poGeReasons.slice(0, 2).join('，')}。这就像一张好牌里混了几张烂牌，需要靠后天的运势来弥补。`)
+  }
+
+  if (pattern.strengths.length > 0) {
+    parts.push(`你的先天优势在于：${pickN(pattern.strengths, 3).map((s: any) => translateTerm(String(s))).join('、')}。`)
+  }
+
+  return parts.join('\n')
+}
+
+function buildWangShuaiVernacular(ctx: ExplainV3Context, strength: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+  const levelCN = strength.strengthLevelCN || strength.strengthLevel || '中和'
+
+  const wsDesc: Record<string, string> = {
+    '极弱': `你（${ctx.dayGan}）的能量非常弱，就像一棵幼苗，需要阳光和水分的滋养才能成长。`,
+    '偏弱': `你（${ctx.dayGan}）的能量偏弱一些，就像一个人体力不够充沛，需要外界的帮助和支撑。`,
+    '中和': `你（${ctx.dayGan}）的能量处于平衡状态，这是最理想的情况。不偏强也不偏弱，进退有度。`,
+    '偏强': `你（${ctx.dayGan}）的能量偏强，就像精力过剩的人，需要找到合适的发泄和施展渠道。`,
+    '极强': `你（${ctx.dayGan}）的能量非常强，力量充足，但过强则需要引导和释放，否则容易走向极端。`,
+  }
+  parts.push(wsDesc[levelCN] || wsDesc['中和'])
+
+  const deDesc: string[] = []
+  if (strength.deLing) {
+    deDesc.push(pick([
+      '你出生的月份对你有利（得令），相当于占了天时。',
+      '你生在了对自己有利的月份，这是很好的先天条件。',
+    ]))
+  }
+  if (strength.deDi) {
+    deDesc.push(pick([
+      '你的八字中有坚实的根基（得地），就像有房有地有家底。',
+      '你在地支中有根，这是稳固的基础。',
+    ]))
+  }
+  if (strength.deShi) {
+    deDesc.push(pick([
+      '你身边有不少帮手（得势），有人缘有资源。',
+      '你的天干中有帮扶力量，说明贵人运不错。',
+    ]))
+  }
+  if (deDesc.length > 0) {
+    parts.push(deDesc.join(''))
+  }
+
+  return parts.join('\n')
+}
+
+function buildTiaoHouVernacular(ctx: ExplainV3Context, climate: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  const climateDesc: Record<string, string> = {
+    '寒': '你的命局偏寒，就像冬天出生的人，天生怕冷，需要温暖的环境和阳光。',
+    '暖': '你的命局偏暖，就像春天里温暖舒适，但要注意别过于燥热。',
+    '燥': '你的命局偏燥，就像夏天烈日当空，需要水分来滋润降温。',
+    '湿': '你的命局偏湿，就像梅雨季节，有些阴郁，需要阳光来驱散潮湿。',
+    '中和': '你的命局寒暖适中，不冷不热，这是最舒适的状态，说明先天环境很均衡。',
+  }
+  parts.push(climateDesc[climate.climateType] || climateDesc['中和'])
+
+  if (climate.needsAdjustment) {
+    const needDesc = climate.needs.map((n: any) => {
+      const elemDesc: Record<FiveElement, string> = {
+        '木': '多接触花草树木，用绿色装饰生活空间',
+        '火': '多晒太阳，用红色/暖色调，保持热情积极的心态',
+        '土': '亲近大地，保持稳定的生活节奏',
+        '金': '接触金属材质，保持果断和原则性',
+        '水': '多喝水，居住在靠近水源的地方',
+      }
+      return `需要${n.element}来调候——${elemDesc[n.element as FiveElement] || ''}`
+    })
+    parts.push(needDesc.join('；') + '。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildBingYaoVernacular(ctx: ExplainV3Context, disease: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  if (disease.hasDisease) {
+    parts.push(pick([
+      '每个命盘都有它的"病症"，找到病症才能对症下药。',
+      '命理上讲"有病方为贵"，有缺陷不一定是坏事，关键在于能否找到解决之道。',
+    ]))
+
+    for (const d of disease.diseases) {
+      parts.push(`你的一个"病症"是【${translateTerm(d.name)}】——${translateTerm(d.cause)}。`)
+    }
+
+    parts.push('\n不过不用担心，每个"病"都有对应的"药"：')
+    for (const m of disease.medicines) {
+      parts.push(`  - ${translateTerm(m.name)}：${translateTerm(m.treatment)}`)
+    }
+
+    parts.push(`\n总结来说：${disease.treatment}`)
+  } else {
+    parts.push('你的命盘五行比较平衡，没有明显的"病症"。这就像身体检查各项指标正常，是良好的先天基础。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildYongShenVernacular(ctx: ExplainV3Context, useGod: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  const yongDesc: Record<FiveElement, string[]> = {
+    '木': [
+      '"木"是你的用神。木代表生长和拓展，你需要像树木一样不断成长和发展。',
+      '你最有利的五行是"木"。多接触绿色植物、春天去踏青、从事与教育或成长相关的事务，都会对你有帮助。',
+    ],
+    '火': [
+      '"火"是你的用神。火代表热情和光明，你需要保持积极向上的心态。',
+      '你最有利的五行是"火"。多晒太阳、保持社交热情、从事创意类工作，都是对你有利的方向。',
+    ],
+    '土': [
+      '"土"是你的用神。土代表稳定和厚实，你需要踏踏实实地积累。',
+      '你最有利的五行是"土"。保持生活规律、从事稳定行业、接触大地和自然，都是增强你运势的方式。',
+    ],
+    '金': [
+      '"金"是你的用神。金代表果断和规则，你需要做事干脆利落、有原则。',
+      '你最有利的五行是"金"。从事金融、法律或需要果断决策的工作对你有利，同时注意保持自律。',
+    ],
+    '水': [
+      '"水"是你的用神。水代表智慧和变通，你需要灵活应变、善于思考。',
+      '你最有利的五行是"水"。多读书学习、保持思维活跃、从事与智慧或流动性相关的事务，都是好选择。',
+    ],
+  }
+
+  parts.push(pick(yongDesc[useGod.yongShen as FiveElement] || yongDesc[dayElement]) || `${useGod.yongShen}是你的用神。`)
+  parts.push(`对你有利的五行还有${useGod.xiShen}（喜神），而${useGod.jiShen}（忌神）和${useGod.chouShen}（仇神）则对你不利。`)
+  parts.push(`\n简单来说：宜补${useGod.yongShen}和${useGod.xiShen}，忌接触过多${useGod.jiShen}和${useGod.chouShen}的属性。`)
+
+  return parts.join('\n')
+}
+
+function buildProbabilityVernacular(ctx: ExplainV3Context): string {
+  const pr = ctx.probabilityResult
+  const parts: string[] = []
+
+  parts.push(pick([
+    `综合来看，你的人生整体评分是${pr.overallScore}分（满分100），属于${pr.overallScore >= 70 ? '中上水平' : pr.overallScore >= 50 ? '中等水平' : '需要更多努力'}。`,
+    `从概率角度来看，你的人生综合得分为${pr.overallScore}/100，${pr.overallRisk === '低' || pr.overallRisk === '极低' ? '整体风险可控' : '需要注意一些风险'}。`,
+  ]))
+
+  parts.push(`\n各领域具体情况：`)
+  for (const dim of pr.dimensions) {
+    const scoreLabel = dim.score >= 70 ? '不错' : dim.score >= 50 ? '一般' : '需要关注'
+    parts.push(`  - ${dim.name}：${dim.score}分（${scoreLabel}）。${dim.advice}`)
+  }
+
+  parts.push(`\n最佳年龄段：${pr.peakAge}，这段时间要抓住机会。需谨慎年龄段：${pr.cautionAge}，这段时间宜稳不宜冒险。`)
+
+  return parts.join('\n')
+}
+
+function buildTimelineVernacular(ctx: ExplainV3Context): string {
+  const tr = ctx.timelineResult
+  const parts: string[] = []
+
+  parts.push(pick([
+    `你的人生走势呈"${tr.overallTrend}"趋势。${tr.overallTrend === '上升型' ? '总体来说是越来越好，前途光明。' : tr.overallTrend === '先抑后扬' ? '虽然早年可能不太顺利，但后来会越来越好。' : '人生会有起伏，关键是在不同阶段做出正确的选择。'}`,
+    `从人生时间轴来看，你的整体运势呈"${tr.overallTrend}"。巅峰期在${tr.peakAge}左右。`,
+  ]))
+
+  parts.push('\n各阶段人生轨迹：')
+  for (const stage of tr.stages) {
+    const trendDesc: Record<string, string> = {
+      '上升': '越来越好',
+      '平稳': '稳中求进',
+      '下降': '需要注意调整',
+      '峰值': '人生高峰期',
+      '谷底': '低谷期，需蓄力',
+    }
+    parts.push(`  - ${stage.ageRange}岁：${trendDesc[stage.trend] || '正常发展'}，综合${stage.score.overall}分。${stage.description || ''}`)
+  }
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ③ 行动建议（action）— 按领域/时段，宜忌明确
+// ══════════════════════════════════════════════════════════════════════
+
+function buildAction(
+  ctx: ExplainV3Context,
+  dayElement: FiveElement,
+  kb?: any[],
+  level?: ExplainV3ReadingLevel,
+): ExplainV3Section[] {
+  const sections: ExplainV3Section[] = []
+  const { strength, climate, disease, useGod, pattern } = ctx
+
+  // ─── 1. 事业建议 ───
+  sections.push({
+    title: '一、事业建议',
+    content: buildCareerAction(ctx, useGod, strength, dayElement),
+    classicalRef: getClassicalRef('career', '事业', kb),
+  })
+
+  // ─── 2. 财富建议 ───
+  sections.push({
+    title: '二、财富建议',
+    content: buildWealthAction(ctx, useGod, strength, dayElement),
+    classicalRef: getClassicalRef('wealth', '财富', kb),
+  })
+
+  // ─── 3. 感情建议 ───
+  sections.push({
+    title: '三、感情建议',
+    content: buildRelationshipAction(ctx, useGod, strength, dayElement),
+    classicalRef: getClassicalRef('marriage', '婚姻', kb),
+  })
+
+  // ─── 4. 健康建议 ───
+  sections.push({
+    title: '四、健康建议',
+    content: buildHealthAction(ctx, climate, disease, useGod, dayElement),
+    classicalRef: getClassicalRef('health', '健康', kb),
+  })
+
+  // ─── 5. 阶段规划 ───
+  sections.push({
+    title: '五、阶段规划',
+    content: buildTimelineAction(ctx, useGod, pattern, dayElement),
+    classicalRef: getClassicalRef('career', '事业', kb),
+  })
+
+  // ─── 6. 决策引擎建议（P3新增） ───
+  if (ctx.decisionResult) {
+    sections.push({
+      title: '六、重大决策参考',
+      content: buildDecisionAction(ctx),
+      classicalRef: getClassicalRef('yongShen', useGod.yongShen, kb),
+    })
+  }
+
+  // ─── 7. 关键时间节点（P3新增） ───
+  if (ctx.eventResult) {
+    sections.push({
+      title: ctx.decisionResult ? '七、关键时间节点' : '六、关键时间节点',
+      content: buildEventAction(ctx),
+      classicalRef: ctx.eventResult.classicalRef || getClassicalRef('career', '事业', kb),
+    })
+  }
+
+  return sections
+}
+
+function buildCareerAction(
+  ctx: ExplainV3Context,
+  useGod: any,
+  strength: any,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+  const score = strength.strengthScore
+
+  if (score >= 65) {
+    parts.push(pick([
+      '你（身旺）适合开创性、领导性的工作。你的能量充足，能够承担较大的压力和责任。',
+      '你的能量偏强，适合做"开拓者"而非"守成者"。创业或接手新项目是你的强项。',
+    ]))
+    parts.push('\n宜：')
+    parts.push('  - 创业、带领团队、开拓新业务')
+    parts.push('  - 学习考试、展示才华、发表演讲')
+    parts.push(`  - 从事${useGod.yongShen}和${useGod.xiShen}相关行业`)
+    parts.push('\n忌：')
+    parts.push('  - 频繁跳槽、三分钟热度')
+    parts.push('  - 独断专行、不听他人意见')
+    parts.push('  - 过度消耗精力、不懂得休息')
+  } else if (score < 45) {
+    parts.push(pick([
+      '你（身弱）适合在稳定的环境中稳扎稳打。先打好基础，再逐步发展。',
+      '你的能量偏弱，不宜冒进。选择一个好的平台和团队，借助团队的力量来成就自己。',
+    ]))
+    parts.push('\n宜：')
+    parts.push('  - 在大平台/稳定企业中积累经验')
+    parts.push('  - 多学习考证，提升自己的专业能力')
+    parts.push('  - 结交贵人，寻求导师的指导')
+    parts.push('\n忌：')
+    parts.push('  - 盲目创业、过早独立')
+    parts.push('  - 频繁更换行业')
+    parts.push('  - 单打独斗、缺乏团队支持')
+  } else {
+    parts.push(pick([
+      '你（身中和）比较灵活，既能在稳定环境中发展，也具备一定开创能力。',
+      '你的能量比较均衡，事业发展路线比较灵活，可以根据兴趣和机缘来选择。',
+    ]))
+    parts.push('\n宜：')
+    parts.push('  - 综合发展、多条腿走路')
+    parts.push('  - 培养复合型技能')
+    parts.push(`  - 从事${useGod.yongShen}相关行业`)
+    parts.push('\n忌：')
+    parts.push('  - 长期犹豫不决、缺乏行动')
+    parts.push('  - 过于追求稳定而错过机会')
+  }
+
+  parts.push(`\n你的用神是${useGod.yongShen}，以下行业方向对你特别有利：`)
+  const industryMap: Record<FiveElement, string> = {
+    '木': '教育、培训、出版、健康、环保、农业、林业、中医药、文具',
+    '火': '互联网、传媒、餐饮、创意设计、影视演艺、电商、新能源',
+    '土': '房地产、建筑、农业、矿业、物业管理、酒店、人力资源',
+    '金': '金融、法律、医疗、机械制造、科技、IT硬件、珠宝',
+    '水': '咨询、旅游、物流、航运、艺术、学术研究、贸易、酒水',
+  }
+  parts.push(`  - ${industryMap[useGod.yongShen as FiveElement] || '综合类'}`)
+
+  return parts.join('\n')
+}
+
+function buildWealthAction(
+  ctx: ExplainV3Context,
+  useGod: any,
+  strength: any,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+  const score = strength.strengthScore
+
+  if (score >= 65) {
+    parts.push('你身旺能任财，天生具备"赚钱"的能力。只要用神到位，财富自然会向你聚集。')
+    parts.push('\n宜：')
+    parts.push('  - 稳健理财，长期投资')
+    parts.push('  - 利用专业技能创造收入')
+    parts.push('  - 财富积累后适当做慈善（泄财）')
+    parts.push('\n忌：')
+    parts.push('  - 过度保守、错失良机')
+    parts.push('  - 贪图暴利、投机冒险')
+  } else if (score < 45) {
+    parts.push('你身弱不宜直接追求大财，"财多身弱反为财累"。应该先增强自身能力，财富自然会随之而来。')
+    parts.push('\n宜：')
+    parts.push('  - 储蓄为主，量入为出')
+    parts.push('  - 投资于自身学习和能力提升')
+    parts.push('  - 寻找合伙人，不要独自扛风险')
+    parts.push('\n忌：')
+    parts.push('  - 借贷投资、杠杆操作')
+    parts.push('  - 投机冒险、一夜暴富的心态')
+  } else {
+    parts.push('你的财富运势比较平稳，适合稳健的理财方式。不会大起大落，细水长流。')
+    parts.push('\n宜：')
+    parts.push('  - 定期定额投资')
+    parts.push('  - 多元化配置资产')
+    parts.push('  - 重视现金流管理')
+    parts.push('\n忌：')
+    parts.push('  - 把鸡蛋放在一个篮子里')
+    parts.push('  - 跟风投资、盲目投机')
+  }
+
+  const wealthElement = OVERCOME[dayElement]
+  parts.push(`\n你的财星五行是${wealthElement}，在${ELEMENT_SEASON[wealthElement]}季和方位（${getDirection(wealthElement)}）可能会有额外的财运机遇。`)
+
+  return parts.join('\n')
+}
+
+function buildRelationshipAction(
+  ctx: ExplainV3Context,
+  useGod: any,
+  strength: any,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+  const score = strength.strengthScore
+
+  if (score >= 65) {
+    parts.push('你性格主动强势，在感情中往往扮演主导角色。要注意给对方足够的空间和尊重。')
+    parts.push('\n宜：')
+    parts.push('  - 主动表达爱意和关心')
+    parts.push('  - 在关系中展现你的责任心和担当')
+    parts.push('  - 选择能包容你强势性格的伴侣')
+    parts.push('\n忌：')
+    parts.push('  - 控制欲过强、干涉对方')
+    parts.push('  - 在感情中冲动决定')
+  } else if (score < 45) {
+    parts.push('你性格温柔细腻，在感情中容易付出很多。要懂得保护自己，选择真正对你好的人。')
+    parts.push('\n宜：')
+    parts.push('  - 主动沟通，表达自己的需求')
+    parts.push('  - 选择能给你安全感的伴侣')
+    parts.push('  - 在感情中保持自己的独立性')
+    parts.push('\n忌：')
+    parts.push('  - 过度付出、牺牲自己')
+    parts.push('  - 因为害怕孤独而将就')
+  } else {
+    parts.push('你在感情中比较理性和平和，是一个懂得经营关系的类型。')
+    parts.push('\n宜：')
+    parts.push('  - 坦诚沟通，建立深层信任')
+    parts.push('  - 在感情中保持平等和尊重')
+    parts.push('  - 共同成长、互相支持')
+    parts.push('\n忌：')
+    parts.push('  - 冷暴力、回避问题')
+    parts.push('  - 在感情中过于计较得失')
+  }
+
+  parts.push(`\n你的喜神五行是${useGod.xiShen}，如果伴侣的八字中${useGod.xiShen}较多，你们会相处得更加融洽。`)
+
+  return parts.join('\n')
+}
+
+function buildHealthAction(
+  ctx: ExplainV3Context,
+  climate: any,
+  disease: any,
+  useGod: any,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  const organMap: Record<FiveElement, string> = {
+    '木': '肝、胆、眼睛、筋腱',
+    '火': '心、小肠、舌、血管',
+    '土': '脾、胃、口、肌肉',
+    '金': '肺、大肠、鼻、皮肤',
+    '水': '肾、膀胱、耳、骨骼',
+  }
+
+  parts.push(`你的日主五行是${dayElement}，对应的脏腑是${organMap[dayElement]}，这些部位需要特别注意保养。`)
+
+  if (climate.needsAdjustment) {
+    parts.push(`\n你的命局${climate.climateType}，以下健康建议特别重要：`)
+    const healthTips: Record<string, string> = {
+      '寒': '注意保暖，尤其是腰腹和脚部。冬天不宜过度运动出汗，适合温泉、艾灸等温补方式。饮食宜温热，忌生冷。',
+      '燥': '注意滋阴润燥，多喝水、多吃水果。秋冬季节注意皮肤保湿。饮食忌辛辣，宜清淡滋润。',
+      '湿': '注意祛湿，保持居住环境干燥通风。运动出汗有助排湿。饮食忌油腻甜食，宜健脾利湿。',
+      '暖': '注意清热降火，避免过度熬夜。夏天注意防暑。饮食宜清淡，多吃清凉食物。',
+    }
+    parts.push(healthTips[climate.climateType] || '')
+  }
+
+  if (disease.hasDisease) {
+    parts.push('\n命局五行失衡可能影响的健康方面：')
+    for (const d of disease.diseases) {
+      if (d.element) {
+        parts.push(`  - ${d.element}行偏弱/偏旺 → 关注${organMap[d.element as FiveElement]}相关健康`)
+      }
+    }
+  }
+
+  parts.push('\n通用健康建议：')
+  parts.push('  - 宜：规律作息、适度运动、均衡饮食、定期体检')
+  parts.push('  - 忌：熬夜、暴饮暴食、过度劳累、忽视小毛病')
+  parts.push(`  - 适宜运动：${getSuitableExercise(useGod.yongShen)}`)
+
+  return parts.join('\n')
+}
+
+function buildTimelineAction(
+  ctx: ExplainV3Context,
+  useGod: any,
+  pattern: any,
+  dayElement: FiveElement,
+): string {
+  const parts: string[] = []
+
+  parts.push('【近期（1年内）】')
+  if (pattern.starLevel >= 4) {
+    parts.push('  - 你目前处于运势较好的阶段，适合大胆行动、推进重要计划。')
+  } else if (pattern.starLevel >= 3) {
+    parts.push('  - 运势平稳，适合稳扎稳打、积累实力。')
+  } else {
+    parts.push('  - 宜低调蓄力，多学习提升自己，为将来的机会做准备。')
+  }
+  parts.push(`  - 重点补足${useGod.yongShen}的能量：${getElementAction(useGod.yongShen)}`)
+
+  parts.push('\n【中期（1-3年）】')
+  parts.push(`  - 持续深耕${useGod.yongShen}相关的领域和能力。`)
+  if (pattern.defects.length > 0) {
+    parts.push(`  - 有意识地补足自身短板：${pattern.defects.slice(0, 2).map((d: string) => translateTerm(d)).join('、')}。`)
+  }
+  parts.push(`  - 拓展人脉，寻找能给你带来${useGod.xiShen}能量的人和环境。`)
+
+  parts.push('\n【远期（3年以上）】')
+  if (pattern.starLevel >= 4) {
+    parts.push(`  - 长期来看，你具备较高的成就潜力。在${useGod.yongShen}相关领域深耕，有望取得卓越成就。`)
+  } else if (pattern.starLevel >= 3) {
+    parts.push('  - 稳步发展，中年后运势往往更佳。关键是保持耐心和持续学习。')
+  } else {
+    parts.push('  - "大器晚成"的命格居多。不要着急，积累够了，机会自然会来。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildDecisionAction(ctx: ExplainV3Context): string {
+  const dr = ctx.decisionResult
+  const parts: string[] = []
+
+  // 决策结果可能是单个决策或全部决策
+  if (dr.decisions) {
+    parts.push('基于你的命盘综合分析，以下是各类重大决策的参考建议：\n')
+    for (const d of dr.decisions) {
+      parts.push(`【${d.type}】— ${d.recommendation}（${d.overallScore}分）`)
+      parts.push(`  - 命局分析（${d.natalScore}分）：${d.natalAnalysis}`)
+      parts.push(`  - 大运分析（${d.luckScore}分）：${d.luckAnalysis}`)
+      parts.push(`  - 流年分析（${d.yearScore}分）：${d.yearAnalysis}`)
+      parts.push(`  - 建议：${d.advice}`)
+      parts.push(`  - 最佳时机：${d.timing}`)
+      if (d.alternatives && d.alternatives.length > 0) {
+        parts.push(`  - 替代方案：${d.alternatives.join('；')}`)
+      }
+      parts.push('')
+    }
+    if (dr.summary) {
+      parts.push(`总结：${dr.summary}`)
+    }
+  } else {
+    parts.push(`【${dr.type}】— ${dr.recommendation}（${dr.overallScore}分）`)
+    parts.push(`  - 命局分析（${dr.natalScore}分）：${dr.natalAnalysis}`)
+    parts.push(`  - 建议：${dr.advice}`)
+    parts.push(`  - 最佳时机：${dr.timing}`)
+  }
+
+  return parts.join('\n')
+}
+
+function buildEventAction(ctx: ExplainV3Context): string {
+  const er = ctx.eventResult
+  const parts: string[] = []
+
+  parts.push('基于事件预测引擎，以下是关键人生事件的概率分析：\n')
+
+  // 积极事件
+  if (er.positiveEvents && er.positiveEvents.length > 0) {
+    parts.push('【值得期待的积极事件】')
+    for (const e of er.positiveEvents) {
+      parts.push(`  - ${e.type}（概率${e.probability}%，${e.timeWindow}）：${e.suggestion}`)
+    }
+    parts.push('')
+  }
+
+  // 风险事件
+  if (er.riskEvents && er.riskEvents.length > 0) {
+    parts.push('【需关注的风险事件】')
+    for (const e of er.riskEvents) {
+      parts.push(`  - ${e.type}（概率${e.probability}%，${e.timeWindow}）：${e.suggestion}`)
+    }
+    parts.push('')
+  }
+
+  // 警告事件
+  if (er.warningEvents && er.warningEvents.length > 0) {
+    parts.push('【高度警惕事件】')
+    for (const e of er.warningEvents) {
+      parts.push(`  - ${e.type}（概率${e.probability}%，${e.timeWindow}）：${e.suggestion}`)
+    }
+    parts.push('')
+  }
+
+  // 最可能发生的事件
+  if (er.topEvent) {
+    parts.push(`【最可能发生的事件】：${er.topEvent.type}（概率${er.topEvent.probability}%，${er.topEvent.timeWindow}）`)
+  }
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ④ 风险提示（risk）— 基于概率引擎和事件预测的风险等级分析
+// ══════════════════════════════════════════════════════════════════════
+
+function buildRisk(
+  ctx: ExplainV3Context,
+  dayElement: FiveElement,
+  kb?: any[],
+  level?: ExplainV3ReadingLevel,
+): ExplainV3Section[] {
+  const sections: ExplainV3Section[] = []
+
+  // ─── 1. 健康风险 ───
+  sections.push({
+    title: '一、健康风险',
+    content: buildHealthRisk(ctx, dayElement),
+    classicalRef: getClassicalRef('health', '健康', kb),
+  })
+
+  // ─── 2. 财务风险 ───
+  sections.push({
+    title: '二、财务风险',
+    content: buildFinancialRisk(ctx, dayElement),
+    classicalRef: getClassicalRef('wealth', '财富', kb),
+  })
+
+  // ─── 3. 事业风险 ───
+  sections.push({
+    title: '三、事业风险',
+    content: buildCareerRisk(ctx, dayElement),
+    classicalRef: getClassicalRef('career', '事业', kb),
+  })
+
+  // ─── 4. 感情风险 ───
+  sections.push({
+    title: '四、感情风险',
+    content: buildMarriageRisk(ctx, dayElement),
+    classicalRef: getClassicalRef('marriage', '婚姻', kb),
+  })
+
+  // ─── 5. 综合风险总结 ───
+  sections.push({
+    title: '五、综合风险总结',
+    content: buildOverallRisk(ctx, dayElement),
+    classicalRef: getClassicalRef('yongShen', ctx.useGod.yongShen, kb),
+  })
+
+  return sections
+}
+
+function getRiskLevelInfo(riskLevel: string | undefined): { level: string; bar: string; strategy: string } {
+  const map: Record<string, { bar: string; strategy: string }> = {
+    '极低': { bar: '■□□□□', strategy: '风险极低，保持健康生活习惯即可，无需过度担忧。' },
+    '低': { bar: '■■□□□', strategy: '风险较低，但仍需保持警惕。定期关注相关方面，防患于未然。' },
+    '中': { bar: '■■■□□', strategy: '中等风险，需要主动关注和预防。建议制定相应的风险管理计划。' },
+    '高': { bar: '■■■■□', strategy: '风险较高，建议重点关注。需要提前做好准备，必要时寻求专业建议。' },
+    '极高': { bar: '■■■■■', strategy: '风险极高，必须高度重视。建议立即采取预防措施，制定应急预案。' },
+  }
+  const info = map[riskLevel || '中'] || map['中']
+  return { level: riskLevel || '中', bar: info.bar, strategy: info.strategy }
+}
+
+function buildHealthRisk(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+  let riskLevel = '中'
+  let factors: string[] = []
+  let strategy = '保持规律作息和定期体检。'
+
+  if (ctx.probabilityResult) {
+    const healthDim = ctx.probabilityResult.dimensions.find((d: any) => d.name === '健康' || d.name === 'health')
+    if (healthDim) {
+      riskLevel = healthDim.riskLevel
+      factors = healthDim.negativeFactors || []
+      strategy = healthDim.advice || strategy
+    }
+  }
+
+  const info = getRiskLevelInfo(riskLevel)
+  parts.push(`健康风险等级：${info.level} [${info.bar}]`)
+  parts.push(`\n应对策略：${info.strategy}`)
+
+  if (factors.length > 0) {
+    parts.push(`\n主要风险因素：`)
+    for (const f of factors.slice(0, 3)) {
+      parts.push(`  - ${f}`)
+    }
+  }
+
+  // 基于事件预测引擎的疾病风险
+  if (ctx.eventResult) {
+    const diseaseEvents = (ctx.eventResult.riskEvents || []).filter((e: any) => e.type === '疾病')
+    if (diseaseEvents.length > 0) {
+      parts.push(`\n疾病事件预测：`)
+      for (const e of diseaseEvents) {
+        parts.push(`  - ${e.timeWindow}，概率${e.probability}%：${e.suggestion}`)
+      }
+    }
+  }
+
+  // 五行脏腑提示
+  const organMap: Record<FiveElement, string> = {
+    '木': '肝胆系统', '火': '心血管系统', '土': '脾胃消化系统',
+    '金': '呼吸系统', '水': '肾脏泌尿系统',
+  }
+  parts.push(`\n日主${dayElement}行，先天需要关注${organMap[dayElement]}方面的健康。`)
+
+  return parts.join('\n')
+}
+
+function buildFinancialRisk(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+  let riskLevel = '中'
+  let factors: string[] = []
+  let strategy = '稳健理财，量入为出。'
+
+  if (ctx.probabilityResult) {
+    const wealthDim = ctx.probabilityResult.dimensions.find((d: any) => d.name === '财富' || d.name === 'wealth')
+    if (wealthDim) {
+      riskLevel = wealthDim.riskLevel
+      factors = wealthDim.negativeFactors || []
+      strategy = wealthDim.advice || strategy
+    }
+  }
+
+  const info = getRiskLevelInfo(riskLevel)
+  parts.push(`财务风险等级：${info.level} [${info.bar}]`)
+  parts.push(`\n应对策略：${info.strategy}`)
+
+  if (factors.length > 0) {
+    parts.push(`\n主要风险因素：`)
+    for (const f of factors.slice(0, 3)) {
+      parts.push(`  - ${f}`)
+    }
+  }
+
+  // 基于事件预测引擎的破财风险
+  if (ctx.eventResult) {
+    const financeEvents = (ctx.eventResult.riskEvents || []).filter((e: any) => e.type === '破财' || e.type === '投资')
+    if (financeEvents.length > 0) {
+      parts.push(`\n财务事件预测：`)
+      for (const e of financeEvents) {
+        parts.push(`  - ${e.type}（${e.timeWindow}），概率${e.probability}%：${e.suggestion}`)
+      }
+    }
+  }
+
+  // 身弱财多特别提醒
+  if (ctx.strength.strengthScore < 45) {
+    parts.push('\n特别提醒：你身弱不宜承受大额财务压力，"财多身弱反为财累"。')
+    parts.push('建议以稳健储蓄为主，避免高杠杆投资。')
+  }
+
+  return parts.join('\n')
+}
+
+function buildCareerRisk(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+  let riskLevel = '中'
+  let factors: string[] = []
+  let strategy = '保持学习，稳步发展。'
+
+  if (ctx.probabilityResult) {
+    const careerDim = ctx.probabilityResult.dimensions.find((d: any) => d.name === '事业' || d.name === 'career')
+    if (careerDim) {
+      riskLevel = careerDim.riskLevel
+      factors = careerDim.negativeFactors || []
+      strategy = careerDim.advice || strategy
+    }
+  }
+
+  const info = getRiskLevelInfo(riskLevel)
+  parts.push(`事业风险等级：${info.level} [${info.bar}]`)
+  parts.push(`\n应对策略：${info.strategy}`)
+
+  if (factors.length > 0) {
+    parts.push(`\n主要风险因素：`)
+    for (const f of factors.slice(0, 3)) {
+      parts.push(`  - ${f}`)
+    }
+  }
+
+  // 基于时间轴的最差阶段
+  if (ctx.timelineResult) {
+    const worstStage = ctx.timelineResult.stages.find((s: any) => s.ageRange === ctx.timelineResult.worstStage)
+    if (worstStage) {
+      parts.push(`\n人生最需注意的阶段：${worstStage.ageRange}岁（综合${worstStage.score.overall}分，${worstStage.trend}）。`)
+      parts.push(`在此阶段宜降低预期、蓄力积累，避免做出重大改变。`)
+    }
+  }
+
+  return parts.join('\n')
+}
+
+function buildMarriageRisk(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+  let riskLevel = '中'
+  let factors: string[] = []
+  let strategy = '多沟通、多理解，经营感情需要双方共同努力。'
+
+  if (ctx.probabilityResult) {
+    const marriageDim = ctx.probabilityResult.dimensions.find((d: any) => d.name === '婚姻' || d.name === 'marriage')
+    if (marriageDim) {
+      riskLevel = marriageDim.riskLevel
+      factors = marriageDim.negativeFactors || []
+      strategy = marriageDim.advice || strategy
+    }
+  }
+
+  const info = getRiskLevelInfo(riskLevel)
+  parts.push(`感情风险等级：${info.level} [${info.bar}]`)
+  parts.push(`\n应对策略：${info.strategy}`)
+
+  if (factors.length > 0) {
+    parts.push(`\n主要风险因素：`)
+    for (const f of factors.slice(0, 3)) {
+      parts.push(`  - ${f}`)
+    }
+  }
+
+  // 日支婚姻宫提示
+  parts.push(`\n你的日支为妻宫/夫宫，日支五行为${OVERCOME[dayElement]}行（配偶星方向）。`)
+  parts.push(pick([
+    '婚姻美满的关键在于选择五行与你喜用神相合的伴侣，并在生活中保持沟通与尊重。',
+    '命局中的婚姻信息只是一种倾向，真正的婚姻质量取决于双方的经营和付出。',
+  ]))
+
+  return parts.join('\n')
+}
+
+function buildOverallRisk(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  // 综合风险
+  const overallRisk = ctx.probabilityResult
+    ? ctx.probabilityResult.overallRisk
+    : ctx.pattern.starLevel >= 4 ? '低' : ctx.pattern.starLevel >= 3 ? '中' : '高'
+
+  const info = getRiskLevelInfo(overallRisk)
+  parts.push(`综合风险等级：${info.level} [${info.bar}]`)
+  parts.push(`\n综合应对策略：${info.strategy}`)
+
+  // 谨慎年龄区间
+  if (ctx.probabilityResult) {
+    parts.push(`\n需特别谨慎的年龄区间：${ctx.probabilityResult.cautionAge}。在此期间宜保守行事，减少重大决策。`)
+  }
+
+  // 警告事件汇总
+  if (ctx.eventResult && ctx.eventResult.warningEvents && ctx.eventResult.warningEvents.length > 0) {
+    parts.push(`\n高度警惕事件汇总：`)
+    for (const e of ctx.eventResult.warningEvents) {
+      parts.push(`  - ${e.type}（${e.timeWindow}，概率${e.probability}%）`)
+    }
+  }
+
+  // 总体建议
+  parts.push(pick([
+    '\n命理风险分析仅供参考。古人云"知命而不认命"，了解风险是为了更好地规避风险。',
+    '\n命理提供了风险的预判，但人生的走向最终取决于个人的选择和努力。"趋吉避凶"是智慧，不是迷信。',
+    '\n风险提示的目的是让你有备无患。提前识别风险点，制定应对策略，是明智的做法。',
+  ]))
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ⑤ 古籍依据（classical）— 集中引用相关古籍原文+解读
+// ══════════════════════════════════════════════════════════════════════
+
+function buildClassical(
+  ctx: ExplainV3Context,
+  dayElement: FiveElement,
+  kb?: any[],
+  level?: ExplainV3ReadingLevel,
+): ExplainV3Section[] {
+  const sections: ExplainV3Section[] = []
+
+  // ─── 1. 格局类古籍 ───
+  sections.push({
+    title: '一、格局类古籍',
+    content: buildClassicalCategory(ctx, 'geJu', '格局', kb, level),
+  })
+
+  // ─── 2. 旺衰类古籍 ───
+  sections.push({
+    title: '二、旺衰类古籍',
+    content: buildClassicalCategory(ctx, 'wangShuai', '旺衰', kb, level),
+  })
+
+  // ─── 3. 调候类古籍 ───
+  sections.push({
+    title: '三、调候类古籍',
+    content: buildClassicalCategory(ctx, 'tiaoHou', '调候', kb, level),
+  })
+
+  // ─── 4. 用神类古籍 ───
+  sections.push({
+    title: '四、用神类古籍',
+    content: buildClassicalCategory(ctx, 'yongShen', '用神', kb, level),
+  })
+
+  // ─── 5. 事业类古籍 ───
+  sections.push({
+    title: '五、事业类古籍',
+    content: buildClassicalCategory(ctx, 'career', '事业', kb, level),
+  })
+
+  // ─── 6. 财富类古籍 ───
+  sections.push({
+    title: '六、财富类古籍',
+    content: buildClassicalCategory(ctx, 'wealth', '财富', kb, level),
+  })
+
+  // ─── 7. 婚姻类古籍 ───
+  sections.push({
+    title: '七、婚姻类古籍',
+    content: buildClassicalCategory(ctx, 'marriage', '婚姻', kb, level),
+  })
+
+  // ─── 8. 健康类古籍 ───
+  sections.push({
+    title: '八、健康类古籍',
+    content: buildClassicalCategory(ctx, 'health', '健康', kb, level),
+  })
+
+  return sections
+}
+
+function buildClassicalCategory(
+  ctx: ExplainV3Context,
+  category: string,
+  topic: string,
+  kb?: any[],
+  level?: ExplainV3ReadingLevel,
+): string {
+  const parts: string[] = []
+
+  // 从 knowledgeBase 中搜索相关条目
+  const kbRefs: string[] = []
+  if (kb && kb.length > 0) {
+    const topicMap: Record<string, string> = {
+      '格局': '格局', '旺衰': '旺衰', '调候': '调候', '用神': '用神',
+      '事业': '事业', '财富': '财富', '婚姻': '婚姻', '健康': '健康',
+    }
+    const keyword = topicMap[category] || topic
+    const matches = kb.filter((e: any) =>
+      (e.originalText && e.originalText.includes(keyword)) ||
+      (e.vernacular && e.vernacular.includes(keyword)) ||
+      (e.keywords && e.keywords.some((k: string) => k.includes(keyword)))
+    )
+    for (const m of matches.slice(0, 3)) {
+      kbRefs.push(`《${m.source}》${m.chapter ? m.chapter + '：' : ''}"${m.originalText}"`)
+    }
+  }
+
+  // 合并内置引用
+  const builtInRefs = getAllClassicalRefs(category)
+  const allRefs = [...kbRefs, ...builtInRefs]
+  const selectedRefs = pickN(allRefs, 3)
+
+  if (selectedRefs.length === 0) {
+    parts.push(`暂无${topic}类古籍引用。`)
+    return parts.join('\n')
+  }
+
+  for (const ref of selectedRefs) {
+    parts.push(ref)
+    parts.push(`  白话解读：${buildVernacularInterpretation(ref, ctx, category)}`)
+    parts.push('')
+  }
+
+  return parts.join('\n')
+}
+
+function buildVernacularInterpretation(ref: string, ctx: ExplainV3Context, category: string): string {
+  const interpretations: Record<string, string[]> = {
+    geJu: [
+      '意思是说，一个人的命格高低，直接决定了一生的穷通祸福。好的格局是成功的基础，但还需要后天运势的配合。',
+      '这段话强调了格局的重要性——格局的好坏决定了你先天起跑线的位置。但格局不是宿命，后天的努力和选择同样关键。',
+    ],
+    wangShuai: [
+      '简单来说，太强的人需要克制，太弱的人需要扶持。找到平衡点，人生才会顺遂。',
+      '这段话告诉我们，了解自己的能量状态非常重要。能量强的人要适当释放，能量弱的人要善于借力。',
+    ],
+    tiaoHou: [
+      '意思是说，命局就像自然界的气候，太寒需要暖，太燥需要湿。找到适合你的"气候环境"，人生才会舒适。',
+      '这段话强调环境对人的影响。就像植物需要合适的温度和湿度，人也需要适合自己的生活环境和节奏。',
+    ],
+    bingYao: [
+      '意思是说，有缺陷的命盘不一定是坏事。关键在于找到"解药"，化缺陷为优势。这正是"对症下药"的道理。',
+      '这段话很有深意：完美反而平庸，有缺陷反而成就非凡。关键在于你能否找到化解之道。',
+    ],
+    tongGuan: [
+      '意思是说，当两种力量在冲突时，需要找到中间的调解力量来化解矛盾。这对人际关系和职场发展都有启发。',
+      '这段话在命理上讲的是五行的调和，在现实中对应的是矛盾的化解和关系的协调。',
+    ],
+    yongShen: [
+      '意思是说，用神是整个命盘的核心所在，找到用神就找到了人生的方向。用神有力则亨通，用神无力则蹇滞。',
+      '这段话强调找到人生方向的重要性。用神就像人生的指南针，指引你应该往哪个方向努力。',
+    ],
+    career: [
+      '意思是说，人生不同阶段有不同的发展重心。年轻时靠才华和拼搏，中年靠积累和官运。',
+      '这段话揭示了人生事业发展的规律：年轻时重在学习和成长，中年重在成果和地位。',
+    ],
+    wealth: [
+      '意思是说，财富是维持生活的根本，不能没有。自身强、财星旺，才能富贵双全。',
+      '这段话告诉我们，赚钱的能力和承受财富的能力缺一不可。有赚钱的能力还要有"守财"的能力。',
+    ],
+    marriage: [
+      '意思是说，在八字中，男性的配偶看财星，女性的配偶看官星。日支代表婚姻宫位。',
+      '这段话揭示了传统命理对婚姻的看法：好的婚姻需要双方的五行能够互补和调和。',
+    ],
+    health: [
+      '意思是说，五行平衡则身体健康，五行失衡则容易生病。调候不当更是疾病的根源。',
+      '这段话在中医和命理中都是核心思想：身体的平衡是健康的基础，失衡则会带来各种问题。',
+    ],
+  }
+
+  const options = interpretations[category] || [
+    '这段古籍原文揭示了命理的基本原理，对我们理解自身的优势和挑战有重要参考价值。',
+  ]
+  return pick(options)
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ⑥ 相似案例（similar）— 基于 SimilarityEngine 的 TOP3 相似案例摘要
+// ══════════════════════════════════════════════════════════════════════
+
+function buildSimilar(
+  ctx: ExplainV3Context,
+  dayElement: FiveElement,
+  kb?: any[],
+  level?: ExplainV3ReadingLevel,
+): ExplainV3Section[] {
+  const sections: ExplainV3Section[] = []
+
+  if (!ctx.similarResult) {
+    // 没有相似度引擎结果时，返回说明
+    sections.push({
+      title: '相似案例分析',
+      content: '暂无相似案例数据。请接入 SimilarityEngine（P3.7）以获取基于案例库的相似命局对比分析。',
+      classicalRef: getClassicalRef('geJu', '格局', kb),
+    })
+    return sections
+  }
+
+  const sr = ctx.similarResult
+
+  // ─── 1. 案例匹配概述 ───
+  sections.push({
+    title: '一、案例匹配概述',
+    content: buildSimilarOverview(ctx, sr),
+    classicalRef: sr.classicalRef || getClassicalRef('geJu', ctx.geJuName || '格局', kb),
+  })
+
+  // ─── 2. TOP3 相似案例 ───
+  const topCases = sr.topCases ? sr.topCases.slice(0, 3) : (sr.bestMatch ? [sr.bestMatch] : [])
+  if (topCases.length > 0) {
+    sections.push({
+      title: '二、TOP3 相似案例',
+      content: buildSimilarTopCases(ctx, topCases, dayElement),
+      classicalRef: getClassicalRef('wangShuai', '旺衰', kb),
+    })
+  }
+
+  // ─── 3. 对比分析 ───
+  if (topCases.length > 0) {
+    sections.push({
+      title: '三、对比分析',
+      content: buildSimilarComparison(ctx, topCases, dayElement),
+      classicalRef: getClassicalRef('yongShen', ctx.useGod.yongShen, kb),
+    })
+  }
+
+  // ─── 4. 案例启示 ───
+  sections.push({
+    title: '四、案例启示',
+    content: buildSimilarInsight(ctx, sr, dayElement),
+    classicalRef: getClassicalRef('career', '事业', kb),
+  })
+
+  return sections
+}
+
+function buildSimilarOverview(ctx: ExplainV3Context, sr: any): string {
+  const parts: string[] = []
+
+  parts.push(`本次分析共对比了${sr.totalCompared || 0}个历史命盘案例，整体匹配置信度为${sr.overallConfidence || 0}%。`)
+
+  parts.push(`\n${sr.summary || '以下是与当前命盘最为相似的案例分析。'}`)
+
+  return parts.join('\n')
+}
+
+function buildSimilarTopCases(ctx: ExplainV3Context, cases: any[], dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  cases.forEach((c: any, index: number) => {
+    parts.push(`【案例${index + 1}】${c.name || '未命名案例'}`)
+    parts.push(`  - 相似度：${c.similarity}/100`)
+    parts.push(`  - 可信度等级：${c.trustLevel || '未知'}`)
+    parts.push(`  - 传统结论：${c.conclusion || '暂无'}`)
+    if (c.dayElement) {
+      parts.push(`  - 日主五行：${c.dayElement}`)
+    }
+    if (c.pattern) {
+      parts.push(`  - 格局：${c.pattern}`)
+    }
+    if (c.matchDetails) {
+      parts.push(`  - 匹配详情：${c.matchDetails}`)
+    }
+
+    // 关键人生事件
+    if (c.lifeEvents && c.lifeEvents.length > 0) {
+      parts.push(`  - 关键人生事件：`)
+      for (const evt of c.lifeEvents.slice(0, 3)) {
+        const evtDesc = typeof evt === 'string' ? evt : `${evt.age || ''}${evt.event || evt.type || ''}`
+        parts.push(`    ${evtDesc}`)
+      }
+    }
+    parts.push('')
+  })
+
+  return parts.join('\n')
+}
+
+function buildSimilarComparison(ctx: ExplainV3Context, cases: any[], dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  // 共同点
+  parts.push('【与相似案例的共同点】')
+
+  const commonPoints: string[] = []
+  if (ctx.geJuName) {
+    const samePattern = cases.filter((c: any) => c.pattern && c.pattern.includes(ctx.geJuName))
+    if (samePattern.length > 0) {
+      commonPoints.push(`格局相同或相似（${ctx.geJuName}）`)
+    }
+  }
+  if (cases.some((c: any) => c.dayElement === dayElement)) {
+    commonPoints.push(`日主五行相同（${dayElement}）`)
+  }
+  if (ctx.useGod.yongShen && cases.some((c: any) => c.yongShen === ctx.useGod.yongShen)) {
+    commonPoints.push(`用神相同（${ctx.useGod.yongShen}）`)
+  }
+  const avgSimilarity = Math.round(cases.reduce((sum: number, c: any) => sum + (c.similarity || 0), 0) / cases.length)
+  commonPoints.push(`平均相似度${avgSimilarity}%，整体匹配度${avgSimilarity >= 70 ? '较高' : '中等'}`)
+
+  for (const cp of commonPoints) {
+    parts.push(`  - ${cp}`)
+  }
+
+  // 差异点
+  parts.push('\n【与相似案例的差异点】')
+  const diffs: string[] = []
+  diffs.push(pick([
+    '每人的出生时辰不同，大运流年各异，即使格局相似，人生轨迹也会有差异。',
+    '命盘相似不代表命运完全相同。后天的成长环境、教育经历、个人选择都是重要变量。',
+    '相似案例提供的是一种"概率参考"，而非精确预测。可以借鉴但不能照搬。',
+  ]))
+
+  if (cases.some((c: any) => c.wangShuai !== (ctx.strength.strengthLevelCN || ctx.strength.strengthLevel))) {
+    diffs.push('旺衰程度与部分案例不同，这意味着在具体的人生策略上需要做相应调整。')
+  }
+
+  for (const d of diffs) {
+    parts.push(`  - ${d}`)
+  }
+
+  return parts.join('\n')
+}
+
+function buildSimilarInsight(ctx: ExplainV3Context, sr: any, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  parts.push(pick([
+    '通过相似案例的对比分析，我们可以从他人的真实经历中获得启发和借鉴。',
+    '历史案例是宝贵的参考。虽然不能完全复制，但相似命盘的人生轨迹可以作为我们规划未来的参考。',
+  ]))
+
+  if (sr.advice) {
+    parts.push(`\n相似引擎建议：${sr.advice}`)
+  }
+
+  // 从案例中提取的人生规律
+  parts.push('\n【案例启示】')
+  parts.push(pick([
+    '相似命盘的人往往在用神所代表的领域取得较好成就。关注你的用神方向，是成功的关键之一。',
+    '大多数相似案例的人生轨迹显示：早年多磨砺、中年渐入佳境、晚年趋于安定。耐心和坚持非常重要。',
+    '命盘相似的人在职业选择上往往有共性——从事用神五行相关行业的人更容易获得满足感和成就感。',
+  ]))
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  ⑦ AI综合建议（aiAdvice）— 跨引擎综合分析，给出务实建议
+// ══════════════════════════════════════════════════════════════════════
+
+function buildAiAdvice(
+  ctx: ExplainV3Context,
+  dayElement: FiveElement,
+  kb?: any[],
+  level?: ExplainV3ReadingLevel,
+  confidence: number = 70,
+): ExplainV3Section[] {
+  const sections: ExplainV3Section[] = []
+
+  // ─── 1. 核心建议（3-5条） ───
+  sections.push({
+    title: '一、核心建议',
+    content: buildCoreAdvice(ctx, dayElement, confidence),
+    classicalRef: getClassicalRef('yongShen', ctx.useGod.yongShen, kb),
+  })
+
+  // ─── 2. 跨引擎综合分析 ───
+  sections.push({
+    title: '二、跨引擎综合分析',
+    content: buildCrossEngineAnalysis(ctx, dayElement),
+    classicalRef: getClassicalRef('geJu', ctx.geJuName || '格局', kb),
+  })
+
+  // ─── 3. 最优行动路径 ───
+  sections.push({
+    title: '三、最优行动路径',
+    content: buildOptimalActionPath(ctx, dayElement),
+    classicalRef: getClassicalRef('career', '事业', kb),
+  })
+
+  // ─── 4. 需规避的陷阱 ───
+  sections.push({
+    title: '四、需规避的陷阱',
+    content: buildPitfallsToAvoid(ctx, dayElement),
+    classicalRef: getClassicalRef('bingYao', '病', kb),
+  })
+
+  // ─── 5. 长期发展策略 ───
+  sections.push({
+    title: '五、长期发展策略',
+    content: buildLongTermStrategy(ctx, dayElement),
+    classicalRef: getClassicalRef('tiaoHou', '调候', kb),
+  })
+
+  return sections
+}
+
+function buildCoreAdvice(ctx: ExplainV3Context, dayElement: FiveElement, confidence: number): string {
+  const parts: string[] = []
+  const advices: { text: string; engines: string; cred: number }[] = []
+
+  // 建议1：用神方向（来自 V2 UseGod + P3 Probability）
+  const careerDim = ctx.probabilityResult
+    ? ctx.probabilityResult.dimensions.find((d: any) => d.name === '事业' || d.name === 'career')
+    : null
+  advices.push({
+    text: pick([
+      `将${ctx.useGod.yongShen}五行作为你的核心发展方向。从事${ctx.useGod.yongShen}相关行业、方位、颜色的事物最能助旺你的运势。`,
+      `你的命盘核心密码是"${ctx.useGod.yongShen}"——在工作、生活、人际关系中多接触${ctx.useGod.yongShen}的属性，会让一切事半功倍。`,
+    ]),
+    engines: 'V2-UseGod' + (careerDim ? ' + P3-Probability' : ''),
+    cred: Math.min(95, confidence + (careerDim ? 5 : 0)),
+  })
+
+  // 建议2：阶段策略（来自 P3 Timeline）
+  if (ctx.timelineResult) {
+    advices.push({
+      text: pick([
+        `把握人生巅峰期"${ctx.timelineResult.peakAge}"。在此阶段大胆行动，充分施展才华。而在"${ctx.timelineResult.cautionAge}"阶段宜保守行事，积蓄力量。`,
+        `人生不是匀速前进的。你的巅峰期在${ctx.timelineResult.peakAge}，要提前做好准备，届时果断出击。谨慎期${ctx.timelineResult.cautionAge}则适合学习充电。`,
+      ]),
+      engines: 'P3-Timeline',
+      cred: Math.min(90, confidence - 5),
+    })
+  }
+
+  // 建议3：风险管理（来自 P3 Probability + EventPrediction）
+  if (ctx.probabilityResult) {
+    const highRiskDims = ctx.probabilityResult.dimensions.filter(
+      (d: any) => d.riskLevel === '高' || d.riskLevel === '极高'
+    )
+    if (highRiskDims.length > 0) {
+      const riskNames = highRiskDims.map((d: any) => d.name).join('、')
+      advices.push({
+        text: pick([
+          `重点关注${riskNames}领域的高风险因素，提前制定预防和应对方案。${highRiskDims[0].advice || ''}`,
+          `你的${riskNames}领域存在较高风险，建议在这些方面格外谨慎，做好"Plan B"的准备。`,
+        ]),
+        engines: 'P3-Probability' + (ctx.eventResult ? ' + P3-EventPrediction' : ''),
+        cred: Math.min(85, confidence),
+      })
+    }
+  }
+
+  // 建议4：决策参考（来自 P3 Decision）
+  if (ctx.decisionResult) {
+    const best = ctx.decisionResult.bestDecision || ctx.decisionResult
+    advices.push({
+      text: pick([
+        `在面临重大决策时，优先考虑"${best.type}"类选择（${best.recommendation}，${best.overallScore}分）。最佳时机：${best.timing}。`,
+        `基于多维度分析，"${best.type}"是目前最值得推进的方向（${best.recommendation}），建议在${best.timing}采取行动。`,
+      ]),
+      engines: 'P3-Decision',
+      cred: Math.min(88, best.confidence || confidence),
+    })
+  }
+
+  // 建议5：相似案例启示（来自 P3 SimilarityEngine）
+  if (ctx.similarResult && ctx.similarResult.topCases && ctx.similarResult.topCases.length > 0) {
+    const bestCase = ctx.similarResult.topCases[0]
+    advices.push({
+      text: pick([
+        `参考相似度最高的案例"${bestCase.name}"（相似度${bestCase.similarity}%），该案例的人生经历表明：${bestCase.conclusion || '在用神方向的深耕是成功的关键'}`,
+        `与你命盘最相似的历史案例是"${bestCase.name}"，该案例的人生轨迹对你当前的规划有重要参考价值。`,
+      ]),
+      engines: 'P3-SimilarityEngine',
+      cred: Math.min(75, ctx.similarResult.overallConfidence || 60),
+    })
+  }
+
+  // 输出建议
+  parts.push('以下是综合全部分析引擎得出的核心建议：\n')
+  for (let i = 0; i < Math.min(advices.length, 5); i++) {
+    const a = advices[i]
+    const credLabel = a.cred >= 85 ? '高' : a.cred >= 70 ? '中' : '参考'
+    parts.push(`${i + 1}. ${a.text}`)
+    parts.push(`   来源：${a.engines} | 可信度：${credLabel}（${a.cred}%）`)
+    parts.push('')
+  }
+
+  return parts.join('\n')
+}
+
+function buildCrossEngineAnalysis(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  parts.push('以下综合了所有分析引擎的结果，给出跨引擎的一致性判断：\n')
+
+  const engines: { name: string; key: string; status: 'active' | 'missing'; summary: string }[] = [
+    {
+      name: 'V2 格局引擎',
+      key: 'pattern',
+      status: ctx.pattern ? 'active' : 'missing',
+      summary: ctx.pattern
+        ? `格局${ctx.geJuName || '正格'}，${ctx.pattern.starLevel}星，${ctx.pattern.totalScore}分。`
+        : '未接入',
+    },
+    {
+      name: 'V2 旺衰引擎',
+      key: 'strength',
+      status: ctx.strength ? 'active' : 'missing',
+      summary: ctx.strength
+        ? `日主${ctx.strength.strengthLevelCN || ctx.strength.strengthLevel || '中和'}，${ctx.strength.strengthScore}分。`
+        : '未接入',
+    },
+    {
+      name: 'V2 调候引擎',
+      key: 'climate',
+      status: ctx.climate ? 'active' : 'missing',
+      summary: ctx.climate
+        ? `气候${ctx.climate.climateType}，${ctx.climate.climateScore}分。`
+        : '未接入',
+    },
+    {
+      name: 'V2 用神引擎',
+      key: 'useGod',
+      status: ctx.useGod ? 'active' : 'missing',
+      summary: ctx.useGod
+        ? `用神${ctx.useGod.yongShen}，喜神${ctx.useGod.xiShen}。`
+        : '未接入',
+    },
+    {
+      name: 'P3 概率引擎',
+      key: 'probability',
+      status: ctx.probabilityResult ? 'active' : 'missing',
+      summary: ctx.probabilityResult
+        ? `综合${ctx.probabilityResult.overallScore}分，风险${ctx.probabilityResult.overallRisk}。`
+        : '未接入',
+    },
+    {
+      name: 'P3 时间轴引擎',
+      key: 'timeline',
+      status: ctx.timelineResult ? 'active' : 'missing',
+      summary: ctx.timelineResult
+        ? `趋势${ctx.timelineResult.overallTrend}，巅峰${ctx.timelineResult.peakAge}。`
+        : '未接入',
+    },
+    {
+      name: 'P3 事件预测引擎',
+      key: 'event',
+      status: ctx.eventResult ? 'active' : 'missing',
+      summary: ctx.eventResult
+        ? `最可能事件：${ctx.eventResult.topEvent ? ctx.eventResult.topEvent.type : '未知'}。`
+        : '未接入',
+    },
+    {
+      name: 'P3 决策引擎',
+      key: 'decision',
+      status: ctx.decisionResult ? 'active' : 'missing',
+      summary: ctx.decisionResult
+        ? `最优决策：${ctx.decisionResult.bestDecision ? ctx.decisionResult.bestDecision.type : ctx.decisionResult.type}（${ctx.decisionResult.bestDecision ? ctx.decisionResult.bestDecision.recommendation : ctx.decisionResult.recommendation}）。`
+        : '未接入',
+    },
+    {
+      name: 'P3 相似度引擎',
+      key: 'similar',
+      status: ctx.similarResult ? 'active' : 'missing',
+      summary: ctx.similarResult
+        ? `最佳匹配：${ctx.similarResult.bestMatch ? ctx.similarResult.bestMatch.name : '未知'}（${ctx.similarResult.bestMatch ? ctx.similarResult.bestMatch.similarity : 0}%）。`
+        : '未接入',
+    },
+  ]
+
+  const activeCount = engines.filter(e => e.status === 'active').length
+  parts.push(`已接入 ${activeCount}/${engines.length} 个分析引擎。\n`)
+
+  for (const engine of engines) {
+    const icon = engine.status === 'active' ? '[V]' : '[X]'
+    parts.push(`  ${icon} ${engine.name}：${engine.summary}`)
+  }
+
+  // 一致性判断
+  parts.push('\n【跨引擎一致性】')
+  parts.push(pick([
+    `各引擎对核心结论的一致性${activeCount >= 7 ? '很高' : activeCount >= 5 ? '较高' : '一般'}。接入的引擎越多，分析结论越可靠。`,
+    `核心结论（用神方向、风险等级、发展建议）在各引擎之间${activeCount >= 7 ? '高度一致' : '基本一致'}，说明分析结果较为可靠。`,
+  ]))
+
+  return parts.join('\n')
+}
+
+function buildOptimalActionPath(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  parts.push(pick([
+    '基于全部引擎的分析结果，以下是为你规划的最优行动路径：',
+    '综合命理分析和概率推演，以下是建议你的行动路线图：',
+  ]))
+
+  // 近期行动
+  parts.push('\n【近期（当前至1年内）】')
+  parts.push(pick([
+    `重点补足${ctx.useGod.yongShen}的能量：${getElementAction(ctx.useGod.yongShen)}。`,
+    `当前阶段的核心任务是：增强${ctx.useGod.yongShen}五行的力量，${getElementAction(ctx.useGod.yongShen)}。`,
+  ]))
+
+  if (ctx.eventResult) {
+    const nearEvents = ctx.eventResult.positiveEvents
+      ? ctx.eventResult.positiveEvents.filter((e: any) => {
+          const tw = e.timeWindow || ''
+          return tw.includes('0-') || tw.includes('10-') || tw.includes('20-')
+        })
+      : []
+    if (nearEvents.length > 0) {
+      parts.push(`可期待的近期事件：${nearEvents.map((e: any) => e.type).join('、')}。`)
+    }
+  }
+
+  // 中期行动
+  parts.push('\n【中期（1-5年）】')
+  const industryMap: Record<FiveElement, string> = {
+    '木': '教育培训、健康环保',
+    '火': '互联网传媒、创意产业',
+    '土': '房地产建筑、金融管理',
+    '金': '金融法律、科技制造',
+    '水': '咨询旅游、学术贸易',
+  }
+  parts.push(`深耕${ctx.useGod.yongShen}相关领域（如${industryMap[ctx.useGod.yongShen as FiveElement] || '综合类'}），建立专业壁垒。`)
+
+  if (ctx.timelineResult) {
+    const peakStage = ctx.timelineResult.stages.find(
+      (s: any) => s.ageRange === ctx.timelineResult.bestStage
+    )
+    if (peakStage) {
+      parts.push(`在${peakStage.ageRange}岁阶段（你的最佳阶段）到来之前，做好充分的准备和积累。`)
+    }
+  }
+
+  // 长期行动
+  parts.push('\n【长期（5年以上）】')
+  if (ctx.pattern.starLevel >= 4) {
+    parts.push(pick([
+      '你有较高的成就潜力，长期目标可以设定得更远大。保持学习和成长，在用神方向做到极致。',
+      '长期来看，你的格局支持较高的成就目标。关键是保持方向的一致性，不轻易偏离用神轨道。',
+    ]))
+  } else {
+    parts.push(pick([
+      '长期发展重在积累和坚持。选择正确的方向比追求速度更重要。"大器晚成"也是一种成功。',
+      '稳步前行是你最好的策略。不要追求短期爆发，而是通过持续积累实现量变到质变。',
+    ]))
+  }
+
+  return parts.join('\n')
+}
+
+function buildPitfallsToAvoid(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  parts.push('根据命盘分析和引擎推演，以下是你在人生中需要特别注意规避的陷阱：\n')
+
+  // 基于忌神的陷阱
+  parts.push('【五行陷阱】')
+  parts.push(`你的忌神是${ctx.useGod.jiShen}，仇神是${ctx.useGod.chouShen}。以下是这些五行可能带来的陷阱：`)
+
+  const pitfallsByElement: Record<FiveElement, string[]> = {
+    '木': ['在不适合自己的行业（如竞争激烈的纯销售领域）耗费精力', '过于固执己见、不愿变通'],
+    '火': ['过于急躁冒进、冲动决策', '追求表面光鲜而忽视内在积累'],
+    '土': ['过于保守、错失变革和创新的时机', '固执己见、不愿接受新事物'],
+    '金': ['过于苛刻、与人际关系处理失当', '追求绝对完美而陷入内耗'],
+    '水': ['过于随波逐流、缺乏方向感', '过度思考而迟迟不行动'],
+  }
+  const jiPitfalls = pitfallsByElement[ctx.useGod.jiShen as FiveElement] || []
+  for (const p of jiPitfalls) {
+    parts.push(`  - ${p}`)
+  }
+
+  // 基于风险事件的陷阱
+  if (ctx.eventResult && ctx.eventResult.warningEvents) {
+    parts.push('\n【风险事件陷阱】')
+    for (const e of ctx.eventResult.warningEvents.slice(0, 3)) {
+      parts.push(`  - ${e.type}风险（${e.timeWindow}，概率${e.probability}%）：${e.suggestion}`)
+    }
+  }
+
+  // 基于时间轴低谷的陷阱
+  if (ctx.timelineResult) {
+    const worstStage = ctx.timelineResult.stages.find(
+      (s: any) => s.ageRange === ctx.timelineResult.worstStage
+    )
+    if (worstStage && worstStage.score.overall < 40) {
+      parts.push('\n【低谷期陷阱】')
+      parts.push(`  - 在${worstStage.ageRange}岁阶段，运势偏低，不宜在此阶段做出重大的、不可逆的决定。`)
+      parts.push(`  - 特别是涉及大量资金投入、职业转型、婚姻变动等重大事项，建议延后或谨慎处理。`)
+    }
+  }
+
+  return parts.join('\n')
+}
+
+function buildLongTermStrategy(ctx: ExplainV3Context, dayElement: FiveElement): string {
+  const parts: string[] = []
+
+  parts.push(pick([
+    '以下是综合命盘特征和各引擎分析，为你量身定制的长期发展策略：',
+    '人生是一场马拉松，而非短跑。以下是针对你命盘特点的长期规划建议：',
+  ]))
+
+  // 策略1：核心赛道
+  parts.push('\n【核心赛道策略】')
+  parts.push(`你的命盘核心密码是"${ctx.useGod.yongShen}"，这意味着：`)
+  const longTermStrategies: Record<FiveElement, string> = {
+    '木': '长期来看，你适合在"生长型"赛道深耕——教育、医疗、环保、健康等行业。这些行业需要耐心和持续投入，但长期回报丰厚。你的成长速度会随着积累越来越快。',
+    '火': '你的长期优势在"创意型和传播型"赛道——互联网、传媒、文化创意、教育等行业。保持热情和创造力，你的影响力会随着年龄增长而扩大。',
+    '土': '你适合在"稳健型和平台型"赛道发展——房地产、金融、管理、基础设施等行业。你的价值会随着时间和经验的积累而不断增值。',
+    '金': '你的长期优势在"专业型和规则型"赛道——金融、法律、科技、医疗等行业。深耕专业领域，成为行业专家，是你最好的长期策略。',
+    '水': '你适合在"流动型和智慧型"赛道发展——咨询、旅游、学术、贸易等行业。保持学习和适应能力，你的价值在于灵活应变和跨界整合。',
+  }
+  parts.push(longTermStrategies[ctx.useGod.yongShen as FiveElement] || longTermStrategies[dayElement])
+
+  // 策略2：人生节奏
+  parts.push('\n【人生节奏策略】')
+  if (ctx.timelineResult) {
+    parts.push(`你的整体人生趋势为"${ctx.timelineResult.overallTrend}"。`)
+    if (ctx.timelineResult.overallTrend === '上升型' || ctx.timelineResult.overallTrend === '先抑后扬') {
+      parts.push('越往后发展越有利，不要急于在早年证明自己。打好基础，厚积薄发。')
+    } else if (ctx.timelineResult.overallTrend === '先扬后抑') {
+      parts.push('早年运势较好，要抓住机会积累资源和资本。中年后宜转为守成策略。')
+    } else {
+      parts.push('人生有起有伏，关键是在不同阶段调整策略。顺势而为，不要逆势而动。')
+    }
+  } else {
+    parts.push('建议根据自身年龄和所处阶段，灵活调整人生节奏。年轻时重学习，中年重积累，晚年重守成。')
+  }
+
+  // 策略3：持续优化
+  parts.push('\n【持续优化策略】')
+  parts.push(pick([
+    `命理分析是一个动态过程，随着大运流年的变化，你的运势也会随之调整。建议每隔1-2年重新进行一次全面分析，及时调整策略。`,
+    `保持对自身命盘的定期复盘。好运时乘势而上，差运时韬光养晦。灵活调整、顺势而为，才是用命的最高境界。`,
+    `长期来看，最重要的不是"知道"而是"做到"。将这些策略落实到日常生活中，用行动来验证和完善。`,
+  ]))
+
+  return parts.join('\n')
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  整体摘要（根据 readingLevel 调整术语密度）
+// ══════════════════════════════════════════════════════════════════════
+
+function buildOverallSummary(
+  ctx: ExplainV3Context,
+  dayElement: FiveElement,
+  kb?: any[],
+  confidence: number = 70,
+  level: ExplainV3ReadingLevel = 'intermediate',
+): string {
+  const { geJuName, strength, useGod, pattern, disease } = ctx
+
+  const parts: string[] = []
+
+  if (level === 'expert') {
+    // 专家版：术语密集
+    parts.push(pick([
+      `${ctx.dayGan}日主生于${ctx.monthZhi}月，${geJuName || '正格'}格局，日主${strength.strengthLevelCN || strength.strengthLevel || '中和'}（${strength.strengthScore}分）。格局${pattern.starLevel}星（${pattern.totalScore}分），用神${useGod.yongShen}，喜神${useGod.xiShen}，忌神${useGod.jiShen}。`,
+      `此造${ctx.dayGan}${dayElement}日主，月建${ctx.monthZhi}，格局取${geJuName || '正格'}。${pattern.totalScore}分，日主${strength.strengthLevelCN || strength.strengthLevel || '中和'}。`,
+    ]))
+
+    if (ctx.probabilityResult) {
+      parts.push(`概率引擎评估：综合${ctx.probabilityResult.overallScore}分，置信度${ctx.probabilityResult.overallConfidence}%，风险${ctx.probabilityResult.overallRisk}。`)
+    }
+    if (ctx.timelineResult) {
+      parts.push(`人生趋势${ctx.timelineResult.overallTrend}，巅峰期${ctx.timelineResult.peakAge}，谨慎期${ctx.timelineResult.cautionAge}。`)
+    }
+
+    parts.push(`\n（分析置信度：${formatConfidence(confidence, 'expert')}）`)
+  } else if (level === 'intermediate') {
+    // 中级版：有术语有注释
+    parts.push(pick([
+      `${ctx.dayGan}日主（五行属${dayElement}）生于${ctx.monthZhi}月，格局为"${geJuName || '正格'}"，综合评分${pattern.totalScore}分。日主能量状态${strength.strengthLevelCN || strength.strengthLevel || '中和'}。`,
+      `你的命盘以${ctx.dayGan}${dayElement}为核心，生在${ctx.monthZhi}月，格局${geJuName || '正格'}，属于${pattern.starLevel >= 4 ? '上等' : pattern.starLevel >= 3 ? '中等' : '需要后天补足'}格局。`,
+    ]))
+
+    parts.push(`核心方向：用神${useGod.yongShen}（最有利于你的五行），喜神${useGod.xiShen}（次有利的五行）。宜补${useGod.yongShen}、忌触${useGod.jiShen}。`)
+
+    if (ctx.probabilityResult) {
+      parts.push(`\n综合评分${ctx.probabilityResult.overallScore}/100，人生阶段${ctx.probabilityResult.lifePhase}。`)
+    }
+    if (ctx.timelineResult) {
+      parts.push(`人生趋势：${ctx.timelineResult.overallTrend}，巅峰在${ctx.timelineResult.peakAge}，谨慎期在${ctx.timelineResult.cautionAge}。`)
+    }
+
+    parts.push(`\n（分析置信度：${formatConfidence(confidence, 'intermediate')}）`)
+  } else {
+    // 初学者版：比喻类比
+    const dayGanMetaphor: Record<string, Record<FiveElement, string>> = {
+      '强': {
+        '木': '你就像一棵参天大树，根基深厚、充满生命力。',
+        '火': '你就像一团明亮的火焰，热情洋溢、光芒四射。',
+        '土': '你就像一座巍峨的大山，沉稳可靠、值得信赖。',
+        '金': '你就像一把锋利的宝剑，果敢有力、锐不可当。',
+        '水': '你就像一条奔腾的大河，灵活变通、势不可挡。',
+      },
+      '弱': {
+        '木': '你就像春天刚发芽的小树苗，充满生机但还很柔嫩。',
+        '火': '你就像夜空中的星星，安静地散发着属于自己的光芒。',
+        '土': '你就像一块璞玉，外表朴实但内含珍贵价值。',
+        '金': '你就像一块含金的矿石，虽然还未提炼，但潜力十足。',
+        '水': '你就像山间的小溪，虽然不大但清澈纯净、源源不断。',
+      },
+      '中': {
+        '木': '你就像庭院里修剪整齐的树木，恰到好处地展现风采。',
+        '火': '你就像壁炉中温暖的火苗，不急不躁、恰到好处。',
+        '土': '你就像一块耕种良好的田地，平实而富有滋养力。',
+        '金': '你就像一枚精心铸造的硬币，价值明确、品质稳定。',
+        '水': '你就像一池平静的湖水，波澜不惊却深不可测。',
+      },
+    }
+
+    const strengthKey = strength.strengthScore >= 65 ? '强' : strength.strengthScore < 45 ? '弱' : '中'
+    const metaphor = dayGanMetaphor[strengthKey]?.[dayElement] || dayGanMetaphor['中'][dayElement]
+
+    parts.push(pick([
+      `你的核心五行是"${dayElement}"，${metaphor}`,
+      `从命理角度看，你的本质能量是"${dayElement}"——${metaphor}`,
+    ]))
+
+    const starBeginner: Record<number, string> = {
+      5: '你的先天条件非常优越，属于"天赋异禀"的类型。',
+      4: '你的先天条件很不错，起点比大多数人都要高。',
+      3: '你的先天条件处于中等水平，有优势也有短板。',
+      2: '你的先天条件有一些短板，但"短板效应"可以通过后天补足。',
+      1: '你的先天条件不算理想，但"命由天定，运由己造"，后天努力非常重要。',
+    }
+    parts.push(starBeginner[pattern.starLevel] || starBeginner[3])
+
+    parts.push(`\n对你最有利的方向是和"${useGod.yongShen}"相关的事物。${getElementAction(useGod.yongShen)}。`)
+
+    if (ctx.probabilityResult) {
+      parts.push(`\n综合来看，你的人生评分是${ctx.probabilityResult.overallScore}分（满分100），属于${ctx.probabilityResult.overallScore >= 70 ? '中上水平' : '中等水平'}。`)
+    }
+
+    parts.push(`\n（分析可信度：${formatConfidence(confidence, 'beginner')}）`)
+  }
+
+  return parts.join('\n')
+}

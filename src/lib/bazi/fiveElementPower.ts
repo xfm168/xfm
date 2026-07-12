@@ -37,6 +37,15 @@ export interface FiveElementPowerResult {
   deLingReason: string
   deDiReason: string
   deShiReason: string
+  // 透干
+  touGan: boolean
+  touGanReason: string
+  // 生扶力量
+  shengFuPower: number
+  shengFuReason: string
+  // 克泄耗力量
+  keXiePower: number
+  keXieReason: string
   // 十二长生状态（参考，不直接决定旺衰）
   changShengStates: Record<string, { zhi: string; state: string; description: string }>
   // 地支合局
@@ -205,24 +214,41 @@ export function calculateFiveElementPower(
   // ===== 地支合局检测 =====
   const zhiList = pillars.map(p => p.zhi)
   const heJu: string[] = []
-  const SAN_HE: Record<string, EarthlyBranch[]> = {
-    '水局': ['申', '子', '辰'] as EarthlyBranch[],
-    '火局': ['寅', '午', '戌'] as EarthlyBranch[],
-    '金局': ['巳', '酉', '丑'] as EarthlyBranch[],
-    '木局': ['亥', '卯', '未'] as EarthlyBranch[],
+
+  // 三合局：申子辰水、寅午戌火、巳酉丑金、亥卯未木
+  const SAN_HE: Record<string, { branches: EarthlyBranch[]; element: FiveElement }> = {
+    '三合水局': { branches: ['申', '子', '辰'] as EarthlyBranch[], element: '水' },
+    '三合火局': { branches: ['寅', '午', '戌'] as EarthlyBranch[], element: '火' },
+    '三合金局': { branches: ['巳', '酉', '丑'] as EarthlyBranch[], element: '金' },
+    '三合木局': { branches: ['亥', '卯', '未'] as EarthlyBranch[], element: '木' },
   }
-  for (const [juName, required] of Object.entries(SAN_HE)) {
-    const matched = required.filter(z => zhiList.includes(z)).length
+  for (const [juName, { branches, element: heElement }] of Object.entries(SAN_HE)) {
+    const matched = branches.filter(z => zhiList.includes(z)).length
     if (matched >= 2) {
-      heJu.push(`${juName}(${matched}/3)`)
-      // 半合或三合增强对应五行
-      const heElement: Record<string, FiveElement> = { '水局': '水', '火局': '火', '金局': '金', '木局': '木' }
-      const el = heElement[juName]
-      if (el) {
-        const bonus = matched >= 3 ? 15 : 8
-        scores[el].total += bonus
-        totalScore += bonus
-      }
+      const label = matched >= 3 ? `${juName}(全)` : `${juName}(半合)`
+      heJu.push(label)
+      // 半合 +8，三合全 +15
+      const bonus = matched >= 3 ? 15 : 8
+      scores[heElement].total += bonus
+      totalScore += bonus
+    }
+  }
+
+  // 三会局：寅卯辰会木、巳午未会火、申酉戌会金、亥子丑会水
+  const SAN_HUI: Record<string, { branches: EarthlyBranch[]; element: FiveElement }> = {
+    '东方木局': { branches: ['寅', '卯', '辰'] as EarthlyBranch[], element: '木' },
+    '南方火局': { branches: ['巳', '午', '未'] as EarthlyBranch[], element: '火' },
+    '西方金局': { branches: ['申', '酉', '戌'] as EarthlyBranch[], element: '金' },
+    '北方水局': { branches: ['亥', '子', '丑'] as EarthlyBranch[], element: '水' },
+  }
+  for (const [juName, { branches, element: huiElement }] of Object.entries(SAN_HUI)) {
+    const matched = branches.filter(z => zhiList.includes(z)).length
+    if (matched >= 3) {
+      heJu.push(`${juName}(三会方)`)
+      // 三会方力量极强，+20
+      const bonus = 20
+      scores[huiElement].total += bonus
+      totalScore += bonus
     }
   }
 
@@ -306,12 +332,21 @@ export function calculateFiveElementPower(
     deShiReason = '天干中无比劫印星帮身，完全不得势'
   }
 
+  // ===== 透干判断 =====
+  const touGan = stems.some(g => getStemElement(g as HeavenlyStem) === dayElement)
+  let touGanReason = ''
+  if (touGan) {
+    const touGanList = stems.filter(g => getStemElement(g as HeavenlyStem) === dayElement)
+    touGanReason = `天干中${touGanList.join('、')}与日主${dayGan}同属${dayElement}，日主透干有力`
+  } else {
+    touGanReason = `天干中无比肩劫财透干，日主${dayGan}不透`
+  }
+
   // ===== 综合旺衰定性判断 =====
   // 综合得令、得地、得势、通根、透干、十二长生、生扶克泄耗
   let wangShuaiLevel: '极旺' | '旺' | '偏旺' | '中和' | '偏弱' | '弱' | '极弱' = '中和'
 
   const youGen = scores[dayElement].fromTongGen > 0
-  const touGan = stems.some(g => getStemElement(g as HeavenlyStem) === dayElement)
   const shengFuCount = tongDangCount
   const keXieCount = keXieList.length
 
@@ -329,6 +364,24 @@ export function calculateFiveElementPower(
     wangShuaiLevel = '偏弱'
   } else {
     wangShuaiLevel = '中和'
+  }
+
+  // ===== 生扶力量 =====
+  const shengFuPower = tongDangCount * 20
+  let shengFuReason = ''
+  if (tongDangList.length > 0) {
+    shengFuReason = `天干中生扶日主的力量：${tongDangList.join('、')}，共${tongDangCount}个，生扶力量${shengFuPower}分`
+  } else {
+    shengFuReason = '天干中无比劫印星生扶日主，生扶力量为0'
+  }
+
+  // ===== 克泄耗力量 =====
+  const keXiePower = keXieList.length * 20
+  let keXieReason = ''
+  if (keXieList.length > 0) {
+    keXieReason = `天干中克泄耗日主的力量：${keXieList.join('、')}，共${keXieList.length}个，克泄耗力量${keXiePower}分`
+  } else {
+    keXieReason = '天干中无克泄耗日主之力，克泄耗力量为0'
   }
 
   const wangOrder: WuXingWangShuai[] = ['旺', '相', '休', '囚', '死']
@@ -358,6 +411,12 @@ export function calculateFiveElementPower(
     deLingReason,
     deDiReason,
     deShiReason,
+    touGan,
+    touGanReason,
+    shengFuPower,
+    shengFuReason,
+    keXiePower,
+    keXieReason,
     changShengStates,
     heJu,
   }
