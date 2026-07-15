@@ -125,6 +125,7 @@ export interface PipelineMetadata {
   pipelineStart?: number
   pipelineEnd?: number
   stepCount?: number
+  traceId?: string           // Pipeline 追踪 ID
 }
 
 /** Step 执行结果统一结构（elapsed 由 Pipeline 调度器计算，Step 不负责） */

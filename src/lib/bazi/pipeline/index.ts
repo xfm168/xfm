@@ -14,7 +14,6 @@ import { deepFreeze } from './immutable'
 import { emptyHooks, type PipelineHooks } from './hooks'
 import { PIPELINE_VERSION } from './types'
 import type { StepContext } from './steps'
-
 // Re-export 公共接口
 export type {
   BaZiAnalysisOptions, BaZiPipelineResult, BaZiPipelineStep, BaZiScore, BaZiAIReport,
@@ -148,6 +147,7 @@ export async function runBaZiPipelineFromBirthData(
   metadata.stepCount = metadata.executedSteps.length + metadata.skippedSteps.length
   metadata.cacheHits = cacheStats.hits
   metadata.cacheMisses = cacheStats.misses
+  metadata.traceId = traceId
   try { metadata.memoryUsage = (performance as any).memory?.usedJSHeapSize } catch {}
   result.metadata = metadata
   result.duration = metadata.totalTime
