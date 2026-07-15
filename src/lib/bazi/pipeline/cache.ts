@@ -23,7 +23,7 @@ export interface PipelineCache {
   delete(key: string): boolean
   has(key: string): boolean
   clear(): void
-  getStats(): { size: number; hits: number; misses: number }
+  getStats(): { size: number; hits: number; misses: number; clearCount: number }
 }
 
 /** 内存缓存实现 */
@@ -31,6 +31,7 @@ export class MemoryPipelineCache implements PipelineCache {
   private store = new Map<string, PipelineCacheEntry>()
   private hits = 0
   private misses = 0
+  private clearCount = 0
   private config: PipelineCacheConfig
 
   constructor(config?: Partial<PipelineCacheConfig>) {
@@ -89,9 +90,10 @@ export class MemoryPipelineCache implements PipelineCache {
     this.store.clear()
     this.hits = 0
     this.misses = 0
+    this.clearCount++
   }
 
   getStats() {
-    return { size: this.store.size, hits: this.hits, misses: this.misses }
+    return { size: this.store.size, hits: this.hits, misses: this.misses, clearCount: this.clearCount }
   }
 }

@@ -67,6 +67,16 @@ describe('MemoryPipelineCache', () => {
     expect(stats.size).toBe(1)
     expect(stats.hits).toBe(2)
     expect(stats.misses).toBe(2)
+    expect(stats.clearCount).toBe(0)
+  })
+
+  it('clearCount 累计 clear() 调用次数', () => {
+    cache.set('a', 1)
+    cache.clear()
+    expect(cache.getStats().clearCount).toBe(1)
+    cache.set('b', 2)
+    cache.clear()
+    expect(cache.getStats().clearCount).toBe(2)
   })
 
   it('自定义 TTL 覆盖默认', async () => {

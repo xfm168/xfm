@@ -48,6 +48,14 @@ describe('PipelineRegistry', () => {
     expect(PipelineRegistry.getAll()).toEqual([])
   })
 
+  it('has() 正确判断是否存在', () => {
+    PipelineRegistry.register(mockStep('exists'))
+    expect(PipelineRegistry.has('exists')).toBe(true)
+    expect(PipelineRegistry.has('nope')).toBe(false)
+    PipelineRegistry.clear()
+    expect(PipelineRegistry.has('exists')).toBe(false)
+  })
+
   it('register() 重复 ID 抛出 PipelineRegistryError', () => {
     PipelineRegistry.register(mockStep('dup'))
     expect(() => PipelineRegistry.register(mockStep('dup'))).toThrow(PipelineRegistryError)
@@ -127,6 +135,13 @@ describe('PipelineRegistry', () => {
         mockStep('b', ['a']),
       ])
       expect(PipelineRegistry.getTopologicalOrder()).toBeNull()
+    })
+
+    it('自环依赖返回 null', () => {
+      PipelineRegistry.register(mockStep('self', ['self']))
+      expect(PipelineRegistry.getTopologicalOrder()).toBeNull()
+      const v = PipelineRegistry.validateDependencyGraph()
+      expect(v.valid).toBe(false)
     })
 
     it('无依赖的 Step 全部排在前面', () => {
