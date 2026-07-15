@@ -53,14 +53,20 @@ export type {
 } from './rules/engine'
 
 // Pipeline（推荐入口）
-export { runBaZiPipeline } from './pipeline'
+export { runBaZiPipeline, runBaZiPipelineFromBirthData, PipelineRegistry, PIPELINE_VERSION } from './pipeline'
 export type {
   BaZiAnalysisOptions,
   BaZiPipelineResult,
   BaZiPipelineStep,
   BaZiScore,
   BaZiAIReport,
-} from './pipeline/types'
+  PipelineProgressCallback,
+  PipelineProgressEvent,
+  PipelineMetadata,
+  StepResult,
+  PipelineCache,
+  PipelineHooks,
+} from './pipeline/index'
 
 // Report Engine
 export { generateBaZiReport } from './report'
@@ -125,7 +131,6 @@ export type { FengShuiAnalysisResult, ColorAdvice, LuckyNumber, DirectionAdvice,
 // Full Report (P7 AI解读)
 export { generateFullReport } from './fullReport'
 export type { FullReportResult, ReportChapter, FullReportInput } from './fullReport'
-export type { WangShuaiResult } from './types'
 
 // Report Export (V3.0 商业版导出)
 export { exportMarkdown, exportWord, exportPdf } from './reportExport'
