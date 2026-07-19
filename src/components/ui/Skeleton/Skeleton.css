@@ -28,7 +28,7 @@
 }
 
 .xui-skeleton--circular {
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   width: 40px;
   height: 40px;
 }

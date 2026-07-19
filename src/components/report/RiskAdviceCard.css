@@ -1,0 +1,158 @@
+/**
+ * RiskAdviceCard - 风险与建议关联卡片样式
+ * 风险列表（等级颜色区分）、机会列表、建议列表
+ * 前缀: xr-ra-
+ */
+
+.xr-ra {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── 区域标题 ── */
+.xr-ra__section-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: var(--space-3);
+  letter-spacing: 0.03em;
+}
+
+/* ── 风险卡片 ── */
+.xr-ra__risks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.xr-ra__risk {
+  padding: var(--space-3) var(--space-4);
+  border-radius: 8px;
+  border: 1px solid var(--border, #e5e5e5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.xr-ra__risk--high {
+  background: rgba(231, 76, 60, 0.06);
+  border-color: rgba(231, 76, 60, 0.2);
+}
+
+.xr-ra__risk--medium {
+  background: rgba(243, 156, 18, 0.06);
+  border-color: rgba(243, 156, 18, 0.2);
+}
+
+.xr-ra__risk--low {
+  background: rgba(241, 196, 15, 0.06);
+  border-color: rgba(241, 196, 15, 0.2);
+}
+
+.xr-ra__risk-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.xr-ra__risk-reason {
+  font-size: 0.875rem;
+  color: var(--ink, #333);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.xr-ra__risk-suggestion {
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.xr-ra__risk-avoidance {
+  font-size: 0.8125rem;
+  color: var(--accent2, #5b8def);
+  line-height: 1.6;
+  padding: var(--space-2) var(--space-3);
+  background: rgba(91, 141, 239, 0.06);
+  border-radius: 4px;
+}
+
+.xr-ra__risk-avoidance-label {
+  font-weight: 600;
+  margin-right: var(--space-1);
+}
+
+/* ── 机会卡片 ── */
+.xr-ra__opportunities {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.xr-ra__opportunity {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(39, 174, 96, 0.25);
+  border-radius: 8px;
+  background: rgba(39, 174, 96, 0.04);
+}
+
+.xr-ra__opportunity-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.xr-ra__opportunity-reason {
+  font-size: 0.875rem;
+  color: var(--ink, #333);
+  line-height: 1.6;
+}
+
+/* ── 建议列表 ── */
+.xr-ra__recommendations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.xr-ra__recommendation {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}
+
+.xr-ra__recommendation-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.xr-ra__recommendation-content {
+  font-size: 0.875rem;
+  color: var(--ink, #333);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.xr-ra__recommendation-reasoning {
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ── 移动端适配 ── */
+@media (max-width: 480px) {
+  .xr-ra__risk,
+  .xr-ra__opportunity,
+  .xr-ra__recommendation {
+    padding: var(--space-3);
+  }
+}

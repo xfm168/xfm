@@ -85,6 +85,14 @@ export default function Analysis() {
   const [roomType, setRoomType] = useState<RoomType | null>(location.state?.roomType ?? null)
   const [result, setResult] = useState<AnalysisResult | undefined>(location.state?.analysisResult ?? undefined)
 
+  // SEO
+  useEffect(function() {
+    document.title = '风水分析结果 | 玄风门'
+    var desc = document.querySelector('meta[name="description"]')
+    if (desc) desc.setAttribute('content', '玄风门风水分析结果，查看空间格局研判、气场评分与改善建议。')
+    else { var m = document.createElement('meta'); m.name = 'description'; m.content = '玄风门风水分析结果，查看空间格局研判、气场评分与改善建议。'; document.head.appendChild(m) }
+  }, [])
+
   // Persist to localStorage when state arrives from navigation
   useEffect(() => {
     if (location.state?.image && location.state?.roomType && location.state?.analysisResult) {
@@ -151,8 +159,8 @@ export default function Analysis() {
       <div className="analysis-page">
         <div className="error-state">
           <div className="error-icon">⚠️</div>
-          <h2>未找到分析数据</h2>
-          <p>请先上传照片进行分析</p>
+          <h2>未找到推演数据</h2>
+          <p>请先上传照片进行推演</p>
           <Link to="/fengshui" className="back-btn">返回上传</Link>
         </div>
       </div>
@@ -165,7 +173,7 @@ export default function Analysis() {
       <section className="result-header">
         <div className="container">
           <span className="result-label">分析结果</span>
-          <h1 className="result-title">{roomNames[roomType]}风水分析</h1>
+          <h1 className="result-title">{roomNames[roomType]}风水研判</h1>
         </div>
       </section>
 
@@ -175,10 +183,9 @@ export default function Analysis() {
           <div className="container">
             <div className="mismatch-card">
               <div className="mismatch-icon">🚫</div>
-              <h2 className="mismatch-title">空间类型不匹配</h2>
+              <h2 className="mismatch-title">格局类型不符</h2>
               <p className="mismatch-desc">
-                您选择的是<strong>{roomNames[roomType]}</strong>，
-                但AI识别到该照片为<strong>{result.detectedRoomType}</strong>。
+                您选择的是<strong>{roomNames[roomType]}</strong>，然理气推演判断此照片为<strong>{result.detectedRoomType}</strong>
               </p>
               {result.mismatchReason && (
                 <p className="mismatch-reason">{result.mismatchReason}</p>
@@ -195,8 +202,15 @@ export default function Analysis() {
       <section className="photo-section">
         <div className="container">
           <div className="photo-label">原始照片</div>
-          <div className="photo-wrapper" onClick={() => setIsImageModalOpen(true)}>
-            <img src={image} alt="房间照片" className="uploaded-photo" />
+          <div
+              className="photo-wrapper"
+              onClick={() => setIsImageModalOpen(true)}
+              role="button"
+              tabIndex={0}
+              aria-label="点击放大照片"
+              onKeyDown={(e) => { if (e.key === 'Enter') setIsImageModalOpen(true); }}
+            >
+            <img src={image} alt="房间照片" className="uploaded-photo" loading="lazy" decoding="async" />
             <div className="photo-zoom-hint">
               <span>🔍</span>
               <span>点击放大</span>
@@ -207,17 +221,17 @@ export default function Analysis() {
 
       {/* Image Modal */}
       {isImageModalOpen && (
-        <div className="photo-modal-overlay" onClick={() => setIsImageModalOpen(false)}>
+        <div className="photo-modal-overlay" onClick={() => setIsImageModalOpen(false)} onKeyDown={(e) => { if (e.key === 'Escape') setIsImageModalOpen(false) }} role="dialog" aria-modal="true">
           <div className="photo-modal-content">
-            <img src={image} alt="房间照片" className="photo-modal-img" />
-            <button className="photo-modal-close" onClick={() => setIsImageModalOpen(false)}>
+            <img src={image} alt="房间照片（放大预览）" className="photo-modal-img" decoding="async" />
+            <button className="photo-modal-close" onClick={() => setIsImageModalOpen(false)} aria-label="关闭图片预览">
               ✕
             </button>
           </div>
         </div>
       )}
 
-      {/* AI Detection Results */}
+      {/* 空间检测结果 */}
       {result.roomMatch && (
         <>
           {/* Score Section */}
@@ -273,7 +287,7 @@ export default function Analysis() {
                   </div>
                 </div>
                 <div className="detection-objects">
-                  <span className="detection-label">识别到的家具物品</span>
+                  <span className="detection-label">辨识出的器物陈设</span>
                   <div className="objects-list">
                     {result.detectedObjects.map((obj, idx) => (
                       <span key={idx} className="object-tag">{obj}</span>
@@ -396,7 +410,7 @@ export default function Analysis() {
                     },
                   })}
                 >
-                  查看完整风水报告
+                  查看完整风水研判
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
@@ -413,7 +427,7 @@ export default function Analysis() {
           <div className="container">
             <div className="detection-card mismatch-info">
               <div className="detection-objects">
-                <span className="detection-label">识别到的物品</span>
+                <span className="detection-label">辨识出的器物</span>
                 <div className="objects-list">
                   {result.detectedObjects.map((obj, idx) => (
                     <span key={idx} className="object-tag">{obj}</span>
@@ -427,7 +441,7 @@ export default function Analysis() {
 
       {/* Share Card Modal */}
       {showShareCard && (
-        <div className="share-modal-overlay" onClick={() => setShowShareCard(false)}>
+        <div className="share-modal-overlay" onClick={() => setShowShareCard(false)} onKeyDown={(e) => { if (e.key === 'Escape') setShowShareCard(false) }} role="dialog" aria-modal="true">
           <div className="share-modal-wrap" onClick={e => e.stopPropagation()}>
             <button className="share-modal-close" onClick={() => setShowShareCard(false)}>✕</button>
 

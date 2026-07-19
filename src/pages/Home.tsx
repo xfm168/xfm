@@ -1,8 +1,13 @@
-import { CSSProperties, useEffect } from 'react'
+import React, { CSSProperties, useEffect } from 'react'
 import Compass from '../components/business/Compass/Compass'
 import FeatureCard from '../components/business/FeatureCard/FeatureCard'
 import { RELEASE_BANNER } from '../config/release'
 import './Home.css'
+
+var DailyFortuneCard = React.lazy(function() { return import('../components/business/DailyFortuneCard').then(function(m) { return { default: m.DailyFortuneCard } }) })
+var TrialEntry = React.lazy(function() { return import('../components/business/TrialEntry').then(function(m) { return { default: m.TrialEntry } }) })
+var FAQSection = React.lazy(function() { return import('../components/business/FAQSection').then(function(m) { return { default: m.FAQSection } }) })
+var ValueProps = React.lazy(function() { return import('../components/business/ValueProps').then(function(m) { return { default: m.ValueProps } }) })
 
 const featureCards = [
   {
@@ -83,6 +88,31 @@ export default function Home() {
             />
           ))}
         </div>
+      </section>
+
+      {/* V1.2 运营组件 */}
+      <section className="v12-ops-section">
+        <React.Suspense fallback={null}>
+          <DailyFortuneCard />
+        </React.Suspense>
+      </section>
+
+      <section className="v12-trial-section">
+        <React.Suspense fallback={null}>
+          <TrialEntry />
+        </React.Suspense>
+      </section>
+
+      <section className="v12-value-section">
+        <React.Suspense fallback={null}>
+          <ValueProps />
+        </React.Suspense>
+      </section>
+
+      <section className="v12-faq-section">
+        <React.Suspense fallback={null}>
+          <FAQSection />
+        </React.Suspense>
       </section>
 
       {/* 品牌语 */}

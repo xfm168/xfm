@@ -8,17 +8,8 @@
 /** 事件参数 */
 type EventParams = Record<string, string | number | boolean>
 
-/** GA4 全局数据层类型 */
-interface GtagEvent {
-  command: string
-  eventName?: string
-  eventParams?: EventParams
-  pagePath?: string
-}
-
 /** 缓存初始化状态 */
 let gaInitialized = false
-let clarityInitialized = false
 
 /**
  * 动态加载外部脚本
@@ -94,7 +85,6 @@ export function initAnalytics(): void {
       'y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);' +
       '})(window,document,"clarity","script","' + clarityProjectId + '");'
     document.head.appendChild(clarityScript)
-    clarityInitialized = true
   }
 }
 

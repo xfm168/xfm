@@ -287,7 +287,7 @@ Acceptance Gate 必须全部通过以下 6 项：
 > 第四层真实命例验证是发现"算法自洽但结论错误"的关键手段。
 >
 > 本体系为开放式设计，未来可根据项目发展持续扩展新的验证层，例如：
-> - AI Cross Validation（AI 交叉验证）
+> - 推演交叉验证（Cross Validation）
 > - Master Review（专家审核）
 > - User Feedback Validation（真实用户反馈）
 > - A/B Accuracy Test（版本准确率对比）
@@ -338,7 +338,7 @@ Governance → Algorithm → User
 
 ### 6.1 Future Ideas 登记簿
 
-任何新的 AI 优化、Dashboard 建议、新治理模块、新统计、新架构，
+任何新的推演优化、Dashboard 建议、新治理模块、新统计、新架构，
 统一登记至 [docs/future-ideas.md](file:///workspace/docs/future-ideas.md)，
 不再修改 V4.8.1 Final 路线图。
 

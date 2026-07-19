@@ -1,0 +1,55 @@
+/**
+ * XiYongCard - 喜用神分析卡片样式
+ * 展示日主强弱、五神列表、调理方向
+ * 前缀: xr-xy-
+ */
+
+.xr-xy {
+  padding: var(--space-4);
+}
+
+/* ── 日主强弱 ── */
+.xr-xy__strength {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.xr-xy__strength-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  letter-spacing: 0.05em;
+}
+
+/* ── 五神列表 ── */
+.xr-xy__gods {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.xr-xy__god-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.xr-xy__god-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink, #333);
+  min-width: 4em;
+}
+
+/* ── 调理方向 ── */
+.xr-xy__direction {
+  font-size: 0.875rem;
+  color: var(--muted, #666);
+  line-height: 1.7;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent, #c8a951);
+}

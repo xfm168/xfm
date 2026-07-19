@@ -1,32 +1,48 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PageTitle, Card, Badge, Button, Loading } from '../components/ui'
 import { ScoreRing, ScoreBar } from '../components/business'
 import { useBazi } from '../hooks/useBazi'
 import { useAIAnalysis } from '../hooks/useAIAnalysis'
-import BaziPoster from '../components/business/BaziPoster'
-import { ReportExperience } from '../components/business/ReportExperience/ReportExperience'
-import { determineXiYongShen, type XiYongShenResult } from '../lib/bazi/xiyongshen'
-import {
-  calculateBaZiFromBirthData, type FiveElement, type BaZiAnalysis, type BaZiChart,
-  determineGeJu, type GeJuResult, calculateShenSha, type ShenShaCategory,
-  analyzeShenShi, type ShenShiAnalysisResult, calculateFiveElementPower,
-  analyzeDaYun, analyzeLiuNian, analyzeLiuYue,
-  analyzeMarriage, type MarriageAnalysisResult,
-  analyzeCareer, type CareerAnalysisResult,
-  analyzeWealth, type WealthAnalysisResult,
-  analyzeHealth, type HealthAnalysisResult,
-  analyzeFengShui, type FengShuiAnalysisResult,
-  generateFullReport, type FullReportResult,
-  type FiveElementPowerResult,
-  exportMarkdown, exportWord, exportPdf,
-  ELEMENT_COLORS,
+// V4.4 性能优化：懒加载重型可视化组件，减小首屏 JS 体积
+const BaziPoster = lazy(() => import('../components/business/BaziPoster'))
+const ReportExperience = lazy(() =>
+  import('../components/business/ReportExperience/ReportExperience').then(m => ({ default: m.ReportExperience }))
+)
+// V4.4 性能优化：虚拟列表工具（大运 / 流年长列表）
+import { useVirtualList } from '../lib/bazi/performance'
+// V4.4 Enterprise: BaziChart 统一通过 Pipeline 获取所有分析数据
+// 禁止直接调用底层分析函数，形成 Single Source of Truth
+import { runBaZiPipelineFromBirthData, type PipelineProgressCallback } from '../lib/bazi/pipeline'
+import type { BaZiPipelineResult } from '../lib/bazi/pipeline/types'
+import { calculateBaZiFromBirthData, exportMarkdown, exportWord, exportPdf, ELEMENT_COLORS } from '../lib/bazi'
+import type {
+  FiveElement, BaZiChart, BaZiAnalysis, GeJuResult,
+  ShenShiAnalysisResult, FiveElementPowerResult,
+  MarriageAnalysisResult, CareerAnalysisResult, WealthAnalysisResult,
+  HealthAnalysisResult, FengShuiAnalysisResult, FullReportResult,
 } from '../lib/bazi'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import type { BirthData } from '@/lib/core'
+// V4.2 新增导入
+import { askMaster } from '../lib/bazi/askMaster'
+import type { AskMasterResult } from '../lib/bazi/askMaster'
+import { generateAnnualReport } from '../lib/bazi/annualReport'
+import type { AnnualReportResult } from '../lib/bazi/annualReport'
+import { generateBaziFengShuiLink } from '../lib/bazi/baziFengShuiLink'
+import type { BaziFengShuiLinkResult } from '../lib/bazi/baziFengShuiLink'
+import { exportProfessionalReport } from '../lib/bazi/report/professionalReport'
+import {
+  generateNineGridImage, generateLongImage, generateWeChatShareCard,
+  downloadShareImage,
+} from '../lib/bazi/shareUtils'
+import { recordView, incrementStat } from '../lib/bazi/statistics'
+import { FiveElementRing } from '../components/business/BaziVisualization'
 import './BaziChart.css'
+// V4.4 移动端专项优化（独立文件，不修改 BaziChart.css）
+import './BaziChart.mobile.css'
 
-type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'dayun' | 'liunian' | 'liuyue' | 'marriage' | 'career' | 'wealth' | 'health' | 'fengshui' | 'analysis' | 'report'
+type TabKey = 'overview' | 'wuxing' | 'shenshi' | 'wangshuai' | 'geju' | 'shensha' | 'xiyong' | 'master' | 'pillars' | 'shishen-detail' | 'shensha-detail' | 'score' | 'dayun' | 'dayun-detail' | 'liunian' | 'liunian-detail' | 'liuyue' | 'liuyue-detail' | 'marriage' | 'career' | 'wealth' | 'health' | 'fengshui' | 'analysis' | 'report' | 'ask' | 'fengshui-link' | 'annual'
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: '命盘' },
@@ -36,9 +52,17 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'geju', label: '格局' },
   { key: 'shensha', label: '神煞' },
   { key: 'xiyong', label: '喜用神' },
+  { key: 'master', label: '命局总论' },
+  { key: 'pillars', label: '四柱详解' },
+  { key: 'shishen-detail', label: '十神详解' },
+  { key: 'shensha-detail', label: '神煞详解' },
+  { key: 'score', label: '综合评分' },
   { key: 'dayun', label: '大运' },
+  { key: 'dayun-detail', label: '大运详解' },
   { key: 'liunian', label: '流年' },
+  { key: 'liunian-detail', label: '流年详解' },
   { key: 'liuyue', label: '流月' },
+  { key: 'liuyue-detail', label: '流月详解' },
   { key: 'marriage', label: '婚姻' },
   { key: 'career', label: '事业' },
   { key: 'wealth', label: '财富' },
@@ -46,7 +70,21 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'fengshui', label: '风水' },
   { key: 'analysis', label: '解析' },
   { key: 'report', label: '报告' },
+  { key: 'ask', label: 'AI 问命' },
+  { key: 'fengshui-link', label: '风水建议' },
+  { key: 'annual', label: '年度运势' },
 ]
+
+/* V4.4 虚拟列表参数（大运 / 流年长列表性能优化）
+ * - 当列表条目数超过 VIRTUAL_THRESHOLD 时启用虚拟化
+ * - 展开某项时退回全量渲染（保证可变高度正确）
+ * - 大运通常 ~8 步，不触发虚拟化；流年 100 年，触发虚拟化
+ */
+const DAYUN_ITEM_HEIGHT = 96
+const DAYUN_CONTAINER_HEIGHT = 520
+const LIUNIAN_ITEM_HEIGHT = 84
+const LIUNIAN_CONTAINER_HEIGHT = 560
+const VIRTUAL_THRESHOLD = 30
 
 function getRadarPoints(scale: number): string {
   const points: string[] = []
@@ -73,6 +111,42 @@ function getRadarDataPoints(power: { elements: { element: FiveElement; percentag
     points.push(`${x},${y}`)
   }
   return points.join(' ')
+}
+
+/** 10 维度雷达图顶点计算 */
+function getScoreRadarPoints(data: number[], cx: number, cy: number, r: number): string {
+  return data.map((v, i) => {
+    const angle = (i * 36 - 90) * Math.PI / 180
+    const scale = Math.max(0, Math.min(1, v / 100))
+    const x = cx + r * scale * Math.cos(angle)
+    const y = cy + r * scale * Math.sin(angle)
+    return `${x.toFixed(2)},${y.toFixed(2)}`
+  }).join(' ')
+}
+
+/** 10 维度雷达图网格线 */
+function getScoreRadarGrid(cx: number, cy: number, r: number, levels: number = 4): string[] {
+  const grids: string[] = []
+  for (let l = 1; l <= levels; l++) {
+    const lr = (r / levels) * l
+    const pts: string[] = []
+    for (let i = 0; i < 10; i++) {
+      const angle = (i * 36 - 90) * Math.PI / 180
+      pts.push(`${(cx + lr * Math.cos(angle)).toFixed(2)},${(cy + lr * Math.sin(angle)).toFixed(2)}`)
+    }
+    grids.push(pts.join(' '))
+  }
+  return grids
+}
+
+/** 复制文本到剪贴板 */
+async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch {
+    return false
+  }
 }
 
 export default function BaziChart() {
@@ -103,25 +177,33 @@ export default function BaziChart() {
   const [expandedChapters, setExpandedChapters] = useState<Set<number>>(() => new Set([0, 1, 2]))
   const [expandedLiuyue, setExpandedLiuyue] = useState<number | null>(null)
   const [liuYueYear, setLiuYueYear] = useState(() => new Date().getFullYear())
+  const [expandedMaster, setExpandedMaster] = useState<Set<number>>(() => new Set([0]))
+  const [expandedPillars, setExpandedPillars] = useState<Set<string>>(() => new Set(['year']))
+  const [expandedShiShenDetail, setExpandedShiShenDetail] = useState<Set<number>>(() => new Set([0]))
+  const [expandedShenShaDetail, setExpandedShenShaDetail] = useState<Set<number>>(() => new Set([0]))
+  const [expandedDayunDetail, setExpandedDayunDetail] = useState<number | null>(null)
+  const [expandedLiuNianDetail, setExpandedLiuNianDetail] = useState<number | null>(null)
+  const [expandedLiuYueDetail, setExpandedLiuYueDetail] = useState<number | null>(null)
+  const [showToc, setShowToc] = useState(false)
+
+  // V4.2 新增状态
+  const [askQuestion, setAskQuestion] = useState('')
+  const [askHistory, setAskHistory] = useState<AskMasterResult[]>([])
+  const [askLoading, setAskLoading] = useState(false)
+  const [annualYear, setAnnualYear] = useState(() => new Date().getFullYear())
+  const [annualResult, setAnnualResult] = useState<AnnualReportResult | null>(null)
+  const [fengShuiLinkResult, setFengShuiLinkResult] = useState<BaziFengShuiLinkResult | null>(null)
+
+  // V4.4 虚拟列表滚动位置（大运 / 流年长列表）
+  const [dayunScrollTop, setDayunScrollTop] = useState(0)
+  const [liunianScrollTop, setLiunianScrollTop] = useState(0)
 
   // 分步 Loading 状态
   const [loadingStep, setLoadingStep] = useState(0)
+  const [loadingText, setLoadingText] = useState('排盘分析...')
   const [analysisReady, setAnalysisReady] = useState(false)
-  const analysisRef = useRef<Partial<{
-    geJu: GeJuResult
-    shenSha: ShenShaCategory[]
-    shenShiAnalysis: ShenShiAnalysisResult
-    fiveElementPower: FiveElementPowerResult
-    daYun: ReturnType<typeof analyzeDaYun>
-    liuNian: ReturnType<typeof analyzeLiuNian>
-    liuYue: ReturnType<typeof analyzeLiuYue>
-    marriage: MarriageAnalysisResult
-    career: CareerAnalysisResult
-    wealth: WealthAnalysisResult
-    health: HealthAnalysisResult
-    fengshui: FengShuiAnalysisResult
-    fullReport: FullReportResult
-  }>>({})
+  // V4.4 Enterprise: 统一通过 Pipeline 获取所有分析数据
+  const [pipelineResult, setPipelineResult] = useState<BaZiPipelineResult | null>(null)
 
   useEffect(() => {
     if (!chart && charts.length > 0) {
@@ -129,103 +211,56 @@ export default function BaziChart() {
     }
   }, [charts])
 
-  // 分步 Loading：将所有同步计算拆分为异步步骤，避免白屏
+  // V4.4 虚拟列表：展开/收起切换时重置滚动位置，避免虚拟窗口与全量渲染切换时窗口错位
+  useEffect(() => {
+    setDayunScrollTop(0)
+    setLiunianScrollTop(0)
+  }, [expandedDayun, expandedLiunian])
+
+  // V4.4 Enterprise: 统一通过 Pipeline 获取所有分析数据 + 真实进度
   useEffect(() => {
     if (!chart || analysisReady) return undefined
 
-    const timeoutIds: ReturnType<typeof setTimeout>[] = []
-    const { sixLines, fiveElementCount, dayMaster, xiYongShen, birthInfo: chartBirth } = chart
-    const birthDate = new Date(`${chartBirth.birthDate}T${chartBirth.birthTime}`)
-    const currentYear = new Date().getFullYear()
+    let cancelled = false
+    setLoadingStep(1)
 
-    const steps = [
-      () => { setLoadingStep(1) },
-      () => {
-        const g = determineGeJu(sixLines, dayMaster.relatedShens, dayMaster.strengthScore, dayMaster.dayGan, sixLines.month.zhi, fiveElementCount)
-        const s = calculateShenSha(sixLines, dayMaster.dayGan, chartBirth.gender)
-        analysisRef.current = { ...analysisRef.current, geJu: g, shenSha: s }
-        setLoadingStep(2)
+    const birthData: BirthData = {
+      birthday: chart.birthInfo.birthDate,
+      birthTime: chart.birthInfo.birthTime,
+      gender: chart.birthInfo.gender,
+    }
+
+    runBaZiPipelineFromBirthData(
+      {
+        birthData,
+        options: {
+          includeDaYun: true,
+          includeLiuNian: true,
+          includeCareer: true,
+          includeMarriage: true,
+          includeWealth: true,
+          includeHealth: true,
+          detailed: true,
+        },
       },
-      () => {
-        const ss = analyzeShenShi(sixLines, dayMaster.dayGan, chartBirth.gender)
-        const fe = calculateFiveElementPower(sixLines, dayMaster.dayGan)
-        analysisRef.current = { ...analysisRef.current, shenShiAnalysis: ss, fiveElementPower: fe }
-        setLoadingStep(3)
+      // 真实 Pipeline Progress 回调
+      (event) => {
+        if (cancelled) return
+        const stepIndex = Math.min(Math.floor(event.progress / 5), 8)
+        setLoadingStep(stepIndex)
+        setLoadingText(event.stepName)
       },
-      () => {
-        const dy = analyzeDaYun(sixLines, birthDate, dayMaster.dayGan, chartBirth.gender, [xiYongShen.bestElement], xiYongShen.avoidedElements)
-        const daYunSteps = dy.steps.map(s => ({ ganZhi: s.ganZhi, startYear: s.startYear, endYear: s.endYear }))
-        const ln = analyzeLiuNian(sixLines, dayMaster.dayGan, currentYear, 100, daYunSteps)
-        analysisRef.current = { ...analysisRef.current, daYun: dy, liuNian: ln }
-        setLoadingStep(4)
-      },
-      () => {
-        const ly = analyzeLiuYue(sixLines, dayMaster.dayGan, currentYear)
-        analysisRef.current = { ...analysisRef.current, liuYue: ly }
-        setLoadingStep(5)
-      },
-      () => {
-        const m = analyzeMarriage(sixLines, dayMaster.dayGan, chartBirth.gender)
-        const c = analyzeCareer(sixLines, dayMaster.dayGan, chartBirth.gender, analysisRef.current.shenShiAnalysis!, analysisRef.current.geJu!, analysisRef.current.fiveElementPower!)
-        analysisRef.current = { ...analysisRef.current, marriage: m, career: c }
-        setLoadingStep(6)
-      },
-      () => {
-        const w = analyzeWealth(sixLines, dayMaster.dayGan, analysisRef.current!.shenShiAnalysis, analysisRef.current!.liuNian, analysisRef.current!.geJu)
-        const h = analyzeHealth(sixLines, dayMaster.dayGan, analysisRef.current!.fiveElementPower)
-        const f = analyzeFengShui(sixLines, dayMaster.dayGan, xiYongShen, analysisRef.current!.fiveElementPower, analysisRef.current!.shenShiAnalysis.details[0]?.name || '')
-        analysisRef.current = { ...analysisRef.current, wealth: w, health: h, fengshui: f }
-        setLoadingStep(7)
-      },
-      () => {
-        const cur = analysisRef.current!
-        const r = generateFullReport({
-          chart, sixLines, dayMaster,
-          geJu: cur.geJu,
-          wangShuai: {
-            wangShuai: dayMaster.wangShuai,
-            strengthScore: dayMaster.strengthScore,
-            deLing: ['旺', '相'].includes(dayMaster.wangShuai),
-            deDi: dayMaster.strengthScore >= 50,
-            deShi: dayMaster.strengthScore >= 60,
-            tongGen: dayMaster.strengthScore >= 40,
-            yueLing: sixLines.month.zhi,
-            bestElement: xiYongShen.bestElement,
-            avoidedElements: xiYongShen.avoidedElements,
-            level: dayMaster.wangShuai,
-          },
-          shenShiAnalysis: cur.shenShiAnalysis,
-          fiveElementPower: cur.fiveElementPower,
-          shenSha: cur.shenSha,
-          xiYongShen: { bestElement: xiYongShen.bestElement, avoidedElements: xiYongShen.avoidedElements, idleElements: xiYongShen.idleElements, enemyElements: xiYongShen.enemyElements },
-          marriage: cur.marriage,
-          career: cur.career,
-          wealth: cur.wealth,
-          health: cur.health,
-          fengshui: cur.fengshui,
-          daYun: cur.daYun,
-          liuNian: cur.liuNian,
-          liuYue: cur.liuYue,
-        })
-        analysisRef.current = { ...cur, fullReport: r }
-        setLoadingStep(8)
-      },
-      () => {
+    ).then(result => {
+      if (!cancelled) {
+        setPipelineResult(result)
         setAnalysisReady(true)
-      },
-    ]
+      }
+    }).catch(err => {
+      console.error('Pipeline 执行失败', err)
+      if (!cancelled) setAnalysisReady(true)
+    })
 
-    const DELAY = 180
-    let delay = 50
-    for (const step of steps) {
-      const id = setTimeout(step, delay)
-      timeoutIds.push(id)
-      delay += DELAY
-    }
-
-    return () => {
-      for (const id of timeoutIds) clearTimeout(id)
-    }
+    return () => { cancelled = true }
   }, [chart, analysisReady])
 
   const birthDateTime = chart ? `${chart.birthInfo.birthDate} ${chart.birthInfo.birthTime}` : ''
@@ -243,7 +278,7 @@ export default function BaziChart() {
     autoFetch: activeTab === 'analysis' && !!chart,
   })
 
-  // 切换到解析 Tab 时触发 AI
+  // 切换到解析 Tab 时触发推演
   useEffect(() => {
     if (activeTab === 'analysis' && chart && !aiLoading && !aiError) {
       // autoFetch 已处理，此处仅用于 Tab 切换时的触发
@@ -289,7 +324,7 @@ export default function BaziChart() {
               {currentStep && (
                 <div className="bazi-loading-step bazi-loading-step--active">
                   <span className="bazi-loading-step-icon bazi-loading-pulse">{currentStep.icon}</span>
-                  <span className="bazi-loading-step-text">{currentStep.text}</span>
+                  <span className="bazi-loading-step-text">{loadingText}</span>
                   <span className="bazi-loading-step-dots">
                     <span className="dot">·</span>
                     <span className="dot">·</span>
@@ -331,29 +366,229 @@ export default function BaziChart() {
 
   const { sixLines, fiveElementCount, dayMaster, xiYongShen, overallScore, birthInfo: chartBirth } = chart
 
-  // 从 analysisRef 读取计算结果（分步 Loading 完成后可用）
-  const a = analysisRef.current!
-  const geJu = a.geJu!
-  const shenSha = a.shenSha!
-  const shenShiAnalysis = a.shenShiAnalysis!
-  const fiveElementPower = a.fiveElementPower!
-  const daYun = a.daYun!
-  const liuNian = a.liuNian!
-  const liuYue = a.liuYue!
-  const marriage = a.marriage!
-  const career = a.career!
-  const wealth = a.wealth!
-  const health = a.health!
-  const fengshui = a.fengshui!
-  const fullReport = a.fullReport!
+  // V4.4 Enterprise: 所有分析数据统一从 Pipeline Result 读取
+  // 禁止直接调用底层分析函数，形成 Single Source of Truth
+  const p = pipelineResult
+  const geJu = p?.geJu!
+
+  // shenShaDetail 由下方 useMemo 提供
+  const shenShiAnalysis = p?.shenShiAnalysis!
+  const fiveElementPower = p?.fiveElementPower!
+  const daYun = p?.daYun!
+  const liuNian = p?.liuNian!
+  const liuYue = p?.liuYue!
+  const marriage = p?.marriage!
+  const career = p?.career!
+  const wealth = p?.wealth!
+  const health = p?.health!
+  const fengshui = p?.fengshui!
+  const fullReport = p?.fullReport
+
+  // ===== V4.4 虚拟列表（大运 / 流年长列表性能优化） =====
+  // useVirtualList 为纯函数，可在此直接调用；列表短或展开某项时退回全量渲染
+  const dayunSteps = daYun.steps
+  const dayunVirtual = useVirtualList(
+    dayunSteps,
+    DAYUN_ITEM_HEIGHT,
+    DAYUN_CONTAINER_HEIGHT,
+    dayunScrollTop,
+    3
+  )
+  // 大运条目少（通常 8 步），不触发虚拟化；保留接口以便统一处理
+  const dayunVirtualized = dayunSteps.length > VIRTUAL_THRESHOLD && expandedDayun === null
+
+  const liunianYears = liuNian.years
+  const liunianVirtual = useVirtualList(
+    liunianYears,
+    LIUNIAN_ITEM_HEIGHT,
+    LIUNIAN_CONTAINER_HEIGHT,
+    liunianScrollTop,
+    4
+  )
+  // 流年 100 年，触发虚拟化；展开某项时退回全量渲染
+  const liunianVirtualized = liunianYears.length > VIRTUAL_THRESHOLD && expandedLiunian === null
+
+  // ===== 新 Tab 数据（从 Pipeline Result 读取，不直接调用底层函数） =====
+  const masterSummary = useMemo(() => {
+    return p?.masterSummary ?? null
+  }, [p])
+
+  const pillarAnalysis = useMemo(() => {
+    return p?.pillarAnalysis ?? null
+  }, [p])
+
+  const shiShenDetail = useMemo(() => {
+    return p?.shiShenDetail ?? null
+  }, [p])
+
+  const shenShaDetail = useMemo(() => {
+    return p?.shenShaDetail ?? null
+  }, [p])
+
+  // 神煞分类视图：从 shenShaDetail 派生（吉神 / 凶煞）
+  const shenShaCategories = useMemo(() => {
+    if (!shenShaDetail?.items) return []
+    const auspicious = shenShaDetail.items.filter(s => s.isAuspicious)
+    const inauspicious = shenShaDetail.items.filter(s => !s.isAuspicious)
+    return [
+      { name: '吉神贵神', items: auspicious },
+      { name: '凶煞', items: inauspicious },
+    ].filter(c => c.items.length > 0)
+  }, [shenShaDetail])
+
+  const compScore = useMemo(() => {
+    return p?.comprehensiveScore ?? null
+  }, [p])
+
+  const dayunDetails = useMemo(() => {
+    return p?.dayunDetails ?? []
+  }, [p])
+
+  const liunianDetails = useMemo(() => {
+    return p?.liunianDetails ?? []
+  }, [p])
+
+  // 复制按钮状态
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const handleCopy = useCallback(async (text: string, id: string) => {
+    const ok = await copyText(text)
+    if (ok) {
+      setCopiedId(id)
+      setTimeout(() => setCopiedId(null), 1500)
+    }
+  }, [])
 
   function handleSave() {
     if (chart) {
       const chartWithAnalysis = { ...chart, analysis }
       saveChart(chartWithAnalysis)
       setSaved(true)
+      recordView(chart.birthInfo.birthDate)
     }
   }
+
+  // V4.2 新增处理函数
+
+  /** AI 问命 */
+  const handleAskQuestion = useCallback(() => {
+    if (!chart || !askQuestion.trim()) return
+    setAskLoading(true)
+    try {
+      const result = askMaster({
+        chart,
+        question: askQuestion.trim(),
+        geJu,
+        xiYongShen,
+        daYun,
+        currentYear: new Date().getFullYear(),
+      })
+      setAskHistory(prev => [result, ...prev].slice(0, 20))
+      setAskQuestion('')
+    } catch (e) {
+      console.error('AI 问命失败', e)
+    } finally {
+      setAskLoading(false)
+    }
+  }, [chart, askQuestion, geJu, xiYongShen, daYun])
+
+  /** 生成年度运势 */
+  const handleGenerateAnnual = useCallback(() => {
+    if (!chart) return
+    try {
+      const result = generateAnnualReport({
+        chart,
+        year: annualYear,
+        xiYongShen,
+        daYun,
+      })
+      setAnnualResult(result)
+    } catch (e) {
+      console.error('年度运势生成失败', e)
+    }
+  }, [chart, annualYear, xiYongShen, daYun])
+
+  /** 计算风水建议 */
+  const fengShuiLinkMemo = useMemo(() => {
+    if (!chart) return null
+    try {
+      return generateBaziFengShuiLink(chart, xiYongShen)
+    } catch {
+      return null
+    }
+  }, [chart, xiYongShen])
+
+  /** 导出专业报告 */
+  const handleExportProfessional = useCallback(async () => {
+    if (!chart) return
+    try {
+      const blob = await exportProfessionalReport({
+        chart,
+        masterSummary: masterSummary,
+        comprehensiveScore: compScore,
+        daYun,
+        liuNian,
+        baziFengShuiLink: fengShuiLinkMemo,
+        generateDate: new Date().toISOString(),
+      })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `玄风门命理报告_${chartBirth.birthDate}.html`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      incrementStat('export')
+    } catch (e) {
+      console.error('导出专业报告失败', e)
+    }
+  }, [chart, masterSummary, compScore, daYun, liuNian, fengShuiLinkMemo, chartBirth.birthDate])
+
+  /** 下载九宫格分享图 */
+  const handleDownloadNineGrid = useCallback(() => {
+    if (!chart) return
+    const canvas = generateNineGridImage({
+      chart,
+      geJu: geJu.name,
+      dayMasterDesc: `日元 ${dayMaster.dayGan}${dayMaster.dayGanElement}`,
+      xiYongShenDesc: `喜${xiYongShen.happiness} 用${xiYongShen.usage}`,
+      overallScore: overallScore,
+      fortuneSummary: chart.analysis?.summary,
+    })
+    downloadShareImage(canvas, `命盘九宫格_${chartBirth.birthDate}`)
+    incrementStat('share')
+  }, [chart, geJu, dayMaster, xiYongShen, overallScore, chartBirth.birthDate])
+
+  /** 下载长图海报 */
+  const handleDownloadLongImage = useCallback(() => {
+    if (!chart) return
+    const canvas = generateLongImage({
+      chart,
+      geJu: geJu.name,
+      dayMasterDesc: `日元 ${dayMaster.dayGan}${dayMaster.dayGanElement}`,
+      xiYongShenDesc: `喜${xiYongShen.happiness} 用${xiYongShen.usage}`,
+      overallScore: overallScore,
+      fiveElementPower: fiveElementPower.elements.map(e => ({ element: e.element, percentage: e.percentage })),
+      daYun: daYun.steps.map(s => ({ ganZhi: `${s.ganZhi.gan}${s.ganZhi.zhi}`, startYear: s.startYear, endYear: s.endYear })),
+      fortuneSummary: chart.analysis?.summary,
+    })
+    downloadShareImage(canvas, `命盘长图_${chartBirth.birthDate}`)
+    incrementStat('share')
+  }, [chart, geJu, dayMaster, xiYongShen, overallScore, fiveElementPower, daYun, chartBirth.birthDate])
+
+  /** 下载微信卡片 */
+  const handleDownloadWeChatCard = useCallback(() => {
+    if (!chart) return
+    const canvas = generateWeChatShareCard({
+      chart,
+      geJu: geJu.name,
+      dayMasterDesc: `日元 ${dayMaster.dayGan}${dayMaster.dayGanElement}`,
+      xiYongShenDesc: `喜${xiYongShen.happiness} 用${xiYongShen.usage}`,
+      overallScore: overallScore,
+    })
+    downloadShareImage(canvas, `命盘分享_${chartBirth.birthDate}`)
+    incrementStat('share')
+  }, [chart, geJu, dayMaster, xiYongShen, overallScore, chartBirth.birthDate])
 
   function renderComparePanel() {
     if (!compareTarget || !chart) return null
@@ -462,6 +697,155 @@ export default function BaziChart() {
     { label: '时柱', ...sixLines.hour },
   ]
 
+  // V4.4 虚拟列表项渲染器（大运 / 流年复用，避免虚拟化分支与全量分支的 JSX 重复）
+  const renderDayunItem = (step: typeof daYun.steps[number], absIdx: number) => (
+    <div
+      key={step.index}
+      className={`dayun-item ${absIdx === daYun.currentStepIndex ? 'dayun-item--current' : ''} ${expandedDayun === step.index ? 'dayun-item--expanded' : ''}`}
+    >
+      <div
+        className="dayun-item-header"
+        onClick={() => setExpandedDayun(expandedDayun === step.index ? null : step.index)}
+      >
+        <div className="dayun-item-index">第{step.index}步</div>
+        <div className="dayun-item-ganzhi">
+          <span className="dayun-gan">{step.ganZhi.gan}</span>
+          <span className="dayun-zhi">{step.ganZhi.zhi}</span>
+        </div>
+        <div className="dayun-item-shenshi">
+          <Badge variant="default" size="sm">{step.shenShi.gan}</Badge>
+        </div>
+        <div className="dayun-item-toggle">
+          {expandedDayun === step.index ? '收起 ▲' : '展开 ▼'}
+        </div>
+      </div>
+      <div className="dayun-item-info">
+        <div className="dayun-item-age">
+          {step.startAge}-{step.endAge}岁
+        </div>
+        <div className="dayun-item-year">
+          {step.startYear}-{step.endYear}年
+        </div>
+      </div>
+      <div className="dayun-item-tags">
+        {step.isXi && <Badge variant="success" size="sm">喜</Badge>}
+        {step.isJi && <Badge variant="error" size="sm">忌</Badge>}
+        <Badge variant="default" size="sm">{step.wangShuai}</Badge>
+      </div>
+      <div className="dayun-item-score">
+        <div className="dayun-score-bar">
+          <div
+            className="dayun-score-fill"
+            style={{
+              width: `${step.score}%`,
+              background: step.score >= 70 ? 'var(--success)' : step.score >= 50 ? 'var(--gold-500)' : 'var(--error)'
+            }}
+          />
+        </div>
+        <span className="dayun-score-value">{step.score}分</span>
+      </div>
+      <div className="dayun-item-summary">
+        {step.summary}
+      </div>
+      {expandedDayun === step.index && (
+        <div className="dayun-item-detail">
+          <p>{step.detail}</p>
+        </div>
+      )}
+    </div>
+  )
+
+  const renderLiunianItem = (year: typeof liuNian.years[number]) => (
+    <div
+      key={year.year}
+      className={`liunian-item ${year.isCurrentYear ? 'liunian-item--current' : ''} ${expandedLiunian === year.year ? 'liunian-item--expanded' : ''}`}
+    >
+      <div
+        className="liunian-item-header"
+        onClick={() => setExpandedLiunian(expandedLiunian === year.year ? null : year.year)}
+      >
+        <div className="liunian-item-year">{year.year}年</div>
+        <div className="liunian-item-ganzhi">
+          <span className="liunian-gan">{year.ganZhi.gan}</span>
+          <span className="liunian-zhi">{year.ganZhi.zhi}</span>
+        </div>
+        <div className="liunian-item-shenshi">
+          <Badge variant="default" size="sm">{year.shenShi.gan}</Badge>
+        </div>
+        <div className="liunian-item-toggle">
+          {expandedLiunian === year.year ? '收起 ▲' : '展开 ▼'}
+        </div>
+      </div>
+      <div className="liunian-item-relations">
+        {year.vsMingJu.chong.length > 0 && (
+          <Badge variant="error" size="sm">冲</Badge>
+        )}
+        {year.vsMingJu.he.length > 0 && (
+          <Badge variant="success" size="sm">合</Badge>
+        )}
+        {year.vsMingJu.xing.length > 0 && (
+          <Badge variant="warning" size="sm">刑</Badge>
+        )}
+        {year.vsMingJu.hai.length > 0 && (
+          <Badge variant="error" size="sm">害</Badge>
+        )}
+        {year.vsMingJu.chuan.length > 0 && (
+          <Badge variant="warning" size="sm">穿</Badge>
+        )}
+        {year.vsMingJu.po.length > 0 && (
+          <Badge variant="default" size="sm">破</Badge>
+        )}
+        {year.vsDaYun.chong.length > 0 && (
+          <Badge variant="error" size="sm">冲运</Badge>
+        )}
+        {year.vsDaYun.he.length > 0 && (
+          <Badge variant="success" size="sm">合运</Badge>
+        )}
+      </div>
+      <div className="liunian-item-summary">
+        {year.summary}
+      </div>
+      {expandedLiunian === year.year && (
+        <div className="liunian-item-detail">
+          <p>{year.detail}</p>
+          {year.yingQi.length > 0 && (
+            <div className="liunian-yingqi">
+              <p><strong>应期事件：</strong></p>
+              {year.yingQi.map((yq, idx) => (
+                <div key={idx} className="yingqi-item">
+                  <p>• {yq.event}（强度：{yq.intensity}）</p>
+                  <p>　原因：{yq.reason}</p>
+                  <p>　影响：{yq.implications.join('、')}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          {year.vsMingJu.chong.length > 0 && (
+            <p><strong>流年冲命局：</strong>{year.vsMingJu.chong.join('、')}</p>
+          )}
+          {year.vsMingJu.he.length > 0 && (
+            <p><strong>流年合命局：</strong>{year.vsMingJu.he.join('、')}</p>
+          )}
+          {year.vsMingJu.xing.length > 0 && (
+            <p><strong>流年刑命局：</strong>{year.vsMingJu.xing.join('、')}</p>
+          )}
+          {year.vsMingJu.hai.length > 0 && (
+            <p><strong>流年害命局：</strong>{year.vsMingJu.hai.join('、')}</p>
+          )}
+          {year.vsMingJu.chuan.length > 0 && (
+            <p><strong>流年穿命局：</strong>{year.vsMingJu.chuan.join('、')}</p>
+          )}
+          {year.vsMingJu.po.length > 0 && (
+            <p><strong>流年破命局：</strong>{year.vsMingJu.po.join('、')}</p>
+          )}
+          {(year.vsDaYun.chong.length > 0 || year.vsDaYun.he.length > 0 || year.vsDaYun.xing.length > 0 || year.vsDaYun.hai.length > 0 || year.vsDaYun.chuan.length > 0 || year.vsDaYun.po.length > 0 || year.vsDaYun.fuYin.length > 0) && (
+            <p><strong>流年与大运：</strong>{[...year.vsDaYun.chong, ...year.vsDaYun.he, ...year.vsDaYun.xing, ...year.vsDaYun.hai, ...year.vsDaYun.chuan, ...year.vsDaYun.po, ...year.vsDaYun.fuYin].join('、')}</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
+
   return (
     <div className="bazi-chart-page">
       <PageTitle
@@ -541,6 +925,26 @@ export default function BaziChart() {
           ))}
         </div>
 
+        {/* 可折叠目录导航 */}
+        <div className="bazi-toc-section">
+          <button className="bazi-toc-toggle" onClick={() => setShowToc(!showToc)}>
+            {showToc ? '收起目录 ▲' : '展开目录 ▼'}
+          </button>
+          {showToc && (
+            <div className="bazi-toc-list">
+              {TABS.map(tab => (
+                <button
+                  key={tab.key}
+                  className={`bazi-toc-item ${activeTab === tab.key ? 'active' : ''}`}
+                  onClick={() => { setActiveTab(tab.key); setShowToc(false) }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="bazi-tabs">
           {TABS.map(tab => (
             <button
@@ -555,6 +959,7 @@ export default function BaziChart() {
 
         <div className="bazi-tab-content">
           {activeTab === 'overview' && (
+            <>
             <Card className="bazi-overview-card">
               <h3 className="card-title">命盘概览</h3>
               <div className="overview-row">
@@ -580,6 +985,15 @@ export default function BaziChart() {
                 <span className="overview-value">{sixLines.hour.gan}{sixLines.hour.zhi}</span>
               </div>
             </Card>
+            {/* V4.2 五行能量环可视化 */}
+            <Card className="bazi-overview-card" style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }}>
+              <FiveElementRing
+                fiveElementCount={fiveElementCount}
+                dayMasterElement={dayMaster.dayGanElement}
+                size={200}
+              />
+            </Card>
+            </>
           )}
 
           {activeTab === 'wuxing' && (
@@ -938,7 +1352,7 @@ export default function BaziChart() {
 
           {activeTab === 'shensha' && (
             <div className="bazi-shensha-list">
-              {shenSha.map(category => (
+              {shenShaCategories.map(category => (
                 <Card key={category.name} className="bazi-shensha-card">
                   <h3 className="card-title">{category.name}</h3>
                   <div className="shensha-items">
@@ -1019,64 +1433,26 @@ export default function BaziChart() {
 
               <Card className="bazi-dayun-list-card">
                 <h3 className="card-title">大运走势</h3>
-                <div className="dayun-list">
-                  {daYun.steps.map((step, idx) => (
-                    <div
-                      key={step.index}
-                      className={`dayun-item ${idx === daYun.currentStepIndex ? 'dayun-item--current' : ''} ${expandedDayun === step.index ? 'dayun-item--expanded' : ''}`}
-                    >
-                      <div
-                        className="dayun-item-header"
-                        onClick={() => setExpandedDayun(expandedDayun === step.index ? null : step.index)}
-                      >
-                        <div className="dayun-item-index">第{step.index}步</div>
-                        <div className="dayun-item-ganzhi">
-                          <span className="dayun-gan">{step.ganZhi.gan}</span>
-                          <span className="dayun-zhi">{step.ganZhi.zhi}</span>
-                        </div>
-                        <div className="dayun-item-shenshi">
-                          <Badge variant="default" size="sm">{step.shenShi.gan}</Badge>
-                        </div>
-                        <div className="dayun-item-toggle">
-                          {expandedDayun === step.index ? '收起 ▲' : '展开 ▼'}
-                        </div>
+                {/* V4.4 虚拟列表：大运条目少（~8 步）通常走全量渲染；超阈值时启用虚拟化 */}
+                {dayunVirtualized ? (
+                  <div
+                    className="dayun-list dayun-list--virtual"
+                    style={{ maxHeight: DAYUN_CONTAINER_HEIGHT, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}
+                    onScroll={(e) => setDayunScrollTop(e.currentTarget.scrollTop)}
+                  >
+                    <div style={{ height: dayunVirtual.total * DAYUN_ITEM_HEIGHT, position: 'relative' }}>
+                      <div style={{ transform: `translateY(${dayunVirtual.offsetY}px)` }}>
+                        {dayunVirtual.visibleItems.map((step, relIdx) =>
+                          renderDayunItem(step, dayunVirtual.startIndex + relIdx)
+                        )}
                       </div>
-                      <div className="dayun-item-info">
-                        <div className="dayun-item-age">
-                          {step.startAge}-{step.endAge}岁
-                        </div>
-                        <div className="dayun-item-year">
-                          {step.startYear}-{step.endYear}年
-                        </div>
-                      </div>
-                      <div className="dayun-item-tags">
-                        {step.isXi && <Badge variant="success" size="sm">喜</Badge>}
-                        {step.isJi && <Badge variant="error" size="sm">忌</Badge>}
-                        <Badge variant="default" size="sm">{step.wangShuai}</Badge>
-                      </div>
-                      <div className="dayun-item-score">
-                        <div className="dayun-score-bar">
-                          <div
-                            className="dayun-score-fill"
-                            style={{
-                              width: `${step.score}%`,
-                              background: step.score >= 70 ? 'var(--success)' : step.score >= 50 ? 'var(--gold-500)' : 'var(--error)'
-                            }}
-                          />
-                        </div>
-                        <span className="dayun-score-value">{step.score}分</span>
-                      </div>
-                      <div className="dayun-item-summary">
-                        {step.summary}
-                      </div>
-                      {expandedDayun === step.index && (
-                        <div className="dayun-item-detail">
-                          <p>{step.detail}</p>
-                        </div>
-                      )}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ) : (
+                  <div className="dayun-list">
+                    {daYun.steps.map((step, idx) => renderDayunItem(step, idx))}
+                  </div>
+                )}
               </Card>
             </div>
           )}
@@ -1092,98 +1468,24 @@ export default function BaziChart() {
 
               <Card className="bazi-liunian-list-card">
                 <h3 className="card-title">流年列表</h3>
-                <div className="liunian-list">
-                  {liuNian.years.map((year) => (
-                    <div
-                      key={year.year}
-                      className={`liunian-item ${year.isCurrentYear ? 'liunian-item--current' : ''} ${expandedLiunian === year.year ? 'liunian-item--expanded' : ''}`}
-                    >
-                      <div
-                        className="liunian-item-header"
-                        onClick={() => setExpandedLiunian(expandedLiunian === year.year ? null : year.year)}
-                      >
-                        <div className="liunian-item-year">{year.year}年</div>
-                        <div className="liunian-item-ganzhi">
-                          <span className="liunian-gan">{year.ganZhi.gan}</span>
-                          <span className="liunian-zhi">{year.ganZhi.zhi}</span>
-                        </div>
-                        <div className="liunian-item-shenshi">
-                          <Badge variant="default" size="sm">{year.shenShi.gan}</Badge>
-                        </div>
-                        <div className="liunian-item-toggle">
-                          {expandedLiunian === year.year ? '收起 ▲' : '展开 ▼'}
-                        </div>
+                {/* V4.4 虚拟列表：流年 100 年长列表，超阈值启用虚拟化；展开某项时退回全量渲染 */}
+                {liunianVirtualized ? (
+                  <div
+                    className="liunian-list liunian-list--virtual"
+                    style={{ maxHeight: LIUNIAN_CONTAINER_HEIGHT, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}
+                    onScroll={(e) => setLiunianScrollTop(e.currentTarget.scrollTop)}
+                  >
+                    <div style={{ height: liunianVirtual.total * LIUNIAN_ITEM_HEIGHT, position: 'relative' }}>
+                      <div style={{ transform: `translateY(${liunianVirtual.offsetY}px)` }}>
+                        {liunianVirtual.visibleItems.map((year) => renderLiunianItem(year))}
                       </div>
-                      <div className="liunian-item-relations">
-                        {year.vsMingJu.chong.length > 0 && (
-                          <Badge variant="error" size="sm">冲</Badge>
-                        )}
-                        {year.vsMingJu.he.length > 0 && (
-                          <Badge variant="success" size="sm">合</Badge>
-                        )}
-                        {year.vsMingJu.xing.length > 0 && (
-                          <Badge variant="warning" size="sm">刑</Badge>
-                        )}
-                        {year.vsMingJu.hai.length > 0 && (
-                          <Badge variant="error" size="sm">害</Badge>
-                        )}
-                        {year.vsMingJu.chuan.length > 0 && (
-                          <Badge variant="warning" size="sm">穿</Badge>
-                        )}
-                        {year.vsMingJu.po.length > 0 && (
-                          <Badge variant="default" size="sm">破</Badge>
-                        )}
-                        {year.vsDaYun.chong.length > 0 && (
-                          <Badge variant="error" size="sm">冲运</Badge>
-                        )}
-                        {year.vsDaYun.he.length > 0 && (
-                          <Badge variant="success" size="sm">合运</Badge>
-                        )}
-                      </div>
-                      <div className="liunian-item-summary">
-                        {year.summary}
-                      </div>
-                      {expandedLiunian === year.year && (
-                        <div className="liunian-item-detail">
-                          <p>{year.detail}</p>
-                          {year.yingQi.length > 0 && (
-                            <div className="liunian-yingqi">
-                              <p><strong>应期事件：</strong></p>
-                              {year.yingQi.map((yq, idx) => (
-                                <div key={idx} className="yingqi-item">
-                                  <p>• {yq.event}（强度：{yq.intensity}）</p>
-                                  <p>　原因：{yq.reason}</p>
-                                  <p>　影响：{yq.implications.join('、')}</p>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {year.vsMingJu.chong.length > 0 && (
-                            <p><strong>流年冲命局：</strong>{year.vsMingJu.chong.join('、')}</p>
-                          )}
-                          {year.vsMingJu.he.length > 0 && (
-                            <p><strong>流年合命局：</strong>{year.vsMingJu.he.join('、')}</p>
-                          )}
-                          {year.vsMingJu.xing.length > 0 && (
-                            <p><strong>流年刑命局：</strong>{year.vsMingJu.xing.join('、')}</p>
-                          )}
-                          {year.vsMingJu.hai.length > 0 && (
-                            <p><strong>流年害命局：</strong>{year.vsMingJu.hai.join('、')}</p>
-                          )}
-                          {year.vsMingJu.chuan.length > 0 && (
-                            <p><strong>流年穿命局：</strong>{year.vsMingJu.chuan.join('、')}</p>
-                          )}
-                          {year.vsMingJu.po.length > 0 && (
-                            <p><strong>流年破命局：</strong>{year.vsMingJu.po.join('、')}</p>
-                          )}
-                          {(year.vsDaYun.chong.length > 0 || year.vsDaYun.he.length > 0 || year.vsDaYun.xing.length > 0 || year.vsDaYun.hai.length > 0 || year.vsDaYun.chuan.length > 0 || year.vsDaYun.po.length > 0 || year.vsDaYun.fuYin.length > 0) && (
-                            <p><strong>流年与大运：</strong>{[...year.vsDaYun.chong, ...year.vsDaYun.he, ...year.vsDaYun.xing, ...year.vsDaYun.hai, ...year.vsDaYun.chuan, ...year.vsDaYun.po, ...year.vsDaYun.fuYin].join('、')}</p>
-                          )}
-                        </div>
-                      )}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ) : (
+                  <div className="liunian-list">
+                    {liuNian.years.map((year) => renderLiunianItem(year))}
+                  </div>
+                )}
               </Card>
             </div>
           )}
@@ -2044,9 +2346,490 @@ export default function BaziChart() {
             </div>
           )}
 
+          {/* ===== 新增 8 个 Tab ===== */}
+
+          {/* 命局总论 */}
+          {activeTab === 'master' && masterSummary && (
+            <div className="bazi-master-analysis">
+              <Card className="bazi-master-card">
+                <h3 className="card-title">命局总论</h3>
+                {masterSummary.sections.map((sec, idx) => (
+                  <div key={idx} className="bazi-master-section">
+                    <div
+                      className="bazi-master-section-header"
+                      onClick={() => {
+                        const next = new Set(expandedMaster)
+                        next.has(idx) ? next.delete(idx) : next.add(idx)
+                        setExpandedMaster(next)
+                      }}
+                    >
+                      <h4 className="section-title">{sec.title}</h4>
+                      <span className="bazi-master-section-toggle">
+                        {expandedMaster.has(idx) ? '收起 ▲' : '展开 ▼'}
+                      </span>
+                    </div>
+                    {expandedMaster.has(idx) && (
+                      <div className="bazi-master-section-body">
+                        {sec.content.split('\n').map((p, pi) => (
+                          <p key={pi} className="section-text">{p}</p>
+                        ))}
+                        <button
+                          className="bazi-copy-btn"
+                          onClick={() => handleCopy(sec.content, `master-${idx}`)}
+                        >
+                          {copiedId === `master-${idx}` ? '已复制' : '复制文本'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <button
+                  className="bazi-copy-btn"
+                  onClick={() => handleCopy(masterSummary.fullText, 'master-full')}
+                >
+                  {copiedId === 'master-full' ? '已复制全文' : '复制全文'}
+                </button>
+              </Card>
+            </div>
+          )}
+
+          {/* 四柱详解 */}
+          {activeTab === 'pillars' && pillarAnalysis && (
+            <div className="bazi-pillars-analysis">
+              {(['year', 'month', 'day', 'hour'] as const).map(key => {
+                const p = pillarAnalysis[key]
+                const isOpen = expandedPillars.has(key)
+                return (
+                  <Card key={key} className="bazi-pillar-card">
+                    <div
+                      className="bazi-pillar-card-header"
+                      onClick={() => {
+                        const next = new Set(expandedPillars)
+                        next.has(key) ? next.delete(key) : next.add(key)
+                        setExpandedPillars(next)
+                      }}
+                    >
+                      <h3 className="card-title">{p.label} ({p.gan}{p.zhi})</h3>
+                      <span className="bazi-master-section-toggle">
+                        {isOpen ? '收起 ▲' : '展开 ▼'}
+                      </span>
+                    </div>
+                    {isOpen && (
+                      <div className="bazi-pillar-card-body">
+                        {p.sections.map((s, si) => (
+                          <div key={si} className="bazi-pillar-section">
+                            <h4 className="section-title">{s.title}</h4>
+                            <p className="section-text">{s.content}</p>
+                          </div>
+                        ))}
+                        <div className="bazi-pillar-summary">
+                          <h4 className="section-title">总评</h4>
+                          <p className="section-text">{p.summary}</p>
+                        </div>
+                        <button
+                          className="bazi-copy-btn"
+                          onClick={() => handleCopy(p.sections.map(s => `${s.title}\n${s.content}`).join('\n\n'), `pillar-${key}`)}
+                        >
+                          {copiedId === `pillar-${key}` ? '已复制' : '复制文本'}
+                        </button>
+                      </div>
+                    )}
+                  </Card>
+                )
+              })}
+            </div>
+          )}
+
+          {/* 十神详解 */}
+          {activeTab === 'shishen-detail' && shiShenDetail && (
+            <div className="bazi-shishen-detail-analysis">
+              {shiShenDetail.items.map((item, idx) => {
+                const isOpen = expandedShiShenDetail.has(idx)
+                return (
+                  <Card key={idx} className="bazi-shishen-detail-card">
+                    <div
+                      className="bazi-shishen-detail-header"
+                      onClick={() => {
+                        const next = new Set(expandedShiShenDetail)
+                        next.has(idx) ? next.delete(idx) : next.add(idx)
+                        setExpandedShiShenDetail(next)
+                      }}
+                    >
+                      <h3 className="card-title">
+                        {item.name}
+                        <Badge variant={item.isFavorable ? 'success' : 'error'} size="sm">
+                          {item.isFavorable ? '喜' : '忌'}
+                        </Badge>
+                        <Badge variant="default" size="sm">{item.element}</Badge>
+                      </h3>
+                      <span className="bazi-master-section-toggle">
+                        {isOpen ? '收起 ▲' : '展开 ▼'}
+                      </span>
+                    </div>
+                    {isOpen && (
+                      <div className="bazi-shishen-detail-body">
+                        <p className="section-text">出现位置：{item.positions.join('、')}</p>
+                        {item.analysis.map((a, ai) => (
+                          <div key={ai} className="bazi-shishen-detail-section">
+                            <h4 className="section-title">{a.title}</h4>
+                            <p className="section-text">{a.content}</p>
+                          </div>
+                        ))}
+                        <div className="bazi-shishen-detail-summary">
+                          <h4 className="section-title">总体影响</h4>
+                          <p className="section-text">{item.summary}</p>
+                        </div>
+                        <button
+                          className="bazi-copy-btn"
+                          onClick={() => handleCopy(item.summary, `shishen-${idx}`)}
+                        >
+                          {copiedId === `shishen-${idx}` ? '已复制' : '复制文本'}
+                        </button>
+                      </div>
+                    )}
+                  </Card>
+                )
+              })}
+            </div>
+          )}
+
+          {/* 神煞详解 */}
+          {activeTab === 'shensha-detail' && shenShaDetail && (
+            <div className="bazi-shensha-detail-analysis">
+              {shenShaDetail.items.map((item, idx) => {
+                const isOpen = expandedShenShaDetail.has(idx)
+                return (
+                  <Card key={idx} className="bazi-shensha-detail-card">
+                    <div
+                      className="bazi-shensha-detail-header"
+                      onClick={() => {
+                        const next = new Set(expandedShenShaDetail)
+                        next.has(idx) ? next.delete(idx) : next.add(idx)
+                        setExpandedShenShaDetail(next)
+                      }}
+                    >
+                      <h3 className="card-title">
+                        {item.name}
+                        <Badge variant={item.isAuspicious ? 'success' : 'error'} size="sm">
+                          {item.isAuspicious ? '吉神' : '凶煞'}
+                        </Badge>
+                      </h3>
+                      <span className="bazi-master-section-toggle">
+                        {isOpen ? '收起 ▲' : '展开 ▼'}
+                      </span>
+                    </div>
+                    {isOpen && (
+                      <div className="bazi-shensha-detail-body">
+                        <p className="section-text">出现位置：{item.position}</p>
+                        {item.detail.map((d, di) => (
+                          <div key={di} className="bazi-shensha-detail-section">
+                            <h4 className="section-title">{d.title}</h4>
+                            <p className="section-text">{d.content}</p>
+                          </div>
+                        ))}
+                        <button
+                          className="bazi-copy-btn"
+                          onClick={() => handleCopy(item.detail.map(d => `${d.title}\n${d.content}`).join('\n\n'), `shensha-${idx}`)}
+                        >
+                          {copiedId === `shensha-${idx}` ? '已复制' : '复制文本'}
+                        </button>
+                      </div>
+                    )}
+                  </Card>
+                )
+              })}
+            </div>
+          )}
+
+          {/* 综合评分 */}
+          {activeTab === 'score' && compScore && (
+            <div className="bazi-score-analysis">
+              <Card className="bazi-score-overview-card">
+                <h3 className="card-title">综合评分</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <svg width="280" height="280" viewBox="0 0 300 300" style={{ maxWidth: '100%' }}>
+                    {/* 网格 */}
+                    {getScoreRadarGrid(150, 150, 110, 4).map((pts, i) => (
+                      <polygon key={`grid-${i}`} points={pts} fill="none" stroke="var(--border)" strokeWidth="0.5" />
+                    ))}
+                    {/* 轴线 */}
+                    {compScore.radarData.map((_, i) => {
+                      const angle = (i * 36 - 90) * Math.PI / 180
+                      const x = 150 + 110 * Math.cos(angle)
+                      const y = 150 + 110 * Math.sin(angle)
+                      return <line key={`axis-${i}`} x1={150} y1={150} x2={x} y2={y} stroke="var(--border)" strokeWidth="0.5" />
+                    })}
+                    {/* 数据多边形 */}
+                    <polygon
+                      points={getScoreRadarPoints(compScore.radarData, 150, 150, 110)}
+                      fill="rgba(99,102,241,0.2)"
+                      stroke="var(--primary)"
+                      strokeWidth="2"
+                    />
+                    {/* 顶点圆点 + 标签 */}
+                    {compScore.dimensions.map((dim, i) => {
+                      const angle = (i * 36 - 90) * Math.PI / 180
+                      const val = compScore.radarData[i] / 100
+                      const cx = 150 + 110 * val * Math.cos(angle)
+                      const cy = 150 + 110 * val * Math.sin(angle)
+                      const lx = 150 + 128 * Math.cos(angle)
+                      const ly = 150 + 128 * Math.sin(angle)
+                      return (
+                        <g key={`label-${i}`}>
+                          <circle cx={cx} cy={cy} r="3" fill="var(--primary)" />
+                          <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize="11" fill="var(--text-secondary)">
+                            {dim.name}
+                          </text>
+                        </g>
+                      )
+                    })}
+                  </svg>
+                  <div style={{ marginTop: '8px', textAlign: 'center' }}>
+                    <span style={{ fontSize: '24px', fontWeight: 700, color: 'var(--primary)' }}>{compScore.overallScore}</span>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', marginLeft: '4px' }}>{compScore.overallLevel}</span>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="bazi-score-bars-card">
+                <h3 className="card-title">维度评分明细</h3>
+                {compScore.dimensions.map((dim, idx) => (
+                  <div key={idx} className="bazi-score-dim-row">
+                    <div className="bazi-score-dim-label">{dim.name}</div>
+                    <div className="bazi-score-dim-bar">
+                      <div
+                        className="dayun-score-fill"
+                        style={{
+                          width: `${dim.score}%`,
+                          background: dim.score >= 80 ? 'var(--success)' : dim.score >= 60 ? 'var(--gold-500)' : dim.score >= 40 ? 'var(--warning)' : 'var(--error)',
+                        }}
+                      />
+                    </div>
+                    <div className="bazi-score-dim-value">{dim.score}分</div>
+                    <div className="bazi-score-dim-level">
+                      <Badge variant={dim.score >= 80 ? 'success' : dim.score >= 60 ? 'gold' : 'default'} size="sm">{dim.level}</Badge>
+                    </div>
+                  </div>
+                ))}
+              </Card>
+            </div>
+          )}
+
+          {/* 大运详解 */}
+          {activeTab === 'dayun-detail' && dayunDetails.length > 0 && (
+            <div className="bazi-dayun-detail-analysis">
+              <Card className="bazi-dayun-detail-card">
+                <h3 className="card-title">大运深度解析</h3>
+                <div className="dayun-list">
+                  {dayunDetails.map((detail: any, idx: number) => {
+                    const step = daYun.steps[idx]
+                    const isOpen = expandedDayunDetail === idx
+                    return (
+                      <div key={idx} className={`dayun-item ${idx === daYun.currentStepIndex ? 'dayun-item--current' : ''} ${isOpen ? 'dayun-item--expanded' : ''}`}>
+                        <div
+                          className="dayun-item-header"
+                          onClick={() => setExpandedDayunDetail(isOpen ? null : idx)}
+                        >
+                          <div className="dayun-item-ganzhi">
+                            <span className="dayun-gan">{detail.ganZhi}</span>
+                          </div>
+                          <div className="dayun-item-info">
+                            <span className="dayun-item-age">{detail.ageRange}</span>
+                            <span className="dayun-item-year">{detail.yearRange}</span>
+                          </div>
+                          <div className="dayun-item-score">
+                            <Badge variant={detail.overallScore >= 70 ? 'success' : detail.overallScore >= 50 ? 'gold' : 'error'} size="sm">
+                              {detail.overallScore}分
+                            </Badge>
+                          </div>
+                          <span className="dayun-item-toggle">{isOpen ? '收起 ▲' : '展开 ▼'}</span>
+                        </div>
+                        {isOpen && (
+                          <div className="dayun-item-detail">
+                            <div className="dayun-detail-sections">
+                              {detail.sections.map((s: any, si: number) => (
+                                <div key={si} className="dayun-detail-section">
+                                  <h4 className="section-title">{s.title}</h4>
+                                  <p className="section-text">{s.content}</p>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="dayun-detail-summary">
+                              <h4 className="section-title">总体评述</h4>
+                              <p className="section-text">{detail.summary}</p>
+                            </div>
+                            <button
+                              className="bazi-copy-btn"
+                              onClick={() => handleCopy(detail.sections.map((s: any) => `${s.title}\n${s.content}`).join('\n\n') + '\n\n总体评述\n' + detail.summary, `dayun-detail-${idx}`)}
+                            >
+                              {copiedId === `dayun-detail-${idx}` ? '已复制' : '复制文本'}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* 流年详解 */}
+          {activeTab === 'liunian-detail' && liunianDetails.length > 0 && (
+            <div className="bazi-liunian-detail-analysis">
+              <Card className="bazi-liunian-detail-card">
+                <h3 className="card-title">流年深度解析</h3>
+                <div className="liunian-list">
+                  {liunianDetails.map((detail: any, idx: number) => {
+                    const isOpen = expandedLiuNianDetail === idx
+                    const year = liuNian.years[idx]
+                    return (
+                      <div key={idx} className={`liunian-item ${year?.isCurrentYear ? 'liunian-item--current' : ''} ${isOpen ? 'liunian-item--expanded' : ''}`}>
+                        <div
+                          className="liunian-item-header"
+                          onClick={() => setExpandedLiuNianDetail(isOpen ? null : idx)}
+                        >
+                          <div className="liunian-item-year">{detail.year}年</div>
+                          <div className="liunian-item-ganzhi">
+                            <span className="liunian-gan">{detail.ganZhi}</span>
+                          </div>
+                          <div className="dayun-item-score">
+                            <Badge variant={detail.overallScore >= 70 ? 'success' : detail.overallScore >= 50 ? 'gold' : 'error'} size="sm">
+                              {detail.overallScore}分
+                            </Badge>
+                          </div>
+                          <span className="liunian-item-toggle">{isOpen ? '收起 ▲' : '展开 ▼'}</span>
+                        </div>
+                        {isOpen && (
+                          <div className="liunian-item-detail">
+                            <div className="liunian-detail-sections">
+                              {detail.sections.map((s: any, si: number) => (
+                                <div key={si} className="liunian-detail-section">
+                                  <h4 className="section-title">{s.title}</h4>
+                                  <p className="section-text">{s.content}</p>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="liunian-detail-summary">
+                              <h4 className="section-title">总体评述</h4>
+                              <p className="section-text">{detail.summary}</p>
+                            </div>
+                            <button
+                              className="bazi-copy-btn"
+                              onClick={() => handleCopy(detail.sections.map((s: any) => `${s.title}\n${s.content}`).join('\n\n') + '\n\n总体评述\n' + detail.summary, `liunian-detail-${idx}`)}
+                            >
+                              {copiedId === `liunian-detail-${idx}` ? '已复制' : '复制文本'}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* 流月详解 */}
+          {activeTab === 'liuyue-detail' && (
+            <div className="bazi-liuyue-detail-analysis">
+              <Card className="bazi-liuyue-detail-card">
+                <h3 className="card-title">流月逐月分析</h3>
+                <div className="liuyue-overview-info">
+                  <div className="liuyue-year-selector">
+                    <Button variant="secondary" size="sm" onClick={() => setLiuYueYear(liuYueYear - 1)}>
+                      上一年
+                    </Button>
+                    <span className="liuyue-year-display">
+                      {liuYue.year}年 {liuYue.yearGanZhi.gan}{liuYue.yearGanZhi.zhi}
+                    </span>
+                    <Button variant="secondary" size="sm" onClick={() => setLiuYueYear(liuYueYear + 1)}>
+                      下一年
+                    </Button>
+                  </div>
+                </div>
+                <div className="liuyue-grid">
+                  {liuYue.months.map((month) => {
+                    const isOpen = expandedLiuYueDetail === month.monthIndex
+                    return (
+                      <div key={month.monthIndex} className={`liuyue-item ${isOpen ? 'liuyue-item--expanded' : ''}`}>
+                        <div
+                          className="liuyue-item-header"
+                          onClick={() => setExpandedLiuYueDetail(isOpen ? null : month.monthIndex)}
+                        >
+                          <div className="liuyue-item-month">{month.monthName}</div>
+                          <div className="liuyue-item-ganzhi">
+                            <span className="liuyue-gan">{month.ganZhi.gan}</span>
+                            <span className="liuyue-zhi">{month.ganZhi.zhi}</span>
+                          </div>
+                          <div className="liuyue-item-jixiong">
+                            <Badge
+                              variant={
+                                month.jiXiong === '大吉' ? 'success' :
+                                month.jiXiong === '吉' ? 'gold' :
+                                month.jiXiong === '平' ? 'default' :
+                                month.jiXiong === '凶' ? 'warning' : 'error'
+                              }
+                              size="sm"
+                            >
+                              {month.jiXiong}
+                            </Badge>
+                          </div>
+                          <div className="liuyue-item-toggle">
+                            {isOpen ? '▲' : '▼'}
+                          </div>
+                        </div>
+                        <div className="liuyue-item-score">
+                          <div className="liuyue-score-bar">
+                            <div
+                              className="liuyue-score-fill"
+                              style={{
+                                width: `${month.score}%`,
+                                background: month.score >= 70 ? 'var(--success)' : month.score >= 50 ? 'var(--gold-500)' : 'var(--error)'
+                              }}
+                            />
+                          </div>
+                          <span className="liuyue-score-value">{month.score}分</span>
+                        </div>
+                        {isOpen && (
+                          <div className="liuyue-item-detail">
+                            <h4 className="section-title">月份概述</h4>
+                            <p className="section-text">{month.summary}</p>
+                            <h4 className="section-title">注意事项</h4>
+                            <p className="section-text">{month.notice}</p>
+                            <div className="liuyue-item-relations">
+                              {month.chong.length > 0 && <p><strong>冲：</strong>{month.chong.join('、')}</p>}
+                              {month.he.length > 0 && <p><strong>合：</strong>{month.he.join('、')}</p>}
+                              {month.xing.length > 0 && <p><strong>刑：</strong>{month.xing.join('、')}</p>}
+                              {month.hai.length > 0 && <p><strong>害：</strong>{month.hai.join('、')}</p>}
+                            </div>
+                            <button
+                              className="bazi-copy-btn"
+                              onClick={() => handleCopy(`${month.monthName} ${month.ganZhi.gan}${month.ganZhi.zhi}\n${month.summary}\n注意事项：${month.notice}`, `liuyue-detail-${month.monthIndex}`)}
+                            >
+                              {copiedId === `liuyue-detail-${month.monthIndex}` ? '已复制' : '复制文本'}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </Card>
+            </div>
+          )}
+
           {activeTab === 'report' && (
-            <ReportExperience
-              data={{
+            <div>
+              {/* V4.2 导出专业报告按钮 */}
+              <div style={{ marginBottom: 12 }}>
+                <Button variant="primary" onClick={handleExportProfessional}>
+                  导出专业报告
+                </Button>
+              </div>
+              <Suspense fallback={<Loading />}>
+              <ReportExperience
+                data={{
                 dayGan: sixLines.day.gan,
                 dayZhi: sixLines.day.zhi,
                 monthGan: sixLines.month.gan,
@@ -2060,13 +2843,7 @@ export default function BaziChart() {
                 gender: chartBirth.gender,
                 birthDate: chartBirth.birthDate + ' ' + chartBirth.birthTime,
                 geJu: geJu,
-                xiYong: determineXiYongShen(
-                  dayMaster.strengthScore,
-                  dayMaster.wangShuai,
-                  geJu.name as any,
-                  dayMaster.dayGanElement,
-                  dayMaster.heHuaResults,
-                ) as XiYongShenResult,
+                xiYong: p?.xiYongShen!,
                 strength: dayMaster,
                 marriage: marriage,
                 career: career,
@@ -2079,6 +2856,282 @@ export default function BaziChart() {
               }}
               onSave={function() { handleSave() }}
             />
+            </Suspense>
+            </div>
+          )}
+
+          {/* ===== V4.2 新增 Tab ===== */}
+
+          {/* AI 问命 */}
+          {activeTab === 'ask' && (
+            <Card className="bazi-overview-card">
+              <h3 className="card-title">AI 问命</h3>
+              <p style={{ color: '#a89f8a', fontSize: 14, marginBottom: 16 }}>
+                基于命盘数据的智能问答，输入您的问题获得个性化命理解读
+              </p>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+                <input
+                  type="text"
+                  className="bazi-ask-input"
+                  value={askQuestion}
+                  onChange={e => setAskQuestion(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleAskQuestion()}
+                  placeholder="例如：我的事业运势如何？今年财运好吗？"
+                  style={{
+                    flex: 1,
+                    padding: '10px 14px',
+                    background: '#141210',
+                    border: '1px solid #3D3527',
+                    borderRadius: 6,
+                    color: '#F5F0E1',
+                    fontSize: 14,
+                    outline: 'none',
+                  }}
+                />
+                <Button
+                  variant="primary"
+                  onClick={handleAskQuestion}
+                  disabled={askLoading || !askQuestion.trim()}
+                >
+                  {askLoading ? '推演中...' : '问命'}
+                </Button>
+              </div>
+              {askHistory.length > 0 && (
+                <div className="bazi-ask-history">
+                  <h4 style={{ color: '#D4A843', fontSize: 14, marginBottom: 12 }}>问答记录</h4>
+                  {askHistory.map((item, i) => (
+                    <div key={i} className="bazi-ask-item" style={{
+                      background: i === 0 ? '#1A1714' : '#141210',
+                      border: '1px solid #2A2520',
+                      borderRadius: 8,
+                      padding: 16,
+                      marginBottom: 12,
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <span style={{ color: '#D4A843', fontSize: 12 }}>
+                          {item.relatedAspects.join(' / ')}
+                        </span>
+                        <span style={{ color: '#6B6354', fontSize: 12 }}>
+                          置信度 {item.confidence}%
+                        </span>
+                      </div>
+                      <p style={{ color: '#F5F0E1', fontSize: 14, lineHeight: 1.8, marginBottom: 10 }}>
+                        {item.answer}
+                      </p>
+                      {item.suggestions.length > 0 && (
+                        <div style={{ borderTop: '1px solid #2A2520', paddingTop: 8 }}>
+                          {item.suggestions.map((s, si) => (
+                            <p key={si} style={{ color: '#A89F8A', fontSize: 13, margin: '4px 0' }}>
+                              &bull; {s}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
+
+          {/* 风水建议（baziFengShuiLink） */}
+          {activeTab === 'fengshui-link' && fengShuiLinkMemo && (
+            <div className="bazi-fengshui-link">
+              <Card className="bazi-overview-card">
+                <h3 className="card-title">八字风水联动建议</h3>
+                <p style={{ color: '#a89f8a', fontSize: 14, marginBottom: 16 }}>
+                  基于命盘喜用神五行推算的风水布局建议
+                </p>
+
+                {/* 有利方位 */}
+                {fengShuiLinkMemo.favorableDirections.length > 0 && (
+                  <div style={{ marginBottom: 20 }}>
+                    <h4 style={{ color: '#D4A843', fontSize: 15, marginBottom: 10 }}>有利方位</h4>
+                    {fengShuiLinkMemo.favorableDirections.map((d, i) => (
+                      <div key={i} style={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        padding: '8px 12px', background: d.isFavorable ? '#1A1714' : '#141210',
+                        border: '1px solid #2A2520', borderRadius: 6, marginBottom: 6,
+                      }}>
+                        <span style={{ color: '#F5F0E1', fontSize: 14 }}>
+                          {d.direction}（{d.element}）
+                        </span>
+                        <span style={{
+                          color: d.isFavorable ? '#5B8C5A' : '#C4453A',
+                          fontSize: 13, fontWeight: 'bold',
+                        }}>
+                          {d.score}分
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 幸运颜色 */}
+                {fengShuiLinkMemo.luckyColors.length > 0 && (
+                  <div style={{ marginBottom: 20 }}>
+                    <h4 style={{ color: '#D4A843', fontSize: 15, marginBottom: 10 }}>幸运颜色</h4>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      {fengShuiLinkMemo.luckyColors.map((c, i) => (
+                        <span key={i} style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 6,
+                          padding: '6px 12px', background: '#1A1714', borderRadius: 20,
+                          border: '1px solid #2A2520', fontSize: 13, color: '#F5F0E1',
+                        }}>
+                          <span style={{
+                            width: 14, height: 14, borderRadius: '50%',
+                            background: c.hex, display: 'inline-block',
+                          }} />
+                          {c.color}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 幸运数字 */}
+                {fengShuiLinkMemo.luckyNumbers.length > 0 && (
+                  <div style={{ marginBottom: 20 }}>
+                    <h4 style={{ color: '#D4A843', fontSize: 15, marginBottom: 10 }}>幸运数字</h4>
+                    <div style={{ display: 'flex', gap: 10 }}>
+                      {fengShuiLinkMemo.luckyNumbers.map((n, i) => (
+                        <span key={i} style={{
+                          width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          background: '#1A1714', border: '1px solid #3D3527', borderRadius: 6,
+                          color: '#D4A843', fontSize: 16, fontWeight: 'bold',
+                        }}>
+                          {n}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 总体建议 */}
+                {fengShuiLinkMemo.summary && (
+                  <div style={{
+                    padding: 16, background: '#141210', border: '1px solid #2A2520',
+                    borderRadius: 8, marginTop: 12,
+                  }}>
+                    <h4 style={{ color: '#D4A843', fontSize: 15, marginBottom: 8 }}>总体建议</h4>
+                    <p style={{ color: '#F5F0E1', fontSize: 14, lineHeight: 1.8 }}>
+                      {fengShuiLinkMemo.summary}
+                    </p>
+                  </div>
+                )}
+              </Card>
+            </div>
+          )}
+
+          {/* 年度运势 */}
+          {activeTab === 'annual' && (
+            <Card className="bazi-overview-card">
+              <h3 className="card-title">年度运势</h3>
+              <p style={{ color: '#a89f8a', fontSize: 14, marginBottom: 16 }}>
+                基于命盘与流年干支的详细年度运势分析
+              </p>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 20, alignItems: 'center' }}>
+                <label style={{ color: '#A89F8A', fontSize: 14 }}>选择年份：</label>
+                <input
+                  type="number"
+                  value={annualYear}
+                  onChange={e => setAnnualYear(parseInt(e.target.value) || new Date().getFullYear())}
+                  min={1900}
+                  max={2100}
+                  style={{
+                    width: 100, padding: '8px 12px',
+                    background: '#141210', border: '1px solid #3D3527',
+                    borderRadius: 6, color: '#F5F0E1', fontSize: 14, outline: 'none',
+                  }}
+                />
+                <Button variant="primary" onClick={handleGenerateAnnual}>
+                  生成运势
+                </Button>
+              </div>
+              {annualResult && (
+                <div className="bazi-annual-result">
+                  <div style={{
+                    padding: 16, background: '#1A1714', borderRadius: 8,
+                    border: '1px solid #3D3527', marginBottom: 16,
+                  }}>
+                    <h4 style={{ color: '#D4A843', fontSize: 18, marginBottom: 8 }}>
+                      {annualResult.title}
+                    </h4>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                      <span style={{ color: '#F5F0E1', fontSize: 20, fontWeight: 'bold' }}>
+                        {annualResult.overallScore}分
+                      </span>
+                      <span style={{
+                        padding: '4px 10px', borderRadius: 12, fontSize: 13,
+                        background: annualResult.overallScore >= 70 ? '#2E4A2E' : annualResult.overallScore >= 50 ? '#4A3E2E' : '#4A2E2E',
+                        color: '#F5F0E1',
+                      }}>
+                        {annualResult.overallLevel}
+                      </span>
+                    </div>
+                    <p style={{ color: '#A89F8A', fontSize: 14, lineHeight: 1.8 }}>
+                      {annualResult.summary}
+                    </p>
+                  </div>
+
+                  {/* 关键月份 */}
+                  {annualResult.keyMonths.length > 0 && (
+                    <div style={{ marginBottom: 16 }}>
+                      <h4 style={{ color: '#D4A843', fontSize: 15, marginBottom: 10 }}>关键月份</h4>
+                      {annualResult.keyMonths.map((km, i) => (
+                        <div key={i} style={{
+                          padding: '8px 12px', background: km.type === 'best' ? '#1A2E1A' : '#2E1A1A',
+                          border: '1px solid #2A2520', borderRadius: 6, marginBottom: 6,
+                          display: 'flex', justifyContent: 'space-between',
+                        }}>
+                          <span style={{ color: km.type === 'best' ? '#5B8C5A' : '#C4453A', fontSize: 14, fontWeight: 'bold' }}>
+                            {km.type === 'best' ? '吉' : '凶'} · {km.month}月
+                          </span>
+                          <span style={{ color: '#A89F8A', fontSize: 13 }}>{km.reason}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 年度建议 */}
+                  {annualResult.suggestions.length > 0 && (
+                    <div style={{ marginBottom: 16 }}>
+                      <h4 style={{ color: '#D4A843', fontSize: 15, marginBottom: 10 }}>年度建议</h4>
+                      {annualResult.suggestions.map((s, i) => (
+                        <p key={i} style={{ color: '#F5F0E1', fontSize: 14, lineHeight: 1.6, marginBottom: 4 }}>
+                          {i + 1}. {s}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 月度运势概览 */}
+                  {annualResult.months.length > 0 && (
+                    <div>
+                      <h4 style={{ color: '#D4A843', fontSize: 15, marginBottom: 10 }}>月度运势</h4>
+                      {annualResult.months.map(m => (
+                        <div key={m.month} style={{
+                          padding: '10px 12px', background: '#141210',
+                          border: '1px solid #2A2520', borderRadius: 6, marginBottom: 6,
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                            <span style={{ color: '#F5F0E1', fontSize: 14, fontWeight: 'bold' }}>
+                              {m.monthName}
+                            </span>
+                            <span style={{ color: '#D4A843', fontSize: 13 }}>
+                              综合 {m.overall.score}分
+                            </span>
+                          </div>
+                          <p style={{ color: '#A89F8A', fontSize: 13, lineHeight: 1.6, margin: 0 }}>
+                            {m.overall.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Card>
           )}
         </div>
 
@@ -2095,6 +3148,22 @@ export default function BaziChart() {
           <Button variant="ghost" fullWidth onClick={() => setShowPoster(true)}>
             分享海报
           </Button>
+          {/* V4.2 新增分享选项 */}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Button variant="ghost" style={{ flex: 1 }} onClick={handleDownloadNineGrid}>
+              九宫格
+            </Button>
+            <Button variant="ghost" style={{ flex: 1 }} onClick={handleDownloadLongImage}>
+              长图海报
+            </Button>
+            <Button variant="ghost" style={{ flex: 1 }} onClick={handleDownloadWeChatCard}>
+              微信卡片
+            </Button>
+          </div>
+          {/* V4.2 导出专业报告 */}
+          <Button variant="ghost" fullWidth onClick={handleExportProfessional}>
+            导出专业报告
+          </Button>
           <Button variant="ghost" fullWidth onClick={() => navigate('/bazi')}>
             重新排盘
           </Button>
@@ -2102,7 +3171,15 @@ export default function BaziChart() {
 
         {/* 海报弹窗 */}
         {showPoster && chart && (
-          <BaziPoster chart={chart} onClose={() => setShowPoster(false)} />
+          <Suspense fallback={null}>
+          <BaziPoster
+            chart={chart}
+            onClose={() => setShowPoster(false)}
+            geJu={p?.geJu?.name}
+            dayMaster={`日元 ${chart.dayMaster.dayGan}${chart.dayMaster.dayGanElement}`}
+            xiYongShen={`喜 ${chart.xiYongShen.happiness} 用 ${chart.xiYongShen.usage}`}
+          />
+          </Suspense>
         )}
       </div>
     </div>

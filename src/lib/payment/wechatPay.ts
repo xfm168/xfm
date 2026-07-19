@@ -90,8 +90,8 @@ export function createOrder(
 
 export function verifyNotify(
   config: WechatPayConfig | null,
-  body: string,
-  signature: string
+  _body: string,
+  _signature: string
 ): Promise<boolean> {
   return new Promise(function(resolve) {
     if (!isConfigured(config)) {

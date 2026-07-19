@@ -1,0 +1,566 @@
+{
+  "generatedAt": 1784252694247,
+  "perfReport": {
+    "version": "1.0.0",
+    "runAt": 1784252694244,
+    "environment": {
+      "nodeVersion": "v22.23.1",
+      "platform": "linux",
+      "cpuCount": 2,
+      "totalMemoryMB": 3924,
+      "timestamp": 1784252693298
+    },
+    "singleBenchmark": {
+      "scale": "single",
+      "iterations": 1,
+      "totalTimeMs": 32.33,
+      "avgTimeMs": 32.33,
+      "throughputPerSecond": 30.93,
+      "memoryPeakMB": 25.13,
+      "memoryAfterGCMB": 25.13,
+      "results": [
+        {
+          "engine": "module1-four-pillars",
+          "iterations": 1,
+          "totalTimeMs": 0.7,
+          "avgTimeMs": 0.7,
+          "minTimeMs": 0.7,
+          "maxTimeMs": 0.7,
+          "medianTimeMs": 0.7,
+          "p95TimeMs": 0.7,
+          "p99TimeMs": 0.7,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.16
+        },
+        {
+          "engine": "module2-shensha",
+          "iterations": 1,
+          "totalTimeMs": 0.03,
+          "avgTimeMs": 0.03,
+          "minTimeMs": 0.03,
+          "maxTimeMs": 0.03,
+          "medianTimeMs": 0.03,
+          "p95TimeMs": 0.03,
+          "p99TimeMs": 0.03,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0
+        },
+        {
+          "engine": "module3-ten-gods",
+          "iterations": 1,
+          "totalTimeMs": 0.02,
+          "avgTimeMs": 0.02,
+          "minTimeMs": 0.02,
+          "maxTimeMs": 0.02,
+          "medianTimeMs": 0.02,
+          "p95TimeMs": 0.02,
+          "p99TimeMs": 0.02,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0
+        },
+        {
+          "engine": "module4-pattern",
+          "iterations": 1,
+          "totalTimeMs": 0.02,
+          "avgTimeMs": 0.02,
+          "minTimeMs": 0.02,
+          "maxTimeMs": 0.02,
+          "medianTimeMs": 0.02,
+          "p95TimeMs": 0.02,
+          "p99TimeMs": 0.02,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0
+        },
+        {
+          "engine": "module5-xiyong",
+          "iterations": 1,
+          "totalTimeMs": 0.02,
+          "avgTimeMs": 0.02,
+          "minTimeMs": 0.02,
+          "maxTimeMs": 0.02,
+          "medianTimeMs": 0.02,
+          "p95TimeMs": 0.02,
+          "p99TimeMs": 0.02,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0
+        },
+        {
+          "engine": "module6-fortune",
+          "iterations": 1,
+          "totalTimeMs": 0.04,
+          "avgTimeMs": 0.04,
+          "minTimeMs": 0.04,
+          "maxTimeMs": 0.04,
+          "medianTimeMs": 0.04,
+          "p95TimeMs": 0.04,
+          "p99TimeMs": 0.04,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0
+        }
+      ]
+    },
+    "batch100Benchmark": {
+      "scale": "batch-100",
+      "iterations": 100,
+      "totalTimeMs": 126.63,
+      "avgTimeMs": 1.27,
+      "throughputPerSecond": 789.7,
+      "memoryPeakMB": 40.75,
+      "memoryAfterGCMB": 32.87,
+      "results": [
+        {
+          "engine": "module1-four-pillars",
+          "iterations": 100,
+          "totalTimeMs": 48.66,
+          "avgTimeMs": 0.49,
+          "minTimeMs": 0.29,
+          "maxTimeMs": 1.89,
+          "medianTimeMs": 0.52,
+          "p95TimeMs": 0.71,
+          "p99TimeMs": 1.13,
+          "stdDevMs": 0.21,
+          "memoryDeltaMB": -0.28
+        },
+        {
+          "engine": "module2-shensha",
+          "iterations": 100,
+          "totalTimeMs": 0.12,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.01,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.1
+        },
+        {
+          "engine": "module3-ten-gods",
+          "iterations": 100,
+          "totalTimeMs": 0.1,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.01,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.1
+        },
+        {
+          "engine": "module4-pattern",
+          "iterations": 100,
+          "totalTimeMs": 0.11,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.01,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0.01,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.11
+        },
+        {
+          "engine": "module5-xiyong",
+          "iterations": 100,
+          "totalTimeMs": 0.11,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.01,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.09
+        },
+        {
+          "engine": "module6-fortune",
+          "iterations": 100,
+          "totalTimeMs": 0.17,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.02,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0.01,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.08
+        }
+      ]
+    },
+    "batch1000Benchmark": {
+      "scale": "batch-1000",
+      "iterations": 1000,
+      "totalTimeMs": 471.08,
+      "avgTimeMs": 0.47,
+      "throughputPerSecond": 2122.77,
+      "memoryPeakMB": 51.34,
+      "memoryAfterGCMB": 39.24,
+      "results": [
+        {
+          "engine": "module1-four-pillars",
+          "iterations": 100,
+          "totalTimeMs": 44.29,
+          "avgTimeMs": 0.44,
+          "minTimeMs": 0.22,
+          "maxTimeMs": 1.12,
+          "medianTimeMs": 0.43,
+          "p95TimeMs": 0.51,
+          "p99TimeMs": 0.96,
+          "stdDevMs": 0.1,
+          "memoryDeltaMB": 12.48
+        },
+        {
+          "engine": "module2-shensha",
+          "iterations": 100,
+          "totalTimeMs": 0.1,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.01,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.08
+        },
+        {
+          "engine": "module3-ten-gods",
+          "iterations": 100,
+          "totalTimeMs": 0.16,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.04,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0.02,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.09
+        },
+        {
+          "engine": "module4-pattern",
+          "iterations": 100,
+          "totalTimeMs": 1.57,
+          "avgTimeMs": 0.02,
+          "minTimeMs": 0,
+          "maxTimeMs": 1.4,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0.01,
+          "stdDevMs": 0.14,
+          "memoryDeltaMB": -14.31
+        },
+        {
+          "engine": "module5-xiyong",
+          "iterations": 100,
+          "totalTimeMs": 0.17,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.01,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.07
+        },
+        {
+          "engine": "module6-fortune",
+          "iterations": 100,
+          "totalTimeMs": 0.2,
+          "avgTimeMs": 0,
+          "minTimeMs": 0,
+          "maxTimeMs": 0.01,
+          "medianTimeMs": 0,
+          "p95TimeMs": 0,
+          "p99TimeMs": 0,
+          "stdDevMs": 0,
+          "memoryDeltaMB": 0.07
+        }
+      ]
+    },
+    "concurrencyBenchmarks": [
+      {
+        "concurrency": 1,
+        "totalRequests": 10,
+        "totalTimeMs": 3.43,
+        "avgLatencyMs": 0.34,
+        "p95LatencyMs": 0.51,
+        "p99LatencyMs": 0.69,
+        "errors": 0,
+        "throughputPerSecond": 2919.11
+      },
+      {
+        "concurrency": 5,
+        "totalRequests": 50,
+        "totalTimeMs": 26.8,
+        "avgLatencyMs": 0.54,
+        "p95LatencyMs": 0.8,
+        "p99LatencyMs": 1.07,
+        "errors": 0,
+        "throughputPerSecond": 1865.64
+      },
+      {
+        "concurrency": 10,
+        "totalRequests": 100,
+        "totalTimeMs": 31.24,
+        "avgLatencyMs": 0.31,
+        "p95LatencyMs": 0.47,
+        "p99LatencyMs": 0.62,
+        "errors": 0,
+        "throughputPerSecond": 3200.91
+      }
+    ],
+    "cacheBenchmark": {
+      "engine": "module3-ten-gods",
+      "cacheSize": 1,
+      "hitRateBefore": 0,
+      "hitRateAfter": 100,
+      "clearTimeMs": 0
+    },
+    "summary": {
+      "totalTests": 18,
+      "totalIterations": 1101,
+      "totalTimeMs": 947,
+      "slowestEngine": "module1-four-pillars",
+      "fastestEngine": "module2-shensha",
+      "avgPipelineTimeMs": 11.36,
+      "baselineRecommended": true,
+      "grade": "excellent"
+    }
+  },
+  "dashboard": {
+    "version": "1.0.0",
+    "generatedAt": 1784252694245,
+    "sections": [
+      {
+        "title": "引擎版本",
+        "metrics": [
+          {
+            "id": "v-m1",
+            "label": "Module 1 四柱",
+            "value": "1.0.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-m2",
+            "label": "Module 2 神煞",
+            "value": "2.0.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-m3",
+            "label": "Module 3 十神",
+            "value": "3.1.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-m4",
+            "label": "Module 4 格局",
+            "value": "4.1.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-m5",
+            "label": "Module 5 喜用神",
+            "value": "5.0.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-m6",
+            "label": "Module 6 大运",
+            "value": "6.0.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-m7",
+            "label": "Module 7 报告",
+            "value": "7.0.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-m8",
+            "label": "Module 8 导出",
+            "value": "8.0.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-case",
+            "label": "Case Library",
+            "value": "1.0.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-ev",
+            "label": "Expert Validation",
+            "value": "1.0.0",
+            "status": "ok"
+          },
+          {
+            "id": "v-qg",
+            "label": "Quality Gate",
+            "value": "1.0.0",
+            "status": "ok"
+          }
+        ]
+      },
+      {
+        "title": "质量门禁",
+        "metrics": [
+          {
+            "id": "qg-total",
+            "label": "检查项",
+            "value": 14,
+            "status": "ok"
+          },
+          {
+            "id": "qg-pass",
+            "label": "通过项",
+            "value": 14,
+            "status": "ok"
+          },
+          {
+            "id": "qg-health",
+            "label": "Health Score",
+            "value": "92.0",
+            "status": "ok"
+          },
+          {
+            "id": "qg-grade",
+            "label": "评级",
+            "value": "Excellent",
+            "status": "ok"
+          },
+          {
+            "id": "qg-release",
+            "label": "Release Gate",
+            "value": "PASS",
+            "status": "ok"
+          },
+          {
+            "id": "qg-ts",
+            "label": "TS Error",
+            "value": 0,
+            "status": "ok"
+          }
+        ]
+      },
+      {
+        "title": "规则中心",
+        "metrics": [
+          {
+            "id": "rr-total",
+            "label": "总规则数",
+            "value": 87,
+            "status": "ok"
+          },
+          {
+            "id": "rr-enabled",
+            "label": "启用规则",
+            "value": 87,
+            "status": "ok"
+          },
+          {
+            "id": "rr-modules",
+            "label": "覆盖模块",
+            "value": "10/10",
+            "status": "ok"
+          },
+          {
+            "id": "rr-coverage",
+            "label": "覆盖率",
+            "value": "100%",
+            "status": "ok"
+          }
+        ]
+      },
+      {
+        "title": "知识库",
+        "metrics": [
+          {
+            "id": "kb-total",
+            "label": "知识条目",
+            "value": 26,
+            "status": "ok"
+          },
+          {
+            "id": "kb-cats",
+            "label": "覆盖分类",
+            "value": "17/19",
+            "status": "ok"
+          },
+          {
+            "id": "kb-sources",
+            "label": "古籍来源",
+            "value": "7/7",
+            "status": "ok"
+          },
+          {
+            "id": "kb-confidence",
+            "label": "平均置信度",
+            "value": "94%",
+            "status": "ok"
+          }
+        ]
+      },
+      {
+        "title": "案例库",
+        "metrics": [
+          {
+            "id": "case-classic",
+            "label": "经典命例",
+            "value": 10,
+            "status": "info"
+          },
+          {
+            "id": "case-anon",
+            "label": "匿名命例",
+            "value": 5,
+            "status": "info"
+          },
+          {
+            "id": "case-reg",
+            "label": "回归样本",
+            "value": 10,
+            "status": "info"
+          },
+          {
+            "id": "case-total",
+            "label": "总计",
+            "value": 25,
+            "status": "ok"
+          }
+        ]
+      },
+      {
+        "title": "测试覆盖",
+        "metrics": [
+          {
+            "id": "test-suites",
+            "label": "测试套件",
+            "value": 15,
+            "status": "ok"
+          },
+          {
+            "id": "test-cases",
+            "label": "测试用例",
+            "value": 1083,
+            "status": "ok"
+          },
+          {
+            "id": "test-pass",
+            "label": "通过率",
+            "value": "100%",
+            "status": "ok"
+          },
+          {
+            "id": "test-fail",
+            "label": "失败",
+            "value": 0,
+            "status": "ok"
+          }
+        ]
+      }
+    ],
+    "overallStatus": "healthy",
+    "overallScore": 92
+  }
+}

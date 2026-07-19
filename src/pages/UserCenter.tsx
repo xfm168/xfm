@@ -4,7 +4,7 @@
  * 使用单引号 + concatenation
  */
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useOrder } from '../hooks/useOrder'
@@ -66,24 +66,82 @@ function UserCenter() {
   var activeTab = tabHook[0]
   var setActiveTab = tabHook[1]
 
-  // 模拟分析历史数据
-  var mockAnalysisData = [
-    { id: 'a1', type: '八字排盘', date: '2026-07-12 10:30', status: 'completed' },
-    { id: 'a2', type: '风水扫描', date: '2026-07-11 15:20', status: 'completed' },
-    { id: 'a3', type: '六爻占卜', date: '2026-07-10 09:15', status: 'completed' },
-    { id: 'a4', type: '八字分析', date: '2026-07-09 14:00', status: 'completed' },
-    { id: 'a5', type: '每日运势', date: '2026-07-08 08:00', status: 'completed' }
-  ]
+  // 分析历史数据（从 API 加载）
+  var analysisHook = useState([])
+  var analysisData = analysisHook[0]
+  var setAnalysisData = analysisHook[1]
+  var analysisLoadingHook = useState(true)
+  var analysisLoading = analysisLoadingHook[0]
+  var setAnalysisLoading = analysisLoadingHook[1]
 
-  // 模拟支付记录数据
-  var mockPaymentData = [
-    { id: 'p1', method: '微信支付', amount: 2900, status: 'paid', time: '2026-07-10 12:00' },
-    { id: 'p2', method: '支付宝', amount: 9900, status: 'paid', time: '2026-06-15 18:30' },
-    { id: 'p3', method: '微信支付', amount: 1900, status: 'paid', time: '2026-05-20 10:00' }
-  ]
+  // 支付记录数据（从 API 加载）
+  var paymentHook = useState([])
+  var paymentData = paymentHook[0]
+  var setPaymentData = paymentHook[1]
+  var paymentLoadingHook = useState(true)
+  var paymentLoading = paymentLoadingHook[0]
+  var setPaymentLoading = paymentLoadingHook[1]
 
-  // 模拟邀请码
-  var mockInviteCode = 'XF' + (auth.user ? auth.user.id.slice(-4).toUpperCase() : '0000') + 'ABCD'
+  // 邀请奖励数据（从 API 加载）
+  var inviteHook = useState({ inviteCode: '', inviteeCount: 0 })
+  var inviteData = inviteHook[0]
+  var setInviteData = inviteHook[1]
+
+  function getToken() {
+    try {
+      var raw = localStorage.getItem('sb-xuanfengmen-auth-token')
+      if (raw) {
+        var parsed = JSON.parse(raw)
+        return parsed.access_token || ''
+      }
+    } catch (e) {}
+    return ''
+  }
+
+  // 加载分析历史数据
+  useEffect(function() {
+    if (activeTab !== 'analysis') return
+    setAnalysisLoading(true)
+    fetch('/api/history', {
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+      .then(function(r) { return r.json() })
+      .then(function(json) {
+        setAnalysisData(json.data || json.history || json.items || [])
+      })
+      .catch(function() {})
+      .finally(function() { setAnalysisLoading(false) })
+  }, [activeTab])
+
+  // 加载支付记录数据
+  useEffect(function() {
+    if (activeTab !== 'payments') return
+    setPaymentLoading(true)
+    fetch('/api/user/payments', {
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+      .then(function(r) { return r.json() })
+      .then(function(json) {
+        setPaymentData(json.payments || [])
+      })
+      .catch(function() {})
+      .finally(function() { setPaymentLoading(false) })
+  }, [activeTab])
+
+  // 加载邀请奖励数据
+  useEffect(function() {
+    if (activeTab !== 'invite') return
+    fetch('/api/user/invite', {
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+      .then(function(r) { return r.json() })
+      .then(function(json) {
+        if (json.success) {
+          setInviteData({ inviteCode: json.inviteCode || '', inviteeCount: json.inviteeCount || 0 })
+        }
+      })
+      .catch(function() {})
+  }, [activeTab])
 
   var handleLogout = useCallback(function() {
     auth.logout()
@@ -108,10 +166,8 @@ function UserCenter() {
   var tierLabel: Record<string, string> = {
     'free': 'Free',
     'basic': 'Basic',
-    'pro': 'Pro',
     'premium': 'Premium',
-    'vip': 'VIP',
-    'master': 'Master'
+    'vip': 'VIP'
   }
 
   var tierClass = profile ? profile.membership_tier : 'free'
@@ -142,14 +198,26 @@ function UserCenter() {
   }
 
   var renderAnalysis = function() {
+    if (analysisLoading) {
+      return React.createElement(React.Fragment, null,
+        React.createElement('h2', null, '分析历史'),
+        React.createElement('div', { className: 'uc-empty' }, '加载中...')
+      )
+    }
+    if (analysisData.length === 0) {
+      return React.createElement(React.Fragment, null,
+        React.createElement('h2', null, '分析历史'),
+        React.createElement('div', { className: 'uc-empty' }, '暂无分析记录')
+      )
+    }
     return React.createElement(React.Fragment, null,
       React.createElement('h2', null, '分析历史'),
       React.createElement('div', { className: 'uc-list' },
-        mockAnalysisData.map(function(item) {
+        analysisData.map(function(item) {
           return React.createElement('div', { key: item.id, className: 'uc-list-item' },
-            React.createElement('div', { className: 'uc-list-title' }, item.type),
-            React.createElement('div', { className: 'uc-list-meta' }, item.date),
-            React.createElement('span', { className: 'uc-status completed' }, '已完成'),
+            React.createElement('div', { className: 'uc-list-title' }, item.type || item.analysis_type || '分析'),
+            React.createElement('div', { className: 'uc-list-meta' }, item.date || item.created_at || ''),
+            React.createElement('span', { className: 'uc-status ' + (item.status || 'completed') }, getStatusLabel(item.status || 'completed')),
             React.createElement('button', { className: 'uc-action-btn' }, '查看')
           )
         })
@@ -186,15 +254,27 @@ function UserCenter() {
   }
 
   var renderPayments = function() {
+    if (paymentLoading) {
+      return React.createElement(React.Fragment, null,
+        React.createElement('h2', null, '支付记录'),
+        React.createElement('div', { className: 'uc-empty' }, '加载中...')
+      )
+    }
+    if (paymentData.length === 0) {
+      return React.createElement(React.Fragment, null,
+        React.createElement('h2', null, '支付记录'),
+        React.createElement('div', { className: 'uc-empty' }, '暂无支付记录')
+      )
+    }
     return React.createElement(React.Fragment, null,
       React.createElement('h2', null, '支付记录'),
       React.createElement('div', { className: 'uc-list' },
-        mockPaymentData.map(function(item) {
+        paymentData.map(function(item) {
           return React.createElement('div', { key: item.id, className: 'uc-list-item' },
-            React.createElement('div', { className: 'uc-list-title' }, item.method),
-            React.createElement('div', { className: 'uc-list-meta' }, item.time),
-            React.createElement('div', { className: 'uc-list-amount' }, formatMoney(item.amount)),
-            React.createElement('span', { className: 'uc-status ' + item.status }, getStatusLabel(item.status))
+            React.createElement('div', { className: 'uc-list-title' }, item.method || item.payment_method || '支付'),
+            React.createElement('div', { className: 'uc-list-meta' }, item.time || item.created_at || ''),
+            React.createElement('div', { className: 'uc-list-amount' }, formatMoney(item.amount || item.amount_cents || 0)),
+            React.createElement('span', { className: 'uc-status ' + (item.status || 'paid') }, getStatusLabel(item.status || 'paid'))
           )
         })
       )
@@ -306,18 +386,18 @@ function UserCenter() {
       React.createElement('h2', null, '邀请奖励'),
       React.createElement('div', { className: 'uc-invite-section' },
         React.createElement('div', { style: { marginBottom: '12px', color: '#B8C4D6' } }, '您的专属邀请码'),
-        React.createElement('div', { className: 'uc-invite-code' }, mockInviteCode),
+        React.createElement('div', { className: 'uc-invite-code' }, inviteData.inviteCode || '-'),
         React.createElement('div', { className: 'uc-invite-stats' },
           '邀请好友注册，双方各获得 200 积分奖励'
         )
       ),
       React.createElement('div', { className: 'uc-stats-grid' },
         React.createElement('div', { className: 'uc-stat-card' },
-          React.createElement('div', { className: 'uc-stat-value' }, '0'),
+          React.createElement('div', { className: 'uc-stat-value' }, '' + inviteData.inviteeCount),
           React.createElement('div', { className: 'uc-stat-label' }, '成功邀请')
         ),
         React.createElement('div', { className: 'uc-stat-card' },
-          React.createElement('div', { className: 'uc-stat-value' }, '0'),
+          React.createElement('div', { className: 'uc-stat-value' }, '' + (inviteData.inviteeCount * 200)),
           React.createElement('div', { className: 'uc-stat-label' }, '获得积分')
         )
       )

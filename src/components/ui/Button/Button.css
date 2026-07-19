@@ -22,14 +22,16 @@
 
 /* ── Sizes ── */
 .xui-btn--sm {
-  height: 32px;
+  height: 44px;
+  min-height: 44px;
   padding: 0 var(--space-4);
   font-size: 0.8125rem;
   border-radius: var(--radius-md);
 }
 
 .xui-btn--md {
-  height: 44px;
+  height: 48px;
+  min-height: 48px;
   padding: 0 var(--space-6);
   font-size: 0.9375rem;
   border-radius: var(--radius-lg);
@@ -50,18 +52,18 @@
 .xui-btn--primary {
   background: linear-gradient(180deg, var(--gold-300) 0%, var(--gold-500) 50%, var(--gold-700) 100%);
   color: var(--bg-primary);
-  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.25);
+  box-shadow: var(--shadow-gold);
 }
 
 .xui-btn--primary:hover:not(:disabled) {
   background: linear-gradient(180deg, var(--gold-100) 0%, var(--gold-300) 50%, var(--gold-500) 100%);
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
+  box-shadow: var(--shadow-gold-md);
   transform: translateY(-1px);
 }
 
 .xui-btn--primary:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 1px 6px rgba(212, 175, 55, 0.3);
+  box-shadow: var(--shadow-gold-sm);
 }
 
 /* ── Secondary ── */
@@ -99,7 +101,7 @@
   color: var(--gold-500);
   padding: 0 var(--space-2);
   height: auto;
-  min-height: 32px;
+  min-height: 44px;
 }
 
 .xui-btn--text:hover:not(:disabled) {
@@ -121,7 +123,7 @@
   height: 1em;
   border: 2px solid currentColor;
   border-top-color: transparent;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   animation: xui-btn-spin 0.8s linear infinite;
 }
 

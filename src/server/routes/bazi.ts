@@ -23,7 +23,9 @@ import { Hono } from 'hono'
 import { calculateBaZiFromBirthData } from '../../lib/bazi/calculator'
 import type { BaZiChart } from '../../lib/bazi/types'
 import { ApiError } from '../middleware/error'
-import { BirthData, ApiRequestBodyAdapter } from '@/lib/core'
+import { BirthData } from '@/lib/core'
+import { authOptional } from '../middleware/auth'
+import { getTierLimits } from '../../lib/domain/usageLimit'
 
 const app = new Hono()
 
@@ -44,7 +46,7 @@ interface BaziRequestBody {
   longitude?: unknown
 }
 
-app.post('/', async (c) => {
+app.post('/', authOptional, async (c) => {
   let body: BaziRequestBody
   try {
     body = await c.req.json()
@@ -84,6 +86,41 @@ app.post('/', async (c) => {
 
   const useSolarTime = typeof body.use_solar_time === 'boolean' ? body.use_solar_time : true
 
+  // ── 使用次数限制检查（仅限已登录用户） ──────────────
+  var authUser = c.get('user') as any
+  if (authUser && authUser.id) {
+    var tier = authUser.membership_tier || 'free'
+    var limits = getTierLimits(tier)
+    if (limits.dailyCharts < 999) {
+      try {
+        var supabaseUrl = process.env.VITE_SUPABASE_URL || ''
+        var supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+        if (supabaseUrl && supabaseServiceKey) {
+          var { createClient } = await import('@supabase/supabase-js')
+          var supabase = createClient(supabaseUrl, supabaseServiceKey)
+          var todayStart = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          var { count } = await supabase
+            .from('analysis_history')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', authUser.id)
+            .gte('created_at', todayStart)
+          if ((count || 0) >= limits.dailyCharts) {
+            return c.json({
+              error: 'UPGRADE_REQUIRED',
+              message: '今日免费次数已用完，升级会员获取更多次数',
+              currentUsage: count || 0,
+              dailyLimit: limits.dailyCharts,
+              requiredTier: 'basic',
+            }, 429)
+          }
+        }
+      } catch (usageErr) {
+        // 使用次数查询失败不阻断排盘（降级策略）
+        console.error('[bazi] 使用次数检查失败:', usageErr)
+      }
+    }
+  }
+
   // ── 调用排盘算法 ──────────────────────────
   // P0-② 子时策略 + P0-③ 真太阳时
   const birthData: BirthData = {
@@ -108,8 +145,44 @@ app.post('/', async (c) => {
     })
   }
 
+  // ── 已登录用户：写入 charts 表，返回 chart_id ─────────────────
+  var chartId: string | null = null
+  if (authUser && authUser.id) {
+    try {
+      var supabaseUrl2 = process.env.VITE_SUPABASE_URL || ''
+      var supabaseServiceKey2 = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+      if (supabaseUrl2 && supabaseServiceKey2) {
+        var { createClient: createClient2 } = await import('@supabase/supabase-js')
+        var supabase2 = createClient2(supabaseUrl2, supabaseServiceKey2)
+        var chartDataJson = JSON.stringify(chart)
+        var { data: newChart, error: insertErr } = await supabase2
+          .from('charts')
+          .insert({
+            user_id: authUser.id,
+            name: body.birth_date + ' ' + (body.birth_time as string),
+            birth_date: birth_date,
+            birth_time: body.birth_time as string,
+            gender: gender,
+            birthplace: typeof body.birthplace === 'string' ? body.birthplace : null,
+            timezone: typeof body.timezone === 'string' ? body.timezone : null,
+            chart_data: chartDataJson,
+          })
+          .select('id')
+          .single()
+        if (!insertErr && newChart) {
+          chartId = newChart.id
+        } else if (insertErr) {
+          console.error('[bazi] charts 写入失败:', insertErr.message)
+        }
+      }
+    } catch (chartErr) {
+      console.error('[bazi] charts 写入异常:', chartErr)
+    }
+  }
+
   return c.json({
     chart,
+    chart_id: chartId,
     meta: {
       strategy,
       use_solar_time: useSolarTime,

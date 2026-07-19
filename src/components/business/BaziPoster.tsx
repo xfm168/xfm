@@ -1,6 +1,6 @@
 /**
  * 命盘海报组件
- * V3.0 - 生成分享图片
+ * V4.0 - 增强版：格局/日主/喜用神/二维码
  */
 import { useRef } from 'react'
 import html2canvas from 'html2canvas'
@@ -11,9 +11,19 @@ import './BaziPoster.css'
 interface BaziPosterProps {
   chart: BaZiChart
   onClose: () => void
+  geJu?: string          // 格局名称，如"正官格"
+  dayMaster?: string     // 日主描述，如"日元 丙火"
+  xiYongShen?: string    // 喜用神描述，如"喜用：木水"
+  fiveElementCount?: { [key: string]: number }  // 五行计数（已有，兼容）
 }
 
-export default function BaziPoster({ chart, onClose }: BaziPosterProps) {
+export default function BaziPoster({
+  chart,
+  onClose,
+  geJu,
+  dayMaster: dayMasterDesc,
+  xiYongShen: xiYongShenDesc,
+}: BaziPosterProps) {
   const posterRef = useRef<HTMLDivElement>(null)
   const { sixLines, fiveElementCount, dayMaster, xiYongShen, overallScore, birthInfo } = chart
   const { year, month, day, hour } = sixLines
@@ -23,6 +33,11 @@ export default function BaziPoster({ chart, onClose }: BaziPosterProps) {
     { label: '日柱', ...day, isDay: true },
     { label: '时柱', ...hour },
   ]
+
+  // 日主描述：优先用传入的 prop，否则从 chart 内部生成
+  const dayMasterText = dayMasterDesc || `${dayMaster.dayGan}${dayMaster.dayGanElement}`
+  // 喜用神描述：优先用传入的 prop，否则从 chart 内部生成
+  const xiYongShenText = xiYongShenDesc || `喜 ${xiYongShen.happiness} 用 ${xiYongShen.usage}`
 
   async function handleSave() {
     if (!posterRef.current) return
@@ -127,26 +142,45 @@ export default function BaziPoster({ chart, onClose }: BaziPosterProps) {
             })}
           </div>
 
-          {/* 关键指标 */}
-          <div className="poster-info">
+          {/* 关键指标（增强版） */}
+          <div className="poster-info poster-info--enhanced">
             <div className="poster-info-item">
               <span className="poster-info-label">日主</span>
-              <span className="poster-info-value">{dayMaster.dayGan}（{dayMaster.dayGanElement}）</span>
+              <span className="poster-info-value">{dayMasterText}</span>
             </div>
             <div className="poster-info-item">
               <span className="poster-info-label">旺衰</span>
               <span className="poster-info-value">{dayMaster.wangShuai}</span>
             </div>
+            {geJu && (
+              <div className="poster-info-item">
+                <span className="poster-info-label">格局</span>
+                <span className="poster-info-value poster-info-value--geju">{geJu}</span>
+              </div>
+            )}
             <div className="poster-info-item">
               <span className="poster-info-label">喜用</span>
-              <span className="poster-info-value" style={{ color: ELEMENT_COLORS[xiYongShen.bestElement] }}>{xiYongShen.bestElement}</span>
+              <span className="poster-info-value" style={{ color: ELEMENT_COLORS[xiYongShen.bestElement] }}>{xiYongShenText}</span>
+            </div>
+          </div>
+
+          {/* 分隔 */}
+          <div className="poster-divider" style={{ margin: '12px 0' }}>◈ ◇ ◈</div>
+
+          {/* 二维码占位区域 */}
+          <div className="poster-qrcode-section">
+            <div className="poster-qrcode-box">
+              <div className="poster-qrcode-placeholder">
+                <span className="poster-qrcode-icon">I</span>
+              </div>
+              <p className="poster-qrcode-text">扫码查看完整命盘</p>
             </div>
           </div>
 
           {/* 底部 */}
           <div className="poster-footer">
             <div className="poster-divider">◈ ◇ ◈</div>
-            <p className="poster-brand">仅供娱乐参考 · 玄风命理 V3.0</p>
+            <p className="poster-brand">仅供娱乐参考 · 玄风命理 V4.0</p>
           </div>
         </div>
       </div>

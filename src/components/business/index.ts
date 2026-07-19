@@ -15,3 +15,6 @@ export type { ScoreRingProps } from './ScoreRing/ScoreRing'
 
 export { default as ScoreBar } from './ScoreBar/ScoreBar'
 export type { ScoreBarProps } from './ScoreBar/ScoreBar'
+
+export { default as SharePanel } from './SharePanel'
+export type { SharePanelProps } from './SharePanel'

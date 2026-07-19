@@ -2,6 +2,7 @@ import { useDailyHexagram } from '../hooks/useDailyHexagram'
 import { todayString } from '../lib/hexagram'
 import { PageTitle, Badge } from '../components/ui'
 import { ScoreRing } from '../components/business'
+import { usePageSEO } from '../hooks/usePageSEO'
 import './Daily.css'
 
 // ── Helpers ──────────────────────────────────────────
@@ -40,6 +41,12 @@ function formatDate(dateStr: string): string {
 // ── Main page ─────────────────────────────────────────
 
 export default function Daily() {
+  usePageSEO({
+    title: '今日卦运 | 玄风门',
+    description: '基于每日天干地支推算今日卦象，为您解读今日运势、吉凶宜忌，玄风门每日卦运。',
+    canonical: 'https://xuanfengmen.com/daily'
+  })
+
   const { status, data, error } = useDailyHexagram()
   const today = todayString()
 

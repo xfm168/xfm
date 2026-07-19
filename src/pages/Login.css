@@ -116,6 +116,7 @@
 
 .login-input {
   padding: 12px 16px;
+  min-height: 48px;
   font-size: 15px;
   color: var(--login-text);
   background: rgba(17, 40, 69, 0.6);

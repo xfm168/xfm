@@ -17,7 +17,6 @@
  */
 
 import { Hono } from 'hono'
-import type { Context } from 'hono'
 import { authRequired, authOptional, requireUser } from '../middleware/auth'
 import type { AuthUser } from '../middleware/auth'
 import { ApiError } from '../middleware/error'
@@ -216,7 +215,7 @@ app.post('/otp', async function(c) {
   var { createClient } = await import('@supabase/supabase-js')
   var anonClient = createClient(supabaseUrl, supabaseAnonKey)
 
-  var { data, error } = await anonClient.auth.signInWithOtp({
+  var { error } = await anonClient.auth.signInWithOtp({
     email: email,
   })
 
@@ -514,7 +513,6 @@ app.post('/profile', authRequired, async function(c) {
  * 登出：撤销 session。
  */
 app.post('/logout', authRequired, async function(c) {
-  var user = requireUser(c)
   var body = await c.req.json()
   var refreshToken = body.refresh_token as string || ''
 

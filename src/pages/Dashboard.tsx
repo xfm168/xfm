@@ -1,6 +1,6 @@
 import React from 'react'
-import useDashboard from '../hooks/useDashboard'
-import { DailyMetric, FeatureUsage } from '../lib/dashboard/types'
+import useAdminDashboard from '../hooks/useAdminDashboard'
+import useOpsAdmin from '../hooks/useOpsAdmin'
 import './Dashboard.css'
 
 /* ============================================
@@ -23,14 +23,6 @@ function formatMoney(cents) {
 
 function shortDate(dateStr) {
   return dateStr.slice(5) // MM-DD
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '-'
-  var d = new Date(dateStr)
-  return d.getFullYear() + '-' +
-    String(d.getMonth() + 1).padStart(2, '0') + '-' +
-    String(d.getDate()).padStart(2, '0')
 }
 
 /* ============================================
@@ -399,66 +391,6 @@ function Gauge(props) {
 }
 
 /* ============================================
-   系统状态条组件
-   ============================================ */
-
-function StatusBar(props) {
-  var status = props.status
-  var uptime = props.uptime
-
-  var labels = {
-    healthy: '服务正常',
-    degraded: '性能降级',
-    down: '服务中断'
-  }
-
-  return React.createElement('div', { className: 'dash-status-bar' },
-    React.createElement('div', { className: 'dash-status-dot ' + status }),
-    React.createElement('span', { className: 'dash-status-label ' + status }, labels[status] || status),
-    React.createElement('span', { className: 'dash-status-detail' }, '运行时间 ' + uptime + '%')
-  )
-}
-
-/* ============================================
-   功能热度排行组件
-   ============================================ */
-
-function FeatureRankList(props) {
-  var features = props.features
-
-  var trendLabel = {
-    up: '上升',
-    down: '下降',
-    stable: '持平'
-  }
-
-  var trendIcon = {
-    up: '\u2191',
-    down: '\u2193',
-    stable: '\u2014'
-  }
-
-  var items = features.map(function(f, idx) {
-    return React.createElement('div', { key: f.name, className: 'dash-feature-item' },
-      React.createElement('div', { className: 'dash-feature-rank' }, '' + (idx + 1)),
-      React.createElement('div', { className: 'dash-feature-name' }, f.name),
-      React.createElement('div', { className: 'dash-feature-bar-wrap' },
-        React.createElement('div', {
-          className: 'dash-feature-bar ' + f.trend,
-          style: { width: f.percent + '%' }
-        })
-      ),
-      React.createElement('div', { className: 'dash-feature-percent' }, f.percent + '%'),
-      React.createElement('div', { className: 'dash-feature-trend ' + f.trend },
-        trendIcon[f.trend] + ' ' + trendLabel[f.trend]
-      )
-    )
-  })
-
-  return React.createElement('div', { className: 'dash-feature-list' }, items)
-}
-
-/* ============================================
    管理表格组件
    ============================================ */
 
@@ -499,54 +431,8 @@ function AdminTable(props) {
 }
 
 /* ============================================
-   模拟数据
+   Tab 常量
    ============================================ */
-
-var MOCK_USERS = [
-  { id: 'u001', name: '张三', tier: 'master', registered: '2025-03-15', status: 'active' },
-  { id: 'u002', name: '李四', tier: 'pro', registered: '2025-06-20', status: 'active' },
-  { id: 'u003', name: '王五', tier: 'free', registered: '2026-01-10', status: 'active' },
-  { id: 'u004', name: '赵六', tier: 'pro', registered: '2025-09-05', status: 'inactive' },
-  { id: 'u005', name: '钱七', tier: 'free', registered: '2026-06-28', status: 'active' }
-]
-
-var MOCK_ORDERS = [
-  { id: 'ord-20260712-001', user: '张三', amount: 9900, product: 'Master会员', status: 'paid', time: '2026-07-12' },
-  { id: 'ord-20260711-002', user: '李四', amount: 2900, product: 'Pro会员', status: 'paid', time: '2026-07-11' },
-  { id: 'ord-20260710-003', user: '王五', amount: 1900, product: 'Basic会员', status: 'pending', time: '2026-07-10' },
-  { id: 'ord-20260709-004', user: '赵六', amount: 2900, product: 'Pro会员', status: 'refunded', time: '2026-07-09' },
-  { id: 'ord-20260708-005', user: '钱七', amount: 500, product: 'AI积分', status: 'paid', time: '2026-07-08' }
-]
-
-var MOCK_PAYMENTS = [
-  { id: 'pay-001', method: '微信支付', amount: 9900, status: 'paid', time: '2026-07-12 12:00' },
-  { id: 'pay-002', method: '支付宝', amount: 2900, status: 'paid', time: '2026-07-11 18:30' },
-  { id: 'pay-003', method: '微信支付', amount: 1900, status: 'pending', time: '2026-07-10 10:00' },
-  { id: 'pay-004', method: 'Stripe', amount: 2900, status: 'refunded', time: '2026-07-09 15:20' }
-]
-
-var MOCK_FEEDBACKS = [
-  { id: 'fb-001', user: '张三', type: 'bug', title: '八字排盘时间计算错误', status: 'open', time: '2026-07-12' },
-  { id: 'fb-002', user: '李四', type: 'feature', title: '希望增加流年分析功能', status: 'processing', time: '2026-07-11' },
-  { id: 'fb-003', user: '王五', type: 'accuracy', title: '六爻占卜结果不准确', status: 'resolved', time: '2026-07-08' },
-  { id: 'fb-004', user: '赵六', type: 'other', title: '建议优化UI配色', status: 'closed', time: '2026-07-05' }
-]
-
-var MOCK_COUPONS = [
-  { id: 'cpn-001', code: 'WELCOME20', discount: '20%', min: '无', usage: '50/100', status: 'active' },
-  { id: 'cpn-002', code: 'PRO50', discount: '\u00A550', min: '\u00A529', usage: '30/50', status: 'active' },
-  { id: 'cpn-003', code: 'SUMMER30', discount: '30%', min: '无', usage: '100/200', status: 'expired' }
-]
-
-var MOCK_COMMERCIAL_DAILY = [
-  { date: '2026-07-06', revenue: 215600, members: 15, arpu: 1750 },
-  { date: '2026-07-07', revenue: 198300, members: 8, arpu: 1620 },
-  { date: '2026-07-08', revenue: 245100, members: 22, arpu: 1800 },
-  { date: '2026-07-09', revenue: 231400, members: 18, arpu: 1720 },
-  { date: '2026-07-10', revenue: 268900, members: 25, arpu: 1850 },
-  { date: '2026-07-11', revenue: 252000, members: 20, arpu: 1780 },
-  { date: '2026-07-12', revenue: 284700, members: 23, arpu: 1850 }
-]
 
 var ADMIN_TABS = [
   { key: 'overview', label: '数据概览' },
@@ -560,42 +446,102 @@ var ADMIN_TABS = [
   { key: 'stats', label: '运营统计' }
 ]
 
-var STATUS_LABELS: Record<string, string> = {
-  'active': '正常',
-  'inactive': '未激活',
-  'paid': '已支付',
-  'pending': '待处理',
-  'refunded': '已退款',
-  'cancelled': '已取消',
-  'open': '待处理',
-  'processing': '处理中',
-  'resolved': '已解决',
-  'closed': '已关闭',
-  'expired': '已过期'
-}
-
-function getStatusClass(status: string): string {
-  if (status === 'paid' || status === 'resolved' || status === 'active') return 'dash-status-paid'
-  if (status === 'pending' || status === 'processing' || status === 'open') return 'dash-status-pending'
-  if (status === 'refunded' || status === 'cancelled' || status === 'expired') return 'dash-status-refunded'
-  return ''
-}
-
 /* ============================================
    Dashboard 主页面
    ============================================ */
 
 function Dashboard() {
-  var result = useDashboard()
+  var result = useAdminDashboard()
   var status = result.status
-  var metrics = result.metrics
+  var overview = result.overview
   var dailyData = result.dailyData
+  var retention = result.retention
+  var conversion = result.conversion
+  var trends = result.trends
   var error = result.error
-  var refreshMetrics = result.refreshMetrics
+  var refresh = result.refresh
 
   var tabHook = React.useState('overview')
   var activeTab = tabHook[0]
   var setActiveTab = tabHook[1]
+
+  var opsResult = useOpsAdmin()
+  var opsCoupons = opsResult.coupons
+  var opsAnnouncements = opsResult.announcements
+  var opsAddCoupon = opsResult.addCoupon
+  var opsAddAnnouncement = opsResult.addAnnouncement
+  var opsTogglePublish = opsResult.togglePublish
+
+  // 运营工具 - 表单状态
+  var showCouponFormHook = React.useState(false)
+  var showCouponForm = showCouponFormHook[0]
+  var setShowCouponForm = showCouponFormHook[1]
+
+  var couponFormHook = React.useState({ discount_type: 'percent', discount_value: '10', max_uses: '100', min_order_cents: '0', applies_to: 'all', description: '' })
+  var couponForm = couponFormHook[0]
+  var setCouponForm = couponFormHook[1]
+
+  var showAnnFormHook = React.useState(false)
+  var showAnnForm = showAnnFormHook[0]
+  var setShowAnnForm = showAnnFormHook[1]
+
+  var annFormHook = React.useState({ title: '', content: '', type: 'notice' })
+  var annForm = annFormHook[0]
+  var setAnnForm = annFormHook[1]
+
+  var makeInput = function(type: string, value: string, onChange: (v: string) => void, placeholder: string, width?: number) {
+    var inputStyle: any = { padding: '6px 10px', borderRadius: 4, border: '1px solid #333', background: '#0d0d1a', color: '#eee', fontSize: 13 }
+    if (width) inputStyle.width = width
+    return React.createElement('input', {
+      type: type,
+      value: value,
+      onChange: function(e: any) { onChange(e.target.value) },
+      placeholder: placeholder,
+      style: inputStyle
+    })
+  }
+
+  var onCouponFieldChange = function(field: string, val: string) {
+    setCouponForm(function(prev) {
+      var next: any = {}
+      for (var k in prev) { next[k] = (prev as any)[k] }
+      next[field] = val
+      return next
+    })
+  }
+
+  var onAnnFieldChange = function(field: string, val: string) {
+    setAnnForm(function(prev) {
+      var next: any = {}
+      for (var k in prev) { next[k] = (prev as any)[k] }
+      next[field] = val
+      return next
+    })
+  }
+
+  var handleCreateCoupon = function() {
+    opsAddCoupon({
+      discount_type: couponForm.discount_type,
+      discount_value: parseFloat(couponForm.discount_value) || 0,
+      max_uses: parseInt(couponForm.max_uses, 10) || 100,
+      min_order_cents: parseInt(couponForm.min_order_cents, 10) || 0,
+      applies_to: couponForm.applies_to,
+      description: couponForm.description || null
+    })
+    setShowCouponForm(false)
+    setCouponForm({ discount_type: 'percent', discount_value: '10', max_uses: '100', min_order_cents: '0', applies_to: 'all', description: '' })
+  }
+
+  var handleCreateAnn = function() {
+    if (!annForm.title || !annForm.content) return
+    opsAddAnnouncement({
+      title: annForm.title,
+      content: annForm.content,
+      type: annForm.type
+    })
+    setShowAnnForm(false)
+    setAnnForm({ title: '', content: '', type: 'notice' })
+  }
 
   if (status === 'idle' || status === 'loading') {
     return React.createElement('div', { className: 'dashboard-page' },
@@ -612,36 +558,53 @@ function Dashboard() {
         React.createElement('br', null),
         React.createElement('button', {
           className: 'dash-refresh-btn',
-          onClick: refreshMetrics
+          onClick: refresh
         }, '重试')
       )
     )
   }
 
-  // 线图配置
-  var userLines = [
-    { key: 'dau', color: '#d4a843', label: 'DAU' },
-    { key: 'wau', color: '#60a5fa', label: 'WAU' },
-    { key: 'mau', color: '#a78bfa', label: 'MAU' }
-  ]
+  // 近似 DAU from dailyData
+  var todayLogins = 0
 
-  // 缓存命中率颜色
-  var cacheColorClass = metrics.cacheHitRate >= 90 ? 'good' : metrics.cacheHitRate >= 80 ? 'warning' : 'bad'
-  // API错误率颜色
-  var errorColorClass = metrics.apiErrorRate <= 1 ? 'good' : metrics.apiErrorRate <= 2 ? 'warning' : 'bad'
-  // 分析时间颜色
-  var timeColorClass = metrics.averageAnalysisTime <= 1500 ? 'good' : metrics.averageAnalysisTime <= 2000 ? 'warning' : 'bad'
+  if (dailyData.length > 0) {
+    todayLogins = dailyData[dailyData.length - 1].logins
+  }
+
+  // 今日订单和收入
+  var todayOrders = 0
+  var todayRevenue = 0
+  if (dailyData.length > 0) {
+    todayOrders = dailyData[dailyData.length - 1].orders
+    todayRevenue = dailyData[dailyData.length - 1].revenue
+  }
+
+  // 留存和转化颜色
+  var day1Retention = retention ? retention.day1Retention : 0
+  var day7Retention = retention ? retention.day7Retention : 0
+  var day30Retention = retention ? retention.day30Retention : 0
+  var memberConvRate = conversion ? conversion.memberConversionRate : 0
+  var freeTrialRate = conversion ? conversion.freeTrialRate : 0
+
+  var retentionColor = day1Retention >= 30 ? 'good' : day1Retention >= 15 ? 'warning' : 'bad'
+  var conversionColor = memberConvRate >= 10 ? 'good' : memberConvRate >= 3 ? 'warning' : 'bad'
 
   /* ========== 各管理Tab内容 ========== */
 
   var renderOverview = function() {
+    // 趋势图线配置 - 使用 dailyData 中的 newUsers, charts, orders
+    var overviewLines = [
+      { key: 'newUsers', color: '#d4a843', label: '新用户' },
+      { key: 'charts', color: '#60a5fa', label: '排盘' }
+    ]
+
     return React.createElement(React.Fragment, null,
       // 标题区
       React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 } },
         React.createElement('h2', null, '数据概览'),
         React.createElement('button', {
           className: 'dash-refresh-btn',
-          onClick: refreshMetrics
+          onClick: refresh
         }, '\u21bb 刷新')
       ),
       React.createElement('div', { className: 'dash-subtitle' }, '数据概览 \u00B7 最近30天'),
@@ -649,59 +612,57 @@ function Dashboard() {
       // KPI 卡片行
       React.createElement('div', { className: 'dash-kpi-grid' },
         React.createElement('div', { className: 'dash-kpi-card highlight' },
-          React.createElement('div', { className: 'dash-kpi-label' }, 'DAU'),
-          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(metrics.dau))
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日排盘'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.chartsToday : 0))
         ),
         React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, 'WAU'),
-          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(metrics.wau))
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日注册'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.newUsersToday : 0))
         ),
         React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, 'MAU'),
-          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(metrics.mau))
-        ),
-        React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, '次日留存率'),
-          React.createElement('div', { className: 'dash-kpi-value' }, metrics.retentionRate, React.createElement('span', { className: 'dash-kpi-unit' }, '%'))
-        ),
-        React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, '支付转化率'),
-          React.createElement('div', { className: 'dash-kpi-value' }, metrics.paymentRate, React.createElement('span', { className: 'dash-kpi-unit' }, '%'))
+          React.createElement('div', { className: 'dash-kpi-label' }, '会员总数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.paidMembers : 0))
         ),
         React.createElement('div', { className: 'dash-kpi-card highlight' },
-          React.createElement('div', { className: 'dash-kpi-label' }, '总收入（30天）'),
-          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(metrics.totalRevenue))
+          React.createElement('div', { className: 'dash-kpi-label' }, '总收入'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(overview ? overview.totalRevenue : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日收入'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(overview ? overview.revenueToday : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, 'PDF下载'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.pdfDownloads : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '分享次数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.shareCount : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '总用户'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.totalUsers : 0))
         )
       ),
-
-      // 系统状态条
-      React.createElement(StatusBar, {
-        status: metrics.serverStatus,
-        uptime: metrics.serverUptime
-      }),
 
       // 趋势图表
       React.createElement('div', { className: 'dash-charts-section' },
         React.createElement('h2', null, '趋势图表'),
         React.createElement('div', { className: 'dash-chart-grid' },
-          // 用户趋势 - 折线图
+          // 用户增长趋势 - 折线图
           React.createElement('div', { className: 'dash-chart-card' },
-            React.createElement('div', { className: 'dash-chart-title' }, '用户趋势'),
+            React.createElement('div', { className: 'dash-chart-title' }, '用户增长趋势'),
             React.createElement('div', { className: 'dash-chart-container' },
-              React.createElement(LineChart, { data: dailyData, lines: userLines })
+              React.createElement(LineChart, { data: dailyData, lines: overviewLines })
             ),
             React.createElement('div', { className: 'dash-chart-legend' },
               React.createElement('span', { className: 'dash-legend-item' },
                 React.createElement('span', { className: 'dash-legend-color', style: { background: '#d4a843' } }),
-                'DAU'
+                '新用户'
               ),
               React.createElement('span', { className: 'dash-legend-item' },
                 React.createElement('span', { className: 'dash-legend-color', style: { background: '#60a5fa' } }),
-                'WAU'
-              ),
-              React.createElement('span', { className: 'dash-legend-item' },
-                React.createElement('span', { className: 'dash-legend-color', style: { background: '#a78bfa' } }),
-                'MAU'
+                '排盘'
               )
             )
           ),
@@ -722,41 +683,83 @@ function Dashboard() {
         )
       ),
 
-      // 功能热度排行
-      React.createElement('div', { className: 'dash-feature-section' },
-        React.createElement('h2', null, '功能热度排行'),
-        React.createElement(FeatureRankList, { features: metrics.popularFeatures })
-      ),
-
-      // 系统指标
+      // 留存和转化指标
       React.createElement('div', { className: 'dash-system-section' },
-        React.createElement('h2', null, '系统指标'),
+        React.createElement('h2', null, '核心指标'),
         React.createElement('div', { className: 'dash-system-grid' },
-          React.createElement(Gauge, {
-            value: metrics.apiErrorRate,
-            max: 5,
-            label: 'API 错误率',
-            colorClass: errorColorClass
-          }),
-          React.createElement(Gauge, {
-            value: metrics.cacheHitRate,
-            max: 100,
-            label: '缓存命中率',
-            colorClass: cacheColorClass
-          }),
-          React.createElement(Gauge, {
-            value: metrics.averageAnalysisTime,
-            max: 3000,
-            unit: 'ms',
-            label: '平均分析时间',
-            colorClass: timeColorClass
-          }),
-          React.createElement(Gauge, {
-            value: metrics.serverUptime,
-            max: 100,
-            label: '服务器运行时间',
-            colorClass: 'good'
-          })
+          React.createElement(Gauge, { value: day1Retention, max: 100, label: '次日留存率', colorClass: retentionColor }),
+          React.createElement(Gauge, { value: day7Retention, max: 100, label: '7日留存率', colorClass: retentionColor }),
+          React.createElement(Gauge, { value: memberConvRate, max: 100, label: '会员转化率', colorClass: conversionColor }),
+          React.createElement(Gauge, { value: freeTrialRate, max: 100, label: '免费体验率', colorClass: 'neutral' })
+        )
+      )
+    )
+  }
+
+  var renderCommercialKPI = function() {
+    // 使用 trends.weekly 和 trends.monthly 绘制图表
+    var trendDaily = (trends && trends.daily) ? trends.daily : dailyData
+    var trendWeekly = (trends && trends.weekly) ? trends.weekly : []
+
+    // weekly 图表需要 date 字段
+    var weeklyChartData = trendWeekly.map(function(w) {
+      return { date: w.weekStart, revenue: w.revenue, orders: w.orders, newUsers: w.users, logins: 0, charts: 0, analysis: 0, freeTrials: 0, pdfDownloads: 0, shares: 0 }
+    })
+
+    return React.createElement('div', null,
+      React.createElement('h2', null, '商业 KPI'),
+      React.createElement('div', { className: 'dash-kpi-grid' },
+        React.createElement('div', { className: 'dash-kpi-card highlight' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '总收入'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(overview ? overview.totalRevenue : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日收入'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(overview ? overview.revenueToday : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日订单'),
+          React.createElement('div', { className: 'dash-kpi-value' }, '' + todayOrders)
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日活跃'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(todayLogins))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '付费会员'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.paidMembers : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '会员购买人数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.memberPurchases : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, 'PDF下载'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.pdfDownloads : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '分享次数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.shareCount : 0))
+        )
+      ),
+      React.createElement('div', { className: 'dash-chart-grid', style: { marginTop: 24 } },
+        React.createElement('div', { className: 'dash-chart-card' },
+          React.createElement('div', { className: 'dash-chart-title' }, '收入趋势（分）'),
+          React.createElement('div', { className: 'dash-chart-container' },
+            React.createElement(AreaChart, { data: trendDaily, dataKey: 'revenue', color: '#d4a843' })
+          )
+        ),
+        React.createElement('div', { className: 'dash-chart-card' },
+          React.createElement('div', { className: 'dash-chart-title' }, '订单趋势'),
+          React.createElement('div', { className: 'dash-chart-container' },
+            React.createElement(BarChart, { data: trendDaily, dataKey: 'orders', color: '#34d399' })
+          )
+        ),
+        React.createElement('div', { className: 'dash-chart-card' },
+          React.createElement('div', { className: 'dash-chart-title' }, '周收入趋势（分）'),
+          React.createElement('div', { className: 'dash-chart-container' },
+            React.createElement(AreaChart, { data: weeklyChartData, dataKey: 'revenue', color: '#60a5fa' })
+          )
         )
       )
     )
@@ -765,162 +768,303 @@ function Dashboard() {
   var renderUsers = function() {
     return React.createElement('div', null,
       React.createElement('h2', null, '用户管理'),
-      React.createElement(AdminTable, {
-        columns: [
-          { key: 'id', label: 'ID' },
-          { key: 'name', label: '用户名' },
-          { key: 'tier', label: '等级', render: function(v) {
-            var tierCls = v === 'master' ? 'dash-status-paid' : v === 'pro' ? 'dash-status-pending' : ''
-            return React.createElement('span', { className: 'dash-badge ' + tierCls }, v.toUpperCase())
-          }},
-          { key: 'registered', label: '注册时间' },
-          { key: 'status', label: '状态', render: function(v) {
-            return React.createElement('span', { className: 'dash-badge ' + getStatusClass(v) }, STATUS_LABELS[v] || v)
-          }},
-          { key: 'id', label: '操作', render: function(v) {
-            return React.createElement('button', { className: 'dash-action-btn' }, '详情')
-          }}
-        ],
-        data: MOCK_USERS,
-        emptyText: '暂无用户数据'
-      })
+      React.createElement('div', { className: 'dash-kpi-grid', style: { marginBottom: 24 } },
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '总用户数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.totalUsers : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日新注册'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.newUsersToday : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '7天新注册'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.newUsers7d : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '付费会员'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.paidMembers : 0))
+        )
+      ),
+      React.createElement('div', { className: 'dash-chart-card', style: { padding: '40px 0', textAlign: 'center' } },
+        React.createElement('div', { style: { color: '#888', fontSize: 14 } }, '用户列表功能将在 Stage 8 实现')
+      )
     )
   }
 
   var renderOrders = function() {
     return React.createElement('div', null,
       React.createElement('h2', null, '订单管理'),
-      React.createElement(AdminTable, {
-        columns: [
-          { key: 'id', label: '订单号' },
-          { key: 'user', label: '用户' },
-          { key: 'product', label: '商品' },
-          { key: 'amount', label: '金额', render: function(v) { return '\u00A5' + (v / 100).toFixed(2) } },
-          { key: 'status', label: '状态', render: function(v) {
-            return React.createElement('span', { className: 'dash-badge ' + getStatusClass(v) }, STATUS_LABELS[v] || v)
-          }},
-          { key: 'time', label: '时间' },
-          { key: 'id', label: '操作', render: function(v) {
-            return React.createElement('button', { className: 'dash-action-btn' }, '查看')
-          }}
-        ],
-        data: MOCK_ORDERS,
-        emptyText: '暂无订单数据'
-      })
+      React.createElement('div', { className: 'dash-kpi-grid', style: { marginBottom: 24 } },
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日订单'),
+          React.createElement('div', { className: 'dash-kpi-value' }, '' + todayOrders)
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日收入'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(todayRevenue))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '总收入'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(overview ? overview.totalRevenue : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '会员购买人数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.memberPurchases : 0))
+        )
+      ),
+      React.createElement('div', { className: 'dash-chart-card', style: { padding: '40px 0', textAlign: 'center' } },
+        React.createElement('div', { style: { color: '#888', fontSize: 14 } }, '订单列表功能将在 Stage 8 实现')
+      )
     )
   }
 
   var renderPayments = function() {
     return React.createElement('div', null,
       React.createElement('h2', null, '支付管理'),
-      React.createElement(AdminTable, {
-        columns: [
-          { key: 'id', label: '支付ID' },
-          { key: 'method', label: '支付方式' },
-          { key: 'amount', label: '金额', render: function(v) { return '\u00A5' + (v / 100).toFixed(2) } },
-          { key: 'status', label: '状态', render: function(v) {
-            return React.createElement('span', { className: 'dash-badge ' + getStatusClass(v) }, STATUS_LABELS[v] || v)
-          }},
-          { key: 'time', label: '时间' }
-        ],
-        data: MOCK_PAYMENTS,
-        emptyText: '暂无支付记录'
-      })
+      React.createElement('div', { className: 'dash-kpi-grid', style: { marginBottom: 24 } },
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '总收入'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(overview ? overview.totalRevenue : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '今日收入'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatMoney(overview ? overview.revenueToday : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '免费体验次数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.freeTrials : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '总排盘次数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.totalCharts : 0))
+        )
+      ),
+      React.createElement('div', { className: 'dash-chart-card', style: { padding: '40px 0', textAlign: 'center' } },
+        React.createElement('div', { style: { color: '#888', fontSize: 14 } }, '支付列表功能将在 Stage 8 实现')
+      )
     )
   }
 
   var renderFeedbacks = function() {
     return React.createElement('div', null,
       React.createElement('h2', null, '投诉处理'),
-      React.createElement(AdminTable, {
-        columns: [
-          { key: 'id', label: 'ID' },
-          { key: 'user', label: '用户' },
-          { key: 'type', label: '类型' },
-          { key: 'title', label: '标题' },
-          { key: 'status', label: '状态', render: function(v) {
-            return React.createElement('span', { className: 'dash-badge ' + getStatusClass(v) }, STATUS_LABELS[v] || v)
-          }},
-          { key: 'time', label: '时间' },
-          { key: 'id', label: '操作', render: function(v) {
-            return React.createElement('button', { className: 'dash-action-btn' }, '处理')
-          }}
-        ],
-        data: MOCK_FEEDBACKS,
-        emptyText: '暂无反馈记录'
-      })
-    )
-  }
-
-  var renderCoupons = function() {
-    return React.createElement('div', null,
-      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 } },
-        React.createElement('h2', null, '优惠券管理'),
-        React.createElement('button', { className: 'dash-refresh-btn' }, '+ 创建优惠券')
-      ),
-      React.createElement(AdminTable, {
-        columns: [
-          { key: 'id', label: 'ID' },
-          { key: 'code', label: '优惠码' },
-          { key: 'discount', label: '优惠' },
-          { key: 'min', label: '最低消费' },
-          { key: 'usage', label: '使用量' },
-          { key: 'status', label: '状态', render: function(v) {
-            return React.createElement('span', { className: 'dash-badge ' + getStatusClass(v) }, STATUS_LABELS[v] || v)
-          }},
-          { key: 'id', label: '操作', render: function() {
-            return React.createElement('button', { className: 'dash-action-btn' }, '编辑')
-          }}
-        ],
-        data: MOCK_COUPONS,
-        emptyText: '暂无优惠券'
-      })
-    )
-  }
-
-  var renderAnnouncements = function() {
-    return React.createElement('div', null,
-      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 } },
-        React.createElement('h2', null, '公告管理'),
-        React.createElement('button', { className: 'dash-refresh-btn' }, '+ 创建公告')
-      ),
-      React.createElement('div', { className: 'dash-table-wrap' },
-        React.createElement('table', { className: 'dash-table' },
-          React.createElement('thead', null,
-            React.createElement('tr', null,
-              React.createElement('th', { className: 'dash-table-th' }, 'ID'),
-              React.createElement('th', { className: 'dash-table-th' }, '标题'),
-              React.createElement('th', { className: 'dash-table-th' }, '状态'),
-              React.createElement('th', { className: 'dash-table-th' }, '创建时间'),
-              React.createElement('th', { className: 'dash-table-th' }, '操作')
-            )
-          ),
-          React.createElement('tbody', null,
-            React.createElement('tr', { className: 'dash-table-row' },
-              React.createElement('td', { className: 'dash-table-td' }, 'ann-001'),
-              React.createElement('td', { className: 'dash-table-td' }, '系统升级通知'),
-              React.createElement('td', { className: 'dash-table-td' },
-                React.createElement('span', { className: 'dash-badge dash-status-paid' }, '已发布')
-              ),
-              React.createElement('td', { className: 'dash-table-td' }, '2026-07-10'),
-              React.createElement('td', { className: 'dash-table-td' },
-                React.createElement('button', { className: 'dash-action-btn' }, '编辑')
-              )
-            )
-          )
+      React.createElement('div', { className: 'dash-kpi-grid', style: { marginBottom: 24 } },
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '总分析次数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.totalAnalysis : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, 'PDF下载'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.pdfDownloads : 0))
+        ),
+        React.createElement('div', { className: 'dash-kpi-card' },
+          React.createElement('div', { className: 'dash-kpi-label' }, '分享次数'),
+          React.createElement('div', { className: 'dash-kpi-value' }, formatNumber(overview ? overview.shareCount : 0))
         )
+      ),
+      React.createElement('div', { className: 'dash-chart-card', style: { padding: '40px 0', textAlign: 'center' } },
+        React.createElement('div', { style: { color: '#888', fontSize: 14 } }, '反馈列表功能将在 Stage 8 实现')
       )
     )
   }
 
+  var renderCoupons = function() {
+    var couponCols = [
+      { key: 'code', label: '券码' },
+      { key: 'discount_type', label: '折扣类型', render: function(v) {
+        return v === 'percent' ? '百分比' : '固定金额'
+      }},
+      { key: 'discount_value', label: '折扣值', render: function(v, row) {
+        return row.discount_type === 'percent' ? v + '%' : '\u00a5' + v
+      }},
+      { key: 'min_order_cents', label: '最低消费', render: function(v) {
+        return '\u00a5' + (v / 100).toFixed(2)
+      }},
+      { key: 'max_uses', label: '总限额' },
+      { key: 'used_count', label: '已使用' },
+      { key: 'is_active', label: '状态', render: function(v) {
+        return v ? '\u2713 启用' : '\u2717 停用'
+      }},
+      { key: 'applies_to', label: '适用范围' }
+    ]
+
+    var formEl = null
+    if (showCouponForm) {
+      formEl = React.createElement('div', { className: 'dash-chart-card', style: { padding: 16, marginBottom: 16 } },
+        React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' } },
+          React.createElement('div', null,
+            React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '折扣类型'),
+            React.createElement('select', {
+              value: couponForm.discount_type,
+              onChange: function(e: any) { onCouponFieldChange('discount_type', e.target.value) },
+              style: { padding: '6px 10px', borderRadius: 4, border: '1px solid #333', background: '#0d0d1a', color: '#eee', fontSize: 13 }
+            },
+              React.createElement('option', { value: 'percent' }, '百分比'),
+              React.createElement('option', { value: 'fixed' }, '固定金额')
+            )
+          ),
+          React.createElement('div', null,
+            React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '折扣值'),
+            makeInput('number', couponForm.discount_value, function(v) { onCouponFieldChange('discount_value', v) }, '如 10', 80)
+          ),
+          React.createElement('div', null,
+            React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '总限额'),
+            makeInput('number', couponForm.max_uses, function(v) { onCouponFieldChange('max_uses', v) }, '100', 80)
+          ),
+          React.createElement('div', null,
+            React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '最低消费(分)'),
+            makeInput('number', couponForm.min_order_cents, function(v) { onCouponFieldChange('min_order_cents', v) }, '0', 100)
+          ),
+          React.createElement('div', null,
+            React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '适用范围'),
+            React.createElement('select', {
+              value: couponForm.applies_to,
+              onChange: function(e: any) { onCouponFieldChange('applies_to', e.target.value) },
+              style: { padding: '6px 10px', borderRadius: 4, border: '1px solid #333', background: '#0d0d1a', color: '#eee', fontSize: 13 }
+            },
+              React.createElement('option', { value: 'all' }, '全部'),
+              React.createElement('option', { value: 'membership' }, '会员'),
+              React.createElement('option', { value: 'report' }, '报告'),
+              React.createElement('option', { value: 'addon' }, '附加服务')
+            )
+          ),
+          React.createElement('div', null,
+            React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '描述'),
+            makeInput('text', couponForm.description, function(v) { onCouponFieldChange('description', v) }, '可选描述', 200)
+          ),
+          React.createElement('button', {
+            className: 'dash-refresh-btn',
+            onClick: handleCreateCoupon
+          }, '\u2713 创建'),
+          React.createElement('button', {
+            className: 'dash-refresh-btn',
+            onClick: function() { setShowCouponForm(false) }
+          }, '\u2717 取消')
+        )
+      )
+    }
+
+    return React.createElement('div', null,
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 } },
+        React.createElement('h2', null, '优惠券管理'),
+        React.createElement('button', {
+          className: 'dash-refresh-btn',
+          onClick: function() { setShowCouponForm(!showCouponForm) }
+        }, showCouponForm ? '收起' : '+ 新建优惠券')
+      ),
+      formEl,
+      React.createElement(AdminTable, { columns: couponCols, data: opsCoupons || [], emptyText: '暂无优惠券' })
+    )
+  }
+
+  var renderAnnouncements = function() {
+    var annCols = [
+      { key: 'title', label: '标题' },
+      { key: 'type', label: '类型', render: function(v) {
+        var typeMap: Record<string, string> = { notice: '通知', maintenance: '维护', promotion: '促销', feature: '新功能', urgent: '紧急' }
+        return typeMap[v] || v
+      }},
+      { key: 'is_published', label: '状态', render: function(v) {
+        return v ? '\u2713 已发布' : '\u2717 草稿'
+      }},
+      { key: 'published_at', label: '发布时间', render: function(v) {
+        return v ? v.slice(0, 16).replace('T', ' ') : '-'
+      }},
+      { key: 'created_at', label: '创建时间', render: function(v) {
+        return v ? v.slice(0, 16).replace('T', ' ') : '-'
+      }},
+      { key: '_action', label: '操作', render: function(_v, row) {
+        return React.createElement('button', {
+          className: 'dash-refresh-btn',
+          onClick: function() { opsTogglePublish(row.id, !row.is_published) },
+          style: { fontSize: 12, padding: '3px 10px' }
+        }, row.is_published ? '取消发布' : '发布')
+      }}
+    ]
+
+    var typeLabels: Record<string, string> = { notice: '通知', maintenance: '维护', promotion: '促销', feature: '新功能', urgent: '紧急' }
+    var typeOptions = []
+    for (var tk in typeLabels) {
+      typeOptions.push(React.createElement('option', { key: tk, value: tk }, typeLabels[tk]))
+    }
+
+    var formEl = null
+    if (showAnnForm) {
+      formEl = React.createElement('div', { className: 'dash-chart-card', style: { padding: 16, marginBottom: 16 } },
+        React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 10 } },
+          React.createElement('div', { style: { display: 'flex', gap: 12, alignItems: 'flex-end' } },
+            React.createElement('div', null,
+              React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '标题'),
+              makeInput('text', annForm.title, function(v) { onAnnFieldChange('title', v) }, '公告标题', 300)
+            ),
+            React.createElement('div', null,
+              React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '类型'),
+              React.createElement('select', {
+                value: annForm.type,
+                onChange: function(e: any) { onAnnFieldChange('type', e.target.value) },
+                style: { padding: '6px 10px', borderRadius: 4, border: '1px solid #333', background: '#0d0d1a', color: '#eee', fontSize: 13 }
+              }, typeOptions)
+            )
+          ),
+          React.createElement('div', null,
+            React.createElement('div', { style: { fontSize: 12, color: '#999', marginBottom: 4 } }, '内容'),
+            React.createElement('textarea', {
+              value: annForm.content,
+              onChange: function(e: any) { onAnnFieldChange('content', e.target.value) },
+              placeholder: '公告内容',
+              style: { width: '100%', minHeight: 80, padding: '8px 10px', borderRadius: 4, border: '1px solid #333', background: '#0d0d1a', color: '#eee', fontSize: 13, resize: 'vertical' }
+            })
+          ),
+          React.createElement('div', { style: { display: 'flex', gap: 10 } },
+            React.createElement('button', {
+              className: 'dash-refresh-btn',
+              onClick: handleCreateAnn
+            }, '\u2713 创建'),
+            React.createElement('button', {
+              className: 'dash-refresh-btn',
+              onClick: function() { setShowAnnForm(false) }
+            }, '\u2717 取消')
+          )
+        )
+      )
+    }
+
+    return React.createElement('div', null,
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 } },
+        React.createElement('h2', null, '公告管理'),
+        React.createElement('button', {
+          className: 'dash-refresh-btn',
+          onClick: function() { setShowAnnForm(!showAnnForm) }
+        }, showAnnForm ? '收起' : '+ 新建公告')
+      ),
+      formEl,
+      React.createElement(AdminTable, { columns: annCols, data: opsAnnouncements || [], emptyText: '暂无公告' })
+    )
+  }
+
   var renderStats = function() {
+    // 转化率数据
+    var regRate = conversion ? conversion.registrationRate : 0
+    var paidToVipRate = conversion ? conversion.paidToVipRate : 0
+
+    var regColor = regRate >= 50 ? 'good' : regRate >= 20 ? 'warning' : 'bad'
+    var vipColor = paidToVipRate >= 50 ? 'good' : paidToVipRate >= 20 ? 'warning' : 'bad'
+
+    // 趋势线配置
+    var statsLines = [
+      { key: 'newUsers', color: '#d4a843', label: '新用户' },
+      { key: 'charts', color: '#60a5fa', label: '排盘' },
+      { key: 'analysis', color: '#a78bfa', label: '分析' }
+    ]
+
     return React.createElement('div', null,
       React.createElement('h2', null, '运营统计'),
       React.createElement('div', { className: 'dash-chart-grid' },
         React.createElement('div', { className: 'dash-chart-card' },
-          React.createElement('div', { className: 'dash-chart-title' }, '用户增长趋势'),
+          React.createElement('div', { className: 'dash-chart-title' }, '每日活跃趋势'),
           React.createElement('div', { className: 'dash-chart-container' },
-            React.createElement(LineChart, { data: dailyData, lines: userLines })
+            React.createElement(LineChart, { data: dailyData, lines: statsLines })
           )
         ),
         React.createElement('div', { className: 'dash-chart-card' },
@@ -937,72 +1081,20 @@ function Dashboard() {
         )
       ),
       React.createElement('div', { className: 'dash-system-section', style: { marginTop: 24 } },
-        React.createElement('h2', null, '核心指标'),
+        React.createElement('h2', null, '留存指标'),
         React.createElement('div', { className: 'dash-system-grid' },
-          React.createElement(Gauge, { value: metrics.retentionRate, max: 100, label: '次日留存率', colorClass: cacheColorClass }),
-          React.createElement(Gauge, { value: metrics.paymentRate, max: 100, label: '支付转化率', colorClass: errorColorClass }),
-          React.createElement(Gauge, { value: metrics.apiErrorRate, max: 5, label: 'API 错误率', colorClass: errorColorClass }),
-          React.createElement(Gauge, { value: metrics.cacheHitRate, max: 100, label: '缓存命中率', colorClass: cacheColorClass })
-        )
-      )
-    )
-  }
-
-  var renderCommercialKPI = function() {
-    return React.createElement('div', null,
-      React.createElement('h2', null, '商业 KPI'),
-      React.createElement('div', { className: 'dash-kpi-grid' },
-        React.createElement('div', { className: 'dash-kpi-card highlight' },
-          React.createElement('div', { className: 'dash-kpi-label' }, '今日收入'),
-          React.createElement('div', { className: 'dash-kpi-value' }, '\u00A52,847.00')
-        ),
-        React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, '今日订单'),
-          React.createElement('div', { className: 'dash-kpi-value' }, '47')
-        ),
-        React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, '今日退款'),
-          React.createElement('div', { className: 'dash-kpi-value' }, '3')
-        ),
-        React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, '活跃用户'),
-          React.createElement('div', { className: 'dash-kpi-value' }, '1,234')
-        ),
-        React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, '会员增长'),
-          React.createElement('div', { className: 'dash-kpi-value' }, '+23')
-        ),
-        React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, 'ARPU'),
-          React.createElement('div', { className: 'dash-kpi-value' }, '\u00A518.50')
-        ),
-        React.createElement('div', { className: 'dash-kpi-card' },
-          React.createElement('div', { className: 'dash-kpi-label' }, 'LTV'),
-          React.createElement('div', { className: 'dash-kpi-value' }, '\u00A5156.00')
-        ),
-        React.createElement('div', { className: 'dash-kpi-card highlight' },
-          React.createElement('div', { className: 'dash-kpi-label' }, 'ROI'),
-          React.createElement('div', { className: 'dash-kpi-value' }, '3.2x')
+          React.createElement(Gauge, { value: day1Retention, max: 100, label: '次日留存率', colorClass: retentionColor }),
+          React.createElement(Gauge, { value: day7Retention, max: 100, label: '7日留存率', colorClass: retentionColor }),
+          React.createElement(Gauge, { value: day30Retention, max: 100, label: '30日留存率', colorClass: retentionColor })
         )
       ),
-      React.createElement('div', { className: 'dash-chart-grid', style: { marginTop: 24 } },
-        React.createElement('div', { className: 'dash-chart-card' },
-          React.createElement('div', { className: 'dash-chart-title' }, '7天收入趋势（分）'),
-          React.createElement('div', { className: 'dash-chart-container' },
-            React.createElement(AreaChart, { data: MOCK_COMMERCIAL_DAILY, dataKey: 'revenue', color: '#d4a843' })
-          )
-        ),
-        React.createElement('div', { className: 'dash-chart-card' },
-          React.createElement('div', { className: 'dash-chart-title' }, '会员增长趋势'),
-          React.createElement('div', { className: 'dash-chart-container' },
-            React.createElement(BarChart, { data: MOCK_COMMERCIAL_DAILY, dataKey: 'members', color: '#34d399' })
-          )
-        ),
-        React.createElement('div', { className: 'dash-chart-card' },
-          React.createElement('div', { className: 'dash-chart-title' }, 'ARPU 趋势（分）'),
-          React.createElement('div', { className: 'dash-chart-container' },
-            React.createElement(LineChart, { data: MOCK_COMMERCIAL_DAILY, lines: [{ key: 'arpu', color: '#60a5fa', label: 'ARPU' }] })
-          )
+      React.createElement('div', { className: 'dash-system-section', style: { marginTop: 24 } },
+        React.createElement('h2', null, '转化指标'),
+        React.createElement('div', { className: 'dash-system-grid' },
+          React.createElement(Gauge, { value: regRate, max: 100, label: '注册转化率', colorClass: regColor }),
+          React.createElement(Gauge, { value: freeTrialRate, max: 100, label: '免费体验率', colorClass: 'neutral' }),
+          React.createElement(Gauge, { value: memberConvRate, max: 100, label: '会员转化率', colorClass: conversionColor }),
+          React.createElement(Gauge, { value: paidToVipRate, max: 100, label: 'VIP升级率', colorClass: vipColor })
         )
       )
     )

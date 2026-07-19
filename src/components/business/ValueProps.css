@@ -1,0 +1,56 @@
+.vp-section { margin: 1.5rem 0; }
+.vp-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e2e5ed;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #252b3d;
+}
+.vp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+.vp-card {
+  background: #12151e;
+  border: 1px solid #252b3d;
+  border-radius: 8px;
+  padding: 1.2rem;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.vp-card:hover {
+  border-color: rgba(201,149,45,0.4);
+  box-shadow: 0 4px 20px rgba(201,149,45,0.08);
+}
+.vp-icon-wrap {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(201,149,45,0.3);
+  border-radius: 50%;
+  background: rgba(201,149,45,0.05);
+  margin-bottom: 0.8rem;
+}
+.vp-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+.vp-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e2e5ed;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.03em;
+}
+.vp-card-desc {
+  font-size: 0.8rem;
+  color: #a0a5b8;
+  line-height: 1.6;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .vp-grid { grid-template-columns: 1fr; }
+}

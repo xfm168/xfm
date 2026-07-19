@@ -30,7 +30,7 @@ export interface IPipeline<TInput, TOutput> {
 // ─── Rule Engine 接口 ───
 
 export interface IRuleEngine {
-  execute<TContext, TResult>(
+  execute<TContext>(
     rules: unknown[],
     context: TContext,
     options?: Record<string, unknown>,

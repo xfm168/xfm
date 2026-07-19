@@ -83,8 +83,8 @@ export function createOrder(
 
 export function verifyNotify(
   config: AlipayConfig | null,
-  body: Record<string, unknown>,
-  signature: string
+  _body: Record<string, unknown>,
+  _signature: string
 ): Promise<boolean> {
   return new Promise(function(resolve) {
     if (!isConfigured(config)) {

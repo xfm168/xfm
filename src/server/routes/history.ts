@@ -7,6 +7,7 @@
  *   page  = 1     页码（从 1 开始，默认 1）
  *   limit = 20    每页数量（默认 20，上限 100）
  *   type  = chart | analysis   记录类型筛选
+ *   sort  = asc | desc   排序方向（默认 desc，按 created_at）
  *
  * 使用 authOptional 中间件，已登录用户从 charts 和 analysis_history 表
  * 分别查询后合并排序分页，未登录用户返回空列表。
@@ -60,6 +61,8 @@ app.get('/', authOptional, async function(c) {
   var limitRaw = Number(c.req.query('limit')) || 20
   var limit = Math.min(100, Math.max(1, limitRaw))
   var type = c.req.query('type') || ''
+  var sort = (c.req.query('sort') || 'desc').toLowerCase()
+  var ascending = sort === 'asc'
 
   var supabase = await getSupabaseAdmin()
 
@@ -70,7 +73,7 @@ app.get('/', authOptional, async function(c) {
       .from('analysis_history')
       .select('id, user_id, chart_id, analysis_type, result, status, created_at')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: ascending })
 
     if (analysisError) {
       throw ApiError.internal('查询分析历史失败: ' + analysisError.message)
@@ -96,7 +99,7 @@ app.get('/', authOptional, async function(c) {
       .from('charts')
       .select('id, user_id, name, birth_date, birth_time, gender, chart_data, created_at')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: ascending })
 
     if (chartError) {
       throw ApiError.internal('查询命盘历史失败: ' + chartError.message)
@@ -122,7 +125,7 @@ app.get('/', authOptional, async function(c) {
       .from('charts')
       .select('id, user_id, name, birth_date, birth_time, gender, chart_data, created_at')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: ascending })
 
     if (chartsResult.error) {
       throw ApiError.internal('查询命盘历史失败: ' + chartsResult.error.message)
@@ -132,7 +135,7 @@ app.get('/', authOptional, async function(c) {
       .from('analysis_history')
       .select('id, user_id, chart_id, analysis_type, result, status, created_at')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: ascending })
 
     if (analysisResult.error) {
       throw ApiError.internal('查询分析历史失败: ' + analysisResult.error.message)
@@ -170,7 +173,8 @@ app.get('/', authOptional, async function(c) {
     }
 
     allItems.sort(function(a, b) {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      var diff = new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      return ascending ? -diff : diff
     })
   }
 
@@ -184,11 +188,13 @@ app.get('/', authOptional, async function(c) {
     page: number
     limit: number
     type?: string
+    sort?: string
   } = {
     items: items,
     total: total,
     page: page,
     limit: limit,
+    sort: sort,
   }
 
   if (type) {

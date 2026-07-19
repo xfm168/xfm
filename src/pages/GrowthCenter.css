@@ -1,0 +1,210 @@
+.growth-center {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.growth-center-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.growth-center-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #d4af37;
+  margin-bottom: 8px;
+  letter-spacing: 4px;
+}
+
+.growth-center-subtitle {
+  font-size: 14px;
+  color: #888;
+}
+
+.growth-center-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.growth-center-left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.growth-center-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Leaderboard */
+.growth-leaderboard {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  padding: 28px;
+  color: #e0e0e0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.growth-leaderboard-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #d4af37;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  transition: background 0.2s ease;
+}
+
+.leaderboard-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.leaderboard-rank {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.leaderboard-rank.gold {
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.leaderboard-rank.silver {
+  background: rgba(192, 192, 192, 0.15);
+  color: #c0c0c0;
+  border: 1px solid rgba(192, 192, 192, 0.3);
+}
+
+.leaderboard-rank.bronze {
+  background: rgba(205, 127, 50, 0.15);
+  color: #cd7f32;
+  border: 1px solid rgba(205, 127, 50, 0.3);
+}
+
+.leaderboard-rank.normal {
+  background: rgba(255, 255, 255, 0.05);
+  color: #888;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-info {
+  flex: 1;
+}
+
+.leaderboard-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ddd;
+  margin-bottom: 2px;
+}
+
+.leaderboard-level {
+  font-size: 12px;
+  color: #d4af37;
+}
+
+.leaderboard-points {
+  font-size: 14px;
+  color: #d4af37;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Level Guide */
+.growth-level-guide {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  padding: 28px;
+  color: #e0e0e0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.growth-level-guide-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #d4af37;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.level-guide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.level-guide-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.level-guide-item.current {
+  border-color: rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.level-guide-lv {
+  font-size: 14px;
+  font-weight: 700;
+  color: #d4af37;
+  min-width: 50px;
+  margin-right: 12px;
+}
+
+.level-guide-points {
+  font-size: 12px;
+  color: #888;
+  flex: 1;
+}
+
+.level-guide-item.current .level-guide-points {
+  color: #d4af37;
+}
+
+.growth-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 15px;
+}
+
+@media (max-width: 768px) {
+  .growth-center-layout {
+    grid-template-columns: 1fr;
+  }
+}

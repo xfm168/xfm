@@ -1,0 +1,489 @@
+/**
+ * 玄风门 八字命盘 移动端专项优化 V4.4
+ *
+ * 独立文件，不修改 BaziChart.css。
+ * 加载顺序：BaziChart.css → BaziChart.mobile.css（后者覆盖移动端表现）。
+ *
+ * 覆盖范围：
+ *  1. iPhone SE ~ iPad Pro / 桌面 全尺寸适配（6 个断点）
+ *  2. 折叠屏展开态适配
+ *  3. 触控优化（按钮 ≥44x44px、Tab 间距、滑动手势区）
+ *  4. 动画性能（transform / opacity / will-change / prefers-reduced-motion）
+ *  5. 图片加载优化（loading=lazy 配合、渐进式）
+ *  6. 横屏适配
+ *  7. 安全区（notch / 底部 Home Indicator）适配
+ */
+
+/* ================================================================ *
+ * 0. 移动端通用基线（所有 ≤1024px 视口生效）
+ * ================================================================ */
+@media (max-width: 1024px) {
+  /* 内容区收紧边距，提升信息密度 */
+  .bazi-chart-content {
+    padding-left: var(--space-3, 12px);
+    padding-right: var(--space-3, 12px);
+    max-width: 100%;
+  }
+
+  /* 评分区缩小 */
+  .bazi-score-section {
+    padding-top: var(--space-5, 20px);
+    padding-bottom: var(--space-4, 16px);
+  }
+
+  /* 四柱栅格更紧凑 */
+  .bazi-pillars {
+    gap: var(--space-1, 4px);
+    padding: var(--space-3, 12px);
+  }
+
+  /* Tab 横向滚动，去除等分拉伸以保证可读 */
+  .bazi-tabs {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .bazi-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .bazi-tab {
+    flex: 0 0 auto;
+    min-width: 72px;
+    scroll-snap-align: start;
+  }
+
+  /* 卡片标题适度缩小 */
+  .card-title {
+    font-size: 1rem;
+  }
+}
+
+/* ================================================================ *
+ * 1. iPhone SE（≤380px）—— 最小屏，紧凑模式
+ * ================================================================ */
+@media (max-width: 380px) {
+  .bazi-chart-content {
+    padding-left: var(--space-2, 8px);
+    padding-right: var(--space-2, 8px);
+  }
+
+  /* 评分环缩放 */
+  .bazi-score-section :where([class*='score-ring'], svg) {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+
+  /* 四柱：天干地支字号压缩 */
+  .pillar-gan {
+    font-size: 1.25rem;
+  }
+  .pillar-zhi {
+    font-size: 1.1rem;
+  }
+  .pillar-label {
+    font-size: 0.65rem;
+  }
+
+  /* Tab 进一步紧凑 */
+  .bazi-tab {
+    min-width: 64px;
+    font-size: 0.82rem;
+    padding: 0 var(--space-2, 8px);
+  }
+
+  /* 目录项两列网格，节省纵向空间 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-1, 4px);
+  }
+
+  /* 大运 / 流年条目信息密度提升 */
+  .dayun-item-header,
+  .dayun-item-info {
+    font-size: 0.82rem;
+  }
+
+  /* 五行柱状图标签缩小 */
+  .wuxing-bar-label {
+    font-size: 0.85rem;
+  }
+
+  /* 卡片内边距收紧 */
+  :where(.bazi-chart-content) .card,
+  :where([class*='overview-card'], [class*='list-card'], [class*='radar-card']) {
+    padding: var(--space-3, 12px) !important;
+  }
+}
+
+/* ================================================================ *
+ * 2. iPhone mini / 标准（381px ~ 420px）
+ * ================================================================ */
+@media (min-width: 381px) and (max-width: 420px) {
+  .bazi-pillars {
+    gap: var(--space-2, 8px);
+  }
+
+  .pillar-gan {
+    font-size: 1.35rem;
+  }
+
+  .bazi-tab {
+    min-width: 70px;
+    font-size: 0.86rem;
+  }
+
+  /* 目录两列 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-1, 4px);
+  }
+}
+
+/* ================================================================ *
+ * 3. iPhone Plus（421px ~ 480px）
+ * ================================================================ */
+@media (min-width: 421px) and (max-width: 480px) {
+  .pillar-gan {
+    font-size: 1.45rem;
+  }
+
+  .bazi-tab {
+    min-width: 76px;
+    font-size: 0.9rem;
+  }
+
+  /* 目录三列 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2, 8px);
+  }
+}
+
+/* ================================================================ *
+ * 4. 大手机 / 小平板（481px ~ 768px）
+ * ================================================================ */
+@media (min-width: 481px) and (max-width: 768px) {
+  .bazi-chart-content {
+    max-width: 560px;
+  }
+
+  /* 四柱间距放大，提升可读性 */
+  .bazi-pillars {
+    gap: var(--space-3, 12px);
+    padding: var(--space-5, 20px);
+  }
+
+  .pillar-gan {
+    font-size: 1.55rem;
+  }
+
+  .bazi-tab {
+    min-width: 80px;
+  }
+
+  /* 目录三列 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2, 8px);
+  }
+
+  /* 历史对比列表双列 */
+  .bazi-history-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2, 8px);
+  }
+}
+
+/* ================================================================ *
+ * 5. iPad（769px ~ 1024px）
+ * ================================================================ */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .bazi-chart-content {
+    max-width: 720px;
+  }
+
+  /* Tab 可等分显示，无需横向滚动 */
+  .bazi-tabs {
+    overflow-x: visible;
+  }
+  .bazi-tab {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 目录四列 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2, 8px);
+  }
+
+  /* 历史对比列表三列 */
+  .bazi-history-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3, 12px);
+  }
+
+  /* 大运列表双列（空间充足时） */
+  .dayun-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3, 12px);
+  }
+}
+
+/* ================================================================ *
+ * 6. iPad Pro / 桌面（≥1025px）
+ * ================================================================ */
+@media (min-width: 1025px) {
+  .bazi-chart-content {
+    max-width: 960px;
+  }
+
+  /* 大屏可双栏展示部分内容 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--space-2, 8px);
+  }
+
+  .bazi-history-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-3, 12px);
+  }
+}
+
+/* ================================================================ *
+ * 7. 折叠屏适配
+ * ================================================================ */
+
+/* 折叠屏展开态（横向、中等宽度区间） */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape),
+       (min-resolution: 2dppx) and (min-width: 768px) {
+  /* 折叠屏展开：内容区取较宽，避免铰链区域空隙过大 */
+  .bazi-chart-content {
+    max-width: 880px;
+    padding-left: var(--space-6, 24px);
+    padding-right: var(--space-6, 24px);
+  }
+}
+
+/* 折叠屏折叠态（窄竖屏高密度） */
+@media (max-width: 420px) and (min-aspect-ratio: 2/3) and (max-aspect-ratio: 9/16) {
+  .bazi-pillars {
+    padding: var(--space-2, 8px);
+  }
+}
+
+/* 兼容 horizontal viewport query（device-flexible） */
+@supports (display: flex) and (orientation: landscape) {
+  @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    .bazi-tab-content {
+      max-width: 100%;
+    }
+  }
+}
+
+/* ================================================================ *
+ * 8. 触控优化（移动端通用，≤768px）
+ * ================================================================ */
+@media (max-width: 768px) {
+  /* 所有可点击元素最小 44x44px 命中区 */
+  .bazi-tab,
+  .bazi-toc-item,
+  .bazi-toc-toggle,
+  .bazi-history-item,
+  .dayun-item-header,
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Tab 间距增大，避免误触 */
+  .bazi-tabs {
+    gap: 0;
+  }
+  .bazi-tab {
+    padding: 0 var(--space-3, 12px);
+  }
+
+  /* 大运 / 流年条目增加纵向可点击间距 */
+  .dayun-item-header {
+    padding-top: var(--space-2, 8px);
+    padding-bottom: var(--space-2, 8px);
+  }
+
+  /* 取消 hover 依赖（触屏无 hover），active 态反馈 */
+  .bazi-tab:active,
+  .bazi-toc-item:active,
+  .bazi-history-item:active,
+  button:active {
+    opacity: 0.7;
+    transform: scale(0.98);
+    transition: transform 0.1s ease, opacity 0.1s ease;
+  }
+
+  /* 滑动手势区：横向滚动容器禁用纵向手势拦截 */
+  .bazi-tabs,
+  .bazi-toc-list {
+    touch-action: pan-x;
+  }
+
+  /* 命盘整体允许纵向滚动 */
+  .bazi-chart-page {
+    touch-action: pan-y;
+  }
+
+  /* 链接 / 按钮去除点击高亮（统一交互反馈） */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ================================================================ *
+ * 9. 动画性能优化
+ * ================================================================ */
+
+/* 使用 transform / opacity 做过渡，避免触发 layout / paint */
+@media (max-width: 768px) {
+  .bazi-tab-content,
+  .dayun-item,
+  .bazi-history-item,
+  .bazi-toc-item {
+    will-change: transform, opacity;
+  }
+
+  /* 折叠展开使用 transform 而非 height 动画 */
+  .dayun-item--expanded .dayun-item-detail,
+  .bazi-toc-list {
+    transition: transform 0.25s var(--ease-elegant, ease),
+                opacity 0.25s var(--ease-elegant, ease);
+  }
+}
+
+/* 全局：GPU 加速提示（仅对动画元素，避免滥用） */
+.bazi-tab-content {
+  transform: translateZ(0);
+}
+
+/* 尊重用户「减少动态」偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* 关闭进入淡入动画 */
+  .bazi-tab-content {
+    animation: none;
+  }
+
+  /* 关闭点击缩放 */
+  .bazi-tab:active,
+  .bazi-toc-item:active,
+  button:active {
+    transform: none;
+  }
+}
+
+/* ================================================================ *
+ * 10. 图片 / 可视化加载优化
+ * ================================================================ */
+
+/* 所有图片启用懒加载视觉（配合 <img loading="lazy" decoding="async">） */
+.bazi-chart-content img {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 200px;
+}
+
+/* SVG 可视化（五行环 / 雷达图）按需绘制，避免首屏全量 */
+.bazi-chart-content svg {
+  shape-rendering: geometricPrecision;
+  will-change: transform;
+}
+
+/* 占位骨架（图片加载前） */
+.bazi-chart-content img:not([src]),
+.bazi-chart-content img[src=''] {
+  background: linear-gradient(
+    90deg,
+    rgba(232, 197, 106, 0.04) 25%,
+    rgba(232, 197, 106, 0.12) 37%,
+    rgba(232, 197, 106, 0.04) 63%
+  );
+  background-size: 400% 100%;
+  animation: bazi-skeleton 1.4s ease infinite;
+}
+
+@keyframes bazi-skeleton {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* ================================================================ *
+ * 11. 横屏适配
+ * ================================================================ */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 500px) {
+  /* 横屏矮视口：评分区与四柱横向并排，节省纵向空间 */
+  .bazi-score-section {
+    padding: var(--space-3, 12px) 0;
+  }
+
+  .bazi-pillars {
+    margin-bottom: var(--space-4, 16px);
+  }
+
+  .card-title {
+    margin-bottom: var(--space-2, 8px);
+  }
+}
+
+/* ================================================================ *
+ * 12. 安全区（notch / Home Indicator）
+ * ================================================================ */
+@supports (padding: max(0px)) {
+  .bazi-chart-page {
+    padding-left: max(var(--space-4, 16px), env(safe-area-inset-left));
+    padding-right: max(var(--space-4, 16px), env(safe-area-inset-right));
+    padding-bottom: max(var(--space-16, 64px), env(safe-area-inset-bottom));
+  }
+}
+
+/* 底部固定操作栏避免被 Home Indicator 遮挡 */
+.bazi-chart-content > :last-child {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ================================================================ *
+ * 13. 字体渲染优化（移动端抗锯齿）
+ * ================================================================ */
+@media (max-width: 768px) {
+  .bazi-chart-page {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 中文字体在移动端使用系统字体栈，减少 webfont 加载 */
+  .pillar-gan,
+  .pillar-zhi,
+  .overview-value,
+  .wuxing-name {
+    font-family: var(--font-serif, serif);
+  }
+}

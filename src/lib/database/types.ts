@@ -13,11 +13,11 @@
 export type MembershipTier = 'free' | 'basic' | 'premium' | 'vip'
 export type Gender = 'male' | 'female'
 export type ZiShiStrategy = 'late' | 'early' | 'gregorian'
-export type AnalysisType = 'basic' | 'full' | 'ai' | 'compatibility'
+export type AnalysisType = 'basic' | 'full' | 'ai' | 'compatibility' | 'pro' | 'legacy' | 'future'
 export type AnalysisStatus = 'pending' | 'processing' | 'completed' | 'failed'
 export type FeedbackType = 'bug' | 'feature' | 'accuracy' | 'other'
 export type FeedbackSeverity = 'low' | 'normal' | 'high' | 'critical'
-export type FeedbackStatus = 'open' | 'processing' | 'resolved' | 'closed'
+export type FeedbackStatus = 'open' | 'processing' | 'reviewed' | 'accepted' | 'rejected' | 'resolved' | 'closed'
 export type PaymentProductType = 'membership' | 'report' | 'addon' | 'credits'
 export type PaymentMethod = 'wechat' | 'alipay' | 'stripe'
 export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded' | 'cancelled'
@@ -220,10 +220,9 @@ export interface PaymentInsert {
 export type OrderProductType = 'membership' | 'report' | 'addon' | 'credits'
 export type OrderStatus = 'pending' | 'paid' | 'cancelled' | 'expired' | 'refunded'
 export type V11PaymentMethod = 'wechat' | 'alipay' | 'stripe'
-export type V11PaymentStatus = 'pending' | 'processing' | 'success' | 'failed' | 'expired'
-export type RefundStatus = 'pending' | 'processing' | 'success' | 'failed'
+export type V11PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded' | 'cancelled'
+export type RefundStatus = 'pending' | 'processing' | 'succeeded' | 'failed'
 export type TransactionType = 'payment' | 'refund' | 'credits_purchase' | 'credits_spend' | 'points_earn' | 'points_spend' | 'invitation_reward'
-export type MembershipTierV11 = 'free' | 'pro' | 'master'
 
 export interface Order {
   id: string
@@ -291,7 +290,7 @@ export interface UserProfile {
   id: string
   display_name: string | null
   avatar_url: string | null
-  membership_tier: MembershipTierV11
+  membership_tier: MembershipTier
   membership_expires_at: string | null
   points_balance: number
   total_spent_cents: number

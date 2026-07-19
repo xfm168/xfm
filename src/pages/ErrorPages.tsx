@@ -76,7 +76,7 @@ export function MaintenancePage({
       </div>
       <h1 className="error-page__title">{'系统维护中'}</h1>
       <p className="error-page__message">
-        {'我们正在升级系统以提供更好的服务，请稍后再访问。'}
+        {'天庭正在整修星盘，以供养更精准天机，请稍后再访。'}
       </p>
       <p className="error-page__detail">
         {'预计恢复时间：'}

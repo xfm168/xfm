@@ -1,0 +1,438 @@
+/**
+ * BaziVisualization 配套样式
+ * 玄风门 V4.2
+ *
+ * 所有可视化组件的样式定义。
+ * 遵循玄风门设计系统色系：金色(#D4AF37)、棕色(#8B4513) 为主调。
+ */
+
+/* ===== 公共样式 ===== */
+
+.bazi-viz-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #8B4513;
+  margin: 0 0 4px;
+  letter-spacing: 2px;
+  border-left: 3px solid #D4AF37;
+  padding-left: 10px;
+}
+
+.bazi-viz-desc {
+  font-size: 12px;
+  color: #999;
+  margin: 0 0 16px;
+  padding-left: 13px;
+}
+
+/* ===== 1. 五行能量环 ===== */
+
+.bazi-viz-ring {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bazi-viz-ring__container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.bazi-viz-ring__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.bazi-viz-ring__arc {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.bazi-viz-ring__arc-group:hover .bazi-viz-ring__arc {
+  transform: scale(1.02);
+  transform-origin: center;
+  filter: brightness(1.1);
+}
+
+.bazi-viz-ring__arc-label {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bazi-viz-ring__center-element {
+  pointer-events: none;
+  user-select: none;
+  font-weight: 700;
+}
+
+.bazi-viz-ring__center-label {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bazi-viz-ring__tooltip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(139, 69, 19, 0.92);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.bazi-viz-ring__tooltip-name {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.bazi-viz-ring__tooltip-value,
+.bazi-viz-ring__tooltip-pct {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.bazi-viz-ring__legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bazi-viz-ring__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.bazi-viz-ring__legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.bazi-viz-ring__legend-label {
+  font-weight: 500;
+}
+
+.bazi-viz-ring__legend-value {
+  color: #999;
+  font-size: 11px;
+}
+
+/* ===== 2. 十神占比图 ===== */
+
+.bazi-viz-shishen {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bazi-viz-shishen__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bazi-viz-shishen__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bazi-viz-shishen__name {
+  width: 40px;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  text-align: right;
+}
+
+.bazi-viz-shishen__track {
+  flex: 1;
+  height: 24px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bazi-viz-shishen__fill {
+  height: 100%;
+  border-radius: 4px;
+  min-width: 2px;
+  transition: width 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+}
+
+.bazi-viz-shishen__fill-text {
+  font-size: 11px;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== 3. 大运时间轴 ===== */
+
+.bazi-viz-dayun {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bazi-viz-dayun__container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.bazi-viz-dayun__container::-webkit-scrollbar {
+  height: 4px;
+}
+
+.bazi-viz-dayun__container::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 2px;
+}
+
+.bazi-viz-dayun__svg {
+  display: block;
+  min-width: 100%;
+  height: auto;
+}
+
+.bazi-viz-dayun__line {
+  stroke-dasharray: 6 4;
+}
+
+.bazi-viz-dayun__node {
+  transition: r 0.2s ease, filter 0.2s ease;
+}
+
+.bazi-viz-dayun__arc-group:hover .bazi-viz-dayun__node,
+.bazi-viz-dayun__node:hover {
+  filter: brightness(1.15);
+}
+
+.bazi-viz-dayun__node-text {
+  pointer-events: none;
+  user-select: none;
+  font-weight: 500;
+}
+
+.bazi-viz-dayun__age-text,
+.bazi-viz-dayun__score-text {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bazi-viz-dayun__tooltip {
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: rgba(139, 69, 19, 0.92);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.bazi-viz-dayun__tooltip-header {
+  font-weight: 700;
+  font-size: 16px;
+  color: #D4AF37;
+}
+
+.bazi-viz-dayun__tooltip-age,
+.bazi-viz-dayun__tooltip-score,
+.bazi-viz-dayun__tooltip-type {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* ===== 4. 人生运势曲线 ===== */
+
+.bazi-viz-curve {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bazi-viz-curve__container {
+  position: relative;
+}
+
+.bazi-viz-curve__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.bazi-viz-curve__line {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bazi-viz-curve__dot {
+  transition: r 0.2s ease, fill 0.2s ease;
+  cursor: pointer;
+}
+
+.bazi-viz-curve__label,
+.bazi-viz-curve__tick,
+.bazi-viz-curve__x-label {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bazi-viz-curve__tooltip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -80px);
+  background: rgba(139, 69, 19, 0.92);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.bazi-viz-curve__tooltip-age {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.bazi-viz-curve__tooltip-score {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.bazi-viz-curve__tooltip-label {
+  font-size: 11px;
+  color: #D4AF37;
+}
+
+/* ===== 5. 综合评分仪表盘 ===== */
+
+.bazi-viz-gauge {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bazi-viz-gauge__container {
+  display: flex;
+  justify-content: center;
+}
+
+.bazi-viz-gauge__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.bazi-viz-gauge__bg {
+  opacity: 0.6;
+}
+
+.bazi-viz-gauge__fg {
+  transition: stroke-dasharray 0.8s ease;
+}
+
+.bazi-viz-gauge__score,
+.bazi-viz-gauge__level,
+.bazi-viz-gauge__label {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===== 响应式 ===== */
+
+@media (max-width: 600px) {
+  .bazi-viz-title {
+    font-size: 14px;
+  }
+
+  .bazi-viz-desc {
+    font-size: 11px;
+  }
+
+  .bazi-viz-ring,
+  .bazi-viz-shishen,
+  .bazi-viz-dayun,
+  .bazi-viz-curve,
+  .bazi-viz-gauge {
+    padding: 12px;
+  }
+
+  .bazi-viz-shishen__name {
+    width: 32px;
+    font-size: 11px;
+  }
+
+  .bazi-viz-ring__legend {
+    gap: 8px;
+  }
+
+  .bazi-viz-ring__legend-item {
+    font-size: 11px;
+  }
+}
+
+/* ===== 打印样式 ===== */
+
+@media print {
+  .bazi-viz-ring,
+  .bazi-viz-shishen,
+  .bazi-viz-dayun,
+  .bazi-viz-curve,
+  .bazi-viz-gauge {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .bazi-viz-ring__tooltip,
+  .bazi-viz-dayun__tooltip,
+  .bazi-viz-curve__tooltip {
+    display: none;
+  }
+}

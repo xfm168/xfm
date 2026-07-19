@@ -1,0 +1,115 @@
+/**
+ * FortuneTimeline - 大运流年时间轴样式
+ * 竖向时间轴，展示人生各阶段运势
+ * 前缀: xr-ft-
+ */
+
+.xr-ft {
+  padding: var(--space-4);
+}
+
+.xr-ft__list {
+  position: relative;
+  padding-left: var(--space-6);
+}
+
+/* ── 左侧竖线 ── */
+.xr-ft__list::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border, #e5e5e5);
+}
+
+/* ── 单个阶段 ── */
+.xr-ft__stage {
+  position: relative;
+  padding-bottom: var(--space-5);
+}
+
+.xr-ft__stage:last-child {
+  padding-bottom: 0;
+}
+
+/* ── 圆点 ── */
+.xr-ft__dot {
+  position: absolute;
+  left: calc(-1 * var(--space-6) - 1px);
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent, #c8a951);
+  border: 2px solid var(--bg-card, #fff);
+  box-shadow: 0 0 0 2px var(--accent, #c8a951);
+}
+
+/* ── 内容区 ── */
+.xr-ft__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.xr-ft__stage-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+}
+
+.xr-ft__age-range {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+}
+
+.xr-ft__summary {
+  font-size: 0.875rem;
+  color: var(--ink, #333);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.xr-ft__influence {
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+/* ── 关键事件 ── */
+.xr-ft__events {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.xr-ft__event {
+  font-size: 0.8125rem;
+  color: var(--accent2, #5b8def);
+  padding-left: var(--space-4);
+  position: relative;
+  line-height: 1.5;
+}
+
+.xr-ft__event::before {
+  content: '\2022';
+  position: absolute;
+  left: var(--space-1);
+  color: var(--accent2, #5b8def);
+}
+
+/* ── 移动端适配 ── */
+@media (max-width: 480px) {
+  .xr-ft__list {
+    padding-left: var(--space-5);
+  }
+
+  .xr-ft__dot {
+    left: calc(-1 * var(--space-5) - 1px);
+  }
+}

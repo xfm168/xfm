@@ -7,7 +7,7 @@
 - ✅ Pipeline Architecture
 - ✅ Rule Engine (101 Rules)
 - ✅ Knowledge Base (76 Entries)
-- ✅ AI Provider (Unified Timeout)
+- ✅ 推演服务提供方 (Unified Timeout)
 - ✅ Evidence Chain
 - ✅ Report Template
 
@@ -62,7 +62,7 @@
 | Pipeline | Frozen | No modification |
 | Vision | Integrated | No deletion |
 | Simulation | Deprecated | Reserved, no deletion |
-| AI Provider | Frozen | No modification |
+| 推演服务提供方 | Frozen | No modification |
 | Rule Engine | Frozen | No modification |
 | Knowledge Base | Frozen | No modification |
 
@@ -74,7 +74,7 @@ All new features **MUST** reuse V4.4 existing architecture:
 
 | Architecture Component | Purpose | Reuse For |
 |------------------------|---------|-----------|
-| AI Provider | Unified timeout/retry/error | Bazi AI, 合盘 AI, Admin AI |
+| 推演服务提供方 | Unified timeout/retry/error | 八字推演, 合盘推演, 管理推演 |
 | Pipeline | 10-step flow pattern | Bazi Pipeline, 合盘 Pipeline |
 | Report Engine | 12-section template | Bazi Report, 合盘 Report |
 | Logger | Unified logging (dev/prod) | All new modules |
@@ -110,7 +110,7 @@ Only build new architecture if there is a clear technical limitation.
 - API Rate Limit
 - JWT / Refresh Token
 - Webhook 验证
-- AI 调用限制
+- 推演调用限制
 - 日志系统
 
 ### Phase 5: Commercialization

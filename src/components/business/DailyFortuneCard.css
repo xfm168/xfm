@@ -1,0 +1,11 @@
+.dfc-card { background: #12151e; border: 1px solid #252b3d; border-radius: 8px; padding: 1.2rem; margin: 1rem 0; }
+.dfc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+.dfc-label { font-size: 0.85rem; color: #c9952d; font-weight: 600; }
+.dfc-date { font-size: 0.75rem; color: #6b7394; }
+.dfc-fortune-type { text-align: center; font-size: 1.5rem; font-weight: 700; padding: 0.5rem; border: 2px solid; border-radius: 6px; margin-bottom: 1rem; letter-spacing: 0.1em; }
+.dfc-areas { display: flex; flex-direction: column; gap: 0.6rem; }
+.dfc-area { display: flex; align-items: center; gap: 0.5rem; }
+.dfc-area-name { font-size: 0.8rem; color: #e2e5ed; width: 60px; flex-shrink: 0; }
+.dfc-area-bar-wrap { flex: 1; height: 6px; background: #252b3d; border-radius: 3px; overflow: hidden; }
+.dfc-area-bar { height: 100%; border-radius: 3px; transition: width 0.5s; }
+.dfc-area-text { font-size: 0.75rem; color: #6b7394; width: 70px; text-align: right; flex-shrink: 0; }

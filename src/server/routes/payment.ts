@@ -17,13 +17,139 @@ import { Hono } from 'hono'
 import { authRequired, requireUser } from '../middleware/auth'
 import { ApiError } from '../middleware/error'
 import type {
-  OrderProductType,
   OrderStatus,
-  V11PaymentMethod,
   V11PaymentStatus,
 } from '../../lib/database/types'
+import crypto from 'node:crypto'
+import { notifyMembershipUpgraded, notifyOrderPaid } from '../lib/notificationHelper'
 
 var app = new Hono()
+
+// ───────────────────────────────────────────────
+//  Webhook 验签工具
+// ───────────────────────────────────────────────
+
+/** 计算请求体 SHA-256 哈希 */
+function computePayloadHash(body: unknown): string {
+  var raw = JSON.stringify(body)
+  return crypto.createHash('sha256').update(raw).digest('hex')
+}
+
+/** 记录 Webhook 事件到数据库 */
+async function logWebhookEvent(supabase: any, params: {
+  event_id: string
+  provider: string
+  signature_status: string
+  payload_hash: string
+  order_no: string
+  outcome: string
+  error_message?: string
+}): Promise<void> {
+  await supabase.from('webhook_events').insert({
+    event_id: params.event_id,
+    provider: params.provider,
+    signature_status: params.signature_status,
+    payload_hash: params.payload_hash,
+    order_no: params.order_no,
+    outcome: params.outcome,
+    error_message: params.error_message || null,
+  })
+}
+
+/** 幂等检查：同一 event_id 是否已处理 */
+async function isEventProcessed(supabase: any, eventId: string): Promise<boolean> {
+  var { data } = await supabase
+    .from('webhook_events')
+    .select('id')
+    .eq('event_id', eventId)
+    .eq('outcome', 'processed')
+    .maybeSingle()
+  return !!data
+}
+
+/**
+ * 验证微信支付签名
+ * 微信支付 V3 API: HTTP 头 Wechatpay-Signature = HMAC-SHA256(key, timestamp + "\n" + nonce + "\n" + body + "\n")
+ * 注意：真实环境需要用微信支付平台证书公钥验签（非对称），此处先用 HMAC-SHA256 作为 webhook_secret 签名
+ */
+function verifyWechatSignature(
+  payload: string,
+  signature: string,
+  timestamp: string,
+  nonce: string,
+  secret: string
+): boolean {
+  if (!signature || !timestamp || !nonce || !secret) {
+    return false
+  }
+  var message = timestamp + '\n' + nonce + '\n' + payload + '\n'
+  var expected = crypto.createHmac('sha256', secret).update(message).digest('base64')
+  var calcBuf = Buffer.from(expected)
+  var recvBuf = Buffer.from(signature)
+  if (calcBuf.length !== recvBuf.length) return false
+  return crypto.timingSafeEqual(calcBuf, recvBuf)
+}
+
+/**
+ * 验证支付宝签名
+ * 支付宝: sign = RSA2(sign_type=RSA2, params excluding sign & sign_type, sorted, concatenated with &)
+ * 注意：真实环境需要用支付宝公钥 RSA 验签，此处先用 HMAC-SHA256 作为 webhook_secret 签名
+ */
+function verifyAlipaySignature(
+  params: Record<string, string>,
+  signature: string,
+  signType: string,
+  secret: string
+): boolean {
+  if (!signature || !secret) {
+    return false
+  }
+  // 构造待签名字符串：按 key 排序，排除 sign/sign_type，拼接
+  var keys = Object.keys(params).filter(function(k) {
+    return k !== 'sign' && k !== 'sign_type' && params[k] !== ''
+  }).sort()
+  var signStr = keys.map(function(k) { return k + '=' + params[k] }).join('&')
+  var expected = crypto.createHmac('sha256', secret).update(signStr).digest('hex')
+  var calcBuf = Buffer.from(expected)
+  var recvBuf = Buffer.from(signature)
+  if (calcBuf.length !== recvBuf.length) return false
+  return crypto.timingSafeEqual(calcBuf, recvBuf)
+}
+
+/**
+ * 验证 Stripe 签名
+ * Stripe: sv1_timestamp.sv1_payload.sv1_signature
+ * sv1_signature = HMAC-SHA256(webhook_secret, sv1_timestamp + '.' + sv1_payload)
+ * sv1_payload = base64(body)
+ */
+function verifyStripeSignature(
+  payload: string,
+  signatureHeader: string,
+  secret: string
+): boolean {
+  if (!signatureHeader || !secret) {
+    return false
+  }
+  var elements = signatureHeader.split(',')
+  var ts = ''
+  var sig = ''
+  var payloadB64 = Buffer.from(payload).toString('base64')
+
+  for (var i = 0; i < elements.length; i++) {
+    var parts = elements[i].split('=')
+    if (parts[0] === 't') { ts = parts[1] }
+    if (parts[0] === 'v1') { sig = parts[1] }
+  }
+  if (!ts || !sig) {
+    return false
+  }
+  var signedPayload = ts + '.' + payloadB64
+  var expected = crypto.createHmac('sha256', secret).update(signedPayload).digest('hex')
+  var calcBuf = Buffer.from(expected)
+  var recvBuf = Buffer.from(sig)
+  if (calcBuf.length !== recvBuf.length) return false
+  return crypto.timingSafeEqual(calcBuf, recvBuf)
+}
 
 // ───────────────────────────────────────────────
 //  工具函数
@@ -96,8 +222,9 @@ function isValidPaymentMethod(method: string): boolean {
 // ───────────────────────────────────────────────
 
 var PRODUCT_PRICES: Record<string, number> = {
-  'membership-pro': 9900,
-  'membership-master': 29900,
+  'membership-basic': 2900,    // ¥29/月
+  'membership-premium': 9900,   // ¥99/月
+  'membership-vip': 29900,     // ¥299/月
   'report-basic': 1990,
   'report-full': 4990,
   'report-ai': 9990,
@@ -108,11 +235,12 @@ var PRODUCT_PRICES: Record<string, number> = {
 }
 
 var PRODUCT_NAMES: Record<string, string> = {
-  'membership-pro': '玄风门 Pro 会员',
-  'membership-master': '玄风门 Master 会员',
+  'membership-basic': '玄风门基础会员',
+  'membership-premium': '玄风门高级会员',
+  'membership-vip': '玄风门VIP会员',
   'report-basic': '基础分析报告',
   'report-full': '完整分析报告',
-  'report-ai': 'AI 深度分析报告',
+  'report-ai': '深度分析报告',
   'addon-compatibility': '合婚分析附加报告',
   'credits-100': '100 积分包',
   'credits-500': '500 积分包',
@@ -195,9 +323,14 @@ app.post('/create-order', authRequired, async function(c) {
     throw ApiError.internal('创建订单失败: ' + (orderError ? orderError.message : ''))
   }
 
+  // 支付模式配置：test=模拟支付（不产生真实扣款），live=调真实支付SDK
+  var paymentMode = process.env.PAYMENT_MODE || 'test'
+
   return c.json({
     success: true,
     order: order,
+    mode: paymentMode,
+    testModeNotice: paymentMode === 'test' ? '当前为测试模式，支付不会产生真实扣款' : undefined,
   })
 })
 
@@ -265,7 +398,7 @@ app.post('/confirm', authRequired, async function(c) {
     provider_order_id: providerOrderId,
     amount_cents: order.final_amount_cents,
     currency: order.currency,
-    status: 'success',
+    status: 'paid',
     paid_at: now,
     metadata: {},
   }
@@ -281,16 +414,19 @@ app.post('/confirm', authRequired, async function(c) {
   }
 
   // 更新用户会员等级（如果是会员产品）
+  // Domain UserTier: free, basic, premium, vip
   if (order.product_type === 'membership') {
     var tierMap: Record<string, string> = {
-      'pro': 'pro',
-      'master': 'master',
+      'basic': 'basic',
+      'premium': 'premium',
+      'vip': 'vip',
     }
     var tier = tierMap[order.product_id] || null
     if (tier) {
       var durationDays: Record<string, number> = {
-        'pro': 30,
-        'master': 365,
+        'basic': 30,
+        'premium': 90,
+        'vip': 365,
       }
       var days = durationDays[order.product_id] || 30
       var expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
@@ -324,8 +460,14 @@ app.post('/confirm', authRequired, async function(c) {
             total_spent_cents: order.final_amount_cents,
           })
       }
+
+      // 发送会员升级通知（失败不影响支付流程）
+      try { await notifyMembershipUpgraded(supabase, user.id, tier, expiresAt) } catch (_ntfErr) { /* ignore */ }
     }
   }
+
+  // 发送订单支付成功通知（失败不影响支付流程）
+  try { await notifyOrderPaid(supabase, user.id, order.product_name, order.final_amount_cents, orderId) } catch (_ntfErr2) { /* ignore */ }
 
   // 创建 transaction 记录
   var { data: profile } = await supabase
@@ -368,21 +510,42 @@ app.post('/confirm', authRequired, async function(c) {
  */
 app.post('/webhook/wechat', async function(c) {
   var body = await c.req.json()
+  var payloadRaw = JSON.stringify(body)
+  var supabase = await getSupabaseAdmin()
+  var webhookSecret = process.env.WEBHOOK_SECRET || ''
 
-  // TODO: 微信支付验签
-  // var wepaySignature = c.req.header('Wechatpay-Signature')
-  // var wepayTimestamp = c.req.header('Wechatpay-Timestamp')
-  // var wepayNonce = c.req.header('Wechatpay-Nonce')
-  // if (!wepaySignature || !wepayTimestamp || !wepayNonce) {
-  //   throw ApiError.badRequest('缺少微信支付签名头')
-  // }
+  // 微信支付签名头
+  var wepaySignature = c.req.header('Wechatpay-Signature') || ''
+  var wepayTimestamp = c.req.header('Wechatpay-Timestamp') || ''
+  var wepayNonce = c.req.header('Wechatpay-Nonce') || ''
+  var wepaySerial = c.req.header('Wechatpay-Serial') || ''
+  var eventId = wepayTimestamp + '-' + wepayNonce || 'wechat-' + Date.now()
 
-  var resource = body.resource || {}
-  var ciphertext = resource.ciphertext || ''
-  var nonce = resource.nonce || ''
-  var associatedData = resource.associated_data || ''
+  // 验签
+  var signatureValid = false
+  if (webhookSecret && wepaySignature) {
+    signatureValid = verifyWechatSignature(payloadRaw, wepaySignature, wepayTimestamp, wepayNonce, webhookSecret)
+  }
+  if (!signatureValid) {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'wechat',
+      signature_status: webhookSecret ? 'failed' : 'skipped',
+      payload_hash: computePayloadHash(body),
+      order_no: '',
+      outcome: 'rejected',
+      error_message: '签名验证失败',
+    })
+    return c.json({ code: 'FAIL', message: '签名验证失败' }, 401)
+  }
 
-  // TODO: 解密 ciphertext 获取真实支付结果
+  // 幂等检查
+  var alreadyProcessed = await isEventProcessed(supabase, eventId)
+  if (alreadyProcessed) {
+    return c.json({ code: 'SUCCESS', message: '重复通知' })
+  }
+
+  // 解析支付结果
   var decryptedAmount = body.amount || {}
   var totalCents = decryptedAmount.total ? decryptedAmount.total * 100 : 0
   var outTradeNo = decryptedAmount.out_trade_no || body.out_trade_no || ''
@@ -390,10 +553,17 @@ app.post('/webhook/wechat', async function(c) {
   var tradeState = decryptedAmount.trade_state || body.trade_state || ''
 
   if (!outTradeNo) {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'wechat',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: '',
+      outcome: 'error',
+      error_message: '缺少商户订单号',
+    })
     throw ApiError.badRequest('缺少商户订单号')
   }
-
-  var supabase = await getSupabaseAdmin()
 
   // 查找订单
   var { data: order, error: orderError } = await supabase
@@ -403,18 +573,34 @@ app.post('/webhook/wechat', async function(c) {
     .single()
 
   if (orderError || !order) {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'wechat',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'error',
+      error_message: '订单不存在',
+    })
     return c.json({ code: 'FAIL', message: '订单不存在' }, 400)
   }
 
   if (order.status === 'paid') {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'wechat',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'duplicate',
+    })
     return c.json({ code: 'SUCCESS', message: '重复通知' })
   }
 
   var now = new Date().toISOString()
-  var status: V11PaymentStatus = tradeState === 'SUCCESS' ? 'success' : 'failed'
+  var status: V11PaymentStatus = tradeState === 'SUCCESS' ? 'paid' : 'failed'
   var orderStatus: OrderStatus = tradeState === 'SUCCESS' ? 'paid' : 'expired'
 
-  // 更新订单状态
   if (tradeState === 'SUCCESS') {
     await supabase
       .from('orders')
@@ -426,7 +612,6 @@ app.post('/webhook/wechat', async function(c) {
       })
       .eq('id', order.id)
 
-    // 创建 payment 记录
     var paymentInsert: Record<string, unknown> = {
       order_id: order.id,
       user_id: order.user_id,
@@ -437,13 +622,10 @@ app.post('/webhook/wechat', async function(c) {
       currency: order.currency,
       status: status,
       paid_at: now,
-      metadata: {
-        wechat_raw: body,
-      },
+      metadata: {},
     }
     await supabase.from('v11_payments').insert(paymentInsert)
 
-    // 创建 transaction
     var txInsert: Record<string, unknown> = {
       user_id: order.user_id,
       type: 'payment',
@@ -454,11 +636,80 @@ app.post('/webhook/wechat', async function(c) {
       metadata: { provider: 'wechat', transaction_id: transactionId },
     }
     await supabase.from('transactions').insert(txInsert)
+
+    // 会员产品：自动升级 tier（与 /confirm 路由逻辑一致）
+    if (order.product_type === 'membership') {
+      var tierMap: Record<string, string> = {
+        'basic': 'basic',
+        'premium': 'premium',
+        'vip': 'vip',
+      }
+      var tier = tierMap[order.product_id] || null
+      if (tier) {
+        var durationDays: Record<string, number> = {
+          'basic': 30,
+          'premium': 90,
+          'vip': 365,
+        }
+        var days = durationDays[order.product_id] || 30
+        var tierExpiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
+
+        var { data: existingProfile } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('id', order.user_id)
+          .single()
+
+        if (existingProfile) {
+          await supabase
+            .from('user_profiles')
+            .update({
+              membership_tier: tier,
+              membership_expires_at: tierExpiresAt,
+              updated_at: now,
+            })
+            .eq('id', order.user_id)
+        } else {
+          await supabase
+            .from('user_profiles')
+            .insert({
+              id: order.user_id,
+              membership_tier: tier,
+              membership_expires_at: tierExpiresAt,
+            })
+        }
+
+        // 发送会员升级通知（失败不影响支付流程）
+        try { await notifyMembershipUpgraded(supabase, order.user_id, tier, tierExpiresAt) } catch (_ntfErrW) { /* ignore */ }
+      }
+    }
+
+    // 发送订单支付成功通知（失败不影响支付流程）
+    try { await notifyOrderPaid(supabase, order.user_id, order.product_name, order.final_amount_cents, order.id) } catch (_ntfErrW2) { /* ignore */ }
+
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'wechat',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'processed',
+    })
   } else {
     await supabase
       .from('orders')
       .update({ status: orderStatus, updated_at: now })
       .eq('id', order.id)
+
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'wechat',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'rejected',
+      error_message: '交易状态非成功: ' + tradeState,
+    })
   }
 
   return c.json({ code: 'SUCCESS', message: '处理成功' })
@@ -472,23 +723,54 @@ app.post('/webhook/wechat', async function(c) {
 app.post('/webhook/alipay', async function(c) {
   var body = await c.req.json()
   var params = body || {}
+  var supabase = await getSupabaseAdmin()
+  var webhookSecret = process.env.WEBHOOK_SECRET || ''
 
-  // TODO: 支付宝验签
-  // var sign = params.sign || ''
-  // var signType = params.sign_type || ''
-  // 使用支付宝公钥验签
-
+  var sign = params.sign || ''
+  var signType = params.sign_type || 'RSA2'
   var outTradeNo = params.out_trade_no || ''
   var tradeNo = params.trade_no || ''
   var tradeStatus = params.trade_status || ''
   var totalAmount = params.total_amount || ''
   var totalCents = Math.round(parseFloat(totalAmount) * 100)
+  var eventId = 'alipay-' + (tradeNo || outTradeNo || Date.now())
 
-  if (!outTradeNo) {
-    throw ApiError.badRequest('缺少商户订单号')
+  // 验签
+  var signatureValid = false
+  if (webhookSecret && sign) {
+    signatureValid = verifyAlipaySignature(params, sign, signType, webhookSecret)
+  }
+  if (!signatureValid) {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'alipay',
+      signature_status: webhookSecret ? 'failed' : 'skipped',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'rejected',
+      error_message: '签名验证失败',
+    })
+    return c.text('fail', 401)
   }
 
-  var supabase = await getSupabaseAdmin()
+  // 幂等检查
+  var alreadyProcessed = await isEventProcessed(supabase, eventId)
+  if (alreadyProcessed) {
+    return c.text('success')
+  }
+
+  if (!outTradeNo) {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'alipay',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: '',
+      outcome: 'error',
+      error_message: '缺少商户订单号',
+    })
+    throw ApiError.badRequest('缺少商户订单号')
+  }
 
   var { data: order, error: orderError } = await supabase
     .from('orders')
@@ -497,20 +779,37 @@ app.post('/webhook/alipay', async function(c) {
     .single()
 
   if (orderError || !order) {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'alipay',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'error',
+      error_message: '订单不存在',
+    })
     return c.text('fail', 400)
   }
 
   if (order.status === 'paid') {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'alipay',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'duplicate',
+    })
     return c.text('success')
   }
 
   var now = new Date().toISOString()
   var status: V11PaymentStatus = tradeStatus === 'TRADE_SUCCESS' || tradeStatus === 'TRADE_FINISHED'
-    ? 'success'
+    ? 'paid'
     : 'failed'
-  var orderStatus: OrderStatus = status === 'success' ? 'paid' : 'expired'
+  var orderStatus: OrderStatus = status === 'paid' ? 'paid' : 'expired'
 
-  if (status === 'success') {
+  if (status === 'paid') {
     await supabase
       .from('orders')
       .update({
@@ -531,7 +830,7 @@ app.post('/webhook/alipay', async function(c) {
       currency: order.currency,
       status: status,
       paid_at: now,
-      metadata: { alipay_raw: params },
+      metadata: {},
     }
     await supabase.from('v11_payments').insert(paymentInsert)
 
@@ -545,11 +844,80 @@ app.post('/webhook/alipay', async function(c) {
       metadata: { provider: 'alipay', trade_no: tradeNo },
     }
     await supabase.from('transactions').insert(txInsert)
+
+    // 会员产品：自动升级 tier（与 /confirm 路由逻辑一致）
+    if (order.product_type === 'membership') {
+      var tierMap: Record<string, string> = {
+        'basic': 'basic',
+        'premium': 'premium',
+        'vip': 'vip',
+      }
+      var tier = tierMap[order.product_id] || null
+      if (tier) {
+        var durationDays: Record<string, number> = {
+          'basic': 30,
+          'premium': 90,
+          'vip': 365,
+        }
+        var days = durationDays[order.product_id] || 30
+        var tierExpiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
+
+        var { data: existingProfile } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('id', order.user_id)
+          .single()
+
+        if (existingProfile) {
+          await supabase
+            .from('user_profiles')
+            .update({
+              membership_tier: tier,
+              membership_expires_at: tierExpiresAt,
+              updated_at: now,
+            })
+            .eq('id', order.user_id)
+        } else {
+          await supabase
+            .from('user_profiles')
+            .insert({
+              id: order.user_id,
+              membership_tier: tier,
+              membership_expires_at: tierExpiresAt,
+            })
+        }
+
+        // 发送会员升级通知（失败不影响支付流程）
+        try { await notifyMembershipUpgraded(supabase, order.user_id, tier, tierExpiresAt) } catch (_ntfErrA) { /* ignore */ }
+      }
+    }
+
+    // 发送订单支付成功通知（失败不影响支付流程）
+    try { await notifyOrderPaid(supabase, order.user_id, order.product_name, order.final_amount_cents, order.id) } catch (_ntfErrA2) { /* ignore */ }
+
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'alipay',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'processed',
+    })
   } else {
     await supabase
       .from('orders')
       .update({ status: orderStatus, updated_at: now })
       .eq('id', order.id)
+
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'alipay',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: outTradeNo,
+      outcome: 'rejected',
+      error_message: '交易状态非成功: ' + tradeStatus,
+    })
   }
 
   return c.text('success')
@@ -565,21 +933,53 @@ app.post('/webhook/stripe', async function(c) {
   var type = body.type || ''
   var data = body.data || {}
   var object = data.object || {}
+  var supabase = await getSupabaseAdmin()
+  var webhookSecret = process.env.WEBHOOK_SECRET || ''
 
-  // TODO: Stripe 签名验证
-  // var stripeSignature = c.req.header('stripe-signature')
-  // 使用 stripe.webhooks.constructEvent 验证
+  var stripeSignature = c.req.header('stripe-signature') || ''
+  var payloadRaw = JSON.stringify(body)
+  var eventId = body.id || ('stripe-' + Date.now())
+
+  // 验签
+  var signatureValid = false
+  if (webhookSecret && stripeSignature) {
+    signatureValid = verifyStripeSignature(payloadRaw, stripeSignature, webhookSecret)
+  }
+  if (!signatureValid) {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'stripe',
+      signature_status: webhookSecret ? 'failed' : 'skipped',
+      payload_hash: computePayloadHash(body),
+      order_no: '',
+      outcome: 'rejected',
+      error_message: '签名验证失败',
+    })
+    return c.json({ error: '签名验证失败' }, 401)
+  }
+
+  // 幂等检查
+  var alreadyProcessed = await isEventProcessed(supabase, eventId)
+  if (alreadyProcessed) {
+    return c.json({ received: true })
+  }
 
   if (type === 'checkout.session.completed') {
     var orderId = object.metadata ? object.metadata.order_id : ''
     var paymentIntentId = object.payment_intent || ''
-    var stripePaymentStatus = object.payment_status || ''
 
     if (!orderId) {
+      await logWebhookEvent(supabase, {
+        event_id: eventId,
+        provider: 'stripe',
+        signature_status: 'verified',
+        payload_hash: computePayloadHash(body),
+        order_no: '',
+        outcome: 'error',
+        error_message: '缺少 order_id in metadata',
+      })
       return c.json({ received: true })
     }
-
-    var supabase = await getSupabaseAdmin()
 
     var { data: order, error: orderError } = await supabase
       .from('orders')
@@ -588,10 +988,27 @@ app.post('/webhook/stripe', async function(c) {
       .single()
 
     if (orderError || !order) {
+      await logWebhookEvent(supabase, {
+        event_id: eventId,
+        provider: 'stripe',
+        signature_status: 'verified',
+        payload_hash: computePayloadHash(body),
+        order_no: '',
+        outcome: 'error',
+        error_message: '订单不存在: ' + orderId,
+      })
       return c.json({ received: true })
     }
 
     if (order.status === 'paid') {
+      await logWebhookEvent(supabase, {
+        event_id: eventId,
+        provider: 'stripe',
+        signature_status: 'verified',
+        payload_hash: computePayloadHash(body),
+        order_no: order.order_no,
+        outcome: 'duplicate',
+      })
       return c.json({ received: true })
     }
 
@@ -615,9 +1032,9 @@ app.post('/webhook/stripe', async function(c) {
       provider_order_id: object.id || '',
       amount_cents: order.final_amount_cents,
       currency: order.currency,
-      status: 'success',
+      status: 'paid',
       paid_at: now,
-      metadata: { stripe_event: body },
+      metadata: {},
     }
     await supabase.from('v11_payments').insert(paymentInsert)
 
@@ -631,6 +1048,75 @@ app.post('/webhook/stripe', async function(c) {
       metadata: { provider: 'stripe', payment_intent: paymentIntentId },
     }
     await supabase.from('transactions').insert(txInsert)
+
+    // 会员产品：自动升级 tier（与 /confirm 路由逻辑一致）
+    if (order.product_type === 'membership') {
+      var tierMap: Record<string, string> = {
+        'basic': 'basic',
+        'premium': 'premium',
+        'vip': 'vip',
+      }
+      var tier = tierMap[order.product_id] || null
+      if (tier) {
+        var durationDays: Record<string, number> = {
+          'basic': 30,
+          'premium': 90,
+          'vip': 365,
+        }
+        var days = durationDays[order.product_id] || 30
+        var tierExpiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
+
+        var { data: existingProfile } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('id', order.user_id)
+          .single()
+
+        if (existingProfile) {
+          await supabase
+            .from('user_profiles')
+            .update({
+              membership_tier: tier,
+              membership_expires_at: tierExpiresAt,
+              updated_at: now,
+            })
+            .eq('id', order.user_id)
+        } else {
+          await supabase
+            .from('user_profiles')
+            .insert({
+              id: order.user_id,
+              membership_tier: tier,
+              membership_expires_at: tierExpiresAt,
+            })
+        }
+
+        // 发送会员升级通知（失败不影响支付流程）
+        try { await notifyMembershipUpgraded(supabase, order.user_id, tier, tierExpiresAt) } catch (_ntfErrS) { /* ignore */ }
+      }
+    }
+
+    // 发送订单支付成功通知（失败不影响支付流程）
+    try { await notifyOrderPaid(supabase, order.user_id, order.product_name, order.final_amount_cents, order.id) } catch (_ntfErrS2) { /* ignore */ }
+
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'stripe',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: order.order_no,
+      outcome: 'processed',
+    })
+  } else {
+    await logWebhookEvent(supabase, {
+      event_id: eventId,
+      provider: 'stripe',
+      signature_status: 'verified',
+      payload_hash: computePayloadHash(body),
+      order_no: '',
+      outcome: 'processed',
+      error_message: '未处理的事件类型: ' + type,
+    })
   }
 
   return c.json({ received: true })
@@ -700,7 +1186,7 @@ app.post('/refund', authRequired, async function(c) {
     .from('v11_payments')
     .select('id')
     .eq('order_id', orderId)
-    .eq('status', 'success')
+    .eq('status', 'paid')
     .single()
 
   if (!payment) {
@@ -710,7 +1196,6 @@ app.post('/refund', authRequired, async function(c) {
   // 退款金额 = 实付金额
   var refundAmountCents = order.final_amount_cents
   var refundNo = generateRefundNo()
-  var now = new Date().toISOString()
 
   // 创建退款记录
   var refundInsert: Record<string, unknown> = {

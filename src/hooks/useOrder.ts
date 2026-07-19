@@ -1,6 +1,6 @@
 /**
  * useOrder — 订单管理 Hook
- * 暂时使用 localStorage 模拟后端
+ * 优先调用后端 API，localStorage 作为缓存/降级
  */
 
 import { useState, useCallback } from 'react'
@@ -8,6 +8,39 @@ import type { PaymentProductType } from '../lib/database/types'
 import type { Order } from '../lib/business/types'
 
 const STORAGE_KEY = 'xuanfengmen_orders'
+var API_BASE = '/api/payment'
+
+/** 从 localStorage 获取 Supabase access_token */
+function getToken(): string {
+  try {
+    var raw = localStorage.getItem('sb-xuanfengmen-auth-token')
+    if (raw) {
+      var parsed = JSON.parse(raw)
+      if (parsed && parsed.access_token) return parsed.access_token
+    }
+  } catch {}
+  return ''
+}
+
+/** 通用 fetch 封装（带 Bearer token） */
+async function apiFetch(path: string, options: Record<string, unknown> = {}): Promise<any> {
+  var url = API_BASE + path
+  var token = getToken()
+  var headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (token) headers['Authorization'] = 'Bearer ' + token
+
+  var fetchOptions: Record<string, unknown> = { method: options.method || 'GET', headers: headers }
+  if (options.body !== undefined) fetchOptions.body = JSON.stringify(options.body)
+
+  var res = await fetch(url, fetchOptions as RequestInit)
+  var json = await res.json()
+
+  if (!res.ok) {
+    var errMsg = json && json.error && json.error.message ? json.error.message : '请求失败'
+    throw new Error(errMsg)
+  }
+  return json
+}
 
 type Status = 'idle' | 'loading' | 'ready' | 'error'
 
@@ -19,9 +52,9 @@ interface UseOrderResult {
     productType: PaymentProductType,
     productId: string,
     amountCents: number
-  ) => Order | null
+  ) => Promise<Order | null>
   cancelOrder: (orderId: string) => boolean
-  getOrderHistory: () => Order[]
+  getOrderHistory: () => Promise<Order[]>
 }
 
 function loadFromStorage(): Order[] {
@@ -75,15 +108,38 @@ export function useOrder(): UseOrderResult {
   var orders = ordersHook[0]
   var setOrders = ordersHook[1]
 
-  var createOrder = useCallback(function(
+  var createOrder = useCallback(async function(
     productType: PaymentProductType,
     productId: string,
     amountCents: number
-  ): Order | null {
-    try {
-      setStatus('loading')
-      setError(null)
+  ): Promise<Order | null> {
+    setStatus('loading')
+    setError(null)
 
+    try {
+      var json = await apiFetch('/create-order', {
+        method: 'POST',
+        body: {
+          product_type: productType,
+          product_id: productId,
+          amount_cents: amountCents,
+        },
+      })
+      if (json.success && json.order) {
+        var newOrder: Order = json.order
+        setOrders(function(prev) {
+          var updated = [newOrder, ...prev]
+          saveToStorage(updated)
+          return updated
+        })
+        setStatus('ready')
+        return newOrder
+      }
+    } catch (e) {
+      // API 失败，降级到本地创建
+    }
+
+    try {
       var now = new Date().toISOString()
       var newOrder: Order = {
         id: generateId(),
@@ -151,7 +207,18 @@ export function useOrder(): UseOrderResult {
     }
   }, [])
 
-  var getOrderHistory = useCallback(function(): Order[] {
+  var getOrderHistory = useCallback(async function(): Promise<Order[]> {
+    try {
+      var json = await apiFetch('/orders')
+      if (json.success && json.orders) {
+        var apiOrders: Order[] = json.orders
+        setOrders(apiOrders)
+        saveToStorage(apiOrders)
+        return apiOrders
+      }
+    } catch (e) {
+      // API 失败，降级到 localStorage
+    }
     return loadFromStorage().sort(function(a, b) {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     })

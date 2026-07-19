@@ -1,0 +1,8 @@
+.share-container { padding: 1rem 0; }
+.share-card-preview { margin-bottom: 1rem; }
+.share-card-preview p { font-size: 0.75rem; color: #6b7394; margin-bottom: 0.5rem; }
+.share-card-embed { background: #0a0a0a; border: 1px solid #252b3d; border-radius: 8px; padding: 1.5rem 1rem; text-align: center; }
+.share-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.share-btn { padding: 0.5rem 1rem; background: #12151e; border: 1px solid #252b3d; border-radius: 6px; color: #e2e5ed; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+.share-btn:hover { border-color: #c9952d; color: #c9952d; }
+.share-btn-copied { border-color: #2ecc71; color: #2ecc71; }

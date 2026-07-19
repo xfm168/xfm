@@ -1,4 +1,6 @@
 -- V1.1-A: Orders, Payments, Refunds, Transactions tables
+-- Updated: 2026-07-18 — Domain v2 CHECK 对齐（合并原 0005_migration）
+-- 说明：本文件同时包含表创建和 CHECK 约束对齐，确保从零环境可一次执行
 
 -- Orders table
 CREATE TABLE IF NOT EXISTS orders (
@@ -114,3 +116,41 @@ CREATE POLICY "Users can read own transactions" ON transactions FOR SELECT USING
 
 CREATE POLICY "Users can read own profile" ON user_profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON user_profiles FOR UPDATE USING (auth.uid() = id);
+
+-- ════════════════════════════════════════════════════════════════════
+-- Domain v2 CHECK 对齐（原 0005_domain_v2_db_align.sql 合并）
+-- Date: 2026-07-18
+-- 说明：将 CHECK 约束修正为 Domain v2.1 Enterprise 定义
+-- ════════════════════════════════════════════════════════════════════
+
+-- ── user_profiles.membership_tier → Domain UserTier ──
+-- Domain v2: free, basic, premium, vip（原: free, pro, master）
+ALTER TABLE public.user_profiles
+DROP CONSTRAINT IF EXISTS user_profiles_membership_tier_check;
+
+ALTER TABLE public.user_profiles
+ADD CONSTRAINT user_profiles_membership_tier_check
+CHECK (membership_tier IN ('free', 'basic', 'premium', 'vip'));
+
+-- ── v11_payments.status → Domain PaymentStatus ──
+-- Domain v2: pending, paid, failed, refunded, cancelled（原: pending, processing, success, failed, expired）
+ALTER TABLE public.v11_payments
+DROP CONSTRAINT IF EXISTS v11_payments_status_check;
+
+ALTER TABLE public.v11_payments
+ADD CONSTRAINT v11_payments_status_check
+CHECK (status IN ('pending', 'paid', 'failed', 'refunded', 'cancelled'));
+
+-- ── refunds.status → Domain RefundStatus ──
+-- Domain v2: pending, processing, succeeded, failed（原: pending, processing, success, failed）
+-- 注意：表名是 refunds（不是 v11_refunds）
+ALTER TABLE public.refunds
+DROP CONSTRAINT IF EXISTS refunds_status_check;
+
+ALTER TABLE public.refunds
+ADD CONSTRAINT refunds_status_check
+CHECK (status IN ('pending', 'processing', 'succeeded', 'failed'));
+
+-- ── users.membership_tier 确认索引 ──
+CREATE INDEX IF NOT EXISTS idx_users_membership_tier
+ON public.users (membership_tier);

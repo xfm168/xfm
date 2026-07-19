@@ -1,0 +1,62 @@
+/**
+ * PatternCard - 格局分析卡片样式
+ * 展示主格、成格评分、副格、格局描述
+ * 前缀: xr-pat-
+ */
+
+.xr-pat {
+  padding: var(--space-4);
+}
+
+/* ── 主格名称 ── */
+.xr-pat__main {
+  margin-bottom: var(--space-4);
+}
+
+.xr-pat__main-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-1);
+}
+
+.xr-pat__main-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink, #333);
+  font-family: var(--font-serif, serif);
+}
+
+/* ── 成格评分 ── */
+.xr-pat__score {
+  margin-bottom: var(--space-4);
+}
+
+/* ── 副格列表 ── */
+.xr-pat__sub {
+  margin-bottom: var(--space-4);
+}
+
+.xr-pat__sub-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.xr-pat__sub-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ── 格局描述 ── */
+.xr-pat__desc {
+  font-size: 0.875rem;
+  color: var(--muted, #666);
+  line-height: 1.7;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}

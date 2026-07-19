@@ -5,7 +5,7 @@
  */
 
 import type {
-  MembershipTier, PaymentProductType, PaymentMethod, PaymentStatus, Payment
+  MembershipTier, PaymentProductType, PaymentMethod, Payment
 } from '../database/types'
 
 // ────────────────────────────────────────────────
@@ -35,7 +35,7 @@ export interface Order extends Payment {
   couponDiscount: number
 }
 
-export type OrderStatus = 'created' | 'paid' | 'refunding' | 'refunded' | 'expired'
+export type OrderStatus = 'pending' | 'paid' | 'cancelled' | 'expired' | 'refunded'
 
 // ────────────────────────────────────────────────
 //  积分

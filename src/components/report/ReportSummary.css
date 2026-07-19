@@ -1,0 +1,167 @@
+/**
+ * ReportSummary - 第一层核心摘要样式
+ * 展示四柱、命盘定位、一句话总结、优势/风险
+ * 前缀: xr-
+ */
+
+.xr-summary {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--space-4);
+  box-sizing: border-box;
+}
+
+/* ── 四柱网格 ── */
+.xr-summary__pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.xr-summary__pillar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.2s ease;
+}
+
+.xr-summary__pillar--active {
+  border-color: var(--accent, #c8a951);
+  box-shadow: 0 1px 3px rgba(200, 169, 81, 0.15);
+}
+
+.xr-summary__pillar-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  letter-spacing: 0.05em;
+}
+
+.xr-summary__pillar-gan {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--ink, #333);
+  font-family: var(--font-serif, serif);
+}
+
+.xr-summary__pillar-zhi {
+  font-size: 1.125rem;
+  color: var(--ink, #333);
+  font-family: var(--font-serif, serif);
+}
+
+/* ── 命盘定位标签 ── */
+.xr-summary__identity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.xr-summary__identity-text {
+  font-size: 0.9375rem;
+  color: var(--muted, #666);
+  font-family: var(--font-serif, serif);
+}
+
+/* ── 一句话总结 ── */
+.xr-summary__headline {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink, #333);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-2);
+}
+
+/* ── 人生定位 ── */
+.xr-summary__positioning {
+  font-size: 0.9375rem;
+  color: var(--muted, #666);
+  text-align: center;
+  line-height: 1.7;
+  margin-bottom: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}
+
+/* ── 优势列表 ── */
+.xr-summary__strengths {
+  margin-bottom: var(--space-4);
+}
+
+.xr-summary__section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.03em;
+}
+
+.xr-summary__strength-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--success, #27ae60);
+  line-height: 1.6;
+  padding: var(--space-1) 0;
+}
+
+.xr-summary__strength-icon {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* ── 风险列表 ── */
+.xr-summary__risks {
+  margin-bottom: var(--space-4);
+}
+
+.xr-summary__risk-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--warning, #f39c12);
+  line-height: 1.6;
+  padding: var(--space-1) 0;
+}
+
+.xr-summary__risk-icon {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* ── 开发方向 ── */
+.xr-summary__direction {
+  font-size: 0.9375rem;
+  color: var(--ink, #333);
+  line-height: 1.7;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent, #c8a951);
+}
+
+/* ── 移动端适配 ── */
+@media (max-width: 480px) {
+  .xr-summary__pillars {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .xr-summary__headline {
+    font-size: 1.05rem;
+  }
+}

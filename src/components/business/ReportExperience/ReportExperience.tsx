@@ -7,7 +7,7 @@
  *   ⑤ 最终结论  ⑥ 风险等级  ⑦ 调整建议  ⑧ 长期趋势
  *   ⑨ 时间轴    ⑩ PDF       ⑪ 分享卡片  ⑫ 收藏  ⑬ 打印版
  *
- * 所有内容引用 Evidence，禁止 AI 自由发挥。
+ * 所有内容引用 Evidence，禁止推演引擎自由发挥。
  */
 import { useState, useRef, useMemo, type ReactNode } from 'react'
 import type { GeJuResult } from '../../../lib/bazi/geju'

@@ -333,7 +333,6 @@ export function generateMockBetaMetrics(): BetaMetrics {
 
 export function generateMockWaitTimes(): WaitTimeRecord[] {
   var records: WaitTimeRecord[] = []
-  var pages: PageId[] = ['home', 'fengshui', 'bazi-input', 'bazi-chart', 'liuyao', 'daily', 'membership', 'admin']
   var actions = [
     { page: 'home' as PageId, action: '首页加载' },
     { page: 'fengshui' as PageId, action: 'AI风水分析' },

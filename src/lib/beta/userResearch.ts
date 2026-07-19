@@ -106,7 +106,7 @@ export function trackSatisfaction(score: number): void {
   }
 }
 
-export function trackPayConversion(from: string, to: string): void {
+export function trackPayConversion(from: string, _to: string): void {
   var page = from
   var metrics = getOrCreatePageMetrics(page)
   metrics.conversionAttempts += 1

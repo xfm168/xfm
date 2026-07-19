@@ -30,13 +30,19 @@ export default function Footer() {
             <h4 className="footer-title">关于我们</h4>
             <ul className="footer-list">
               <li><Link to="/">关于玄风门</Link></li>
-              <li><Link to="/">联系方式</Link></li>
+              <li><Link to="/legal">隐私政策</Link></li>
+              <li><Link to="/legal">用户协议</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="footer-bottom">
+          <p className="footer-disclaimer">
+            玄风门提供的八字推演、风水分析、六爻占卜等服务基于中国传统命理学理论，
+            所有推演结果仅供文化参考和娱乐。详见 <Link to="/legal">免责声明</Link>。
+          </p>
           <p className="copyright">© 2026 玄风门 · 传承东方智慧</p>
+          <p className="footer-icp">ICP备案号：待备案 · 联系方式：support@xuanfengmen.com</p>
         </div>
       </div>
     </footer>

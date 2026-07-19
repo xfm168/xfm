@@ -249,6 +249,104 @@
 }
 
 /* ============================================
+   我的反馈记录列表
+   ============================================ */
+.feedback-my-section {
+  margin-top: 32px;
+}
+
+.feedback-my-heading {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fb-gold);
+  margin-bottom: 16px;
+}
+
+.feedback-empty-list {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--fb-text-muted);
+  font-size: 14px;
+}
+
+.feedback-my-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feedback-my-item {
+  background: var(--fb-surface);
+  border: 1px solid var(--fb-border-light);
+  border-radius: var(--fb-radius-sm);
+  padding: 16px 20px;
+  transition: border-color 0.2s;
+}
+
+.feedback-my-item:hover {
+  border-color: var(--fb-border);
+}
+
+.feedback-my-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.feedback-my-type {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fb-gold);
+  background: rgba(212, 175, 55, 0.12);
+  border-radius: 4px;
+}
+
+.feedback-my-status {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fb-text-secondary);
+  background: rgba(107, 125, 148, 0.15);
+  border-radius: 4px;
+}
+
+.feedback-my-status-processing {
+  color: var(--fb-yellow);
+  background: rgba(196, 162, 74, 0.15);
+}
+
+.feedback-my-status-done {
+  color: var(--fb-green);
+  background: rgba(107, 158, 122, 0.15);
+}
+
+.feedback-my-date {
+  font-size: 12px;
+  color: var(--fb-text-muted);
+  margin-left: auto;
+}
+
+.feedback-my-title {
+  font-size: 14px;
+  color: var(--fb-text);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feedback-my-satisfaction {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--fb-gold);
+  letter-spacing: 2px;
+}
+
+/* ============================================
    响应式
    ============================================ */
 @media (max-width: 768px) {
@@ -266,5 +364,19 @@
 
   .feedback-star {
     font-size: 24px;
+  }
+
+  .feedback-my-item {
+    padding: 12px 14px;
+  }
+
+  .feedback-my-item-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .feedback-my-date {
+    margin-left: 0;
+    width: 100%;
   }
 }

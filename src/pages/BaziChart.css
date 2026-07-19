@@ -116,12 +116,7 @@
 }
 
 .bazi-tab-content {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  animation: fadeIn var(--duration-base) var(--ease-elegant);
 }
 
 .card-title {
@@ -2860,17 +2855,6 @@
   margin-bottom: var(--space-2);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* ============================================================
    Mobile responsive optimization (commercial edition)
    Only applies on screens <= 768px
@@ -3377,5 +3361,278 @@
   .report-chapter-title {
     color: #8B4513;
     border-bottom: 2px solid #D4AF37;
+  }
+}
+
+/* ============================================================
+   V4.1 新增 Tab 样式
+   ============================================================ */
+
+/* -- 目录导航 -- */
+.bazi-toc-section {
+  margin-bottom: var(--space-2);
+}
+
+.bazi-toc-toggle {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-secondary, rgba(212, 175, 55, 0.05));
+  border: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+  border-radius: 8px;
+  color: var(--text-secondary, #888);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.bazi-toc-toggle:hover {
+  color: var(--text-primary, #333);
+  background: var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+}
+
+.bazi-toc-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+}
+
+.bazi-toc-item {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bazi-toc-item:hover,
+.bazi-toc-item.active {
+  background: var(--gold-500, #d4af37);
+  color: #fff;
+  border-color: var(--gold-500, #d4af37);
+}
+
+/* -- 通用 section -- */
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  margin: var(--space-3) 0 var(--space-1);
+}
+
+.section-text {
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--text-secondary, #555);
+  margin: 0 0 var(--space-2);
+  white-space: pre-wrap;
+}
+
+/* -- 复制按钮 -- */
+.bazi-copy-btn {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  margin-top: var(--space-2);
+  border: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.15));
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-secondary, #888);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bazi-copy-btn:hover {
+  border-color: var(--gold-500, #d4af37);
+  color: var(--gold-500, #d4af37);
+}
+
+/* -- 命局总论 -- */
+.bazi-master-section {
+  border-bottom: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.08));
+  padding: var(--space-3) 0;
+}
+
+.bazi-master-section:last-of-type {
+  border-bottom: none;
+}
+
+.bazi-master-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bazi-master-section-toggle {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #888);
+}
+
+.bazi-master-section-body {
+  padding-top: var(--space-2);
+}
+
+/* -- 四柱详解 -- */
+.bazi-pillar-card + .bazi-pillar-card {
+  margin-top: var(--space-3);
+}
+
+.bazi-pillar-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bazi-pillar-card-body {
+  padding-top: var(--space-2);
+}
+
+.bazi-pillar-section {
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px dashed var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+}
+
+.bazi-pillar-section:last-child {
+  border-bottom: none;
+}
+
+.bazi-pillar-summary {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--gold-500, #d4af37);
+}
+
+/* -- 十神详解 / 神煞详解 -- */
+.bazi-shishen-detail-card + .bazi-shishen-detail-card,
+.bazi-shensha-detail-card + .bazi-shensha-detail-card {
+  margin-top: var(--space-3);
+}
+
+.bazi-shishen-detail-header,
+.bazi-shensha-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bazi-shishen-detail-header .card-title,
+.bazi-shensha-detail-header .card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bazi-shishen-detail-body,
+.bazi-shensha-detail-body {
+  padding-top: var(--space-2);
+}
+
+.bazi-shishen-detail-section,
+.bazi-shensha-detail-section {
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px dashed var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+}
+
+.bazi-shishen-detail-section:last-child,
+.bazi-shensha-detail-section:last-child {
+  border-bottom: none;
+}
+
+.bazi-shishen-detail-summary,
+.bazi-shensha-detail-summary {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--gold-500, #d4af37);
+}
+
+/* -- 综合评分 -- */
+.bazi-score-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-score-dim-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 50px 50px;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.06));
+}
+
+.bazi-score-dim-row:last-child {
+  border-bottom: none;
+}
+
+.bazi-score-dim-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+}
+
+.bazi-score-dim-bar {
+  height: 8px;
+  background: var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bazi-score-dim-value {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #666);
+  text-align: right;
+}
+
+/* -- 大运详解 / 流年详解 附加 -- */
+.dayun-detail-sections,
+.liunian-detail-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dayun-detail-section,
+.liunian-detail-section {
+  padding: var(--space-2);
+  background: var(--bg-secondary, rgba(212, 175, 55, 0.03));
+  border-radius: 6px;
+}
+
+.dayun-detail-summary,
+.liunian-detail-summary {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-secondary, rgba(212, 175, 55, 0.05));
+  border-radius: 6px;
+  border-left: 3px solid var(--gold-500, #d4af37);
+}
+
+/* -- 响应式补充 -- */
+@media (max-width: 768px) {
+  .bazi-score-dim-row {
+    grid-template-columns: 40px 1fr 45px 45px;
+    gap: var(--space-1);
+  }
+
+  .bazi-toc-list {
+    gap: var(--space-1);
+  }
+
+  .bazi-toc-item {
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.75rem;
   }
 }

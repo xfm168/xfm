@@ -1,0 +1,27 @@
+/**
+ * TenGodCard - 十神分析卡片样式
+ * 展示主要十神、十神结构描述
+ * 前缀: xr-tg-
+ */
+
+.xr-tg {
+  padding: var(--space-4);
+}
+
+/* ── 十神标签列表 ── */
+.xr-tg__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+/* ── 十神结构描述 ── */
+.xr-tg__structure {
+  font-size: 0.875rem;
+  color: var(--muted, #666);
+  line-height: 1.7;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}

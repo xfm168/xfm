@@ -115,8 +115,8 @@
   --orbit-r: 116px;
 
   position: relative;
-  width: 316px;
-  height: 316px;
+  width: min(316px, calc(100vw - 2rem));
+  height: min(316px, calc(100vw - 2rem));
   flex-shrink: 0;
   user-select: none;
 }
@@ -347,8 +347,8 @@
 .sxq-w { transform: translate(calc(-85px - 50%), -50%); animation-delay: 0.7s; }
 
 @keyframes sxq-expand {
-  from { opacity: 0; filter: blur(4px); }
-  to   { opacity: 1; filter: blur(0); }
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 /* ══ Stage 4-6: hexagram lines overlay ══════════ */
@@ -535,6 +535,7 @@
 
 .field-input {
   width: 100%;
+  min-height: 48px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);

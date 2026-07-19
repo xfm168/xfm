@@ -52,7 +52,7 @@ export function useAIAnalysis<T>(options: UseAIAnalysisOptions<T>): UseAIAnalysi
       setCache(storageKey, result, response.model)
       fetchedRef.current = true
     } catch {
-      setError('AI 暂时不可用，请稍后重试')
+      setError('推演服务暂时不可用，请稍后重试')
       setData(defaultValue)
     } finally {
       setLoading(false)

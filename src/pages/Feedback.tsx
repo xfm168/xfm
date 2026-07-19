@@ -1,36 +1,64 @@
 /**
  * Feedback 反馈页面 — Bug提交 / 意见反馈 / 满意度评分
+ * Stage 5: 使用真实 API 调用
  * 使用单引号 + concatenation
  */
 
-import React, { useState, useCallback } from 'react'
-import type { FeedbackType, FeedbackSeverity } from '../lib/database/types'
+import React, { useState, useCallback, useEffect } from 'react'
+import type { FeedbackType } from '../lib/database/types'
 import './Feedback.css'
 
 var FEEDBACK_TYPES: { value: FeedbackType; label: string }[] = [
   { value: 'bug', label: 'Bug 报告' },
   { value: 'feature', label: '功能建议' },
-  { value: 'accuracy', label: '准确度反馈' },
+  { value: 'accuracy', label: '命理解读反馈' },
   { value: 'other', label: '其他' }
 ]
 
-var SEVERITY_LABELS: Record<FeedbackSeverity, string> = {
-  low: '低',
-  normal: '中',
-  high: '高',
-  critical: '紧急'
+var STATUS_LABELS: Record<string, string> = {
+  open: '待处理',
+  processing: '处理中',
+  reviewed: '已审核',
+  accepted: '已通过',
+  rejected: '已拒绝',
+  resolved: '已解决',
+  closed: '已关闭'
+}
+
+var TYPE_LABELS: Record<string, string> = {
+  bug: 'Bug',
+  feature: '建议',
+  accuracy: '反馈',
+  other: '其他'
 }
 
 var RATING_LABELS = ['', '非常不满意', '不满意', '一般', '满意', '非常满意']
+
+function getToken() {
+  try {
+    var raw = localStorage.getItem('sb-xuanfengmen-auth-token')
+    if (raw) {
+      var parsed = JSON.parse(raw)
+      return parsed.access_token || ''
+    }
+  } catch (e) { /* ignore */ }
+  return ''
+}
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  var d = new Date(dateStr)
+  var month = String(d.getMonth() + 1).padStart(2, '0')
+  var day = String(d.getDate()).padStart(2, '0')
+  var hour = String(d.getHours()).padStart(2, '0')
+  var minute = String(d.getMinutes()).padStart(2, '0')
+  return month + '-' + day + ' ' + hour + ':' + minute
+}
 
 function Feedback() {
   var typeHook = useState<FeedbackType>('bug')
   var feedbackType = typeHook[0]
   var setFeedbackType = typeHook[1]
-
-  var severityHook = useState<FeedbackSeverity>('normal')
-  var severity = severityHook[0]
-  var setSeverity = severityHook[1]
 
   var titleHook = useState('')
   var title = titleHook[0]
@@ -64,6 +92,15 @@ function Feedback() {
   var error = errorHook[0]
   var setError = errorHook[1]
 
+  // 我的反馈列表
+  var myListHook = useState<Record<string, unknown>[]>([])
+  var myList = myListHook[0]
+  var setMyList = myListHook[1]
+
+  var myListLoadingHook = useState(false)
+  var myListLoading = myListLoadingHook[0]
+  var setMyListLoading = myListLoadingHook[1]
+
   var handleSubmit = useCallback(async function(e: React.FormEvent) {
     e.preventDefault()
     if (!title.trim() || !content.trim()) {
@@ -74,19 +111,67 @@ function Feedback() {
     setError('')
 
     try {
-      await new Promise(function(resolve) { setTimeout(resolve, 1200) })
-      // 模拟提交成功
-      setSuccess(true)
+      var token = getToken()
+      var body: Record<string, unknown> = {
+        type: feedbackType,
+        title: title.trim(),
+        content: content.trim(),
+      }
+      if (contact.trim()) {
+        body.contact = contact.trim()
+      }
+      if (rating > 0) {
+        body.satisfaction = rating
+      }
+
+      var resp = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+        },
+        body: JSON.stringify(body),
+      })
+      var json = await resp.json()
+
+      if (resp.ok && json.success) {
+        setSuccess(true)
+        // 刷新我的反馈列表
+        loadMyList()
+      } else {
+        setError(json.error ? json.error.message || '提交失败' : '提交失败，请稍后再试')
+      }
     } catch (err) {
-      setError('提交失败，请稍后重试')
+      setError('提交失败，请稍后再试')
     } finally {
       setSubmitting(false)
     }
-  }, [title, content])
+  }, [title, content, contact, feedbackType, rating])
+
+  var loadMyList = useCallback(function() {
+    var token = getToken()
+    if (!token) return
+    setMyListLoading(true)
+    fetch('/api/feedback/mine', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(function(r) { return r.json() })
+      .then(function(json) {
+        if (json.items) {
+          setMyList(json.items)
+        }
+      })
+      .catch(function() { /* ignore */ })
+      .finally(function() { setMyListLoading(false) })
+  }, [])
+
+  // 加载我的反馈列表
+  useEffect(function() {
+    loadMyList()
+  }, [])
 
   var handleReset = useCallback(function() {
     setFeedbackType('bug')
-    setSeverity('normal')
     setTitle('')
     setContent('')
     setContact('')
@@ -116,6 +201,45 @@ function Feedback() {
       )
     }
     return stars
+  }
+
+  var renderMyList = function() {
+    if (myList.length === 0) {
+      return React.createElement('div', { className: 'feedback-empty-list' },
+        React.createElement('p', null, '暂无反馈记录')
+      )
+    }
+
+    var items = []
+    for (var i = 0; i < myList.length; i++) {
+      var item = myList[i]
+      var statusClass = 'feedback-my-status'
+      var st = item.status as string || 'open'
+      if (st === 'resolved' || st === 'closed') statusClass += ' feedback-my-status-done'
+      else if (st === 'processing') statusClass += ' feedback-my-status-processing'
+
+      items.push(
+        React.createElement('div', { key: 'item-' + String(i), className: 'feedback-my-item' },
+          React.createElement('div', { className: 'feedback-my-item-header' },
+            React.createElement('span', { className: 'feedback-my-type' },
+              TYPE_LABELS[item.type as string] || String(item.type)
+            ),
+            React.createElement('span', { className: statusClass },
+              STATUS_LABELS[st] || st
+            ),
+            React.createElement('span', { className: 'feedback-my-date' },
+              formatDate(item.created_at as string)
+            )
+          ),
+          React.createElement('div', { className: 'feedback-my-title' }, String(item.title || '')),
+          item.satisfaction ? React.createElement('div', { className: 'feedback-my-satisfaction' },
+            '\u2605 '.repeat(item.satisfaction as number)
+          ) : null
+        )
+      )
+    }
+
+    return React.createElement('div', { className: 'feedback-my-list' }, items)
   }
 
   if (success) {
@@ -159,20 +283,6 @@ function Feedback() {
         },
           FEEDBACK_TYPES.map(function(t) {
             return React.createElement('option', { key: t.value, value: t.value }, t.label)
-          })
-        )
-      ),
-
-      // 严重程度（Bug 时显示）
-      feedbackType === 'bug' && React.createElement('div', { className: 'feedback-field' },
-        React.createElement('label', null, '严重程度'),
-        React.createElement('select', {
-          className: 'feedback-select',
-          value: severity,
-          onChange: function(e: React.ChangeEvent<HTMLSelectElement>) { setSeverity(e.target.value as FeedbackSeverity) }
-        },
-          Object.keys(SEVERITY_LABELS).map(function(key) {
-            return React.createElement('option', { key: key, value: key }, SEVERITY_LABELS[key as FeedbackSeverity])
           })
         )
       ),
@@ -229,6 +339,14 @@ function Feedback() {
         className: 'feedback-submit',
         disabled: submitting
       }, submitting ? '提交中...' : '提交反馈')
+    ),
+
+    // 我的反馈记录
+    React.createElement('div', { className: 'feedback-my-section' },
+      React.createElement('h2', { className: 'feedback-my-heading' }, '我的反馈记录'),
+      myListLoading
+        ? React.createElement('div', { className: 'feedback-empty-list' }, React.createElement('p', null, '加载中...'))
+        : renderMyList()
     )
   )
 }

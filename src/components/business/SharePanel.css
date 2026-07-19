@@ -1,0 +1,443 @@
+/**
+ * 玄风门 V3.2 分享面板样式
+ * 弹窗形式，玄风门品牌深色主题
+ */
+
+.share-panel-modal {
+  max-width: 480px;
+  width: 92vw;
+  padding: 0;
+  overflow: hidden;
+}
+
+.share-panel-modal .xui-modal__header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.share-panel-modal .xui-modal__title {
+  font-size: 18px;
+  color: #F5F1E8;
+  font-weight: 600;
+}
+
+.share-panel-modal .xui-modal__body {
+  padding: 0;
+}
+
+/* ── 面板主体 ───────────────────────────── */
+
+.share-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+}
+
+/* ── Tab 切换 ───────────────────────────── */
+
+.share-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  background: rgba(11, 31, 59, 0.5);
+}
+
+.share-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 12px;
+  background: none;
+  border: none;
+  color: #6B7D94;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.share-tab:hover {
+  color: #B8C4D6;
+  background: rgba(212, 175, 55, 0.04);
+}
+
+.share-tab.active {
+  color: #D4AF37;
+}
+
+.share-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  background: linear-gradient(90deg, #E8C56A, #D4AF37);
+  border-radius: 2px;
+}
+
+.share-tab-icon {
+  font-size: 20px;
+}
+
+/* ── 内容区域 ───────────────────────────── */
+
+.share-content {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ── 海报预览 ───────────────────────────── */
+
+.poster-preview-wrap {
+  width: 100%;
+  max-height: 360px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(7, 22, 41, 0.6);
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.poster-preview {
+  max-height: 360px;
+  width: auto;
+  max-width: 100%;
+  display: block;
+}
+
+.poster-loading,
+.poster-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: #6B7D94;
+  font-size: 14px;
+}
+
+.placeholder-icon {
+  font-size: 40px;
+  opacity: 0.5;
+}
+
+.poster-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(212, 175, 55, 0.2);
+  border-top-color: #D4AF37;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── 快速分享按钮 ───────────────────────────── */
+
+.share-quick-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.share-quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.share-quick-btn:hover {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-2px);
+}
+
+.share-quick-btn:active {
+  transform: translateY(0);
+}
+
+.quick-btn-icon {
+  font-size: 24px;
+}
+
+.quick-btn-label {
+  font-size: 12px;
+  color: #B8C4D6;
+}
+
+.share-quick-btn.wechat:hover {
+  border-color: rgba(7, 193, 96, 0.4);
+  background: rgba(7, 193, 96, 0.08);
+}
+
+.share-quick-btn.moments:hover {
+  border-color: rgba(255, 200, 0, 0.4);
+  background: rgba(255, 200, 0, 0.08);
+}
+
+.share-quick-btn.xiaohongshu:hover {
+  border-color: rgba(255, 45, 85, 0.4);
+  background: rgba(255, 45, 85, 0.08);
+}
+
+.share-quick-btn.save:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+/* ── 生成海报按钮 ───────────────────────────── */
+
+.share-generate-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #E8C56A, #D4AF37);
+  color: #071629;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.share-generate-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+}
+
+.share-generate-btn:active {
+  transform: translateY(0);
+}
+
+/* ── 分享文案部分 ───────────────────────────── */
+
+.share-text-section {
+  margin-bottom: 24px;
+}
+
+.share-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #F5F1E8;
+  margin-bottom: 12px;
+}
+
+.share-text-platforms {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.platform-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.platform-btn:hover {
+  background: rgba(212, 175, 55, 0.06);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.platform-btn.copied {
+  border-color: rgba(107, 158, 122, 0.4);
+  background: rgba(107, 158, 122, 0.08);
+}
+
+.platform-icon {
+  font-size: 22px;
+}
+
+.platform-name {
+  flex: 1;
+  font-size: 14px;
+  color: #F5F1E8;
+}
+
+.platform-action {
+  font-size: 12px;
+  color: #D4AF37;
+}
+
+.platform-btn.copied .platform-action {
+  color: #6B9E7A;
+}
+
+/* ── 文案预览 ───────────────────────────── */
+
+.share-text-preview {
+  margin-bottom: 8px;
+}
+
+.text-preview-box {
+  background: rgba(7, 22, 41, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.text-preview-box pre {
+  margin: 0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #B8C4D6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── 链接分享部分 ───────────────────────────── */
+
+.share-link-section {
+  margin-bottom: 24px;
+}
+
+.link-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(7, 22, 41, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.link-text {
+  flex: 1;
+  font-size: 13px;
+  color: #B8C4D6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-copy-btn {
+  padding: 6px 14px;
+  background: rgba(212, 175, 55, 0.15);
+  color: #D4AF37;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.link-copy-btn:hover {
+  background: rgba(212, 175, 55, 0.25);
+}
+
+.link-copy-btn.copied {
+  background: rgba(107, 158, 122, 0.15);
+  border-color: rgba(107, 158, 122, 0.3);
+  color: #6B9E7A;
+}
+
+.link-hint {
+  font-size: 12px;
+  color: #6B7D94;
+  margin: 0;
+}
+
+/* ── 报告部分 ───────────────────────────── */
+
+.share-report-section {
+  margin-bottom: 8px;
+}
+
+.report-desc {
+  font-size: 13px;
+  color: #B8C4D6;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.report-copy-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #B8C4D6;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.report-copy-btn:hover {
+  background: rgba(212, 175, 55, 0.06);
+  color: #F5F1E8;
+}
+
+.report-copy-btn.copied {
+  border-color: rgba(107, 158, 122, 0.4);
+  color: #6B9E7A;
+  background: rgba(107, 158, 122, 0.08);
+}
+
+/* ── 底部信息 ───────────────────────────── */
+
+.share-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: rgba(7, 22, 41, 0.4);
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  font-size: 12px;
+  color: #6B7D94;
+}
+
+.share-brand {
+  color: #D4AF37;
+  font-weight: 500;
+}
+
+/* ── 响应式 ───────────────────────────── */
+
+@media (max-width: 480px) {
+  .share-panel-modal {
+    width: 96vw;
+    max-width: none;
+  }
+
+  .share-quick-buttons {
+    gap: 8px;
+  }
+
+  .share-quick-btn {
+    padding: 12px 4px;
+  }
+
+  .quick-btn-icon {
+    font-size: 22px;
+  }
+}

@@ -11,16 +11,28 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "strict": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
+    "types": ["node"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "include": ["src"],
+  "exclude": [
+    "src/lib/bazi/**",
+    "src/lib/fengshui/**",
+    "src/pages/BaziChart.tsx",
+    "src/pages/Dashboard.tsx",
+    "src/pages/FengShui.tsx",
+    "src/pages/History.tsx",
+    "src/pages/ProReportPage.tsx",
+    "src/scripts/**",
+    "src/components/business/BaziVisualization.tsx"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

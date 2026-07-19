@@ -64,8 +64,8 @@ app.post('/', authRequired, async function(c) {
     })
   }
 
-  var score = Math.floor(Math.random() * 30) + 60
-  var durationMs = Math.floor(Math.random() * 300) + 100
+  var startTime = performance.now()
+  var score = 70
 
   var insertData: Record<string, unknown> = {
     user_id: user.id,
@@ -78,7 +78,7 @@ app.post('/', authRequired, async function(c) {
       score: score,
       summary: '合婚分析结果占位，等待合婚算法接入',
     },
-    duration_ms: durationMs,
+    duration_ms: Math.round(performance.now() - startTime),
   }
 
   var supabase = await getSupabaseAdmin()

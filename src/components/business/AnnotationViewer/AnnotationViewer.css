@@ -1,0 +1,600 @@
+/* ========================================================
+   AnnotationViewer - 高级标注查看器组件样式
+   ======================================================== */
+
+.annotation-viewer {
+  --av-bg: #1a1a2e;
+  --av-bg-card: #16213e;
+  --av-border: #2d3a5c;
+  --av-text: #e8e8f0;
+  --av-text-secondary: #a0a8c0;
+  --av-accent: #d4a847;
+  --av-radius: 8px;
+  --av-transition: 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+  background: var(--av-bg);
+  border: 1px solid var(--av-border);
+  border-radius: var(--av-radius);
+  overflow: hidden;
+  color: var(--av-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+}
+
+/* ── 工具栏 ── */
+
+.av-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--av-bg-card);
+  border-bottom: 1px solid var(--av-border);
+  flex-wrap: wrap;
+}
+
+.av-toolbar-left,
+.av-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.av-filter-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--av-border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--av-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--av-transition);
+  white-space: nowrap;
+}
+
+.av-filter-btn:hover {
+  color: var(--av-text);
+  border-color: var(--av-accent);
+}
+
+.av-filter-btn.active {
+  background: var(--av-accent);
+  color: #1a1a2e;
+  border-color: var(--av-accent);
+  font-weight: 600;
+}
+
+.av-filter-btn.av-filter-critical.active {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.av-filter-btn.av-filter-warning.active {
+  background: #f97316;
+  border-color: #f97316;
+  color: #fff;
+}
+
+.av-filter-btn.av-filter-suggestion.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.av-icon-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--av-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--av-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--av-transition);
+  line-height: 1;
+  padding: 0;
+}
+
+.av-icon-btn:hover {
+  background: rgba(212, 168, 71, 0.15);
+  border-color: var(--av-accent);
+}
+
+.av-icon-btn.active {
+  background: var(--av-accent);
+  color: #1a1a2e;
+  border-color: var(--av-accent);
+}
+
+.av-icon-btn.off {
+  opacity: 0.5;
+}
+
+.av-zoom-level {
+  font-size: 12px;
+  color: var(--av-text-secondary);
+  min-width: 48px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 主体区域 ── */
+
+.av-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+/* ── 图片区域 ── */
+
+.av-image-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #0d1117;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.av-image-area.dragging {
+  user-select: none;
+}
+
+.av-image-wrapper {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.av-image {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 200px);
+  width: auto;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.av-image-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--av-text-secondary);
+  font-size: 14px;
+}
+
+/* ── 标注层 ── */
+
+.av-annotation-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.av-annotation-box {
+  position: absolute;
+  border: 2px solid;
+  border-radius: 4px;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-sizing: border-box;
+}
+
+.av-annotation-box:hover {
+  z-index: 10;
+}
+
+.av-annotation-box.selected {
+  z-index: 20;
+  animation: av-pulse 2s infinite;
+}
+
+.av-annotation-box.hovered {
+  z-index: 15;
+  transform: scale(1.02);
+}
+
+@keyframes av-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 2px currentColor, 0 0 12px 2px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 0 2px currentColor, 0 0 24px 6px currentColor;
+  }
+}
+
+.av-anno-index {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+/* 悬停浮层 */
+.av-anno-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 200px;
+  max-width: 320px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 10px 12px;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.av-anno-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(15, 23, 42, 0.95);
+}
+
+.av-anno-tooltip-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.av-anno-tooltip-desc {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.av-anno-tooltip-severity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.av-anno-severity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* ── 问题列表 ── */
+
+.av-issue-list {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  background: var(--av-bg-card);
+  border-left: 1px solid var(--av-border);
+  flex-shrink: 0;
+}
+
+.av-issue-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--av-border);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.av-issue-count {
+  font-size: 12px;
+  color: var(--av-text-secondary);
+  font-weight: 400;
+}
+
+.av-issue-list-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.av-issue-list-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.av-issue-list-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.av-issue-list-body::-webkit-scrollbar-thumb {
+  background: var(--av-border);
+  border-radius: 3px;
+}
+
+.av-issue-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-left: 3px solid;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--av-transition);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.av-issue-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.av-issue-item.selected {
+  background: rgba(212, 168, 71, 0.1);
+  box-shadow: 0 0 0 1px var(--av-accent);
+}
+
+.av-issue-index {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 50%;
+  margin-top: 2px;
+}
+
+.av-issue-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.av-issue-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--av-text);
+  line-height: 1.4;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.av-issue-desc {
+  font-size: 12px;
+  color: var(--av-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.av-issue-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.av-issue-severity {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.av-issue-type {
+  font-size: 11px;
+  color: var(--av-text-secondary);
+  text-transform: capitalize;
+}
+
+.av-empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--av-text-secondary);
+  font-size: 13px;
+}
+
+/* ── 全屏模式 ── */
+
+.av-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999;
+  border-radius: 0;
+  border: none;
+}
+
+.av-fullscreen .av-image {
+  max-height: calc(100vh - 120px);
+}
+
+/* 全屏下问题列表浮层 */
+.av-issue-list-floating {
+  position: absolute;
+  top: 70px;
+  right: 16px;
+  width: 300px;
+  max-height: calc(100vh - 100px);
+  border: 1px solid var(--av-border);
+  border-radius: var(--av-radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  opacity: 0.95;
+  backdrop-filter: blur(10px);
+}
+
+/* ========================================================
+   响应式 - 移动端优先
+   ======================================================== */
+
+/* 平板及以下 */
+@media (max-width: 900px) {
+  .av-body {
+    flex-direction: column;
+  }
+
+  .av-issue-list {
+    width: 100%;
+    max-height: 40vh;
+    border-left: none;
+    border-top: 1px solid var(--av-border);
+  }
+
+  .av-issue-list-header {
+    position: sticky;
+    top: 0;
+    background: var(--av-bg-card);
+    z-index: 1;
+  }
+
+  .av-issue-list-body {
+    max-height: 32vh;
+  }
+
+  .av-image-area {
+    min-height: 250px;
+    max-height: 55vh;
+  }
+
+  .av-anno-tooltip {
+    min-width: 160px;
+    max-width: 240px;
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+
+  .av-anno-tooltip::after {
+    left: auto;
+    right: 16px;
+    transform: none;
+  }
+
+  /* 全屏下问题列表浮层 - 移动端 */
+  .av-issue-list-floating {
+    top: auto;
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-height: 40vh;
+  }
+}
+
+/* 手机 */
+@media (max-width: 480px) {
+  .av-toolbar {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .av-filter-btn {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  .av-icon-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .av-zoom-level {
+    min-width: 40px;
+    font-size: 11px;
+  }
+
+  .av-issue-item {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .av-issue-title {
+    font-size: 13px;
+  }
+
+  .av-issue-desc {
+    font-size: 11px;
+  }
+
+  .av-anno-index {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    top: -10px;
+    left: -10px;
+  }
+
+  .av-image-area {
+    min-height: 200px;
+  }
+}
+
+/* 触控设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .av-icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .av-filter-btn {
+    min-height: 40px;
+    padding: 6px 14px;
+  }
+
+  .av-issue-item {
+    min-height: 56px;
+    padding: 10px 12px;
+  }
+}

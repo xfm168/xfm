@@ -1,0 +1,17 @@
+.uc-counter { padding: 0.5rem 0; }
+.uc-label { font-size: 0.75rem; color: #6b7394; margin-bottom: 0.3rem; }
+.uc-bar-wrap {
+  height: 6px; background: #252b3d; border-radius: 3px; overflow: hidden;
+}
+.uc-bar {
+  height: 100%; border-radius: 3px; transition: width 0.3s;
+}
+.uc-good { background: #2ecc71; }
+.uc-warn { background: #f39c12; }
+.uc-danger { background: #e74c3c; }
+.uc-text {
+  font-size: 0.8rem; font-weight: 600; margin-top: 0.2rem;
+}
+.uc-good .uc-text { color: #2ecc71; }
+.uc-warn .uc-text { color: #f39c12; }
+.uc-danger .uc-text { color: #e74c3c; }

@@ -117,7 +117,7 @@ export function useAuth(): UseAuthResult {
       if (sessionUser) {
         setUser({
           id: sessionUser.id,
-          email: sessionUser.email,
+          email: sessionUser.email || null,
         })
         // 加载 profile
         loadProfile(sessionUser.id).then(function(p) {
@@ -139,7 +139,7 @@ export function useAuth(): UseAuthResult {
   /** 加载 user_profile */
   async function loadProfile(userId: string): Promise<UserProfile | null> {
     if (!supabaseClient) return null
-    var { data, error: profileError } = await supabaseClient
+    var { data, error: _profileError } = await supabaseClient
       .from('user_profiles')
       .select('*')
       .eq('id', userId)
@@ -261,7 +261,7 @@ export function useAuth(): UseAuthResult {
       }
 
       var providerName: string = provider === 'google' ? 'google' : 'apple'
-      var { data, error: oauthError } = await supabaseClient.auth.signInWithOAuth({
+      var { error: oauthError } = await supabaseClient.auth.signInWithOAuth({
         provider: providerName as any,
       })
 
@@ -352,10 +352,10 @@ export function useAuth(): UseAuthResult {
       return function() {}
     }
 
-    var subscription = supabaseClient.auth.onAuthStateChange(function(event, session) {
+    var subscription = supabaseClient.auth.onAuthStateChange(function(_event, session) {
       var sessionUser = session ? session.user : null
       var authUser: AuthUser | null = sessionUser
-        ? { id: sessionUser.id, email: sessionUser.email }
+        ? { id: sessionUser.id, email: sessionUser.email || null }
         : null
       setUser(authUser)
       callback(authUser)

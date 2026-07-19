@@ -21,6 +21,11 @@ const AICostDashboard = React.lazy(function() { return import('./pages/AICostDas
 const Login = React.lazy(function() { return import('./pages/Login') })
 const UserCenter = React.lazy(function() { return import('./pages/UserCenter') })
 const Feedback = React.lazy(function() { return import('./pages/Feedback') })
+const Legal = React.lazy(function() { return import('./pages/Legal') })
+const ProReport = React.lazy(function() { return import('./pages/ProReportPage') })
+const KnowledgeCenter = React.lazy(function() { return import('./pages/KnowledgeCenter') })
+const NotificationCenterPage = React.lazy(function() { return import('./pages/NotificationCenterPage') })
+const GrowthCenter = React.lazy(function() { return import('./pages/GrowthCenter') })
 
 function App() {
   return (
@@ -28,7 +33,7 @@ function App() {
       <div className="app">
         <Header />
         <main className="main-content">
-          <React.Suspense fallback={<div>Loading...</div>}>
+          <React.Suspense fallback={<div>推演中...</div>}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/fengshui" element={<FengShui />} />
@@ -46,6 +51,13 @@ function App() {
               <Route path="/feedback" element={<Feedback />} />
               <Route path="/admin" element={<AuthGuard requireAdmin={true}><Dashboard /></AuthGuard>} />
               <Route path="/admin/ai-cost" element={<AuthGuard requireAdmin={true}><AICostDashboard /></AuthGuard>} />
+              <Route path="/legal" element={<Legal />} />
+              <Route path="/pro-report" element={<ProReport />} />
+              <Route path="/knowledge" element={<KnowledgeCenter />} />
+              <Route path="/knowledge/:categorySlug" element={<KnowledgeCenter />} />
+              <Route path="/knowledge/:categorySlug/:articleSlug" element={<KnowledgeCenter />} />
+              <Route path="/growth" element={<AuthGuard><GrowthCenter /></AuthGuard>} />
+              <Route path="/notifications" element={<AuthGuard><NotificationCenterPage /></AuthGuard>} />
             </Routes>
           </React.Suspense>
         </main>

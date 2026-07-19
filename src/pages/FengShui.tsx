@@ -1,12 +1,26 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './FengShui.css'
-import { runFullPipeline, PIPELINE_STEPS, type PipelineStep, type PipelineOutput } from '../lib/fengshui/pipeline'
+import { runV31Pipeline, type V31PipelineOutput } from '../lib/fengshui/v31/pipeline'
+import { PIPELINE_STEPS, type PipelineStep } from '../lib/fengshui/pipeline'
+import { validateImageType, validateFileSize } from '../lib/security/inputValidation'
+import { sanitizeHtml, encodeForHtml } from '../lib/security/sanitize'
+import { usePageSEO } from '../hooks/usePageSEO'
+import type { ImageQualityCheck, ProfessionalFengShuiReport, FengShuiTerm } from '../lib/fengshui/types'
+import { getTermExplanation } from '../lib/fengshui/knowledge/rulesKnowledgeBase'
+import { clearAllFengShuiCache } from '../lib/fengshui/utils/cache'
+import { saveFengShuiHistory } from '../lib/fengshui/history'
+import { generatePDFReport } from '../lib/fengshui/v31/pdf'
+import { saveHistoryFromReportV31 } from '../lib/fengshui/v31/history'
+import AnnotationViewer from '../components/business/AnnotationViewer/AnnotationViewer'
+import { SharePanel } from '../components/business'
+import type { FengShuiHistoryRecordV31 } from '../lib/fengshui/v31/types'
 
-type RoomType = 'living' | 'bedroom' | 'kitchen' | 'balcony' | 'study' | 'bathroom' | 'entrance' | 'dining'
+// UI 层简化房间类型（面向用户选择）
+type UIRoomType = 'living' | 'bedroom' | 'kitchen' | 'balcony' | 'study' | 'bathroom' | 'entrance' | 'dining'
 
 interface RoomInfo {
-  id: RoomType
+  id: UIRoomType
   name: string
   icon: string
   desc: string
@@ -26,8 +40,14 @@ const roomTypes: RoomInfo[] = [
 type PagePhase = 'select' | 'upload' | 'analyzing' | 'result'
 
 export default function FengShui() {
+  usePageSEO({
+    title: '风水勘测 | 玄风门',
+    description: '上传空间照片，玄风门将通过传统风水学理论为您分析空间格局、气运流动，提供专业改善建议。',
+    canonical: 'https://xuanfengmen.com/fengshui'
+  })
+
   const [phase, setPhase] = useState<PagePhase>('select')
-  const [selectedRoom, setSelectedRoom] = useState<RoomType | null>(null)
+  const [selectedRoom, setSelectedRoom] = useState<UIRoomType | null>(null)
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -37,15 +57,83 @@ export default function FengShui() {
     PIPELINE_STEPS.map(s => ({ ...s, status: 'pending' as const, progress: 0 }))
   )
   const [overallProgress, setOverallProgress] = useState(0)
-  const [pipelineResult, setPipelineResult] = useState<PipelineOutput | null>(null)
-  
+  const [pipelineResult, setPipelineResult] = useState<V31PipelineOutput | null>(null)
+
+  // V3.0: 图片质量检测
+  const [imageQuality, setImageQuality] = useState<ImageQualityCheck | null>(null)
+
+  // V3.0: 术语弹窗
+  const [activeTerm, setActiveTerm] = useState<FengShuiTerm | null>(null)
+
   // 报告展开状态
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['overall-score']))
-  
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['overall-score-8d']))
+  const [displayScore, setDisplayScore] = useState(0)
+  const [showSections, setShowSections] = useState(false)
+
+  // V3.2: 分享面板
+  const [sharePanelOpen, setSharePanelOpen] = useState(false)
+
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const resultScrollRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
 
-  const handleRoomSelect = (room: RoomType) => {
+  // CountUp 动画 + 模块依次出现
+  useEffect(() => {
+    if (phase !== 'result' || !pipelineResult?.report) return
+
+    const targetScore = pipelineResult.report.overallScore
+    const duration = 1200
+    const startTime = Date.now()
+
+    function animate(): void {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      // easeOutQuad
+      const eased = 1 - (1 - progress) * (1 - progress)
+      setDisplayScore(Math.round(targetScore * eased))
+
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      }
+    }
+
+    requestAnimationFrame(animate)
+
+    // 模块依次出现：评分 → 300ms → 问题 → 300ms → 建议 → 300ms → 总结
+    const timer = setTimeout(() => setShowSections(true), 600)
+    return () => clearTimeout(timer)
+  }, [phase, pipelineResult?.report?.overallScore])
+
+  // V3.0 / V3.1: 保存到历史记录
+  useEffect(() => {
+    if (phase !== 'result' || !pipelineResult || pipelineResult.status !== 'success') return
+    if (!selectedRoom || !uploadedImage) return
+    const roomName = roomTypes.find(r => r.id === selectedRoom)?.name ?? selectedRoom
+    try {
+      if (pipelineResult.v31) {
+        saveHistoryFromReportV31({
+          roomType: selectedRoom,
+          roomName,
+          imageData: uploadedImage,
+          overallScore: pipelineResult.v31.score12D.overall,
+          score12D: Object.fromEntries(
+            Object.entries(pipelineResult.v31.score12D.dimensions).map(([k, v]) => [k, v.score])
+          ),
+          credibility: pipelineResult.v31.credibility,
+          mainIssues: pipelineResult.v31.professionalReport.issues.map(i => i.title).slice(0, 5),
+          remediationPlans: pipelineResult.v31.professionalReport.remediationPlans.map(p => p.issue).slice(0, 5),
+          annotations: pipelineResult.v31.annotations,
+          analysisDurationMs: pipelineResult.totalTime,
+        })
+      } else {
+        saveFengShuiHistory(selectedRoom, roomName, uploadedImage, pipelineResult)
+      }
+    } catch {
+      // 保存失败不影响用户体验
+    }
+  }, [phase, pipelineResult, selectedRoom, uploadedImage])
+
+  const handleRoomSelect = (room: UIRoomType) => {
     setSelectedRoom(room)
     setPhase('upload')
     setUploadedImage(null)
@@ -58,13 +146,12 @@ export default function FengShui() {
       return
     }
     
-    if (!file.type.startsWith('image/')) {
-      setError('请上传图片文件（JPG、PNG 格式）')
+    if (!validateImageType(file.type)) {
+      setError('请上传图片文件（JPG、PNG、WebP、GIF 格式）')
       return
     }
     
-    const MAX_SIZE = 10 * 1024 * 1024
-    if (file.size > MAX_SIZE) {
+    if (!validateFileSize(file.size, 10)) {
       setError('图片大小不能超过 10MB，请压缩后重新上传')
       return
     }
@@ -75,9 +162,24 @@ export default function FengShui() {
     }
     
     setError(null)
+    setImageQuality(null)
     const reader = new FileReader()
     reader.onload = (e) => {
-      setUploadedImage(e.target?.result as string)
+      const dataUrl = e.target?.result as string
+      setUploadedImage(dataUrl)
+
+      // V3.0: 图片质量检测
+      try {
+        const { checkImageQuality } = require('../lib/fengshui/utils/imageQuality')
+        const quality = checkImageQuality(dataUrl)
+        setImageQuality(quality)
+        if (!quality.passed) {
+          const warnings = quality.checks.filter(c => !c.passed).map(c => c.message).join('；')
+          setError('图片质量提醒：' + warnings)
+        }
+      } catch {
+        // 质量检测失败不影响上传
+      }
     }
     reader.onerror = () => {
       setError('图片读取失败，请重新选择文件')
@@ -116,7 +218,7 @@ export default function FengShui() {
     setOverallProgress(0)
 
     try {
-      const result = await runFullPipeline({
+      const result = await runV31Pipeline({
         imageData: uploadedImage,
         roomType: selectedRoom,
         mode: 'standard',
@@ -132,10 +234,10 @@ export default function FengShui() {
       setPhase('result')
       
       if (result.status === 'error') {
-        setError(result.error || '分析失败')
+        setError(result.error || '推演受阻')
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '分析失败')
+      setError(err instanceof Error ? err.message : '推演受阻')
       setPhase('upload')
     }
   }
@@ -158,7 +260,8 @@ export default function FengShui() {
     setUploadedImage(null)
     setPipelineResult(null)
     setError(null)
-    setExpandedSections(new Set(['overall-score']))
+    setImageQuality(null)
+    setExpandedSections(new Set(['overall-score-8d']))
   }
 
   // ========== 渲染 ==========
@@ -169,8 +272,8 @@ export default function FengShui() {
         <section className="analyzing-header">
           <div className="container">
             <span className="page-label">风水分析</span>
-            <h1 className="page-title">AI 正在解析您的空间</h1>
-            <p className="page-desc">识别中，请稍候，整个过程约需 10-30 秒</p>
+            <h1 className="page-title">正在推演宅气……</h1>
+            <p className="page-desc">宅气分析中，请稍候，整个过程约需 10-30 秒</p>
           </div>
         </section>
 
@@ -249,13 +352,13 @@ export default function FengShui() {
         <section className={`result-header level-${scoreLevel.key}`}>
           <div className="container">
             <button className="back-btn" onClick={resetAll}>
-              ← 重新分析
+              ← 重新推演
             </button>
             <div className="result-score-area">
               <div className="result-score-ring">
                 <svg viewBox="0 0 120 120">
                   <circle className="score-ring-bg" cx="60" cy="60" r="52" />
-                  <circle 
+                  <circle
                     className="score-ring-fill"
                     cx="60" cy="60" r="52"
                     strokeDasharray={2 * Math.PI * 52}
@@ -263,62 +366,250 @@ export default function FengShui() {
                   />
                 </svg>
                 <div className="score-ring-text">
-                  <span className="score-value">{score}</span>
+                  <span className="score-value">{displayScore}</span>
                   <span className="score-label">{scoreLevel.text}</span>
                 </div>
               </div>
               <div className="result-info">
                 <h1 className="result-title">{report.title}</h1>
-                <p className="result-confidence">置信度：{report.confidence}%</p>
+                {pipelineResult.v31 ? (
+                  <div className="v31-credibility-mini">
+                    <p className="result-confidence">
+                      V3.1 分析可信度：{getV31CredibilityLevelText(pipelineResult.v31.credibility.level)}
+                      （{pipelineResult.v31.credibility.score}分）
+                    </p>
+                    <div className="credibility-factors-mini">
+                      {Object.entries(pipelineResult.v31.credibility.factors).map(([key, value]) => (
+                        <div key={key} className="credibility-factor-mini">
+                          <span className="factor-name">{getCredibilityFactorName(key)}</span>
+                          <span className="factor-score">{typeof value === 'number' ? value : 0}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="result-confidence">
+                    分析可信度：
+                    {pipelineResult.professionalReport?.confidence.level === 'high' ? '高' :
+                     pipelineResult.professionalReport?.confidence.level === 'fairlyHigh' ? '较高' :
+                     pipelineResult.professionalReport?.confidence.level === 'moderate' ? '一般' : '低'}
+                    {pipelineResult.professionalReport?.confidence.score ?
+                      '（' + pipelineResult.professionalReport.confidence.score + '分）' : ''}
+                  </p>
+                )}
                 <p className="result-time">
-                  分析用时：{(pipelineResult.totalTime / 1000).toFixed(1)} 秒
+                  推算耗时：{(pipelineResult.totalTime / 1000).toFixed(1)} 秒
                 </p>
+              </div>
+              {pipelineResult.v31 && (
+                <div className="result-radar">
+                  <ScoreRadarChart dimensions={pipelineResult.v31.score12D.dimensions} size={180} />
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* 图片 + 分析 双栏布局 */}
+        <section className="result-main">
+          <div className="container">
+            <div className="result-layout">
+              {/* 左侧：原始图片 + 标注 */}
+              <div className="result-image-panel">
+                {uploadedImage && pipelineResult.v31?.annotations && pipelineResult.v31.annotations.length > 0 ? (
+                  <AnnotationViewer
+                    imageSrc={uploadedImage}
+                    annotations={pipelineResult.v31.annotations}
+                    height={500}
+                  />
+                ) : uploadedImage ? (
+                  <div
+                    className="result-image-wrapper"
+                  >
+                    <img
+                      src={uploadedImage}
+                      alt="分析空间照片"
+                      className="result-image"
+                      loading="eager"
+                      decoding="async"
+                    />
+                    <p className="result-image-caption">原始空间照片</p>
+                  </div>
+                ) : null}
+              </div>
+
+              {/* 右侧：分析结果 */}
+              <div className="result-content-panel">
+                {/* 12 章节报告 */}
+                <div className="report-sections">
+                  {report.sections.map((section, idx) => (
+                    <div 
+                      key={section.id} 
+                      className={`report-section section-${section.type} ${expandedSections.has(section.id) ? 'expanded' : ''} ${showSections ? 'stagger-visible' : ''}`}
+                      style={{ animationDelay: showSections ? `${idx * 0.12}s` : '0s' }}
+                    >
+                      <button 
+                        className="section-header"
+                        onClick={() => toggleSection(section.id)}
+                      >
+                        <span className="section-title">{section.title}</span>
+                        <span className="section-toggle">
+                          {expandedSections.has(section.id) ? '收起 ▲' : '展开 ▼'}
+                        </span>
+                      </button>
+                      {expandedSections.has(section.id) && (
+                        <div className="section-content">
+                          <div
+                            className="section-markdown"
+                            dangerouslySetInnerHTML={{ __html: markdownToHtml(sanitizeHtml(section.content)) }}
+                            onClick={(e) => {
+                              const target = e.target as HTMLElement
+                              if (target.classList.contains('fengshui-term')) {
+                                const term = target.getAttribute('data-term')
+                                if (term) {
+                                  const info = getTermExplanation(term)
+                                  if (info) setActiveTerm(info)
+                                }
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 12 章节报告 */}
-        <section className="report-sections">
-          <div className="container">
-            {report.sections.map(section => (
-              <div 
-                key={section.id} 
-                className={`report-section section-${section.type} ${expandedSections.has(section.id) ? 'expanded' : ''}`}
-              >
-                <button 
-                  className="section-header"
-                  onClick={() => toggleSection(section.id)}
-                >
-                  <span className="section-title">{section.title}</span>
-                  <span className="section-toggle">
-                    {expandedSections.has(section.id) ? '收起 ▲' : '展开 ▼'}
-                  </span>
-                </button>
-                {expandedSections.has(section.id) && (
-                  <div className="section-content">
-                    <div 
-                      className="section-markdown"
-                      dangerouslySetInnerHTML={{ __html: markdownToHtml(section.content) }}
-                    />
+        {/* V3.1: 流派融合评分 */}
+        {pipelineResult.v31?.schoolScores && pipelineResult.v31.schoolScores.length > 0 && (
+          <section className="result-schools">
+            <div className="container">
+              <h3 className="school-section-title">多流派融合分析</h3>
+              <div className="school-scores-grid">
+                {pipelineResult.v31.schoolScores.map(s => (
+                  <div key={s.school} className="school-score-item">
+                    <span className="school-name">{s.school}</span>
+                    <div className="school-score-bar-wrap">
+                      <div
+                        className="school-score-bar"
+                        style={{ width: `${s.score}%` }}
+                      />
+                    </div>
+                    <span className="school-score-value">{s.score}分</span>
+                    <span className="school-weight">权重 {Math.round(s.weight * 100)}%</span>
                   </div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
         {/* 底部操作 */}
         <section className="result-actions">
           <div className="container">
             <button className="action-btn primary" onClick={resetAll}>
-              重新分析
+              重新推演
             </button>
             <button className="action-btn" onClick={() => window.print()}>
               保存报告
             </button>
+            {pipelineResult.v31 && (
+              <button
+                className="action-btn"
+                onClick={async () => {
+                  try {
+                    const pdfUrl = await generatePDFReport(
+                      {
+                        title: '玄风门 · 风水勘测专业报告',
+                        subtitle: report.title,
+                        includeAnnotations: true,
+                        includeClassical: true,
+                        includeRadarChart: true,
+                        pageSize: 'A4',
+                      },
+                      pipelineResult.v31.professionalReport,
+                      pipelineResult.v31.annotations
+                    )
+                    const a = document.createElement('a')
+                    a.href = pdfUrl
+                    a.download = `xuanfeng_fengshui_report_${Date.now()}.pdf`
+                    document.body.appendChild(a)
+                    a.click()
+                    document.body.removeChild(a)
+                  } catch {
+                    alert('PDF 生成失败，请稍后重试')
+                  }
+                }}
+              >
+                导出PDF报告
+              </button>
+            )}
+            <button className="action-btn" onClick={() => setSharePanelOpen(true)}>
+              分享
+            </button>
           </div>
         </section>
+
+        {/* V3.2: 分享面板 */}
+        {pipelineResult?.report && uploadedImage && (
+          <SharePanel
+            open={sharePanelOpen}
+            onClose={() => setSharePanelOpen(false)}
+            record={{
+              id: `analysis-${Date.now()}`,
+              roomType: selectedRoom || 'living',
+              roomName: roomTypes.find(r => r.id === selectedRoom)?.name || '客厅',
+              imageData: uploadedImage,
+              thumbnail: uploadedImage,
+              overallScore: pipelineResult.report.overallScore,
+              credibility: pipelineResult.v31?.credibility || { score: 70, level: 'medium', factors: {} as any, explanation: '' },
+              mainIssues: pipelineResult.v31?.professionalReport?.issues?.map(i => i.title) || [],
+              remediationPlans: pipelineResult.v31?.professionalReport?.remediationPlans?.map(r => r.title) || [],
+              annotations: pipelineResult.v31?.annotations || [],
+              createdAt: new Date().toISOString(),
+              analysisDurationMs: pipelineResult.totalTime || 0,
+              status: 'active',
+              favorite: false,
+              tags: [],
+              notes: '',
+            }}
+          />
+        )}
+
+        {/* 术语解释弹窗 */}
+        {activeTerm && (
+          <div
+            className="term-modal-overlay"
+            onClick={() => setActiveTerm(null)}
+            role="dialog"
+            aria-label="术语解释"
+            aria-modal="true"
+          >
+            <div className="term-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="term-modal-header">
+                <h3 className="term-modal-title">{activeTerm.term}</h3>
+                <span className="term-modal-category">{activeTerm.category}</span>
+                <button
+                  className="term-modal-close"
+                  onClick={() => setActiveTerm(null)}
+                  aria-label="关闭"
+                >✕</button>
+              </div>
+              <div className="term-modal-body">
+                <p className="term-modal-explanation">{activeTerm.explanation}</p>
+                {activeTerm.classicalSource && (
+                  <p className="term-modal-source">
+                    <strong>古籍出处：</strong>{activeTerm.classicalSource}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     )
   }
@@ -334,7 +625,7 @@ export default function FengShui() {
           <p className="page-desc">
             {phase === 'select' 
               ? '选择您要分析的空间类型，获得专业风水解读'
-              : '上传清晰照片，AI 将自动识别并生成完整风水报告'
+              : '上传清晰照片，系统将自动识别并生成完整风水报告'
             }
           </p>
         </div>
@@ -384,7 +675,7 @@ export default function FengShui() {
             >
               {uploadedImage ? (
                 <div className="preview-container">
-                  <img src={uploadedImage} alt="上传预览" className="preview-image" />
+                  <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
                   <button
                     className="change-btn"
                     onClick={(e) => {
@@ -412,7 +703,7 @@ export default function FengShui() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,image/gif"
               onChange={handleInputChange}
               className="hidden-input"
             />
@@ -440,6 +731,30 @@ export default function FengShui() {
               </ul>
             </div>
 
+            {/* V3.0: 图片质量检测详情 */}
+            {imageQuality && (
+              <div className="image-quality-panel">
+                <div className={`image-quality-header ${imageQuality.passed ? 'passed' : 'warning'}`}>
+                  <span>{imageQuality.passed ? '✓' : '⚠'}</span>
+                  <span>
+                    图片质量检测
+                    {imageQuality.passed ? '通过' : '存在提醒'}
+                    {imageQuality.overallScore ? `（${imageQuality.overallScore}分）` : ''}
+                  </span>
+                </div>
+                <div className="quality-check-list">
+                  {imageQuality.checks.map((check, i) => (
+                    <div key={i} className="quality-check-item">
+                      <span className="check-label">{check.item}</span>
+                      <span className={`check-status ${check.passed ? 'pass' : 'warn'}`}>
+                        {check.passed ? '通过' : check.message}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {error && (
               <div className="error-message">
                 <span className="error-icon-inline">⚠️</span>
@@ -464,6 +779,126 @@ export default function FengShui() {
   )
 }
 
+// ========== V3.1 组件 ==========
+
+interface ScoreRadarChartProps {
+  dimensions: Record<string, { name: string; score: number }>
+  size?: number
+}
+
+function ScoreRadarChart({ dimensions, size = 180 }: ScoreRadarChartProps) {
+  const dimKeys = [
+    'pattern', 'airFlow', 'windQi', 'lighting',
+    'wealth', 'health', 'career', 'family',
+    'elements', 'cleanliness', 'activityQuiet', 'shaQi'
+  ]
+  const dims = dimKeys.map(key => dimensions[key] ?? { name: key, score: 0 })
+  const count = dims.length
+  const center = size / 2
+  const radius = size * 0.38
+  const angleStep = (Math.PI * 2) / count
+
+  // 网格圆
+  const gridCircles = [0.2, 0.4, 0.6, 0.8, 1.0].map((ratio, i) => {
+    const r = radius * ratio
+    return (
+      <circle
+        key={`grid-${i}`}
+        cx={center}
+        cy={center}
+        r={r}
+        fill="none"
+        stroke="rgba(212, 168, 71, 0.15)"
+        strokeWidth={1}
+      />
+    )
+  })
+
+  // 轴线
+  const axisLines = dims.map((_, i) => {
+    const angle = i * angleStep - Math.PI / 2
+    const x = center + radius * Math.cos(angle)
+    const y = center + radius * Math.sin(angle)
+    return (
+      <line
+        key={`axis-${i}`}
+        x1={center}
+        y1={center}
+        x2={x}
+        y2={y}
+        stroke="rgba(212, 168, 71, 0.1)"
+        strokeWidth={1}
+      />
+    )
+  })
+
+  // 数据多边形
+  const points = dims.map((dim, i) => {
+    const angle = i * angleStep - Math.PI / 2
+    const value = Math.min(100, Math.max(0, dim.score)) / 100
+    const x = center + radius * value * Math.cos(angle)
+    const y = center + radius * value * Math.sin(angle)
+    return `${x},${y}`
+  }).join(' ')
+
+  // 标签
+  const labels = dims.map((dim, i) => {
+    const angle = i * angleStep - Math.PI / 2
+    const labelRadius = radius + 14
+    const x = center + labelRadius * Math.cos(angle)
+    const y = center + labelRadius * Math.sin(angle)
+    const anchor = x > center + 5 ? 'start' : x < center - 5 ? 'end' : 'middle'
+    const dy = y > center + 5 ? '0.3em' : y < center - 5 ? '-0.3em' : '0.3em'
+    return (
+      <text
+        key={`label-${i}`}
+        x={x}
+        y={y}
+        textAnchor={anchor}
+        dy={dy}
+        fontSize={10}
+        fill="var(--text-secondary)"
+      >
+        {dim.name}
+      </text>
+    )
+  })
+
+  // 数据点
+  const dataDots = dims.map((dim, i) => {
+    const angle = i * angleStep - Math.PI / 2
+    const value = Math.min(100, Math.max(0, dim.score)) / 100
+    const x = center + radius * value * Math.cos(angle)
+    const y = center + radius * value * Math.sin(angle)
+    return (
+      <circle
+        key={`dot-${i}`}
+        cx={x}
+        cy={y}
+        r={3}
+        fill="var(--accent)"
+        stroke="var(--bg-card)"
+        strokeWidth={1.5}
+      />
+    )
+  })
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="score-radar-chart">
+      {gridCircles}
+      {axisLines}
+      <polygon
+        points={points}
+        fill="rgba(212, 168, 71, 0.15)"
+        stroke="var(--accent)"
+        strokeWidth={1.5}
+      />
+      {dataDots}
+      {labels}
+    </svg>
+  )
+}
+
 // ========== 辅助函数 ==========
 
 function getScoreLevel(score: number): { text: string; key: string } {
@@ -475,18 +910,48 @@ function getScoreLevel(score: number): { text: string; key: string } {
   return { text: '较差', key: 'poor' }
 }
 
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
+function getV31CredibilityLevelText(level: string): string {
+  const map: Record<string, string> = {
+    veryHigh: '极高',
+    high: '高',
+    medium: '中',
+    low: '低',
+    veryLow: '极低',
+  }
+  return map[level] || '中'
+}
+
+function getCredibilityFactorName(key: string): string {
+  const map: Record<string, string> = {
+    imageCompleteness: '图片完整度',
+    recognitionAccuracy: '识别准确率',
+    ruleMatchRate: '规则匹配率',
+    elementRecognitionCount: '识别元素数',
+    modelConsistency: '模型一致性',
+  }
+  return map[key] || key
+}
+
+// V3.0: 已知风水术语列表（用于渲染时添加可点击标记）
+const KNOWN_TERMS = [
+  '明堂', '藏风聚气', '穿堂煞', '横梁压顶', '缺角', '五行',
+  '五行相生相克', '中宫', '气场', '煞气', '财位', '有靠',
+  '靠山', '水火相冲', '西晒', '阳气', '阴阳', '八卦方位',
+  '动线', '玄关', '聚宝盆',
+]
+
+function wrapTermsInHtml(html: string): string {
+  let result = html
+  for (const term of KNOWN_TERMS) {
+    const regex = new RegExp('([^<>]|^)(' + term + ')([^<>]|$)', 'g')
+    result = result.replace(regex, '$1<span class="fengshui-term" data-term="' + term + '">$2</span>$3')
+  }
+  return result
 }
 
 function markdownToHtml(md: string): string {
-  var escaped = escapeHtml(md)
-  return escaped
+  var escaped = encodeForHtml(md)
+  var html = escaped
     .replace(/^### (.*$)/gm, '<h3>$1</h3>')
     .replace(/^## (.*$)/gm, '<h2>$1</h2>')
     .replace(/^# (.*$)/gm, '<h1>$1</h1>')
@@ -501,4 +966,6 @@ function markdownToHtml(md: string): string {
     .replace(/^&gt; (.*$)/gm, '<blockquote>$1</blockquote>')
     .replace(/\n\n/g, '<br/><br/>')
     .replace(/\n/g, '<br/>')
+  // V3.0: 为术语添加可点击标记
+  return wrapTermsInHtml(html)
 }

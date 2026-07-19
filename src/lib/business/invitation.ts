@@ -73,7 +73,7 @@ export function validateInvitationCode(
  * 计算邀请奖励（邀请人和被邀请人各自的积分）
  */
 export function applyInvitationReward(
-  code: string,
+  _code: string,
   inviterPoints: number,
   inviteePoints: number
 ): { inviterReward: number; inviteeReward: number } {

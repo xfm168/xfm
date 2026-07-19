@@ -166,7 +166,7 @@ export function generateCityLandingPage(city: CityData): string {
 }
 
 export function generateFAQPage(faqs: FAQItem[]): string {
-  var questions = faqs.map(function(faq, index) {
+  var questions = faqs.map(function(faq) {
     return {
       '@type': 'Question',
       name: faq.question,

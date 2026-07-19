@@ -1,0 +1,123 @@
+.legal-page {
+  min-height: 100vh;
+  padding: var(--space-12) 0 var(--space-16);
+}
+
+.legal-header {
+  text-align: center;
+  padding: var(--space-8) 0 var(--space-6);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.legal-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.legal-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.legal-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.legal-tab {
+  flex: 1;
+  min-width: 80px;
+  height: 44px;
+  padding: 0 var(--space-4);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: color var(--duration-base) var(--ease-standard);
+}
+
+.legal-tab:hover {
+  color: var(--text-primary);
+}
+
+.legal-tab.active {
+  color: var(--accent);
+}
+
+.legal-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.legal-content {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.legal-section {
+  animation: fadeIn var(--duration-base) var(--ease-elegant);
+}
+
+.legal-section h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.legal-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: var(--space-6) 0 var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--accent);
+}
+
+.legal-section p {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-3);
+}
+
+.legal-section ul {
+  margin: var(--space-2) 0 var(--space-4);
+  padding-left: var(--space-6);
+}
+
+.legal-section li {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.legal-update {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .legal-title {
+    font-size: 2rem;
+  }
+}

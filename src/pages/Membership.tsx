@@ -12,6 +12,7 @@ import { usePayment } from '../hooks/usePayment'
 import type { MembershipTier } from '../lib/database/types'
 import type { MembershipPlan, GrowthLevel } from '../lib/business/types'
 import './Membership.css'
+import { usePageSEO } from '../hooks/usePageSEO'
 
 // ── 会员计划数据 ──
 
@@ -148,6 +149,12 @@ function generateInviteCode(): string {
 // ── 组件 ──
 
 export default function Membership() {
+  usePageSEO({
+    title: '会员中心 | 玄风门',
+    description: '玄风门会员中心，查看会员等级权益、积分记录、订单管理，解锁更多专业推演功能。',
+    canonical: 'https://xuanfengmen.com/membership'
+  })
+
   var membership = useMembership()
   var orderHook = useOrder()
   var pointsHook = usePoints()

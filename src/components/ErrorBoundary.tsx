@@ -370,9 +370,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
           {/* 说明消息 */}
           <p style={styles.message}>
-            很抱歉，应用在运行过程中遇到了意外错误。
+            抱歉，天道推演暂时受阻。
             <br />
-            您的输入已自动保存，重新分析时可恢复。
+            您所填信息已保存，刷新后可重新推演。
           </p>
 
           {/* 错误 ID */}

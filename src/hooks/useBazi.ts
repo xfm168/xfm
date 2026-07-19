@@ -3,6 +3,7 @@ import { calculateBaZi, calculateBaZiFromBirthData, type BaZiChart, type BirthIn
 import type { BirthData } from '@/lib/core'
 
 const STORAGE_KEY = 'xuanfengmen_bazi_charts'
+const FAVORITES_KEY = 'xuanfengmen_bazi_favorites'
 
 type Status = 'idle' | 'loading' | 'ready' | 'error'
 
@@ -16,6 +17,10 @@ interface UseBaziResult {
   saveChart: (chart: BaZiChart) => void
   loadCharts: () => void
   deleteChart: (createdAt: number) => void
+  clearAllCharts: () => void
+  toggleFavorite: (createdAt: number) => void
+  getFavorites: () => BaZiChart[]
+  isFavorite: (createdAt: number) => boolean
 }
 
 function loadFromStorage(): BaZiChart[] {
@@ -32,6 +37,26 @@ function saveToStorage(charts: BaZiChart[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(charts))
   } catch {
+  }
+}
+
+// ===== 收藏功能辅助 =====
+
+function loadFavorites(): number[] {
+  try {
+    const raw = localStorage.getItem(FAVORITES_KEY)
+    if (!raw) return []
+    return JSON.parse(raw) as number[]
+  } catch {
+    return []
+  }
+}
+
+function saveFavorites(ids: number[]) {
+  try {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids))
+  } catch {
+    // 静默失败
   }
 }
 
@@ -90,6 +115,37 @@ export function useBazi(): UseBaziResult {
     })
   }, [])
 
+  const clearAllCharts = useCallback(() => {
+    setCharts([])
+    saveToStorage([])
+  }, [])
+
+  /** 切换收藏状态 */
+  const toggleFavorite = useCallback((createdAt: number) => {
+    const ids = loadFavorites()
+    const idx = ids.indexOf(createdAt)
+    if (idx >= 0) {
+      ids.splice(idx, 1)
+    } else {
+      ids.push(createdAt)
+    }
+    saveFavorites(ids)
+  }, [])
+
+  /** 获取所有收藏的命盘 */
+  const getFavorites = useCallback((): BaZiChart[] => {
+    const ids = loadFavorites()
+    return ids
+      .map(id => charts.find(c => c.createdAt === id))
+      .filter((c): c is BaZiChart => c !== undefined)
+  }, [charts])
+
+  /** 判断是否已收藏 */
+  const isFavorite = useCallback((createdAt: number): boolean => {
+    const ids = loadFavorites()
+    return ids.includes(createdAt)
+  }, [])
+
   return {
     status,
     chart,
@@ -100,5 +156,9 @@ export function useBazi(): UseBaziResult {
     saveChart,
     loadCharts,
     deleteChart,
+    clearAllCharts,
+    toggleFavorite,
+    getFavorites,
+    isFavorite,
   }
 }

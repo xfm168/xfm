@@ -11,6 +11,7 @@ import {
   type DivinationWithDetail,
 } from '../lib/divination'
 import './Divination.css'
+import { usePageSEO } from '../hooks/usePageSEO'
 
 // ── Types ─────────────────────────────────────────
 type Phase  = 'prepare' | 'ceremony' | 'result'
@@ -223,6 +224,12 @@ function HexCard({
 
 // ── Main ──────────────────────────────────────────
 export default function Divination() {
+  usePageSEO({
+    title: '六爻解卦 | 玄风门',
+    description: '传统六爻占卜，通过铜钱摇卦、心念聚焦，玄风门为您推演吉凶祸福，提供专业解读。',
+    canonical: 'https://xuanfengmen.com/liuyao'
+  })
+
   const [phase, setPhase]                   = useState<Phase>('prepare')
   const [question, setQuestion]             = useState('')
   const [category, setCategory]             = useState<DivinationCategory>('general')
@@ -648,9 +655,9 @@ export default function Divination() {
 
             <div className="result-actions">
               {saveStatus === 'idle'   && <button className="save-btn" onClick={saveRecord}>存入卦运记录</button>}
-              {saveStatus === 'saving' && <button className="save-btn saving" disabled>存入中…</button>}
+              {saveStatus === 'saving' && <button className="save-btn saving" disabled>存录中…</button>}
               {saveStatus === 'saved'  && <span className="save-done">✓ 已保存至卦运记录</span>}
-              {saveStatus === 'error'  && <span className="save-err">保存失败，请重试</span>}
+              {saveStatus === 'error'  && <span className="save-err">保存不成，请重试</span>}
               <button className="reset-btn" onClick={reset}>重新起卦</button>
             </div>
           </div>

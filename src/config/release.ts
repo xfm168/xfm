@@ -29,7 +29,7 @@ export const RELEASE = {
 export const RELEASE_BANNER = `
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
-║    AI Feng Shui Engine                                       ║
+║    玄风风水推演引擎                                          ║
 ║    Version ${RELEASE.version} ${RELEASE.channel}                        ║
 ║    Pipeline ${RELEASE.pipeline}                                     ║
 ║    Rules: ${RELEASE.rules}  Knowledge: ${RELEASE.knowledge}                      ║

@@ -1,0 +1,73 @@
+/**
+ * FiveElementCard - 五行分析卡片样式
+ * 展示五维评分（事业/财富/婚姻/健康/学业）及总分
+ * 前缀: xr-fe-
+ */
+
+.xr-fe {
+  padding: var(--space-4);
+}
+
+/* ── 维度列表 ── */
+.xr-fe__dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.xr-fe__dimension {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.xr-fe__dimension-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.xr-fe__dimension-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+}
+
+.xr-fe__dimension-level {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  padding: 2px var(--space-2);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 4px;
+}
+
+.xr-fe__dimension-score {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent, #c8a951);
+}
+
+/* ── 总分 ── */
+.xr-fe__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+  border: 1px solid var(--border, #e5e5e5);
+}
+
+.xr-fe__total-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+}
+
+.xr-fe__total-score {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent, #c8a951);
+  font-family: var(--font-serif, serif);
+}

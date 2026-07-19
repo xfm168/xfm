@@ -1,0 +1,29 @@
+.share-card { width: 375px; min-height: 500px; background: #0a0a0a; border-radius: 12px; overflow: hidden; font-family: 'Noto Sans SC', sans-serif; position: relative; }
+.share-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #c9952d, #d4a843, #c9952d); }
+.sc-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.2rem; border-bottom: 1px solid #1a1f2e; }
+.sc-brand { font-size: 0.85rem; font-weight: 700; color: #c9952d; letter-spacing: 0.05em; }
+.sc-type { font-size: 0.75rem; color: #6b7394; }
+.sc-body { padding: 1.5rem 1.2rem; }
+.sc-footer { padding: 0.8rem 1.2rem; border-top: 1px solid #1a1f2e; text-align: center; }
+.sc-scan { font-size: 0.75rem; color: #6b7394; display: block; margin-bottom: 0.3rem; }
+.sc-url { font-size: 0.7rem; color: #c9952d; }
+
+/* Bazi type */
+.sc-four-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-bottom: 1rem; }
+.sc-pillar { text-align: center; background: #12151e; border-radius: 8px; padding: 0.6rem 0.4rem; border: 1px solid #252b3d; }
+.sc-pillar-label { font-size: 0.65rem; color: #6b7394; margin-bottom: 0.3rem; }
+.sc-pillar-gan { font-size: 1.2rem; font-weight: 700; color: #c9952d; }
+.sc-pillar-zhi { font-size: 1.2rem; color: #e2e5ed; margin-top: 0.2rem; }
+.sc-bazi-summary { font-size: 0.8rem; color: #e2e5ed; text-align: center; padding: 0.8rem; background: #12151e; border-radius: 6px; }
+
+/* Fortune type */
+.sc-fortune-type { text-align: center; font-size: 1.8rem; font-weight: 700; color: #c9952d; margin-bottom: 1rem; letter-spacing: 0.15em; }
+.sc-fortune-areas { display: flex; flex-direction: column; gap: 0.5rem; }
+.sc-fortune-area { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #1a1f2e; }
+.sc-area-name { font-size: 0.8rem; color: #e2e5ed; }
+.sc-area-score { font-size: 0.8rem; color: #c9952d; font-weight: 600; }
+
+/* Report type */
+.sc-report-title { font-size: 1.1rem; font-weight: 700; color: #e2e5ed; text-align: center; margin-bottom: 0.8rem; }
+.sc-report-summary { font-size: 0.8rem; color: #6b7394; line-height: 1.6; margin-bottom: 1rem; }
+.sc-report-badge { display: inline-block; background: #c9952d; color: #0a0a0a; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 4px; letter-spacing: 0.05em; }

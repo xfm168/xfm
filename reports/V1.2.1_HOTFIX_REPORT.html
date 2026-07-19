@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V1.2.1 Hotfix Report - XuanFengMen</title>
+<style>
+:root { --bg:#0d1117; --surface:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e; --green:#3fb950; --blue:#58a6ff; --purple:#bc8cff; --orange:#f0883e; --red:#f85149; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:40px; }
+.container { max-width:960px; margin:0 auto; }
+h1 { font-size:32px; font-weight:800; }
+.version-tag { display:inline-block; background:rgba(88,166,255,0.15); color:var(--blue); padding:4px 14px; border-radius:16px; font-size:14px; font-weight:600; margin-left:12px; vertical-align:middle; }
+.subtitle { color:var(--muted); font-size:14px; margin:8px 0 40px; }
+h2 { font-size:20px; font-weight:600; margin:36px 0 16px; padding-bottom:8px; border-bottom:1px solid var(--border); color:var(--blue); }
+h3 { font-size:16px; font-weight:600; margin:20px 0 12px; color:var(--text); }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:16px; }
+.badge { display:inline-block; padding:3px 12px; border-radius:12px; font-size:12px; font-weight:600; }
+.badge-green { background:rgba(63,185,80,0.15); color:var(--green); }
+.badge-blue { background:rgba(88,166,255,0.15); color:var(--blue); }
+.badge-orange { background:rgba(240,136,62,0.15); color:var(--orange); }
+.badge-purple { background:rgba(188,140,255,0.15); color:var(--purple); }
+.grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+.metric { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:20px; text-align:center; }
+.metric-value { font-size:32px; font-weight:700; }
+.metric-label { font-size:12px; color:var(--muted); margin-top:4px; }
+.green { color:var(--green); }
+.blue { color:var(--blue); }
+.purple { color:var(--purple); }
+.orange { color:var(--orange); }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:8px 12px; border-bottom:1px solid var(--border); color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; }
+td { padding:8px 12px; border-bottom:1px solid var(--border); }
+code { background:rgba(88,166,255,0.1); color:var(--blue); padding:2px 6px; border-radius:4px; font-size:12px; font-family:'SF Mono',Monaco,monospace; }
+.check-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.check-item:last-child { border-bottom:none; }
+.check-icon { color:var(--green); font-weight:bold; font-size:16px; }
+.file-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.file-item { font-size:12px; padding:8px 12px; background:var(--bg); border:1px solid var(--border); border-radius:4px; color:var(--muted); }
+.file-item code { background:none; padding:0; color:var(--text); }
+.phase-card { border-left:3px solid var(--border); padding-left:16px; margin-bottom:16px; }
+.phase-card.p0 { border-color:var(--green); }
+.phase-card.p1 { border-color:var(--blue); }
+.phase-card.p2 { border-color:var(--orange); }
+.platform-box { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:16px; margin:16px 0; font-family:'SF Mono',Monaco,monospace; font-size:12px; line-height:1.8; color:var(--muted); white-space:pre; overflow-x:auto; }
+.platform-box .highlight { color:var(--green); font-weight:bold; }
+.banner { background:linear-gradient(135deg,rgba(63,185,80,0.12),rgba(88,166,255,0.12),rgba(188,140,255,0.12)); border:1px solid rgba(63,185,80,0.3); border-radius:12px; padding:32px; text-align:center; margin:40px 0; }
+.banner h2 { color:var(--green); border:none; margin:0 0 8px; font-size:22px; }
+.banner p { color:var(--muted); font-size:14px; margin:0; }
+.footer { margin-top:48px; padding-top:16px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); text-align:center; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>V1.2.1 Hotfix Report<span class="version-tag">Final Polish</span></h1>
+<p class="subtitle">XuanFengMen &mdash; 2026-07-12</p>
+
+<div class="grid">
+  <div class="metric"><div class="metric-value green">6</div><div class="metric-label">Hotfix Items</div></div>
+  <div class="metric"><div class="metric-value purple">5</div><div class="metric-label">Known Issues</div></div>
+  <div class="metric"><div class="metric-value blue">3</div><div class="metric-label">V2 Phases</div></div>
+  <div class="metric"><div class="metric-value orange">8</div><div class="metric-label">Platform Modules</div></div>
+</div>
+
+<!-- Section 1: Release -->
+<h2>1. GitHub Release</h2>
+<div class="card">
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>Release Name</strong>: 玄风门 V1.2 Stable</span></div>
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>Tag</strong>: <code>v1.2.0</code> (annotated)</span></div>
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>Release Notes</strong>: <code>GITHUB_RELEASE_v1.2.md</code></span></div>
+  <p style="font-size:13px;color:var(--muted);margin-top:12px;">
+    Release Notes 包含：V1.2 更新内容、新增模块 (12 类)、修复内容 (5 项)、安全更新 (6 项)、
+    推演更新、八字 V3.1、风水分析、Known Issues (5 项)、V2 Preview。
+  </p>
+</div>
+
+<!-- Section 2: License -->
+<h2>2. License</h2>
+<div class="card">
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>文件</strong>: <code>LICENSE</code></span></div>
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>类型</strong>: Proprietary License (专有许可)</span></div>
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>条款</strong>: 保留版权 / 禁止复制 / 禁止商业转载 / 禁止二次销售 / 禁止修改后发布</span></div>
+  <p style="font-size:13px;color:var(--muted);margin-top:12px;">
+    未来如决定开源，可切换至 MIT License。
+  </p>
+</div>
+
+<!-- Section 3: Version -->
+<h2>3. Version</h2>
+<div class="card">
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>文件</strong>: <code>VERSION</code></span></div>
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>当前版本</strong>: <code>1.2.0</code></span></div>
+  <p style="font-size:13px;color:var(--muted);margin-top:12px;">
+    所有部署、后台、API、CI/CD 统一读取此文件。后续版本：1.2.1 &rarr; 1.3.0 &rarr; 2.0.0。
+  </p>
+</div>
+
+<!-- Section 4: Known Issues -->
+<h2>4. Known Issues</h2>
+<div class="card">
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>文件</strong>: <code>KNOWN_ISSUES.md</code></span></div>
+  <table style="margin-top:16px;">
+    <tr><th>#</th><th>问题</th><th>严重性</th><th>状态</th></tr>
+    <tr><td>1</td><td>bazi plugin 36 个 TypeScript 类型错误</td><td><span class="badge badge-orange">低</span></td><td>已知 &mdash; V2 重构</td></tr>
+    <tr><td>2</td><td>微信 OAuth 等待生产配置</td><td><span class="badge badge-blue">中</span></td><td>等待 &mdash; V2 前完成</td></tr>
+    <tr><td>3</td><td>微信支付等待商户信息</td><td><span class="badge badge-blue">中</span></td><td>等待 &mdash; V2 前完成</td></tr>
+    <tr><td>4</td><td>支付宝等待 RSA2 公钥</td><td><span class="badge badge-blue">中</span></td><td>等待 &mdash; V2 前完成</td></tr>
+    <tr><td>5</td><td>Stripe 等待 Webhook Secret</td><td><span class="badge badge-blue">中</span></td><td>等待 &mdash; V2 前完成</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--green);margin-top:12px;">
+    以上问题不会阻止 V1.2 发布。
+  </p>
+</div>
+
+<!-- Section 5: Release Checklist -->
+<h2>5. Release Checklist</h2>
+<div class="card">
+  <div class="check-item"><span class="check-icon">&#10003;</span><span><strong>文件</strong>: <code>RELEASE_CHECKLIST.md</code></span></div>
+  <div class="file-list" style="margin-top:12px;">
+    <div class="file-item">&#10003; Build</div>
+    <div class="file-item">&#10003; Test (228/228)</div>
+    <div class="file-item">&#10003; Tag (v1.2.0)</div>
+    <div class="file-item">&#10003; Release Notes</div>
+    <div class="file-item">&#10003; Changelog</div>
+    <div class="file-item">&#10003; README</div>
+    <div class="file-item">&#10003; Deployment Docs</div>
+    <div class="file-item">&#10003; Environment</div>
+    <div class="file-item">&#10003; Technical Debt</div>
+    <div class="file-item">&#10003; Version (1.2.0)</div>
+    <div class="file-item">&#10003; License</div>
+    <div class="file-item">&#10003; Known Issues</div>
+  </div>
+  <p style="font-size:14px;color:var(--green);font-weight:600;margin-top:16px;">
+    READY FOR RELEASE &#10003;
+  </p>
+</div>
+
+<!-- Section 6: V2 重新规划 -->
+<h2>6. V2 重新规划</h2>
+
+<div class="phase-card p0">
+  <h3>V2.0 &mdash; 命理推演系统 <span class="badge badge-green">P0</span></h3>
+  <p style="font-size:13px;color:var(--muted);">目标：提升付费转化率 &nbsp;|&nbsp; 预计：2026-09</p>
+  <table style="margin-top:8px;">
+    <tr><th>功能</th><th>优先级</th><th>工期</th></tr>
+    <tr><td>八字精研深度报告</td><td><span class="badge badge-green">P0</span></td><td>6 周</td></tr>
+    <tr><td>姻缘合盘大师</td><td><span class="badge badge-green">P1</span></td><td>4 周</td></tr>
+    <tr><td>智能姓名策定</td><td><span class="badge badge-green">P1</span></td><td>3 周</td></tr>
+  </table>
+</div>
+
+<div class="phase-card p1">
+  <h3>V2.1 &mdash; 商业化扩展 <span class="badge badge-blue">P1</span></h3>
+  <p style="font-size:13px;color:var(--muted);">目标：商业化 &nbsp;|&nbsp; 预计：2026-10</p>
+  <table style="margin-top:8px;">
+    <tr><th>功能</th><th>优先级</th><th>工期</th></tr>
+    <tr><td>择吉择日</td><td><span class="badge badge-blue">P2</span></td><td>3 周</td></tr>
+    <tr><td>企业堪舆</td><td><span class="badge badge-blue">P2</span></td><td>4 周</td></tr>
+    <tr><td>开放服务平台 Platform</td><td><span class="badge badge-blue">P1</span></td><td>8 周</td></tr>
+  </table>
+</div>
+
+<div class="phase-card p2">
+  <h3>V2.2 &mdash; 传统命理完善 <span class="badge badge-orange">P2</span></h3>
+  <p style="font-size:13px;color:var(--muted);">目标：完善传统命理体系 &nbsp;|&nbsp; 预计：2026-12</p>
+  <table style="margin-top:8px;">
+    <tr><th>功能</th><th>优先级</th><th>工期</th></tr>
+    <tr><td>奇门遁甲</td><td><span class="badge badge-orange">P3</span></td><td>6 周</td></tr>
+    <tr><td>六壬</td><td><span class="badge badge-orange">P3</span></td><td>6 周</td></tr>
+    <tr><td>紫微斗数</td><td><span class="badge badge-orange">P3</span></td><td>6 周</td></tr>
+  </table>
+</div>
+
+<!-- Section 7: Platform 架构 -->
+<h2>7. Platform 升级说明</h2>
+<div class="card">
+  <p style="font-size:14px;font-weight:600;margin-bottom:12px;">
+    从 V2 开始，玄风门升级为 <span style="color:var(--green)">玄风命理平台</span>。
+  </p>
+  <div class="platform-box"><span class="highlight">玄风命理平台</span>
+    |
+    +-- 推演层 (GPT-4o / Gemini / Edge)
+    |
+    +-- 规则引擎层 (八字 / 风水 / 奇门 / 六壬 / 紫微)
+    |
+    +-- 知识库层 (经典文献 / 案例 / 学派)
+    |
+    +-- 推理引擎层 (Qi Engine / 概率 / 决策)
+    |
+    +-- <span class="highlight">应用层</span> (八字 / 风水 / 合盘 / 起名 / 择日 / 奇门 / 六壬 / 紫微)</div>
+  <p style="font-size:13px;color:var(--muted);margin-top:12px;">
+    所有 8 个命理模块共享统一的基础设施：推演调用层、缓存层、安全层、支付层、监控层、会员体系。
+  </p>
+</div>
+
+<!-- Deliverables -->
+<h2>交付物清单</h2>
+<div class="card">
+  <div class="file-list">
+    <div class="file-item"><code>GITHUB_RELEASE_v1.2.md</code></div>
+    <div class="file-item"><code>LICENSE</code> (Proprietary)</div>
+    <div class="file-item"><code>VERSION</code> (1.2.0)</div>
+    <div class="file-item"><code>KNOWN_ISSUES.md</code> (5 项)</div>
+    <div class="file-item"><code>RELEASE_CHECKLIST.md</code></div>
+    <div class="file-item"><code>ROADMAP_V2.md</code> (updated)</div>
+  </div>
+</div>
+
+<div class="banner">
+  <h2>V1.2.1 Final Release 完成</h2>
+  <p>正式进入 V2.0 Development</p>
+</div>
+
+<div class="footer">
+  XuanFengMen V1.2.1 Hotfix Report &mdash; 2026-07-12<br>
+  玄风命理平台 &mdash; From Website to Platform
+</div>
+
+</div>
+</body>
+</html>

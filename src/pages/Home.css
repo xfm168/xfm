@@ -88,11 +88,6 @@
   animation: fadeInUp 1.2s ease-out 0.3s both;
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 /* 柔和神光（替代放射线） */
 .taiji-glow {
   position: absolute;
@@ -340,6 +335,21 @@
 .bottom-space {
   height: 80px;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1.2 运营组件
+   ═══════════════════════════════════════════════════════════════════ */
+
+.v12-ops-section,
+.v12-trial-section,
+.v12-value-section,
+.v12-faq-section {
+  padding: 2rem 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.v12-ops-section { padding-top: 1rem; }
+.v12-faq-section { padding-bottom: 1rem; }
 
 /* ═══════════════════════════════════════════════════════════════════
    RESPONSIVE — 平板 / 桌面

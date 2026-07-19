@@ -1,0 +1,208 @@
+/* ============================================
+   NotificationBadge 未读通知角标组件样式
+   暗色主题 + 金色强调
+   ============================================ */
+
+.nb-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.nb-bell-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  color: #B8C4D6;
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nb-bell-btn:hover {
+  color: #D4AF37;
+  border-color: rgba(212, 175, 55, 0.35);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+/* 红色圆点角标 */
+.nb-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: #e74c3c;
+  border-radius: 9px;
+  border: 2px solid #071629;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* 下拉面板 */
+.nb-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: -8px;
+  width: 360px;
+  max-height: 480px;
+  background: rgba(11, 31, 59, 0.97);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 面板头部 */
+.nb-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  flex-shrink: 0;
+}
+
+.nb-dropdown-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #F5F1E8;
+}
+
+.nb-dropdown-count {
+  font-size: 12px;
+  color: #6B7D94;
+}
+
+/* 面板列表 */
+.nb-dropdown-list {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+}
+
+.nb-dropdown-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.nb-dropdown-list::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 2px;
+}
+
+/* 下拉单条 */
+.nb-dropdown-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.nb-dropdown-item:hover {
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.nb-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.nb-dropdown-item.unread {
+  background: rgba(17, 40, 69, 0.6);
+}
+
+.nb-dropdown-item .nb-item-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: rgba(212, 175, 55, 0.08);
+  border-radius: 6px;
+}
+
+.nb-dropdown-item .nb-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.nb-dropdown-item .nb-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #F5F1E8;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nb-dropdown-item .nb-item-content {
+  font-size: 12px;
+  color: #B8C4D6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nb-dropdown-item .nb-item-time {
+  font-size: 11px;
+  color: #6B7D94;
+  margin-top: 3px;
+}
+
+/* 下拉空状态 */
+.nb-dropdown-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: #6B7D94;
+  font-size: 13px;
+}
+
+/* 底部链接 */
+.nb-dropdown-footer {
+  padding: 10px 16px;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.nb-view-all-link {
+  font-size: 13px;
+  color: #D4AF37;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.nb-view-all-link:hover {
+  color: #E8C56A;
+  text-decoration: underline;
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .nb-dropdown {
+    right: -48px;
+    width: 320px;
+  }
+}

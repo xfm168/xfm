@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useCallback } from 'react'
 import './Modal.css'
 
 export interface ModalProps {
@@ -30,6 +30,22 @@ export default function Modal({
       document.body.style.overflow = ''
     }
   }, [open])
+
+  // ESC 键关闭支持
+  const handleKeyDown = useCallback(function(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      onClose()
+    }
+  }, [onClose])
+
+  useEffect(function() {
+    if (open) {
+      document.addEventListener('keydown', handleKeyDown)
+      return function() {
+        document.removeEventListener('keydown', handleKeyDown)
+      }
+    }
+  }, [open, handleKeyDown])
 
   if (!open) return null
 

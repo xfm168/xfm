@@ -18,7 +18,7 @@ const GATE_FEATURES = [
   { icon: '☯', text: '健康位与病符位解析' },
   { icon: '☯', text: '家具布局专业建议（4条）' },
   { icon: '☯', text: '颜色五行搭配方案' },
-  { icon: '☯', text: 'AI风水师深度解读' },
+  { icon: '☯', text: '玄风真人深度解读' },
 ]
 
 interface PositionDetail {
@@ -96,7 +96,7 @@ function GateView({ score, roomName, onUnlock }: { score: number; roomName: stri
             <span className="gate-score-unit">分</span>
           </div>
           <div className="gate-score-info">
-            <p className="gate-room">{roomName} · 基础分析已完成</p>
+            <p className="gate-room">{roomName} · 基础推演已完成</p>
             <p className="gate-hint">解锁深度报告，获取完整风水格局解读</p>
           </div>
         </div>
@@ -177,7 +177,7 @@ function UnlockedView({ data, roomName, score, onBack }: {
     <div className="prem-unlocked animate-fade-in">
       <div className="prem-unlocked-badge">
         <span className="unlocked-icon">✦</span>
-        <span>深度报告已解锁 · {roomName}</span>
+        <span>深度研判已解锁 · {roomName}</span>
       </div>
 
       <div className="container">
@@ -290,6 +290,14 @@ export default function PremiumReport() {
   const [payStatus, setPayStatus] = useState<PayStatus>('gate')
   const [premiumData, setPremiumData] = useState<PremiumData | null>(null)
 
+  // SEO
+  useEffect(function() {
+    document.title = '深度风水报告 | 玄风门'
+    var desc = document.querySelector('meta[name="description"]')
+    if (desc) desc.setAttribute('content', '玄风门深度风水报告，包含财位定位、命位格局、健康分析、家具布局与五行配色方案。')
+    else { var m = document.createElement('meta'); m.name = 'description'; m.content = '玄风门深度风水报告，包含财位定位、命位格局、健康分析、家具布局与五行配色方案。'; document.head.appendChild(m) }
+  }, [])
+
   useEffect(() => {
     if (reportId) checkIfAlreadyPaid(reportId)
   }, [reportId])
@@ -309,7 +317,6 @@ export default function PremiumReport() {
 
   async function handleUnlock() {
     setPayStatus('processing')
-    await new Promise(r => setTimeout(r, 2200))
 
     const generated: PremiumData = {
       ...POSITIONS[roomType],

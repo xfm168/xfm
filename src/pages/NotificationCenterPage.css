@@ -1,0 +1,73 @@
+/* ============================================
+   NotificationCenterPage 通知中心页面样式
+   暗色主题 + 金色强调
+   ============================================ */
+
+.ncp-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #F5F1E8;
+  min-height: 60vh;
+}
+
+.ncp-page h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #D4AF37;
+  margin-bottom: 24px;
+}
+
+.ncp-card {
+  background: rgba(11, 31, 59, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* 筛选标签 */
+.ncp-filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.ncp-filter-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #B8C4D6;
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ncp-filter-btn:hover {
+  color: #F5F1E8;
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.ncp-filter-btn.active {
+  color: #071629;
+  background: linear-gradient(135deg, #E8C56A, #D4AF37);
+  border-color: #D4AF37;
+  font-weight: 600;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .ncp-page {
+    padding: 16px 12px 40px;
+  }
+
+  .ncp-page h1 {
+    font-size: 22px;
+  }
+
+  .ncp-card {
+    padding: 16px;
+  }
+}

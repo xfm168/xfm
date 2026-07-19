@@ -1,12 +1,45 @@
 /**
  * useCoupons — 优惠券 Hook
- * 暂时使用 localStorage 模拟后端
+ * 优先调用后端 API，localStorage 作为缓存/降级
  */
 
 import { useState, useCallback } from 'react'
 import type { Coupon } from '../lib/business/types'
 
 const STORAGE_KEY = 'xuanfengmen_coupons'
+var API_BASE = '/api/user'
+
+/** 从 localStorage 获取 Supabase access_token */
+function getToken(): string {
+  try {
+    var raw = localStorage.getItem('sb-xuanfengmen-auth-token')
+    if (raw) {
+      var parsed = JSON.parse(raw)
+      if (parsed && parsed.access_token) return parsed.access_token
+    }
+  } catch {}
+  return ''
+}
+
+/** 通用 fetch 封装（带 Bearer token） */
+async function apiFetch(path: string, options: Record<string, unknown> = {}): Promise<any> {
+  var url = API_BASE + path
+  var token = getToken()
+  var headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (token) headers['Authorization'] = 'Bearer ' + token
+
+  var fetchOptions: Record<string, unknown> = { method: options.method || 'GET', headers: headers }
+  if (options.body !== undefined) fetchOptions.body = JSON.stringify(options.body)
+
+  var res = await fetch(url, fetchOptions as RequestInit)
+  var json = await res.json()
+
+  if (!res.ok) {
+    var errMsg = json && json.error && json.error.message ? json.error.message : '请求失败'
+    throw new Error(errMsg)
+  }
+  return json
+}
 
 type Status = 'idle' | 'loading' | 'ready' | 'error'
 
@@ -14,7 +47,7 @@ interface UseCouponsResult {
   status: Status
   coupons: Coupon[]
   error: string | null
-  applyCoupon: (code: string) => Coupon | null
+  applyCoupon: (code: string) => Promise<Coupon | null>
   loadCoupons: () => void
 }
 
@@ -49,18 +82,39 @@ export function useCoupons(): UseCouponsResult {
   var coupons = couponsHook[0]
   var setCoupons = couponsHook[1]
 
-  var applyCoupon = useCallback(function(code: string): Coupon | null {
+  var applyCoupon = useCallback(async function(code: string): Promise<Coupon | null> {
+    setStatus('loading')
+    setError(null)
+
+    var normalizedCode = code.trim().toUpperCase()
+    if (!normalizedCode) {
+      setError('请输入优惠券码')
+      setStatus('error')
+      return null
+    }
+
+    // 优先调用 API
     try {
-      setStatus('loading')
-      setError(null)
-
-      var normalizedCode = code.trim().toUpperCase()
-      if (!normalizedCode) {
-        setError('请输入优惠券码')
-        setStatus('error')
-        return null
+      var json = await apiFetch('/coupons/apply', {
+        method: 'POST',
+        body: { code: normalizedCode },
+      })
+      if (json.success && json.coupon) {
+        var coupon: Coupon = json.coupon
+        setCoupons(function(prev) {
+          var updated = [coupon, ...prev]
+          saveToStorage(updated)
+          return updated
+        })
+        setStatus('ready')
+        return coupon
       }
+    } catch (e) {
+      // API 失败（可能是 404 路由不存在），降级到本地模拟
+    }
 
+    // 降级：本地模拟
+    try {
       // 检查是否已持有
       var existing = coupons.find(function(c) { return c.code === normalizedCode })
       if (existing) {
@@ -101,10 +155,21 @@ export function useCoupons(): UseCouponsResult {
     }
   }, [coupons])
 
-  var loadCoupons = useCallback(function() {
+  var loadCoupons = useCallback(async function() {
+    setStatus('loading')
+    setError(null)
     try {
-      setStatus('loading')
-      setError(null)
+      var json = await apiFetch('/coupons')
+      if (json.success && json.coupons) {
+        setCoupons(json.coupons)
+        saveToStorage(json.coupons)
+        setStatus('ready')
+        return
+      }
+    } catch (e) {
+      // API 失败（可能是 404 路由不存在），降级到 localStorage
+    }
+    try {
       var data = loadFromStorage()
       setCoupons(data)
       setStatus('ready')

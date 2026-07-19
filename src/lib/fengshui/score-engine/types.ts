@@ -211,3 +211,44 @@ export interface ScoreEngineInput {
     houseType?: string
   }
 }
+
+// ============ V3.0 八维评分体系 ============
+
+/** 八维评分维度 */
+export interface ScoreDimension8D {
+  /** 格局评分 - 户型方正度、缺角情况、整体结构 */
+  pattern: ScoreDimension
+  /** 藏风评分 - 气流回旋、穿堂风防护、门窗关系 */
+  windGathering: ScoreDimension
+  /** 聚气评分 - 明堂开阔、财位通畅、能量聚集 */
+  qiGathering: ScoreDimension
+  /** 明堂评分 - 入户区域、玄关设计、第一印象 */
+  mingHall: ScoreDimension
+  /** 动线评分 - 通行顺畅、家具布局、空间利用率 */
+  flowPath: ScoreDimension
+  /** 光线评分 - 自然采光、人工照明、阴阳平衡 */
+  lighting: ScoreDimension
+  /** 五行协调评分 - 元素分布、五行平衡、相生相克 */
+  elementHarmony: ScoreDimension
+  /** 综合建议评分 - 可执行性、改善潜力、整体提升空间 */
+  advice: ScoreDimension
+}
+
+/** 单个维度评分详情 */
+export interface ScoreDimension {
+  score: number              // 0-100
+  maxScore: number           // 满分100
+  weight: number             // 该维度权重
+  weightedScore: number      // 加权后得分
+  level: 'excellent' | 'good' | 'fair' | 'poor'
+  description: string         // 该维度评价描述
+  factors: { name: string; impact: number; positive: boolean }[]
+}
+
+/** 八维评分结果 */
+export interface Score8DResult {
+  dimensions: ScoreDimension8D
+  overallScore: number
+  overallLevel: 'excellent' | 'good' | 'fair' | 'poor'
+  summary: string
+}

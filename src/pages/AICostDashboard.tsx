@@ -1,6 +1,6 @@
 /**
- * AI Cost Dashboard
- * AI 成本仪表盘：Token 使用、成本趋势、模型对比、缓存统计、降级策略
+ * 推演成本仪表盘
+ * 推演成本仪表盘：资源使用、成本趋势、供应商对比、缓存统计、降级策略
  */
 
 import React from 'react'
@@ -68,10 +68,10 @@ var MOCK_TOKEN_7D = generateTokenData(7)
 var MOCK_TOKEN_30D = generateTokenData(30)
 
 var MOCK_MODEL_COSTS: ModelCostRow[] = [
-  { model: 'gpt-4o', provider: 'OpenAI', inputCostPer1M: 30, outputCostPer1M: 60, avgLatency: 1200, usageShare: 35 },
-  { model: 'gpt-4o-mini', provider: 'OpenAI', inputCostPer1M: 1.5, outputCostPer1M: 6, avgLatency: 600, usageShare: 20 },
-  { model: 'gemini-2.0-flash', provider: 'Gemini', inputCostPer1M: 0.7, outputCostPer1M: 2.1, avgLatency: 800, usageShare: 30 },
-  { model: 'gemini-2.0-pro', provider: 'Gemini', inputCostPer1M: 7, outputCostPer1M: 21, avgLatency: 1500, usageShare: 10 },
+  { model: '旗舰模型', provider: '供应商A', inputCostPer1M: 30, outputCostPer1M: 60, avgLatency: 1200, usageShare: 35 },
+  { model: '轻量模型', provider: '供应商A', inputCostPer1M: 1.5, outputCostPer1M: 6, avgLatency: 600, usageShare: 20 },
+  { model: '极速模型', provider: '供应商B', inputCostPer1M: 0.7, outputCostPer1M: 2.1, avgLatency: 800, usageShare: 30 },
+  { model: '专业模型', provider: '供应商B', inputCostPer1M: 7, outputCostPer1M: 21, avgLatency: 1500, usageShare: 10 },
   { model: 'deepseek-v3', provider: 'DeepSeek', inputCostPer1M: 2, outputCostPer1M: 8, avgLatency: 2000, usageShare: 5 }
 ]
 
@@ -275,13 +275,13 @@ function AICostDashboard() {
   var trendClass = tokenTrend >= 0 ? 'up' : 'down'
 
   return React.createElement('div', { className: 'ai-cost-page' },
-    React.createElement('h1', null, 'AI 成本仪表盘'),
-    React.createElement('div', { className: 'ai-cost-subtitle' }, '实时监控 Token 消耗、模型成本与缓存效率'),
+    React.createElement('h1', null, '推演成本仪表盘'),
+    React.createElement('div', { className: 'ai-cost-subtitle' }, '实时监控资源消耗、供应商成本与缓存效率'),
 
     // KPI 卡片
     React.createElement('div', { className: 'ai-cost-kpi-grid' },
       React.createElement('div', { className: 'ai-cost-kpi-card' },
-        React.createElement('div', { className: 'ai-cost-kpi-label' }, '今日 Token'),
+        React.createElement('div', { className: 'ai-cost-kpi-label' }, '今日消耗'),
         React.createElement('div', { className: 'ai-cost-kpi-value' },
           Math.round(todayTokens / 1000),
           React.createElement('span', { className: 'ai-cost-kpi-unit' }, 'k')
@@ -312,7 +312,7 @@ function AICostDashboard() {
     // 趋势图
     React.createElement('div', { className: 'ai-cost-section' },
       React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
-        React.createElement('h2', null, 'Token 使用趋势'),
+        React.createElement('h2', null, '资源使用趋势'),
         React.createElement('div', { style: { display: 'flex', gap: 8 } },
           React.createElement('button', {
             className: 'dash-refresh-btn' + (range === '7d' ? ' active' : ''),
@@ -328,22 +328,22 @@ function AICostDashboard() {
       ),
       React.createElement('div', { className: 'ai-cost-chart-grid', style: { marginTop: 16 } },
         React.createElement('div', { className: 'ai-cost-chart-card' },
-          React.createElement('div', { className: 'ai-cost-chart-title' }, 'Token 使用量'),
+          React.createElement('div', { className: 'ai-cost-chart-title' }, '资源使用量'),
           React.createElement('div', { className: 'ai-cost-chart-container' },
             React.createElement(TokenLineChart, { data: tokenData })
           ),
           React.createElement('div', { className: 'ai-cost-chart-legend' },
             React.createElement('span', { className: 'ai-cost-legend-item' },
               React.createElement('span', { className: 'ai-cost-legend-color', style: { background: '#d4a843' } }),
-              '总Token'
+              '总消耗'
             ),
             React.createElement('span', { className: 'ai-cost-legend-item' },
               React.createElement('span', { className: 'ai-cost-legend-color', style: { background: '#60a5fa' } }),
-              'Prompt'
+              '输入'
             ),
             React.createElement('span', { className: 'ai-cost-legend-item' },
               React.createElement('span', { className: 'ai-cost-legend-color', style: { background: '#a78bfa' } }),
-              'Completion'
+              '输出'
             )
           )
         )

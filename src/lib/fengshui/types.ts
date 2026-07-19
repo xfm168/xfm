@@ -314,6 +314,151 @@ export interface FengShuiExplain {
 
 // ============ 分析选项 ============
 
+// ============ V3.0 专业深化类型 ============
+
+/** 问题严重程度四级分类 */
+export type IssueSeverity = 'severe' | 'significant' | 'moderate' | 'suggestion'
+
+/** 8维评分体系 */
+export interface FengShuiScore8D {
+  /** 格局评分 */
+  pattern: number
+  /** 藏风评分 */
+  windGathering: number
+  /** 聚气评分 */
+  qiGathering: number
+  /** 明堂评分 */
+  mingHall: number
+  /** 动线评分 */
+  flowPath: number
+  /** 光线评分 */
+  lighting: number
+  /** 五行协调评分 */
+  elementHarmony: number
+  /** 综合建议评分 */
+  advice: number
+  /** 综合总分 */
+  overall: number
+}
+
+/** 单项调整方案 */
+export interface FengShuiAdjustment {
+  /** 方案ID */
+  id: string
+  /** 问题描述 */
+  issue: string
+  /** 原因说明 */
+  cause: string
+  /** 改善方法 */
+  solution: string
+  /** 改善难度 */
+  difficulty: 'low' | 'medium' | 'high'
+  /** 预计改善效果 */
+  expectedEffect: string
+  /** 注意事项 */
+  cautions: string
+  /** 问题级别 */
+  severity: IssueSeverity
+  /** 关联规则ID */
+  relatedRuleId: string
+  /** 所属分类 */
+  category: string
+}
+
+/** 风险提示 */
+export interface FengShuiRisk {
+  /** 风险类型 */
+  type: 'longTerm' | 'shortTerm'
+  /** 风险描述 */
+  description: string
+  /** 是否属于传统风水观点（true=传统风水观点，false=空间布局建议） */
+  isTraditionalView: boolean
+}
+
+/** 分析可信度 */
+export interface AnalysisConfidence {
+  /** 可信度等级 */
+  level: 'high' | 'fairlyHigh' | 'moderate' | 'low'
+  /** 可信度分数 0-100 */
+  score: number
+  /** 可信度原因说明 */
+  reasons: string[]
+  /** 图片质量因子 */
+  imageQualityFactors: {
+    /** 清晰度 */
+    clarity: number
+    /** 光照 */
+    lighting: number
+    /** 拍摄角度 */
+    angle: number
+    /** 空间覆盖度 */
+    coverage: number
+  }
+}
+
+/** 风水术语 */
+export interface FengShuiTerm {
+  /** 术语 */
+  term: string
+  /** 通俗解释 */
+  explanation: string
+  /** 分类 */
+  category: string
+  /** 古籍出处（可选） */
+  classicalSource?: string
+}
+
+/** V3.0 专业报告内容 */
+export interface ProfessionalFengShuiReport {
+  /** 8维评分 */
+  score8d: FengShuiScore8D
+  /** 空间格局解析 */
+  patternAnalysis: {
+    /** 格局描述 */
+    description: string
+    /** 对应风水原理 */
+    principle: string
+    /** 通俗解释 */
+    explanation: string
+  }
+  /** 问题列表（按优先级排序：严重→较严重→一般→建议优化） */
+  issues: {
+    id: string
+    title: string
+    severity: IssueSeverity
+    description: string
+    principle: string
+    adjustments: FengShuiAdjustment[]
+  }[]
+  /** 全部调整方案 */
+  allAdjustments: FengShuiAdjustment[]
+  /** 风险提示 */
+  risks: FengShuiRisk[]
+  /** 总体总结（非模板化，根据实际分析生成） */
+  summary: string
+  /** 可信度 */
+  confidence: AnalysisConfidence
+  /** 报告中使用的术语列表 */
+  terms: FengShuiTerm[]
+}
+
+/** 图片质量检测结果 */
+export interface ImageQualityCheck {
+  /** 是否通过检测 */
+  passed: boolean
+  /** 检测项结果 */
+  checks: {
+    item: string
+    passed: boolean
+    message: string
+    severity: 'error' | 'warning' | 'info'
+  }[]
+  /** 综合质量评分 0-100 */
+  overallScore: number
+  /** 建议 */
+  suggestions: string[]
+}
+
 export interface FengShuiAnalysisOptions {
   includeAI?: boolean
   detailed?: boolean

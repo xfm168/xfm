@@ -1,0 +1,283 @@
+/* Professional Report Page — 三层报告架构页面容器 */
+/* 前缀: xr-page */
+
+.xr-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--ink, #333);
+  line-height: 1.6;
+}
+
+/* 加载状态 */
+.xr-loading {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.xr-loading__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--rule, #e0e0e0);
+  border-top-color: var(--accent, #c8a951);
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: xr-spin 0.8s linear infinite;
+}
+
+@keyframes xr-spin {
+  to { transform: rotate(360deg); }
+}
+
+.xr-loading__text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: 0.5rem;
+}
+
+.xr-loading__hint {
+  font-size: 0.85rem;
+  color: var(--muted, #666);
+}
+
+/* 错误状态 */
+.xr-error {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.xr-error__title {
+  font-size: 1.2rem;
+  color: var(--danger, #e74c3c);
+  margin-bottom: 0.5rem;
+}
+
+.xr-error__message {
+  color: var(--muted, #666);
+  margin-bottom: 1.5rem;
+}
+
+.xr-error__retry {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background: var(--accent, #c8a951);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.xr-error__retry:hover {
+  opacity: 0.9;
+}
+
+/* 折叠模块 */
+.xr-collapsible {
+  margin: 1rem 0;
+  background: var(--bg-card, #fff);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.xr-collapsible__header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 0.5rem;
+  color: var(--ink, #333);
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+
+.xr-collapsible__header:hover {
+  background: var(--bg-page, #f5f5f5);
+}
+
+.xr-collapsible__header--open {
+  border-bottom: 1px solid var(--rule, #e0e0e0);
+}
+
+.xr-collapsible__title {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.xr-collapsible__subtitle {
+  font-size: 0.82rem;
+  color: var(--muted, #666);
+  flex: 1;
+}
+
+.xr-collapsible__arrow {
+  font-size: 0.9rem;
+  color: var(--muted, #666);
+  flex-shrink: 0;
+}
+
+.xr-collapsible__body {
+  padding: 0.5rem 1rem 1rem;
+}
+
+/* AI 解释列表 */
+.xr-explains {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.xr-explain-item {
+  padding: 0.8rem;
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}
+
+.xr-explain-item__topic {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: 0.5rem;
+}
+
+.xr-explain-item__plain {
+  font-size: 0.9rem;
+  color: var(--ink, #333);
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.xr-explain-item__pro {
+  font-size: 0.82rem;
+  color: var(--muted, #666);
+  margin-bottom: 0.3rem;
+}
+
+.xr-explain-item__ref {
+  font-size: 0.78rem;
+  color: var(--muted, #888);
+  font-style: italic;
+}
+
+.xr-explain-item__ref-label {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.xr-explain-item__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.xr-explain-item__tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: var(--accent, #c8a951);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.72rem;
+}
+
+/* Trace 详情 */
+.xr-trace-detail {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.xr-trace-detail h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.xr-trace-module {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--rule, #e0e0e0);
+}
+
+.xr-trace-module:last-child {
+  border-bottom: none;
+}
+
+.xr-trace-module__name {
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.xr-trace-module__count {
+  color: var(--accent, #c8a951);
+  font-weight: 600;
+}
+
+.xr-trace-module__desc {
+  color: var(--muted, #666);
+  flex: 1;
+}
+
+/* 底部操作 */
+.xr-footer-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.xr-footer-actions__btn {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.xr-footer-actions__btn:hover {
+  opacity: 0.9;
+}
+
+.xr-footer-actions__btn--primary {
+  background: var(--accent, #c8a951);
+  color: #fff;
+}
+
+.xr-footer-actions__btn--secondary {
+  background: var(--bg-page, #f5f5f5);
+  color: var(--ink, #333);
+  border: 1px solid var(--rule, #e0e0e0);
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+  .xr-page {
+    padding: 0.5rem;
+  }
+
+  .xr-collapsible__header {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .xr-collapsible__subtitle {
+    display: none;
+  }
+
+  .xr-footer-actions {
+    flex-direction: column;
+  }
+
+  .xr-footer-actions__btn {
+    width: 100%;
+  }
+}

@@ -32,7 +32,7 @@ export const ERROR_CODES: Record<BaziErrorCode, Omit<BaziError, 'detail'>> = {
   'BZ-007': { code: 'BZ-007', message: '规则冲突未解决', level: 'Warn' },
   'BZ-008': { code: 'BZ-008', message: '命例不足（低于阈值）', level: 'Warn' },
   'BZ-009': { code: 'BZ-009', message: 'Benchmark 一致率低于阈值', level: 'Warn' },
-  'BZ-010': { code: 'BZ-010', message: 'AI 调用失败（已降级）', level: 'Warn' },
+  'BZ-010': { code: 'BZ-010', message: '推演调用失败（已降级）', level: 'Warn' },
 }
 
 export function createError(code: BaziErrorCode, detail?: string): BaziError {

@@ -68,9 +68,9 @@ Rejected  Archived
 
 ## 想法清单
 
-### IDEA-001：AI 命例反查引擎
+### IDEA-001：命例反查引擎
 
-- **标题**：AI 命例反查引擎
+- **标题**：命例反查引擎
 - **背景**：用户给出已知命理结论（如"此人35岁破财"），反查符合的命例特征。
 - **收益**：提升断命准确率参考库；商业差异化。
 - **风险**：反查逻辑可能误判，需大量命例支撑。
@@ -267,7 +267,7 @@ Rejected  Archived
   - ② 回归测试（Regression）— 数据集不退化
   - ③ 权威历法对照（Benchmark）— 与专业软件对比
   - ④ 真实命例验证（Gold Case）— 真实案例验证
-  - ⑤ AI Cross Validation（AI 交叉验证）— 未来扩展
+  - ⑤ 推演交叉验证（Cross Validation）— 未来扩展
   - ⑥ Master Review（专家审核）— 未来扩展
   - ⑦ User Feedback Validation（用户反馈验证）— 未来扩展
   - ⑧ A/B Accuracy Test（版本准确率对比）— 未来扩展

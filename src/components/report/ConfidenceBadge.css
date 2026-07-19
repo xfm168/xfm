@@ -1,0 +1,124 @@
+/**
+ * ConfidenceBadge - 置信度展示样式
+ * 置信度总览、警告列表、TraceChain 入口
+ * 前缀: xr-cf-
+ */
+
+.xr-cf {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── 总览区域 ── */
+.xr-cf__overview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.xr-cf__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+}
+
+.xr-cf__status--passed {
+  color: var(--success, #27ae60);
+}
+
+.xr-cf__status--failed {
+  color: var(--danger, #e74c3c);
+}
+
+/* ── 置信度进度条 ── */
+.xr-cf__bar {
+  width: 100%;
+}
+
+/* ── 百分比展示 ── */
+.xr-cf__percentage {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent, #c8a951);
+  font-family: var(--font-serif, serif);
+  text-align: center;
+}
+
+.xr-cf__percentage-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ── 警告列表 ── */
+.xr-cf__warnings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.xr-cf__warnings-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--warning, #f39c12);
+  letter-spacing: 0.03em;
+}
+
+.xr-cf__warning {
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+  line-height: 1.5;
+  padding-left: var(--space-4);
+  position: relative;
+}
+
+.xr-cf__warning::before {
+  content: '\2022';
+  position: absolute;
+  left: var(--space-1);
+  color: var(--warning, #f39c12);
+}
+
+/* ── TraceChain 入口 ── */
+.xr-cf__trace {
+  margin-top: var(--space-1);
+}
+
+.xr-cf__trace-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  color: var(--accent2, #5b8def);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--accent2, #5b8def);
+  border-radius: 6px;
+  padding: var(--space-2) var(--space-3);
+  transition: background 0.2s ease, color 0.2s ease;
+  font-family: inherit;
+}
+
+.xr-cf__trace-btn:hover {
+  background: rgba(91, 141, 239, 0.08);
+  color: var(--accent2, #5b8def);
+}
+
+.xr-cf__trace-steps {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+}
+
+/* ── 移动端适配 ── */
+@media (max-width: 480px) {
+  .xr-cf__overview {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -124,8 +124,8 @@ export function refund(
 
 export function constructEvent(
   config: StripeConfig | null,
-  payload: string,
-  signature: string
+  _payload: string,
+  _signature: string
 ): Promise<{ type: string; data: unknown } | null> {
   return new Promise(function(resolve) {
     if (!isConfigured(config)) {

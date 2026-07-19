@@ -35,7 +35,7 @@ export var pointsConfig = {
 export function addPoints(
   balance: PointsBalance,
   amount: number,
-  source: string
+  _source: string
 ): PointsBalance {
   return {
     userId: balance.userId,
@@ -49,7 +49,7 @@ export function addPoints(
 export function spendPoints(
   balance: PointsBalance,
   amount: number,
-  source: string
+  _source: string
 ): PointsBalance | null {
   if (balance.available < amount) {
     return null

@@ -18,7 +18,6 @@ import type {
   V11Payment,
   Refund,
   OrderProductType,
-  V11PaymentStatus,
 } from '../lib/database/types'
 
 type PaymentStatusType = 'idle' | 'loading' | 'success' | 'error'
@@ -34,7 +33,7 @@ interface UsePaymentV2Result {
   createOrder: (
     productType: OrderProductType,
     productId: string,
-    amountCents: number
+    _amountCents: number
   ) => Promise<Order | null>
   confirmPayment: (orderId: string, paymentMethod: V11PaymentMethod) => Promise<Order | null>
   requestRefund: (orderId: string, reason: string) => Promise<Refund | null>
@@ -124,7 +123,7 @@ export function usePaymentV2(): UsePaymentV2Result {
   var createOrder = useCallback(async function(
     productType: OrderProductType,
     productId: string,
-    amountCents: number
+    _amountCents: number,
   ): Promise<Order | null> {
     setLoading(true)
     setError(null)

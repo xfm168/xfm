@@ -1,6 +1,6 @@
 # 玄风门 Engineering Handbook
 
-> 版本：**V2.0** | 生效日期：2026-06-29 | 适用范围：所有开发人员 & AI
+> 版本：**V2.0** | 生效日期：2026-06-29 | 适用范围：所有开发人员
 >
 > 本文档为玄风门项目工程开发规范。所有代码编写、重构、优化必须遵守。
 > 违反规范的代码不得合并入主线。
@@ -355,9 +355,9 @@ wangshuai_hehua_001_jiajihe
 
 ---
 
-## 7. AI 开发规范
+## 7. 推演开发规范
 
-### 7.1 AI 职责边界
+### 7.1 推演职责边界
 
 > 详见《架构宪章》第六原则：AI只是解释器。
 
@@ -598,7 +598,7 @@ Level 4  ──  单元测试全部通过
     ↓
 Level 5  ──  经典案例验证通过
     ↓
-Level 6  ──  AI 输出符合算法
+Level 6  ──  推演输出符合算法
     ↓
 Level 7  ──  文档同步更新
     ↓
@@ -614,7 +614,7 @@ Level 7  ──  文档同步更新
 | L3 | Rule 无冲突 | 规则之间无冲突，优先级正确 | Rule Engine 自检 |
 | L4 | 单元测试全部通过 | 正常+边界+经典+反例 全部通过 | Vitest 测试 |
 | L5 | 经典案例验证通过 | 典籍案例验证达标 | 人工验证 + 自动化对比 |
-| L6 | AI 输出符合算法 | AI解释与算法结论一致，无幻觉 | 抽样检查 + Prompt Review |
+| L6 | 推演输出符合算法 | AI解释与算法结论一致，无幻觉 | 抽样检查 + Prompt Review |
 | L7 | 文档同步更新 | 相关文档全部更新 | Code Review 检查 |
 
 ---
@@ -735,7 +735,7 @@ feature  develop  release    main
 | # | 检查项 | 说明 | 责任人 |
 |---|--------|------|--------|
 | 1 | Rule版本号 | 规则引擎版本号已更新 | 算法负责人 |
-| 2 | Prompt版本号 | AI Prompt 版本号已更新 | AI负责人 |
+| 2 | Prompt版本号 | 推演 Prompt 版本号已更新 | 推演负责人 |
 | 3 | 数据库Migration | 迁移脚本已验证，回滚脚本已准备 | 后端负责人 |
 | 4 | Edge Function | 所有Edge Function已部署并测试 | 后端负责人 |
 | 5 | API | 接口兼容，无破坏性变更 | 后端负责人 |
@@ -761,7 +761,7 @@ feature  develop  release    main
 | 4 | ✅ Rule说明 | 新增的Rule是否有来源依据，是否有文档 |
 | 5 | ✅ 更新文档 | 是否同步更新相关文档（Rule Spec / Whitepaper / API Spec / Project Status） |
 | 6 | ✅ 影响其他模块 | 是否影响其他模块，影响是否可控 |
-| 7 | ✅ 影响AI Prompt | 是否需要更新 Prompt，Reason Chain 是否同步 |
+| 7 | ✅ 影响推演 Prompt | 是否需要更新 Prompt，Reason Chain 是否同步 |
 | 8 | ✅ 影响API | 是否有API变更，是否有版本兼容 |
 | 9 | ✅ 影响数据库 | 是否有数据库变更，是否有Migration |
 | 10 | ✅ TypeScript无错误 | 严格模式下0错误 |
@@ -797,7 +797,7 @@ feature  develop  release    main
 - [ ] L3 Rule 无冲突
 - [ ] L4 单元测试全部通过
 - [ ] L5 经典案例验证通过
-- [ ] L6 AI 输出符合算法
+- [ ] L6 推演输出符合算法
 - [ ] L7 文档同步更新
 - [ ] Project Status 已更新
 - [ ] 提交信息符合规范

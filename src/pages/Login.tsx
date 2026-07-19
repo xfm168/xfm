@@ -9,10 +9,17 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import type { SocialProvider } from '../hooks/useAuth'
 import './Login.css'
+import { usePageSEO } from '../hooks/usePageSEO'
 
 type LoginMode = 'password' | 'otp'
 
 function Login() {
+  usePageSEO({
+    title: '登录 | 玄风门',
+    description: '登录玄风门账号，管理您的八字命盘、风水分析记录和会员权益。',
+    noindex: true
+  })
+
   var navigate = useNavigate()
   var auth = useAuth()
 
@@ -182,7 +189,7 @@ function Login() {
           className: 'login-submit',
           disabled: auth.loading,
           onClick: handleSubmit
-        }, auth.loading ? '处理中...' : isRegister ? '注册' : '登录')
+        }, auth.loading ? '推演中...' : isRegister ? '注册' : '登录')
       ),
 
       // 社交登录

@@ -1,0 +1,78 @@
+.te-card {
+  position: relative;
+  background: linear-gradient(135deg, #12151e 0%, #1a1f2e 100%);
+  border: 1px solid #c9952d;
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  overflow: hidden;
+}
+.te-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at center, rgba(201,149,45,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.te-content {
+  position: relative;
+  z-index: 1;
+}
+.te-icon {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  filter: drop-shadow(0 0 8px rgba(201,149,45,0.4));
+}
+.te-headline {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #e2e5ed;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+.te-subtitle {
+  font-size: 0.85rem;
+  color: #a0a5b8;
+  margin-bottom: 1.2rem;
+  line-height: 1.5;
+}
+.te-btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  border: none;
+  letter-spacing: 0.05em;
+  font-family: inherit;
+}
+.te-btn-gold {
+  background: linear-gradient(135deg, #c9952d, #d4a843);
+  color: #0a0a0a;
+  box-shadow: 0 4px 16px rgba(201,149,45,0.3);
+}
+.te-btn-gold:hover {
+  background: linear-gradient(135deg, #d4a843, #e0b94f);
+  box-shadow: 0 6px 24px rgba(201,149,45,0.45);
+  transform: translateY(-1px);
+}
+.te-btn-outline {
+  background: transparent;
+  color: #c9952d;
+  border: 1px solid #c9952d;
+}
+.te-btn-outline:hover {
+  background: rgba(201,149,45,0.1);
+  box-shadow: 0 4px 16px rgba(201,149,45,0.15);
+  transform: translateY(-1px);
+}
+.te-note {
+  margin-top: 0.8rem;
+  font-size: 0.75rem;
+  color: #6b7394;
+}

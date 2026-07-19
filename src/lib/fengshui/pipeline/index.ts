@@ -11,6 +11,7 @@
 import type { 
   FengShuiContext, 
   FengShuiResult, 
+  ImageQualityCheck,
 } from '../types'
 import type {
   ImageAnalysisResult,
@@ -23,10 +24,15 @@ import { analyzeHouseRooms } from '../room-engine'
 import { extractFeatures } from '../feature-engine'
 import { executeRules } from '../rules/executor'
 import { ALL_RULES } from '../rules'
-import { calculateScore } from '../score-engine'
+import { calculateScore, calculateScore8D } from '../score-engine'
+import type { Score8DResult } from '../score-engine/types'
 import { knowledgeBase, generateExplain } from '../knowledge'
 import { buildEvidenceChains } from '../evidenceChain'
 import type { EvidenceChain } from '../evidenceChain'
+import { checkImageQuality } from '../utils/imageQuality'
+import { generateCacheKey, getCache, setCache } from '../utils/cache'
+import { buildProfessionalReport, toPipelineReport, calculateAnalysisConfidence } from './professionalReport'
+import type { ProfessionalFengShuiReport } from '../types'
 
 // ============ Pipeline 步骤定义 ============
 
@@ -42,16 +48,12 @@ export interface PipelineStep {
 }
 
 export const PIPELINE_STEPS: Omit<PipelineStep, 'status' | 'progress'>[] = [
-  { id: 'vision', name: '图像识别', icon: '👁️' },
-  { id: 'floor-plan', name: '户型分析', icon: '📐' },
-  { id: 'spatial', name: '空间分析', icon: '📍' },
-  { id: 'furniture', name: '家具识别', icon: '🛋️' },
-  { id: 'room', name: '房间评估', icon: '🚪' },
-  { id: 'feature', name: '特征提取', icon: '✨' },
-  { id: 'rule', name: '规则匹配', icon: '📜' },
-  { id: 'score', name: '评分计算', icon: '📊' },
-  { id: 'knowledge', name: '知识关联', icon: '📚' },
-  { id: 'report', name: '报告生成', icon: '📝' },
+  { id: 'observing-form', name: '正在观形', icon: '👁️' },
+  { id: 'observing-layout', name: '正在察势', icon: '📐' },
+  { id: 'analyzing-layout', name: '分析空间布局', icon: '🛋️' },
+  { id: 'deducing-qi', name: '推演气场', icon: '✨' },
+  { id: 'organizing-advice', name: '整理建议', icon: '📊' },
+  { id: 'generating-report', name: '生成勘测结果', icon: '📝' },
 ]
 
 // ============ Pipeline 输入输出 ============
@@ -59,6 +61,10 @@ export const PIPELINE_STEPS: Omit<PipelineStep, 'status' | 'progress'>[] = [
 export interface PipelineInput {
   /** 图片数据（Base64） */
   imageData: string
+  /** 已加载的 HTMLImageElement（优先使用，避免重复解码） */
+  imageElement?: HTMLImageElement
+  /** 已加载的 ImageBitmap（最高优先级） */
+  imageBitmap?: ImageBitmap
   /** 房间类型（可选） */
   roomType?: string
   /** 用户补充信息 */
@@ -97,10 +103,16 @@ export interface PipelineOutput {
   ruleResult?: any
   /** 评分结果 */
   scoreResult?: FengShuiResult
+  /** 八维评分结果 */
+  score8D?: Score8DResult
   /** 证据链 */
   evidenceChains?: EvidenceChain[]
   /** 完整报告 */
   report?: PipelineReport
+  /** 专业报告（V3.0） */
+  professionalReport?: ProfessionalFengShuiReport
+  /** 图片质量检测结果 */
+  imageQuality?: ImageQualityCheck
   /** 错误信息 */
   error?: string
 }
@@ -145,8 +157,11 @@ export async function runFullPipeline(input: PipelineInput): Promise<PipelineOut
   let featureResult: any
   let ruleResult: any
   let scoreResult: FengShuiResult | undefined
+  let score8D: Score8DResult | undefined
   let evidenceChains: EvidenceChain[] | undefined
   let report: PipelineReport | undefined
+  let professionalReport: ProfessionalFengShuiReport | undefined
+  let imageQuality: ImageQualityCheck | undefined
   let error: string | undefined
   let status: PipelineOutput['status'] = 'success'
 
@@ -159,76 +174,114 @@ export async function runFullPipeline(input: PipelineInput): Promise<PipelineOut
     }
   }
 
+  // ============ V3.0: 缓存检查 ============
+  const cacheKey = generateCacheKey(input.imageData, input.roomType || '')
+  const cached = getCache<PipelineOutput>(cacheKey)
+  if (cached) {
+    return {
+      ...cached,
+      totalTime: Date.now() - startTime,
+      status: 'success',
+    }
+  }
+
+  // ============ V3.0: 图片质量预检 ============
+  imageQuality = checkImageQuality(input.imageData)
+
   try {
-    // ============ Step 1: Vision Engine 图像识别 ============
-    updateStep('vision', { status: 'running', progress: 0, startTime: Date.now() })
-    
+    // ============ Step 1: 正在观形 (Vision) ============
+    updateStep('observing-form', { status: 'running', progress: 0, startTime: Date.now() })
+
     visionResult = await runVisionStep(input)
-    
-    updateStep('vision', { status: 'completed', progress: 100, endTime: Date.now() })
 
-    // ============ Step 2: FloorPlan Engine 户型分析 ============
-    updateStep('floor-plan', { status: 'running', progress: 0, startTime: Date.now() })
-    
+    updateStep('observing-form', { status: 'completed', progress: 100, endTime: Date.now() })
+
+    // ============ Step 2: 正在察势 (FloorPlan + Spatial) ============
+    updateStep('observing-layout', { status: 'running', progress: 0, startTime: Date.now() })
+
     floorPlanResult = await runFloorPlanStep(input, visionResult)
-    
-    updateStep('floor-plan', { status: 'completed', progress: 100, endTime: Date.now() })
+    updateStep('observing-layout', { status: 'running', progress: 50 })
 
-    // ============ Step 3: Spatial Engine 空间分析 ============
-    updateStep('spatial', { status: 'running', progress: 0, startTime: Date.now() })
-    
     spatialResult = runSpatialStep(floorPlanResult, visionResult, input)
-    
-    updateStep('spatial', { status: 'completed', progress: 100, endTime: Date.now() })
 
-    // ============ Step 4: Furniture Engine 家具识别 ============
-    updateStep('furniture', { status: 'running', progress: 0, startTime: Date.now() })
-    
+    updateStep('observing-layout', { status: 'completed', progress: 100, endTime: Date.now() })
+
+    // ============ Step 3: 分析空间布局 (Furniture + Room) ============
+    updateStep('analyzing-layout', { status: 'running', progress: 0, startTime: Date.now() })
+
     const furnitureResult = runFurnitureStep(visionResult)
-    
-    updateStep('furniture', { status: 'completed', progress: 100, endTime: Date.now() })
+    updateStep('analyzing-layout', { status: 'running', progress: 50 })
 
-    // ============ Step 5: Room Engine 房间评估 ============
-    updateStep('room', { status: 'running', progress: 0, startTime: Date.now() })
-    
     roomResult = runRoomStep(spatialResult, furnitureResult, visionResult)
-    
-    updateStep('room', { status: 'completed', progress: 100, endTime: Date.now() })
 
-    // ============ Step 6: Feature Engine 特征提取 ============
-    updateStep('feature', { status: 'running', progress: 0, startTime: Date.now() })
-    
+    updateStep('analyzing-layout', { status: 'completed', progress: 100, endTime: Date.now() })
+
+    // ============ Step 4: 推演气场 (Feature + Rule) ============
+    updateStep('deducing-qi', { status: 'running', progress: 0, startTime: Date.now() })
+
     featureResult = runFeatureStep(spatialResult, roomResult, input)
-    
-    updateStep('feature', { status: 'completed', progress: 100, endTime: Date.now() })
+    updateStep('deducing-qi', { status: 'running', progress: 50 })
 
-    // ============ Step 7: Rule Engine 规则匹配 ============
-    updateStep('rule', { status: 'running', progress: 0, startTime: Date.now() })
-    
     ruleResult = runRuleStep(featureResult, roomResult, spatialResult)
-    
-    updateStep('rule', { status: 'completed', progress: 100, endTime: Date.now() })
 
-    // ============ Step 8: Score Engine 评分计算 ============
-    updateStep('score', { status: 'running', progress: 0, startTime: Date.now() })
-    
+    updateStep('deducing-qi', { status: 'completed', progress: 100, endTime: Date.now() })
+
+    // ============ Step 5: 整理建议 (Score + Knowledge) ============
+    updateStep('organizing-advice', { status: 'running', progress: 0, startTime: Date.now() })
+
     scoreResult = runScoreStep(ruleResult, featureResult, roomResult, spatialResult)
-    
-    updateStep('score', { status: 'completed', progress: 100, endTime: Date.now() })
 
-    // ============ Step 9: Knowledge Base 知识关联 ============
-    updateStep('knowledge', { status: 'running', progress: 0, startTime: Date.now() })
-    
+    // V3.0: 八维评分
+    try {
+      score8D = calculateScore8D({
+        features: featureResult,
+        spatial: spatialResult,
+        rooms: roomResult,
+        ruleResults: ruleResult,
+        userProvided: input.userInfo,
+      })
+    } catch {
+      // 降级：使用原有评分映射
+      score8D = legacyTo8D(scoreResult)
+    }
+
+    updateStep('organizing-advice', { status: 'running', progress: 60 })
+
     evidenceChains = runKnowledgeStep(ruleResult)
-    
-    updateStep('knowledge', { status: 'completed', progress: 100, endTime: Date.now() })
 
-    // ============ Step 10: Report 报告生成 ============
-    updateStep('report', { status: 'running', progress: 0, startTime: Date.now() })
-    
-    report = runReportStep(scoreResult, evidenceChains, visionResult, roomResult, ruleResult)
-    
-    updateStep('report', { status: 'completed', progress: 100, endTime: Date.now() })
+    updateStep('organizing-advice', { status: 'completed', progress: 100, endTime: Date.now() })
+
+    // ============ Step 6: 生成勘测结果 (Report) ============
+    updateStep('generating-report', { status: 'running', progress: 0, startTime: Date.now() })
+
+    // V3.0: 计算分析可信度
+    const confidence = calculateAnalysisConfidence({
+      imageQualityScore: imageQuality?.overallScore ?? 70,
+      visionDetectedCount: visionResult?.detectedObjects?.length ?? 0,
+      ruleMatchCount: ruleResult?.results?.length ?? 0,
+      hasUserInput: !!input.userInfo,
+      analysisDurationMs: Date.now() - startTime,
+    })
+
+    // V3.0: 生成专业报告
+    try {
+      professionalReport = buildProfessionalReport({
+        scoreResult,
+        score8D,
+        evidenceChains,
+        visionResult,
+        roomResult,
+        ruleResult,
+        confidence,
+      })
+      // 转换为兼容格式
+      report = toPipelineReport(professionalReport, visionResult)
+    } catch {
+      // 降级到原有报告生成
+      report = runReportStep(scoreResult, evidenceChains, visionResult, roomResult, ruleResult)
+    }
+
+    updateStep('generating-report', { status: 'completed', progress: 100, endTime: Date.now() })
 
   } catch (err) {
     status = 'error'
@@ -243,7 +296,7 @@ export async function runFullPipeline(input: PipelineInput): Promise<PipelineOut
     }
   }
 
-  return {
+  const output: PipelineOutput = {
     status,
     totalTime: Date.now() - startTime,
     steps,
@@ -254,9 +307,40 @@ export async function runFullPipeline(input: PipelineInput): Promise<PipelineOut
     featureResult,
     ruleResult,
     scoreResult,
+    score8D,
     evidenceChains,
     report,
+    professionalReport,
+    imageQuality,
     error,
+  }
+
+  // V3.0: 写入缓存（仅成功时）
+  if (status === 'success' && cacheKey) {
+    setCache(cacheKey, output)
+  }
+
+  return output
+}
+
+// ============ V3.0 降级辅助函数 ============
+
+function legacyTo8D(scoreResult: FengShuiResult | undefined): any {
+  const s = scoreResult
+  return {
+    dimensions: {
+      pattern: { score: s?.layoutScore ?? 70, maxScore: 100, weight: 20, weightedScore: 14, level: 'good', description: '基于传统评分映射', factors: [] },
+      windGathering: { score: s?.environmentScore ?? 70, maxScore: 100, weight: 15, weightedScore: 10, level: 'good', description: '基于传统评分映射', factors: [] },
+      qiGathering: { score: s?.overallScore ?? 70, maxScore: 100, weight: 15, weightedScore: 10, level: 'good', description: '基于传统评分映射', factors: [] },
+      mingHall: { score: s?.directionScore ?? 70, maxScore: 100, weight: 10, weightedScore: 7, level: 'good', description: '基于传统评分映射', factors: [] },
+      flowPath: { score: s?.roomScore ?? 70, maxScore: 100, weight: 10, weightedScore: 7, level: 'good', description: '基于传统评分映射', factors: [] },
+      lighting: { score: s?.environmentScore ?? 70, maxScore: 100, weight: 10, weightedScore: 7, level: 'good', description: '基于传统评分映射', factors: [] },
+      elementHarmony: { score: s?.elementScore ?? 70, maxScore: 100, weight: 10, weightedScore: 7, level: 'good', description: '基于传统评分映射', factors: [] },
+      advice: { score: s?.overallScore ?? 70, maxScore: 100, weight: 10, weightedScore: 7, level: 'good', description: '基于传统评分映射', factors: [] },
+    },
+    overallScore: s?.overallScore ?? 70,
+    overallLevel: (s?.overallScore ?? 70) >= 85 ? 'excellent' : (s?.overallScore ?? 70) >= 70 ? 'good' : (s?.overallScore ?? 70) >= 50 ? 'fair' : 'poor',
+    summary: '基于传统评分的兼容映射。',
   }
 }
 
@@ -981,7 +1065,7 @@ function generateAIInterpretationContent(result: FengShuiResult): string {
 ### 建议
 建议优先处理主要问题，逐步调整布局，整体运势有望提升。
 
-*本解读由 AI 自动生成，仅供参考。*`
+*本解读由推演引擎自动生成，仅供参考。*`
 }
 
 function generateImprovementPlanContent(result: FengShuiResult, evidenceChains: EvidenceChain[]): string {
@@ -1053,7 +1137,7 @@ function generateCautionsContent(): string {
 
 ---
 
-*本报告由 AI 自动生成，仅供参考，不构成任何决策依据。*`
+*本报告由推演引擎自动生成，仅供参考，不构成任何决策依据。*`
 }
 
 function formatImpact(impact: any): string {
