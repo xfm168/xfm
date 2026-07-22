@@ -70,7 +70,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'fengshui', label: '风水' },
   { key: 'analysis', label: '解析' },
   { key: 'report', label: '报告' },
-  { key: 'ask', label: 'AI 问命' },
+  { key: 'ask', label: '玄机问命' },
   { key: 'fengshui-link', label: '风水建议' },
   { key: 'annual', label: '年度运势' },
 ]
@@ -469,7 +469,7 @@ export default function BaziChart() {
 
   // V4.2 新增处理函数
 
-  /** AI 问命 */
+  /** 玄机问命 */
   const handleAskQuestion = useCallback(() => {
     if (!chart || !askQuestion.trim()) return
     setAskLoading(true)
@@ -485,7 +485,7 @@ export default function BaziChart() {
       setAskHistory(prev => [result, ...prev].slice(0, 20))
       setAskQuestion('')
     } catch (e) {
-      console.error('AI 问命失败', e)
+      console.error('玄机问命失败', e)
     } finally {
       setAskLoading(false)
     }
@@ -2862,12 +2862,12 @@ export default function BaziChart() {
 
           {/* ===== V4.2 新增 Tab ===== */}
 
-          {/* AI 问命 */}
+          {/* 玄机问命 */}
           {activeTab === 'ask' && (
             <Card className="bazi-overview-card">
-              <h3 className="card-title">AI 问命</h3>
+              <h3 className="card-title">玄机问命</h3>
               <p style={{ color: '#a89f8a', fontSize: 14, marginBottom: 16 }}>
-                基于命盘数据的智能问答，输入您的问题获得个性化命理解读
+                基于命盘数据的玄机推演，输入您的问题获得个性化命理解读
               </p>
               <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
                 <input

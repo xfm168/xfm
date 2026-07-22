@@ -1,0 +1,218 @@
+.bazi-history-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding-bottom: var(--space-16);
+}
+
+.bazi-history-content {
+  padding: var(--space-6) var(--space-4);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 空状态 */
+.bazi-history-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+.bazi-history-empty-icon {
+  font-size: 48px;
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+  opacity: 0.4;
+}
+
+.bazi-history-empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-2) 0;
+  font-family: var(--font-serif);
+}
+
+.bazi-history-empty-desc {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin: 0 0 var(--space-6) 0;
+}
+
+.bazi-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-history-item {
+  margin-bottom: 0;
+}
+
+/* 工具栏 */
+.bazi-history-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-color, rgba(212, 175, 55, 0.1));
+}
+
+.bazi-history-sort {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.sort-btn {
+  padding: 4px 12px;
+  border-radius: var(--radius-md, 6px);
+  font-size: 0.75rem;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.sort-btn:hover {
+  color: var(--text-secondary);
+  border-color: var(--border-color, rgba(255, 255, 255, 0.2));
+}
+
+.sort-btn--active {
+  color: var(--accent, #d4af37);
+  border-color: var(--accent, #d4af37);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.bazi-history-clear {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.history-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-item-date {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+}
+
+.history-item-gender {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+.history-item-score {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.history-item-score .score-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-serif);
+}
+
+.history-item-score .score-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+/* 增强信息标签 */
+.history-item-details {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.detail-tag {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm, 4px);
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--accent, #d4af37);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  font-family: var(--font-serif);
+  letter-spacing: 0.5px;
+}
+
+.detail-tag--subtle {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-tertiary);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.detail-tag--accent {
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gold-500, #d4af37);
+  border-color: rgba(212, 175, 55, 0.25);
+  font-weight: 500;
+}
+
+.history-item-pillars {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.pillar-tag {
+  flex: 1;
+  text-align: center;
+  padding: var(--space-2) 0;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-family: var(--font-serif);
+}
+
+.pillar-tag.day {
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.history-item-time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-bottom: var(--space-3);
+}
+
+.history-item-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .pillar-tag {
+    font-size: 0.75rem;
+  }
+
+  .bazi-history-toolbar {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+}

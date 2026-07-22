@@ -14,7 +14,7 @@ function ShareCard(props: any) {
 
   return React.createElement('div', { className: 'share-card share-card-' + type },
     React.createElement('div', { className: 'sc-header' },
-      React.createElement('span', { className: 'sc-brand' }, '玄风门 XuanFengMen'),
+      React.createElement('span', { className: 'sc-brand' }, '玄风门'),
       React.createElement('span', { className: 'sc-type' }, title)
     ),
     React.createElement('div', { className: 'sc-body' },

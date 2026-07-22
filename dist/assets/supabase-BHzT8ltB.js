@@ -1,0 +1,1 @@
+import{c as e}from"./fengshui-DmM_2rPH.js";function t(){return e.error(`缺少环境变量配置：VITE_SUPABASE_URL 和/或 VITE_SUPABASE_ANON_KEY。需要 Supabase 功能的页面将无法正常工作。`,`Supabase`),null}var n=t();export{n as t};

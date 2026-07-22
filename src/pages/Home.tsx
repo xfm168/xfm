@@ -34,6 +34,12 @@ const featureCards = [
     subtitle: '观宅察势 · 调和宅气',
     path: '/fengshui',
   },
+  {
+    icon: 'records' as const,
+    name: '卦象记录',
+    subtitle: '7天 · 30天 · 全部',
+    path: '/records',
+  },
 ]
 
 export default function Home() {

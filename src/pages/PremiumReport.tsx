@@ -247,7 +247,7 @@ function UnlockedView({ data, roomName, score, onBack }: {
 
         {/* Master Reading */}
         <section className="prem-section">
-          <h2 className="prem-section-title">AI风水师深度解读</h2>
+          <h2 className="prem-section-title">玄机风水师深度解读</h2>
           <div className="master-card">
             <div className="master-header">
               <span className="master-icon">☯</span>

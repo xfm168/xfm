@@ -1,0 +1,607 @@
+/* ═══════════════════════════════════════════════════════════════════
+   玄风门首页 — 故宫博物院 / 国博风格
+   ═══════════════════════════════════════════════════════════════════ */
+
+.home {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   背景层
+   ═══════════════════════════════════════════════════════════════════ */
+
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* 薄雾层 */
+.bg-fog {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 70%, rgba(11, 31, 59, 0.4) 0%, transparent 70%);
+  animation: fogDrift 20s ease-in-out infinite;
+}
+
+@keyframes fogDrift {
+  0%, 100% { opacity: 0.8; transform: translateX(0); }
+  50% { opacity: 0.6; transform: translateX(2%); }
+}
+
+/* 山峦剪影 */
+.bg-mountain {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 400' preserveAspectRatio='none'%3E%3Cpath fill='%23071024' d='M0,400 L0,300 L60,260 L120,280 L200,220 L280,260 L360,200 L460,240 L560,180 L660,220 L760,160 L860,200 L960,140 L1060,180 L1160,220 L1260,200 L1360,240 L1440,220 L1440,400 Z' opacity='0.7'/%3E%3Cpath fill='%230B1F3B' fill-opacity='0.6' d='M0,400 L0,320 L100,280 L200,300 L320,240 L440,280 L560,220 L680,260 L800,200 L920,240 L1040,180 L1160,220 L1280,260 L1440,220 L1440,400 Z'/%3E%3Cpath fill='%23071528' fill-opacity='0.8' d='M0,400 L0,340 L160,300 L320,320 L480,270 L640,310 L800,260 L960,300 L1120,250 L1280,290 L1440,260 L1440,400 Z'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  opacity: 0.5;
+}
+
+/* 薄雾叠加 */
+.bg-mist {
+  position: absolute;
+  bottom: 20%;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(11, 31, 59, 0.15) 40%,
+    rgba(7, 22, 41, 0.3) 100%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HERO — 主视觉区域
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px 48px;
+  gap: 36px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ── 太极八卦核心 ── */
+.taiji-wrap {
+  position: relative;
+  width: 100%;
+  max-width: min(80vw, 480px);
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInUp 1.2s ease-out 0.3s both;
+}
+
+.taiji-compass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.taiji-compass > .xbiz-compass {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.taiji-compass > .xbiz-compass svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 柔和神光（替代放射线） */
+.taiji-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  max-width: 520px;
+  max-height: 520px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(212, 175, 55, 0.1) 0%,
+    rgba(212, 175, 55, 0.05) 40%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.taiji-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.12));
+}
+
+/* 太极缓慢旋转 - 20秒一圈 */
+.taiji-body {
+  transform-origin: 250px 250px;
+  animation: taijiRotate 20s linear infinite;
+}
+
+@keyframes taijiRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* 八卦符号组 */
+.bagua-gua {
+  /* 八卦不随太极旋转，保持固定方位 */
+}
+
+/* ── 品牌标题 ── */
+.brand-section {
+  text-align: center;
+  animation: fadeInUp 1.2s ease-out 0.8s both;
+  width: 100%;
+}
+
+.brand-title {
+  font-size: clamp(2.8rem, 10vw, 5rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  background: linear-gradient(180deg,
+    #F0D078 0%,
+    #E8C56A 20%,
+    #D4AF37 50%,
+    #B8860B 80%,
+    #8B6914 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 24px rgba(212, 175, 55, 0.25));
+  font-family: 'Noto Serif SC', 'STKaiti', 'KaiTi', Georgia, serif;
+}
+
+.brand-tagline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.brand-tagline p {
+  font-size: 0.95rem;
+  color: var(--gold);
+  letter-spacing: 0.3em;
+  line-height: 1.8;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   功能入口
+   ═══════════════════════════════════════════════════════════════════ */
+
+.features-section {
+  position: relative;
+  z-index: 1;
+  padding: 48px 20px 56px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.features-grid .xbiz-feature-card {
+  min-height: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.features-grid .xbiz-feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.03) 50%,
+    transparent 100%
+  );
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.features-grid .xbiz-feature-card:hover::before {
+  left: 100%;
+}
+
+.home-feature-card {
+  animation: cardAppear 0.7s ease-out both;
+}
+
+@keyframes cardAppear {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   品牌语
+   ═══════════════════════════════════════════════════════════════════ */
+
+.slogan-section {
+  position: relative;
+  z-index: 1;
+  padding: 60px 20px 80px;
+  text-align: center;
+}
+
+.slogan-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.slogan-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 200px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.4) 50%,
+    transparent 100%
+  );
+}
+
+.divider-diamond {
+  color: var(--gold);
+  font-size: 0.6rem;
+  opacity: 0.7;
+}
+
+.slogan-text {
+  font-size: clamp(1.5rem, 6vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  background: linear-gradient(180deg,
+    #E8C56A 0%,
+    #D4AF37 40%,
+    #B8860B 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.15));
+  animation: sloganReveal 1.5s ease-out 1.5s both;
+}
+
+@keyframes sloganReveal {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.bottom-space {
+  height: 80px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1.2 运营组件
+   ═══════════════════════════════════════════════════════════════════ */
+
+.v12-ops-section,
+.v12-trial-section,
+.v12-value-section,
+.v12-faq-section {
+  padding: 2rem 1.25rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.v12-ops-section {
+  padding-top: 0.5rem;
+}
+
+.v12-faq-section {
+  padding-bottom: 2rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE — 平板 / 桌面
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 640px) {
+  .hero {
+    padding: 80px 32px 64px;
+    gap: 48px;
+  }
+
+  .taiji-wrap {
+    max-width: min(65vw, 440px);
+  }
+
+  .brand-title {
+    font-size: clamp(3.5rem, 8vw, 5.5rem);
+  }
+
+  .brand-tagline p {
+    font-size: 1rem;
+  }
+
+  .features-section {
+    padding: 48px 32px;
+  }
+
+  .features-grid {
+    gap: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding: 100px 40px 80px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1000px;
+    gap: 48px;
+  }
+
+  .taiji-wrap {
+    max-width: 400px;
+    flex: 0 0 auto;
+    order: 0;
+  }
+
+  .brand-section {
+    width: 100%;
+    order: 1;
+  }
+
+  .features-section {
+    max-width: 1000px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    padding: 120px 60px 100px;
+    max-width: 1200px;
+    gap: 60px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .taiji-wrap {
+    max-width: 480px;
+  }
+
+  .brand-section {
+    width: 100%;
+  }
+
+  .brand-title {
+    font-size: clamp(4rem, 7vw, 6.5rem);
+    letter-spacing: 0.35em;
+  }
+
+  .brand-tagline p {
+    font-size: 1.1rem;
+    letter-spacing: 0.35em;
+  }
+
+  .features-section {
+    padding: 60px 40px;
+  }
+
+  .slogan-section {
+    padding: 80px 40px 100px;
+  }
+
+  .v12-ops-section,
+  .v12-trial-section,
+  .v12-value-section,
+  .v12-faq-section {
+    max-width: 1000px;
+    padding: 2rem 2.5rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .hero {
+    max-width: 1400px;
+    padding: 140px 80px 120px;
+    gap: 80px;
+  }
+
+  .taiji-wrap {
+    max-width: 560px;
+  }
+
+  .brand-title {
+    font-size: clamp(4.5rem, 6vw, 7.5rem);
+  }
+
+  .features-section {
+    max-width: 1200px;
+    padding: 72px 60px;
+  }
+
+  .v12-ops-section,
+  .v12-trial-section,
+  .v12-value-section,
+  .v12-faq-section {
+    max-width: 1200px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE — 小屏幕（320px ~ 375px）
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 375px) {
+  .hero {
+    padding: 48px 16px 36px;
+    gap: 28px;
+  }
+
+  .taiji-wrap {
+    max-width: min(75vw, 280px);
+  }
+
+  .brand-title {
+    font-size: 2.5rem;
+    letter-spacing: 0.25em;
+    margin-bottom: 16px;
+  }
+
+  .brand-tagline p {
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+  }
+
+  .features-section {
+    padding: 36px 16px 44px;
+  }
+
+  .features-grid {
+    gap: 12px;
+  }
+
+  .features-grid .xbiz-feature-card {
+    min-height: 88px;
+    padding: var(--space-4) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .features-grid .xbiz-feature-card__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .features-grid .xbiz-feature-card__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .features-grid .xbiz-feature-card__title {
+    font-size: 0.9rem;
+  }
+
+  .features-grid .xbiz-feature-card__subtitle {
+    font-size: 0.7rem;
+  }
+
+  .slogan-section {
+    padding: 48px 16px 64px;
+  }
+
+  .slogan-text {
+    font-size: 1.3rem;
+    letter-spacing: 0.25em;
+  }
+
+  .slogan-divider {
+    width: 160px;
+  }
+
+  .v12-ops-section,
+  .v12-trial-section,
+  .v12-value-section,
+  .v12-faq-section {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .hero {
+    padding: 40px 12px 32px;
+    gap: 24px;
+  }
+
+  .taiji-wrap {
+    max-width: 240px;
+  }
+
+  .brand-title {
+    font-size: 2.2rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+  }
+
+  .brand-tagline p {
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    gap: 8px;
+  }
+
+  .features-section {
+    padding: 28px 12px 36px;
+  }
+
+  .features-grid {
+    gap: 10px;
+  }
+
+  .features-grid .xbiz-feature-card {
+    min-height: 80px;
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .features-grid .xbiz-feature-card__icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .features-grid .xbiz-feature-card__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .features-grid .xbiz-feature-card__title {
+    font-size: 0.82rem;
+  }
+
+  .features-grid .xbiz-feature-card__subtitle {
+    font-size: 0.65rem;
+  }
+
+  .slogan-text {
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+  }
+}

@@ -1,0 +1,1 @@
+function e(e){return{wechat:`wechat`,alipay:`alipay`,stripe:`stripe`}[e]||`stripe`}function t(t,n){var r=Date.now(),i=1800*1e3,a=e(n);return{orderNo:t.order_no||t.id,amountCents:t.amount_cents,currency:t.currency,method:n,provider:a,providerUrl:``,qrCode:null,expiresAt:new Date(r+i).toISOString()}}export{t};

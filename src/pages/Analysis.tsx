@@ -391,7 +391,7 @@ export default function Analysis() {
                     '健康位 · 病符位解析',
                     '家具布局专业建议',
                     '颜色五行搭配方案',
-                    'AI风水师深度解读',
+                    '玄机风水师深度解读',
                   ].map(f => (
                     <li key={f} className="pt-feature-item">
                       <span className="pt-lock">🔒</span>

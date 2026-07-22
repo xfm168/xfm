@@ -1,0 +1,4565 @@
+/**
+ * BaziVisualization 配套样式
+ * 玄风门 V4.2
+ *
+ * 所有可视化组件的样式定义。
+ * 遵循玄风门设计系统色系：金色(#D4AF37)、棕色(#8B4513) 为主调。
+ */
+
+/* ===== 公共样式 ===== */
+
+.bazi-viz-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #8B4513;
+  margin: 0 0 4px;
+  letter-spacing: 2px;
+  border-left: 3px solid #D4AF37;
+  padding-left: 10px;
+}
+
+.bazi-viz-desc {
+  font-size: 12px;
+  color: #999;
+  margin: 0 0 16px;
+  padding-left: 13px;
+}
+
+/* ===== 1. 五行能量环 ===== */
+
+.bazi-viz-ring {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bazi-viz-ring__container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.bazi-viz-ring__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.bazi-viz-ring__arc {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.bazi-viz-ring__arc-group:hover .bazi-viz-ring__arc {
+  transform: scale(1.02);
+  transform-origin: center;
+  filter: brightness(1.1);
+}
+
+.bazi-viz-ring__arc-label {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bazi-viz-ring__center-element {
+  pointer-events: none;
+  user-select: none;
+  font-weight: 700;
+}
+
+.bazi-viz-ring__center-label {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bazi-viz-ring__tooltip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(139, 69, 19, 0.92);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.bazi-viz-ring__tooltip-name {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.bazi-viz-ring__tooltip-value,
+.bazi-viz-ring__tooltip-pct {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.bazi-viz-ring__legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bazi-viz-ring__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.bazi-viz-ring__legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.bazi-viz-ring__legend-label {
+  font-weight: 500;
+}
+
+.bazi-viz-ring__legend-value {
+  color: #999;
+  font-size: 11px;
+}
+
+/* ===== 2. 十神占比图 ===== */
+
+.bazi-viz-shishen {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bazi-viz-shishen__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bazi-viz-shishen__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bazi-viz-shishen__name {
+  width: 40px;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  text-align: right;
+}
+
+.bazi-viz-shishen__track {
+  flex: 1;
+  height: 24px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bazi-viz-shishen__fill {
+  height: 100%;
+  border-radius: 4px;
+  min-width: 2px;
+  transition: width 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+}
+
+.bazi-viz-shishen__fill-text {
+  font-size: 11px;
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== 3. 大运时间轴 ===== */
+
+.bazi-viz-dayun {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bazi-viz-dayun__container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.bazi-viz-dayun__container::-webkit-scrollbar {
+  height: 4px;
+}
+
+.bazi-viz-dayun__container::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 2px;
+}
+
+.bazi-viz-dayun__svg {
+  display: block;
+  min-width: 100%;
+  height: auto;
+}
+
+.bazi-viz-dayun__line {
+  stroke-dasharray: 6 4;
+}
+
+.bazi-viz-dayun__node {
+  transition: r 0.2s ease, filter 0.2s ease;
+}
+
+.bazi-viz-dayun__arc-group:hover .bazi-viz-dayun__node,
+.bazi-viz-dayun__node:hover {
+  filter: brightness(1.15);
+}
+
+.bazi-viz-dayun__node-text {
+  pointer-events: none;
+  user-select: none;
+  font-weight: 500;
+}
+
+.bazi-viz-dayun__age-text,
+.bazi-viz-dayun__score-text {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bazi-viz-dayun__tooltip {
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: rgba(139, 69, 19, 0.92);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.bazi-viz-dayun__tooltip-header {
+  font-weight: 700;
+  font-size: 16px;
+  color: #D4AF37;
+}
+
+.bazi-viz-dayun__tooltip-age,
+.bazi-viz-dayun__tooltip-score,
+.bazi-viz-dayun__tooltip-type {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* ===== 4. 人生运势曲线 ===== */
+
+.bazi-viz-curve {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.bazi-viz-curve__container {
+  position: relative;
+}
+
+.bazi-viz-curve__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.bazi-viz-curve__line {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bazi-viz-curve__dot {
+  transition: r 0.2s ease, fill 0.2s ease;
+  cursor: pointer;
+}
+
+.bazi-viz-curve__label,
+.bazi-viz-curve__tick,
+.bazi-viz-curve__x-label {
+  pointer-events: none;
+  user-select: none;
+}
+
+.bazi-viz-curve__tooltip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -80px);
+  background: rgba(139, 69, 19, 0.92);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.bazi-viz-curve__tooltip-age {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.bazi-viz-curve__tooltip-score {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.bazi-viz-curve__tooltip-label {
+  font-size: 11px;
+  color: #D4AF37;
+}
+
+/* ===== 5. 综合评分仪表盘 ===== */
+
+.bazi-viz-gauge {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bazi-viz-gauge__container {
+  display: flex;
+  justify-content: center;
+}
+
+.bazi-viz-gauge__svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.bazi-viz-gauge__bg {
+  opacity: 0.6;
+}
+
+.bazi-viz-gauge__fg {
+  transition: stroke-dasharray 0.8s ease;
+}
+
+.bazi-viz-gauge__score,
+.bazi-viz-gauge__level,
+.bazi-viz-gauge__label {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===== 响应式 ===== */
+
+@media (max-width: 600px) {
+  .bazi-viz-title {
+    font-size: 14px;
+  }
+
+  .bazi-viz-desc {
+    font-size: 11px;
+  }
+
+  .bazi-viz-ring,
+  .bazi-viz-shishen,
+  .bazi-viz-dayun,
+  .bazi-viz-curve,
+  .bazi-viz-gauge {
+    padding: 12px;
+  }
+
+  .bazi-viz-shishen__name {
+    width: 32px;
+    font-size: 11px;
+  }
+
+  .bazi-viz-ring__legend {
+    gap: 8px;
+  }
+
+  .bazi-viz-ring__legend-item {
+    font-size: 11px;
+  }
+}
+
+/* ===== 打印样式 ===== */
+
+@media print {
+  .bazi-viz-ring,
+  .bazi-viz-shishen,
+  .bazi-viz-dayun,
+  .bazi-viz-curve,
+  .bazi-viz-gauge {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .bazi-viz-ring__tooltip,
+  .bazi-viz-dayun__tooltip,
+  .bazi-viz-curve__tooltip {
+    display: none;
+  }
+}
+.bazi-chart-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding-bottom: var(--space-16);
+}
+
+.bazi-chart-content {
+  padding: var(--space-6) var(--space-4);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.bazi-score-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-8) 0 var(--space-6);
+}
+
+.bazi-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.bazi-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+  padding: var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.bazi-pillar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) 0;
+}
+
+.pillar-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+}
+
+.pillar-gan {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--gold-500);
+  font-family: var(--font-serif);
+}
+
+.pillar-zhi {
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+}
+
+.pillar-element {
+  margin-top: var(--space-1);
+}
+
+.pillar-daymaster {
+  margin-top: 2px;
+}
+
+.bazi-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.bazi-tab {
+  flex: 1;
+  min-width: 80px;
+  height: 44px;
+  padding: 0 var(--space-3);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.bazi-tab:hover {
+  color: var(--text-primary);
+}
+
+.bazi-tab.active {
+  color: var(--accent);
+}
+
+.bazi-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.bazi-tab-content {
+  animation: fadeIn var(--duration-base) var(--ease-elegant);
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-4) 0;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.overview-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.overview-row:last-child {
+  border-bottom: none;
+}
+
+.overview-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.overview-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+}
+
+.wuxing-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.wuxing-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.wuxing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wuxing-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-serif);
+}
+
+.wuxing-count {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+}
+
+.wuxing-summary {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: var(--space-4) 0 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.shenshi-intro {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.shenshi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2);
+}
+
+.shenshi-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-2);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.shenshi-gan {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+  font-family: var(--font-serif);
+}
+
+.shenshi-name {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.xiyong-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-6) 0;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.xiyong-element {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  margin-bottom: var(--space-2);
+}
+
+.xiyong-label {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.2em;
+}
+
+.xiyong-details {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.xiyong-details p {
+  margin: 0 0 var(--space-2) 0;
+}
+
+.xiyong-details p:last-child {
+  margin-bottom: 0;
+}
+
+.bazi-analysis-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.analysis-card {
+  margin-bottom: 0;
+}
+
+.analysis-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.analysis-text.error {
+  color: var(--error);
+}
+
+.ai-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-8) 0;
+  color: var(--text-secondary);
+}
+
+.ai-loading p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.bazi-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+  position: sticky;
+  bottom: var(--space-4);
+}
+
+.bazi-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+.bazi-empty p {
+  margin: 0 0 var(--space-6) 0;
+}
+
+.wangshuai-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-4) 0;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.wangshuai-score {
+  flex-shrink: 0;
+}
+
+.wangshuai-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wangshuai-level {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  margin-bottom: var(--space-1);
+}
+
+.wangshuai-label {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.2em;
+  margin: 0;
+}
+
+.wangshuai-details {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.wangshuai-details p {
+  margin: 0 0 var(--space-1) 0;
+}
+
+.wangshuai-details p:last-child {
+  margin-bottom: 0;
+}
+
+.wangshuai-desc {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.geju-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) 0;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.geju-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  color: var(--text-primary);
+}
+
+.geju-score-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-4) 0;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.geju-score-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.geju-score-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.geju-details {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.geju-details p {
+  margin: 0 0 var(--space-1) 0;
+}
+
+.geju-details p:last-child {
+  margin-bottom: 0;
+}
+
+.geju-reasons {
+  margin-bottom: var(--space-4);
+}
+
+.geju-reasons-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.geju-reasons-list {
+  margin: 0;
+  padding-left: var(--space-4);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.geju-reasons-list li {
+  margin-bottom: var(--space-1);
+}
+
+.geju-reasons-list li:last-child {
+  margin-bottom: 0;
+}
+
+.geju-desc {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.bazi-shensha-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-shensha-card {
+  margin-bottom: 0;
+}
+
+.shensha-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.shensha-item {
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.shensha-item--hit {
+  border-color: rgba(74, 156, 109, 0.3);
+  background: rgba(74, 156, 109, 0.05);
+}
+
+.shensha-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-1);
+}
+
+.shensha-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: var(--font-serif);
+  color: var(--text-primary);
+}
+
+.shensha-position {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.shensha-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.bazi-shenshi-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.shenshi-dominant {
+  padding: var(--space-4) 0;
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.shenshi-dominant-label {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.shenshi-dominant-list {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.shenshi-sorted-label {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.shenshi-sorted-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.shenshi-sorted-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.shenshi-sorted-rank {
+  width: 20px;
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  text-align: center;
+  font-weight: 600;
+}
+
+.shenshi-sorted-name {
+  width: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+}
+
+.shenshi-sorted-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-secondary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.shenshi-sorted-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-500), var(--accent));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.shenshi-sorted-power {
+  width: 32px;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  text-align: right;
+}
+
+.shenshi-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.shenshi-detail-item {
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.shenshi-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.shenshi-detail-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-serif);
+  color: var(--text-primary);
+}
+
+.shenshi-detail-power {
+  font-size: 0.8rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.shenshi-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: var(--space-1);
+}
+
+.shenshi-detail-position {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.shenshi-personality-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.shenshi-personality-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.shenshi-career-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.shenshi-career-suggestions {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.shenshi-career-label {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+  font-weight: 600;
+}
+
+.shenshi-career-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.shenshi-relationship-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.shenshi-relationship-section {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  margin-bottom: var(--space-3);
+}
+
+.shenshi-relationship-section:last-child {
+  margin-bottom: 0;
+}
+
+.shenshi-relationship-label {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+  font-weight: 600;
+}
+
+.shenshi-relationship-list {
+  margin: 0;
+  padding-left: var(--space-4);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.shenshi-relationship-list li {
+  margin-bottom: var(--space-1);
+}
+
+.shenshi-combinations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.shenshi-combination-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.shenshi-combination-item.auspicious {
+  background: rgba(74, 156, 109, 0.05);
+  border-color: rgba(74, 156, 109, 0.2);
+}
+
+.shenshi-combination-item.inauspicious {
+  background: rgba(212, 87, 58, 0.05);
+  border-color: rgba(212, 87, 58, 0.2);
+}
+
+.shenshi-combination-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-1);
+}
+
+.shenshi-combination-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-serif);
+  color: var(--text-primary);
+}
+
+.shenshi-combination-desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.bazi-wuxing-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.wuxing-overview-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+
+.wuxing-overview-item {
+  text-align: center;
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.wuxing-overview-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.wuxing-overview-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-serif);
+}
+
+.wuxing-bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.wuxing-bar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.wuxing-bar-label {
+  width: 30px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: var(--font-serif);
+}
+
+.wuxing-bar-track {
+  flex: 1;
+  height: 24px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.wuxing-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width 0.8s ease;
+}
+
+.wuxing-bar-score {
+  width: 70px;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wuxing-bar-score-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.wuxing-bar-score-pct {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+}
+
+.wuxing-radar-container {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+.wuxing-radar-svg {
+  width: 280px;
+  height: 280px;
+}
+
+.wuxing-radar-grid {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.wuxing-radar-axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.wuxing-radar-data {
+  fill: rgba(212, 175, 55, 0.2);
+  stroke: var(--gold-500);
+  stroke-width: 2;
+}
+
+.wuxing-radar-label {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-serif);
+}
+
+.wuxing-detail-table {
+  width: 100%;
+  font-size: 0.85rem;
+}
+
+.wuxing-detail-header {
+  display: grid;
+  grid-template-columns: 40px repeat(6, 1fr) 50px;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.wuxing-detail-row {
+  display: grid;
+  grid-template-columns: 40px repeat(6, 1fr) 50px;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  align-items: center;
+}
+
+.wuxing-detail-row:last-child {
+  border-bottom: none;
+}
+
+.wuxing-detail-element {
+  font-weight: 700;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+}
+
+.wuxing-detail-wangshuai {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+.wangshuai-旺 {
+  background: rgba(74, 156, 109, 0.15);
+  color: var(--success);
+}
+
+.wangshuai-相 {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold-500);
+}
+
+.wangshuai-休 {
+  background: rgba(100, 100, 100, 0.15);
+  color: var(--text-secondary);
+}
+
+.wangshuai-囚 {
+  background: rgba(200, 150, 50, 0.15);
+  color: #c89632;
+}
+
+.wangshuai-死 {
+  background: rgba(212, 87, 58, 0.15);
+  color: var(--error);
+}
+
+.wuxing-detail-total {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.wuxing-summary-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.bazi-dayun-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dayun-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+}
+
+.dayun-overview-item {
+  text-align: center;
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.dayun-overview-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.dayun-overview-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  font-family: var(--font-serif);
+}
+
+.dayun-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dayun-item {
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.dayun-item--current {
+  border-color: var(--gold-500);
+  background: rgba(212, 175, 55, 0.05);
+  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.1);
+}
+
+.dayun-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+}
+
+.dayun-item-toggle {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.dayun-item-index {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  min-width: 50px;
+}
+
+.dayun-item-ganzhi {
+  display: flex;
+  gap: var(--space-1);
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.dayun-gan {
+  color: var(--text-primary);
+}
+
+.dayun-zhi {
+  color: var(--text-secondary);
+}
+
+.dayun-item-shenshi {
+}
+
+.dayun-item-info {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.dayun-item-tags {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.dayun-item-score {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.dayun-score-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dayun-score-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.dayun-score-value {
+  width: 40px;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.dayun-item-summary {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: var(--space-2);
+}
+
+.dayun-item-detail {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+}
+
+.dayun-item-detail p {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.bazi-liunian-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.liunian-overview-info p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.liunian-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.liunian-item {
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.liunian-item--current {
+  border-color: var(--gold-500);
+  background: rgba(212, 175, 55, 0.05);
+  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.1);
+}
+
+.liunian-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+}
+
+.liunian-item-toggle {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.liunian-item-year {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 70px;
+  font-family: var(--font-serif);
+}
+
+.liunian-item-ganzhi {
+  display: flex;
+  gap: var(--space-1);
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.liunian-gan {
+  color: var(--text-primary);
+}
+
+.liunian-zhi {
+  color: var(--text-secondary);
+}
+
+.liunian-item-shenshi {
+}
+
+.liunian-item-relations {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.liunian-item-score {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.liunian-score-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.liunian-score-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.liunian-score-value {
+  width: 40px;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.liunian-item-summary {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: var(--space-2);
+}
+
+.liunian-item-detail {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+}
+
+.liunian-item-detail p {
+  font-size: 0.8rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.liunian-item-detail p:last-child {
+  margin-bottom: 0;
+}
+
+.liunian-item-detail strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* LiuYue (流月) styles */
+.bazi-liuyue-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.liuyue-overview-info {
+  display: flex;
+  justify-content: center;
+}
+
+.liuyue-year-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.liuyue-year-display {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  color: var(--text-primary);
+  min-width: 160px;
+  text-align: center;
+}
+
+.liuyue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .liuyue-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .liuyue-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.liuyue-item {
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.liuyue-item--expanded {
+  border-color: var(--gold-500);
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.liuyue-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  flex-wrap: wrap;
+}
+
+.liuyue-item-month {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  min-width: 50px;
+}
+
+.liuyue-item-ganzhi {
+  display: flex;
+  gap: 2px;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.liuyue-gan {
+  color: var(--text-primary);
+}
+
+.liuyue-zhi {
+  color: var(--text-secondary);
+}
+
+.liuyue-item-jixiong {
+  margin-left: auto;
+}
+
+.liuyue-item-toggle {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+}
+
+.liuyue-item-score {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.liuyue-score-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--bg-primary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.liuyue-score-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.liuyue-score-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 35px;
+  text-align: right;
+}
+
+.liuyue-item-summary {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.liuyue-item-detail {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.liuyue-item-detail p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.liuyue-item-detail p:last-child {
+  margin-bottom: 0;
+}
+
+.liuyue-item-detail strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.liuyue-item-relations {
+  margin-top: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+@media (max-width: 480px) {
+  .dayun-overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .wuxing-overview-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .wuxing-detail-header,
+  .wuxing-detail-row {
+    grid-template-columns: 35px repeat(6, 1fr) 45px;
+    font-size: 0.7rem;
+    padding: var(--space-2);
+  }
+  .shenshi-details-grid {
+    grid-template-columns: 1fr;
+  }
+  .pillar-gan {
+    font-size: 1.2rem;
+  }
+
+  .pillar-zhi {
+    font-size: 1.1rem;
+  }
+
+  .shenshi-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .shenshi-name {
+    font-size: 0.65rem;
+  }
+
+  .wangshuai-main {
+    gap: var(--space-4);
+  }
+}
+
+/* ========== 婚姻分析 (P2) ========== */
+.bazi-marriage-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-marriage-score-card {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.marriage-score-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.marriage-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.marriage-score-level {
+  margin-top: var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+
+.bazi-marriage-palace-card {
+  padding: var(--space-5);
+}
+
+.marriage-palace-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.marriage-palace-zhi {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.palace-zhi-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.palace-zhi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.marriage-palace-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.bazi-marriage-relations-card {
+  padding: var(--space-5);
+}
+
+.marriage-relations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.marriage-relation-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.marriage-relation-item.severity-high {
+  border-left-color: var(--error);
+  background: rgba(212, 87, 58, 0.08);
+}
+
+.marriage-relation-item.severity-medium {
+  border-left-color: var(--warning);
+  background: rgba(196, 149, 106, 0.08);
+}
+
+.marriage-relation-item.severity-low {
+  border-left-color: var(--success);
+  background: rgba(74, 156, 109, 0.08);
+}
+
+.marriage-relation-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.marriage-relation-target {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.marriage-relation-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-marriage-shensha-card {
+  padding: var(--space-5);
+}
+
+.marriage-shensha-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.marriage-shensha-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  opacity: 0.7;
+}
+
+.marriage-shensha-item.hit {
+  opacity: 1;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid var(--gold-500);
+}
+
+.marriage-shensha-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.marriage-shensha-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.marriage-shensha-position {
+  font-size: 0.8rem;
+  color: var(--gold-500);
+  margin-bottom: var(--space-1);
+}
+
+.marriage-shensha-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-marriage-age-card {
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.marriage-age-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-4) 0;
+}
+
+.marriage-age-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold-500);
+}
+
+.marriage-age-unit {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.marriage-age-reason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  text-align: left;
+}
+
+.bazi-marriage-risks-card {
+  padding: var(--space-5);
+}
+
+.marriage-risks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.marriage-risk-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.marriage-risk-item.level-high {
+  border-left: 3px solid var(--error);
+}
+
+.marriage-risk-item.level-medium {
+  border-left: 3px solid var(--warning);
+}
+
+.marriage-risk-item.level-low {
+  border-left: 3px solid var(--success);
+}
+
+.marriage-risk-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.marriage-risk-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.marriage-risk-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-marriage-suggestions-card {
+  padding: var(--space-5);
+}
+
+.marriage-suggestions-list {
+  margin-top: var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.marriage-suggestions-list li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-2);
+}
+
+.bazi-marriage-summary-card {
+  padding: var(--space-5);
+}
+
+.marriage-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+/* ========== 事业分析 (P3) ========== */
+.bazi-career-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-career-score-card {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.career-score-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.career-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.career-score-level {
+  margin-top: var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+
+.bazi-career-shishen-card {
+  padding: var(--space-5);
+}
+
+.career-shishen-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.career-shishen-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.career-shishen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.career-shishen-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.career-shishen-bar {
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: var(--space-1);
+}
+
+.career-shishen-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.career-shishen-power {
+  font-size: 0.8rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.career-shishen-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-top: var(--space-1);
+}
+
+.bazi-career-directions-card {
+  padding: var(--space-5);
+}
+
+.career-directions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.career-direction-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--border);
+}
+
+.career-direction-item.suitable {
+  border-left-color: var(--success);
+  background: rgba(74, 156, 109, 0.08);
+}
+
+.career-direction-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.career-direction-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.career-direction-score {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.career-direction-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.career-direction-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.career-direction-score-value {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+}
+
+.career-direction-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-career-industries-card {
+  padding: var(--space-5);
+}
+
+.career-industries-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.career-industry-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.career-industry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.career-industry-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.career-industry-score {
+  font-size: 0.85rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.career-industry-tags {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.career-industry-reason {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-career-path-card,
+.bazi-career-wealth-card,
+.bazi-career-risks-card,
+.bazi-career-suggestions-card,
+.bazi-career-summary-card {
+  padding: var(--space-5);
+}
+
+.career-path-text,
+.career-wealth-text,
+.career-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+.career-risks-list,
+.career-suggestions-list {
+  margin-top: var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.career-risks-list li,
+.career-suggestions-list li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-2);
+}
+
+/* ========== 财富分析 (P4) ========== */
+.bazi-wealth-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-wealth-score-card {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.wealth-score-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.wealth-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.wealth-score-level {
+  margin-top: var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+
+.bazi-wealth-caiyun-card {
+  padding: var(--space-5);
+}
+
+.wealth-caiyun-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-caiyun-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.wealth-caiyun-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.wealth-caiyun-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.wealth-caiyun-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-wealth-caiku-card {
+  padding: var(--space-5);
+}
+
+.wealth-caiku-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-caiku-zhi {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.wealth-caiku-desc {
+  margin-top: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-wealth-flags-card {
+  padding: var(--space-5);
+}
+
+.wealth-flags-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-flag-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.wealth-flag-item.warning {
+  border: 1px solid var(--warning);
+}
+
+.wealth-flag-item.error {
+  border: 1px solid var(--error);
+}
+
+.wealth-flag-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bazi-wealth-style-card,
+.bazi-wealth-summary-card {
+  padding: var(--space-5);
+}
+
+.wealth-style-text,
+.wealth-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+.bazi-wealth-investment-card {
+  padding: var(--space-5);
+}
+
+.wealth-investment-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-investment-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--border);
+}
+
+.wealth-investment-item.suitable {
+  border-left-color: var(--success);
+  background: rgba(74, 156, 109, 0.08);
+}
+
+.wealth-investment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.wealth-investment-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.wealth-investment-score {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.wealth-investment-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.wealth-investment-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.wealth-investment-score-value {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+}
+
+.wealth-investment-reason {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-wealth-riskyears-card {
+  padding: var(--space-5);
+}
+
+.wealth-riskyears-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.wealth-riskyear-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.wealth-riskyear-item.level-high {
+  border-left: 3px solid var(--error);
+}
+
+.wealth-riskyear-item.level-medium {
+  border-left: 3px solid var(--warning);
+}
+
+.wealth-riskyear-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.wealth-riskyear-year {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.wealth-riskyear-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-wealth-suggestions-card {
+  padding: var(--space-5);
+}
+
+.wealth-suggestions-list {
+  margin-top: var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.wealth-suggestions-list li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-2);
+}
+
+/* ========== 健康分析 (P5) ========== */
+.bazi-health-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-health-score-card {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.health-score-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.health-score-label {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+}
+
+.health-score-level {
+  margin-top: var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-500);
+}
+
+.bazi-health-constitution-card {
+  padding: var(--space-5);
+}
+
+.health-constitution-main {
+  margin-top: var(--space-3);
+}
+
+.health-constitution-desc {
+  margin-top: var(--space-2);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.health-constitution-chars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.health-char-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.bazi-health-tcm-card {
+  padding: var(--space-5);
+}
+
+.health-tcm-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.health-tcm-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.health-tcm-item.cold { border-left: 3px solid #6b8cce; }
+.health-tcm-item.hot { border-left: 3px solid var(--error); }
+.health-tcm-item.dry { border-left: 3px solid var(--warning); }
+.health-tcm-item.wet { border-left: 3px solid #6b8cce; }
+
+.health-tcm-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-right: var(--space-2);
+}
+
+.health-tcm-desc {
+  margin-top: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-health-disease-card {
+  padding: var(--space-5);
+}
+
+.health-disease-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.health-disease-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.health-disease-item.level-high { border-left: 3px solid var(--error); }
+.health-disease-item.level-medium { border-left: 3px solid var(--warning); }
+.health-disease-item.level-low { border-left: 3px solid var(--success); }
+
+.health-disease-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.health-disease-organ {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.health-disease-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+.health-disease-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.bazi-health-diet-card {
+  padding: var(--space-5);
+}
+
+.health-diet-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.health-diet-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.health-diet-category {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.health-diet-reason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+.health-diet-section {
+  margin-bottom: var(--space-2);
+}
+
+.health-diet-section-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: var(--space-1);
+}
+
+.health-diet-section-label.recommend { color: var(--success); }
+.health-diet-section-label.avoid { color: var(--error); }
+
+.health-diet-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.bazi-health-exercise-card {
+  padding: var(--space-5);
+}
+
+.health-exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.health-exercise-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.health-exercise-reason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.bazi-health-regimen-card {
+  padding: var(--space-5);
+}
+
+.health-regimen-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.health-regimen-aspect {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold-500);
+  margin-bottom: var(--space-2);
+}
+
+.health-regimen-suggestions {
+  padding-left: var(--space-5);
+}
+
+.health-regimen-suggestions li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--space-1);
+}
+
+.bazi-health-summary-card {
+  padding: var(--space-5);
+}
+
+.health-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+/* ========== 风水结合 (P6) ========== */
+.bazi-fengshui-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-fengshui-colors-card,
+.bazi-fengshui-numbers-card,
+.bazi-fengshui-directions-card,
+.bazi-fengshui-residence-card,
+.bazi-fengshui-rooms-card,
+.bazi-fengshui-special-card,
+.bazi-fengshui-summary-card {
+  padding: var(--space-5);
+}
+
+.fengshui-colors-grid,
+.fengshui-numbers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-color-item,
+.fengshui-number-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.fengshui-color-item.lucky { border: 1px solid var(--success); }
+.fengshui-color-item.avoid { border: 1px solid var(--border); opacity: 0.7; }
+.fengshui-number-item.lucky { border: 1px solid var(--success); }
+.fengshui-number-item.avoid { border: 1px solid var(--border); opacity: 0.7; }
+
+.fengshui-color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+}
+
+.fengshui-color-name,
+.fengshui-number-value {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.fengshui-number-value {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  font-size: 1rem;
+}
+
+.fengshui-section-title {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: var(--space-3) 0 var(--space-2);
+}
+
+.fengshui-directions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-direction-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.fengshui-direction-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-direction-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.fengshui-direction-score {
+  font-size: 0.85rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.fengshui-direction-bar {
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-direction-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.fengshui-direction-desc,
+.fengshui-direction-usage {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.fengshui-residence-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-residence-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.fengshui-residence-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.fengshui-residence-desc {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.fengshui-rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-room-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.fengshui-room-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-room-position {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.fengshui-room-facing {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-room-tips,
+.fengshui-room-taboos {
+  margin-bottom: var(--space-1);
+}
+
+.fengshui-tips-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: var(--space-1);
+}
+
+.fengshui-tips-label.tips { color: var(--success); }
+.fengshui-tips-label.taboo { color: var(--error); }
+
+.fengshui-room-tips span,
+.fengshui-room-taboos span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-right: var(--space-2);
+}
+
+.fengshui-special-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.fengshui-special-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid var(--gold-500);
+}
+
+.fengshui-special-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.fengshui-special-direction {
+  font-size: 0.85rem;
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.fengshui-special-desc,
+.fengshui-special-usage {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.fengshui-summary-text {
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+/* ========== 完整命书 (P7) ========== */
+.bazi-full-report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-report-header-card {
+  padding: var(--space-6);
+  text-align: center;
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(212, 175, 55, 0.05) 100%);
+}
+
+.report-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold-500);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.1em;
+}
+
+.report-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.report-wordcount {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.report-export-buttons {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.bazi-report-chapter-card {
+  padding: var(--space-5);
+  animation: fadeInUp 0.5s ease both;
+}
+
+.bazi-report-chapter-card:nth-child(2) { animation-delay: 0.05s; }
+.bazi-report-chapter-card:nth-child(3) { animation-delay: 0.1s; }
+.bazi-report-chapter-card:nth-child(4) { animation-delay: 0.15s; }
+.bazi-report-chapter-card:nth-child(5) { animation-delay: 0.2s; }
+.bazi-report-chapter-card:nth-child(6) { animation-delay: 0.25s; }
+.bazi-report-chapter-card:nth-child(7) { animation-delay: 0.3s; }
+.bazi-report-chapter-card:nth-child(8) { animation-delay: 0.35s; }
+.bazi-report-chapter-card:nth-child(9) { animation-delay: 0.4s; }
+.bazi-report-chapter-card:nth-child(10) { animation-delay: 0.45s; }
+.bazi-report-chapter-card:nth-child(11) { animation-delay: 0.5s; }
+.bazi-report-chapter-card:nth-child(12) { animation-delay: 0.55s; }
+.bazi-report-chapter-card:nth-child(13) { animation-delay: 0.6s; }
+.bazi-report-chapter-card:nth-child(14) { animation-delay: 0.65s; }
+
+.report-chapter-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold-500);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.report-chapter-content {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.report-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: var(--space-3) 0 var(--space-2);
+}
+
+.report-subsection-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.report-paragraph {
+  margin-bottom: var(--space-2);
+  text-indent: 2em;
+}
+
+.report-list-item {
+  margin-bottom: var(--space-1);
+  margin-left: var(--space-4);
+  color: var(--text-secondary);
+}
+
+.report-bold {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+/* ============================================================
+   Mobile responsive optimization (commercial edition)
+   Only applies on screens <= 768px
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* ---------- 1. Tab horizontal scroll optimization ---------- */
+  .bazi-tabs {
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .bazi-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bazi-tab {
+    flex: none;
+    min-width: auto;
+    padding: 0 16px;
+    height: 48px;
+    scroll-snap-align: start;
+  }
+
+  /* ---------- 2. Card border-radius / shadow / spacing ---------- */
+  .bazi-chart-content {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .bazi-chart-content .card,
+  .bazi-chart-content .bazi-card,
+  .bazi-report-chapter-card,
+  .bazi-pillar-card,
+  .wuxing-radar-card,
+  .geju-card,
+  .wangshuai-card,
+  .xiyong-card,
+  .career-shishen-card,
+  .wealth-caiyun-card,
+  .health-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .bazi-pillars {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .dayun-item,
+  .liunian-item,
+  .liuyue-item,
+  .shensha-item,
+  .career-shishen-item,
+  .wealth-caiyun-item {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Analysis section gap tightening */
+  .bazi-full-report,
+  .bazi-dayun-list,
+  .bazi-liunian-list,
+  .bazi-liuyue-list,
+  .bazi-shensha-list,
+  .bazi-career-shishen-list,
+  .bazi-wealth-caiyun-list {
+    gap: var(--space-3);
+  }
+
+  /* ---------- 3. Chart auto-scaling ---------- */
+  .wuxing-radar-svg {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+  }
+
+  .wuxing-radar-container {
+    width: 100%;
+  }
+
+  /* ---------- 4. Font hierarchy adjustment ---------- */
+  .card-title {
+    font-size: 0.95rem;
+  }
+
+  .report-title {
+    font-size: 1.2rem;
+  }
+
+  .report-chapter-title {
+    font-size: 1rem;
+  }
+
+  .report-chapter-content {
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  .geju-name {
+    font-size: 1.2rem;
+  }
+
+  .wangshuai-level {
+    font-size: 2rem;
+  }
+
+  .xiyong-element {
+    font-size: 2.2rem;
+  }
+
+  /* ---------- 5. Long content collapse ---------- */
+  .report-chapter-content.collapsed {
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .report-chapter-content.collapsed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--bg-card)
+    );
+    pointer-events: none;
+  }
+
+  .report-collapse-toggle {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-2) 0;
+    cursor: pointer;
+    color: var(--gold-500);
+    font-size: 0.85rem;
+  }
+
+  /* ---------- 6. Touch target optimization ---------- */
+  .dayun-item-header,
+  .liunian-item-header,
+  .liuyue-item-header {
+    min-height: 44px;
+  }
+
+  .bazi-tab {
+    height: 48px;
+  }
+}
+
+/* ============================================================
+   Step Loading Card
+   ============================================================ */
+.bazi-loading-container {
+  padding: var(--space-8) 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.bazi-loading-progress {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+  border-radius: 2px;
+  margin-bottom: var(--space-6);
+  overflow: hidden;
+}
+
+.bazi-loading-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-500, #d4af37), var(--gold-400, #e5c84b));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.bazi-loading-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.bazi-loading-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.06));
+  transition: background 0.3s ease;
+}
+
+.bazi-loading-step:last-child {
+  border-bottom: none;
+}
+
+.bazi-loading-step--pending {
+  opacity: 0.3;
+}
+
+.bazi-loading-step--done {
+  opacity: 0.7;
+}
+
+.bazi-loading-step--done .bazi-loading-step-text {
+  text-decoration: line-through;
+  text-decoration-color: var(--gold-500, #d4af37);
+}
+
+.bazi-loading-step--active {
+  background: rgba(212, 175, 55, 0.04);
+  border-radius: 8px;
+  margin: 2px 0;
+}
+
+.bazi-loading-step-icon {
+  font-size: 1.1rem;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.bazi-loading-step-text {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.bazi-loading-step-check {
+  color: var(--gold-500, #d4af37);
+  font-size: 0.85rem;
+}
+
+.bazi-loading-step-dots {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--gold-500, #d4af37);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.bazi-loading-step-dots .dot {
+  animation: loadingDotPulse 1.2s infinite;
+}
+
+.bazi-loading-step-dots .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.bazi-loading-step-dots .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loadingDotPulse {
+  0%, 60%, 100% { opacity: 0.2; transform: scale(0.8); }
+  30% { opacity: 1; transform: scale(1.2); }
+}
+
+.bazi-loading-pulse {
+  animation: loadingIconPulse 1.5s infinite;
+}
+
+@keyframes loadingIconPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Mobile: loading step min-height for touch */
+@media (max-width: 768px) {
+  .bazi-loading-step {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .bazi-loading-step-icon {
+    font-size: 1rem;
+    width: 24px;
+  }
+
+  .bazi-loading-step-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* ============================================================
+   History Compare
+   ============================================================ */
+.bazi-compare-section {
+  margin: var(--space-4) 0;
+}
+
+.bazi-compare-active {
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  padding: var(--space-4);
+  background: rgba(212, 175, 55, 0.02);
+}
+
+.bazi-compare-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.bazi-compare-label {
+  font-size: 0.8rem;
+  color: var(--gold-500, #d4af37);
+  background: rgba(212, 175, 55, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.bazi-compare-names {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.bazi-history-list {
+  margin-top: var(--space-3);
+  border: 1px solid var(--bg-tertiary, rgba(0,0,0,0.06));
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bazi-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  border-bottom: 1px solid var(--bg-tertiary, rgba(0,0,0,0.04));
+  transition: background 0.2s;
+}
+
+.bazi-history-item:last-child {
+  border-bottom: none;
+}
+
+.bazi-history-item:hover {
+  background: rgba(212, 175, 55, 0.04);
+}
+
+.bazi-history-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.bazi-history-date {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.bazi-history-gender {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary, rgba(0,0,0,0.05));
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.bazi-history-day {
+  font-size: 0.85rem;
+  color: var(--gold-500, #d4af37);
+  font-weight: bold;
+}
+
+.bazi-history-arrow {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.bazi-history-empty {
+  text-align: center;
+  padding: var(--space-4);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+/* Compare panel */
+.bazi-compare-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-compare-block {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--bg-tertiary, rgba(0,0,0,0.06));
+  border-radius: 8px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.bazi-compare-block-title {
+  font-size: 0.9rem;
+  color: var(--gold-500, #d4af37);
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.bazi-compare-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.bazi-compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--bg-tertiary, rgba(0,0,0,0.03));
+  font-size: 0.85rem;
+}
+
+.bazi-compare-row:last-child {
+  border-bottom: none;
+}
+
+.bazi-compare-row--header {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: bold;
+  border-bottom: 1px solid var(--bg-tertiary, rgba(0,0,0,0.08));
+}
+
+.bazi-compare-row--diff {
+  background: rgba(212, 100, 55, 0.04);
+  border-radius: 4px;
+}
+
+.bazi-compare-row--diff .bazi-compare-cell {
+  color: #a0522d;
+  font-weight: bold;
+}
+
+.bazi-compare-cell {
+  padding: 2px 4px;
+  text-align: center;
+}
+
+.bazi-compare-cell small {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .bazi-compare-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 0.8rem;
+  }
+
+  .bazi-compare-row--header .bazi-compare-cell:last-child,
+  .bazi-compare-row .bazi-compare-cell:last-child {
+    display: none;
+  }
+
+  .bazi-history-item {
+    min-height: 44px;
+  }
+
+  .bazi-compare-header {
+    font-size: 0.8rem;
+  }
+}
+
+/* Print styles for PDF export */
+@media print {
+  .bazi-chart-header,
+  .bazi-tab-bar,
+  .bazi-actions,
+  .report-export-buttons,
+  .score-ring,
+  .chart-table,
+  .bazi-section-title,
+  .page-title {
+    display: none !important;
+  }
+
+  .bazi-chart-content {
+    padding: 0 !important;
+  }
+
+  .bazi-full-report {
+    gap: 20px;
+  }
+
+  .bazi-report-chapter-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #ddd;
+    box-shadow: none;
+  }
+
+  .report-chapter-title {
+    color: #8B4513;
+    border-bottom: 2px solid #D4AF37;
+  }
+}
+
+/* ============================================================
+   V4.1 新增 Tab 样式
+   ============================================================ */
+
+/* -- 目录导航 -- */
+.bazi-toc-section {
+  margin-bottom: var(--space-2);
+}
+
+.bazi-toc-toggle {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-secondary, rgba(212, 175, 55, 0.05));
+  border: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+  border-radius: 8px;
+  color: var(--text-secondary, #888);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.bazi-toc-toggle:hover {
+  color: var(--text-primary, #333);
+  background: var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+}
+
+.bazi-toc-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+}
+
+.bazi-toc-item {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bazi-toc-item:hover,
+.bazi-toc-item.active {
+  background: var(--gold-500, #d4af37);
+  color: #fff;
+  border-color: var(--gold-500, #d4af37);
+}
+
+/* -- 通用 section -- */
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  margin: var(--space-3) 0 var(--space-1);
+}
+
+.section-text {
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--text-secondary, #555);
+  margin: 0 0 var(--space-2);
+  white-space: pre-wrap;
+}
+
+/* -- 复制按钮 -- */
+.bazi-copy-btn {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  margin-top: var(--space-2);
+  border: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.15));
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-secondary, #888);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bazi-copy-btn:hover {
+  border-color: var(--gold-500, #d4af37);
+  color: var(--gold-500, #d4af37);
+}
+
+/* -- 命局总论 -- */
+.bazi-master-section {
+  border-bottom: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.08));
+  padding: var(--space-3) 0;
+}
+
+.bazi-master-section:last-of-type {
+  border-bottom: none;
+}
+
+.bazi-master-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bazi-master-section-toggle {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #888);
+}
+
+.bazi-master-section-body {
+  padding-top: var(--space-2);
+}
+
+/* -- 四柱详解 -- */
+.bazi-pillar-card + .bazi-pillar-card {
+  margin-top: var(--space-3);
+}
+
+.bazi-pillar-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bazi-pillar-card-body {
+  padding-top: var(--space-2);
+}
+
+.bazi-pillar-section {
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px dashed var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+}
+
+.bazi-pillar-section:last-child {
+  border-bottom: none;
+}
+
+.bazi-pillar-summary {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--gold-500, #d4af37);
+}
+
+/* -- 十神详解 / 神煞详解 -- */
+.bazi-shishen-detail-card + .bazi-shishen-detail-card,
+.bazi-shensha-detail-card + .bazi-shensha-detail-card {
+  margin-top: var(--space-3);
+}
+
+.bazi-shishen-detail-header,
+.bazi-shensha-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bazi-shishen-detail-header .card-title,
+.bazi-shensha-detail-header .card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bazi-shishen-detail-body,
+.bazi-shensha-detail-body {
+  padding-top: var(--space-2);
+}
+
+.bazi-shishen-detail-section,
+.bazi-shensha-detail-section {
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px dashed var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+}
+
+.bazi-shishen-detail-section:last-child,
+.bazi-shensha-detail-section:last-child {
+  border-bottom: none;
+}
+
+.bazi-shishen-detail-summary,
+.bazi-shensha-detail-summary {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--gold-500, #d4af37);
+}
+
+/* -- 综合评分 -- */
+.bazi-score-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bazi-score-dim-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 50px 50px;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--bg-tertiary, rgba(212, 175, 55, 0.06));
+}
+
+.bazi-score-dim-row:last-child {
+  border-bottom: none;
+}
+
+.bazi-score-dim-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+}
+
+.bazi-score-dim-bar {
+  height: 8px;
+  background: var(--bg-tertiary, rgba(212, 175, 55, 0.1));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bazi-score-dim-value {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #666);
+  text-align: right;
+}
+
+/* -- 大运详解 / 流年详解 附加 -- */
+.dayun-detail-sections,
+.liunian-detail-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dayun-detail-section,
+.liunian-detail-section {
+  padding: var(--space-2);
+  background: var(--bg-secondary, rgba(212, 175, 55, 0.03));
+  border-radius: 6px;
+}
+
+.dayun-detail-summary,
+.liunian-detail-summary {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-secondary, rgba(212, 175, 55, 0.05));
+  border-radius: 6px;
+  border-left: 3px solid var(--gold-500, #d4af37);
+}
+
+/* -- 响应式补充 -- */
+@media (max-width: 768px) {
+  .bazi-score-dim-row {
+    grid-template-columns: 40px 1fr 45px 45px;
+    gap: var(--space-1);
+  }
+
+  .bazi-toc-list {
+    gap: var(--space-1);
+  }
+
+  .bazi-toc-item {
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.75rem;
+  }
+}
+/**
+ * 玄风门 八字命盘 移动端专项优化 V4.4
+ *
+ * 独立文件，不修改 BaziChart.css。
+ * 加载顺序：BaziChart.css → BaziChart.mobile.css（后者覆盖移动端表现）。
+ *
+ * 覆盖范围：
+ *  1. iPhone SE ~ iPad Pro / 桌面 全尺寸适配（6 个断点）
+ *  2. 折叠屏展开态适配
+ *  3. 触控优化（按钮 ≥44x44px、Tab 间距、滑动手势区）
+ *  4. 动画性能（transform / opacity / will-change / prefers-reduced-motion）
+ *  5. 图片加载优化（loading=lazy 配合、渐进式）
+ *  6. 横屏适配
+ *  7. 安全区（notch / 底部 Home Indicator）适配
+ */
+
+/* ================================================================ *
+ * 0. 移动端通用基线（所有 ≤1024px 视口生效）
+ * ================================================================ */
+@media (max-width: 1024px) {
+  /* 内容区收紧边距，提升信息密度 */
+  .bazi-chart-content {
+    padding-left: var(--space-3, 12px);
+    padding-right: var(--space-3, 12px);
+    max-width: 100%;
+  }
+
+  /* 评分区缩小 */
+  .bazi-score-section {
+    padding-top: var(--space-5, 20px);
+    padding-bottom: var(--space-4, 16px);
+  }
+
+  /* 四柱栅格更紧凑 */
+  .bazi-pillars {
+    gap: var(--space-1, 4px);
+    padding: var(--space-3, 12px);
+  }
+
+  /* Tab 横向滚动，去除等分拉伸以保证可读 */
+  .bazi-tabs {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .bazi-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .bazi-tab {
+    flex: 0 0 auto;
+    min-width: 72px;
+    scroll-snap-align: start;
+  }
+
+  /* 卡片标题适度缩小 */
+  .card-title {
+    font-size: 1rem;
+  }
+}
+
+/* ================================================================ *
+ * 1. iPhone SE（≤380px）—— 最小屏，紧凑模式
+ * ================================================================ */
+@media (max-width: 380px) {
+  .bazi-chart-content {
+    padding-left: var(--space-2, 8px);
+    padding-right: var(--space-2, 8px);
+  }
+
+  /* 评分环缩放 */
+  .bazi-score-section :where([class*='score-ring'], svg) {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+
+  /* 四柱：天干地支字号压缩 */
+  .pillar-gan {
+    font-size: 1.25rem;
+  }
+  .pillar-zhi {
+    font-size: 1.1rem;
+  }
+  .pillar-label {
+    font-size: 0.65rem;
+  }
+
+  /* Tab 进一步紧凑 */
+  .bazi-tab {
+    min-width: 64px;
+    font-size: 0.82rem;
+    padding: 0 var(--space-2, 8px);
+  }
+
+  /* 目录项两列网格，节省纵向空间 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-1, 4px);
+  }
+
+  /* 大运 / 流年条目信息密度提升 */
+  .dayun-item-header,
+  .dayun-item-info {
+    font-size: 0.82rem;
+  }
+
+  /* 五行柱状图标签缩小 */
+  .wuxing-bar-label {
+    font-size: 0.85rem;
+  }
+
+  /* 卡片内边距收紧 */
+  :where(.bazi-chart-content) .card,
+  :where([class*='overview-card'], [class*='list-card'], [class*='radar-card']) {
+    padding: var(--space-3, 12px) !important;
+  }
+}
+
+/* ================================================================ *
+ * 2. iPhone mini / 标准（381px ~ 420px）
+ * ================================================================ */
+@media (min-width: 381px) and (max-width: 420px) {
+  .bazi-pillars {
+    gap: var(--space-2, 8px);
+  }
+
+  .pillar-gan {
+    font-size: 1.35rem;
+  }
+
+  .bazi-tab {
+    min-width: 70px;
+    font-size: 0.86rem;
+  }
+
+  /* 目录两列 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-1, 4px);
+  }
+}
+
+/* ================================================================ *
+ * 3. iPhone Plus（421px ~ 480px）
+ * ================================================================ */
+@media (min-width: 421px) and (max-width: 480px) {
+  .pillar-gan {
+    font-size: 1.45rem;
+  }
+
+  .bazi-tab {
+    min-width: 76px;
+    font-size: 0.9rem;
+  }
+
+  /* 目录三列 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2, 8px);
+  }
+}
+
+/* ================================================================ *
+ * 4. 大手机 / 小平板（481px ~ 768px）
+ * ================================================================ */
+@media (min-width: 481px) and (max-width: 768px) {
+  .bazi-chart-content {
+    max-width: 560px;
+  }
+
+  /* 四柱间距放大，提升可读性 */
+  .bazi-pillars {
+    gap: var(--space-3, 12px);
+    padding: var(--space-5, 20px);
+  }
+
+  .pillar-gan {
+    font-size: 1.55rem;
+  }
+
+  .bazi-tab {
+    min-width: 80px;
+  }
+
+  /* 目录三列 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2, 8px);
+  }
+
+  /* 历史对比列表双列 */
+  .bazi-history-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2, 8px);
+  }
+}
+
+/* ================================================================ *
+ * 5. iPad（769px ~ 1024px）
+ * ================================================================ */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .bazi-chart-content {
+    max-width: 720px;
+  }
+
+  /* Tab 可等分显示，无需横向滚动 */
+  .bazi-tabs {
+    overflow-x: visible;
+  }
+  .bazi-tab {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 目录四列 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2, 8px);
+  }
+
+  /* 历史对比列表三列 */
+  .bazi-history-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3, 12px);
+  }
+
+  /* 大运列表双列（空间充足时） */
+  .dayun-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3, 12px);
+  }
+}
+
+/* ================================================================ *
+ * 6. iPad Pro / 桌面（≥1025px）
+ * ================================================================ */
+@media (min-width: 1025px) {
+  .bazi-chart-content {
+    max-width: 960px;
+  }
+
+  /* 大屏可双栏展示部分内容 */
+  .bazi-toc-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--space-2, 8px);
+  }
+
+  .bazi-history-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-3, 12px);
+  }
+}
+
+/* ================================================================ *
+ * 7. 折叠屏适配
+ * ================================================================ */
+
+/* 折叠屏展开态（横向、中等宽度区间） */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape),
+       (min-resolution: 2dppx) and (min-width: 768px) {
+  /* 折叠屏展开：内容区取较宽，避免铰链区域空隙过大 */
+  .bazi-chart-content {
+    max-width: 880px;
+    padding-left: var(--space-6, 24px);
+    padding-right: var(--space-6, 24px);
+  }
+}
+
+/* 折叠屏折叠态（窄竖屏高密度） */
+@media (max-width: 420px) and (min-aspect-ratio: 2/3) and (max-aspect-ratio: 9/16) {
+  .bazi-pillars {
+    padding: var(--space-2, 8px);
+  }
+}
+
+/* 兼容 horizontal viewport query（device-flexible） */
+@supports (display: flex) and (orientation: landscape) {
+  @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    .bazi-tab-content {
+      max-width: 100%;
+    }
+  }
+}
+
+/* ================================================================ *
+ * 8. 触控优化（移动端通用，≤768px）
+ * ================================================================ */
+@media (max-width: 768px) {
+  /* 所有可点击元素最小 44x44px 命中区 */
+  .bazi-tab,
+  .bazi-toc-item,
+  .bazi-toc-toggle,
+  .bazi-history-item,
+  .dayun-item-header,
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Tab 间距增大，避免误触 */
+  .bazi-tabs {
+    gap: 0;
+  }
+  .bazi-tab {
+    padding: 0 var(--space-3, 12px);
+  }
+
+  /* 大运 / 流年条目增加纵向可点击间距 */
+  .dayun-item-header {
+    padding-top: var(--space-2, 8px);
+    padding-bottom: var(--space-2, 8px);
+  }
+
+  /* 取消 hover 依赖（触屏无 hover），active 态反馈 */
+  .bazi-tab:active,
+  .bazi-toc-item:active,
+  .bazi-history-item:active,
+  button:active {
+    opacity: 0.7;
+    transform: scale(0.98);
+    transition: transform 0.1s ease, opacity 0.1s ease;
+  }
+
+  /* 滑动手势区：横向滚动容器禁用纵向手势拦截 */
+  .bazi-tabs,
+  .bazi-toc-list {
+    touch-action: pan-x;
+  }
+
+  /* 命盘整体允许纵向滚动 */
+  .bazi-chart-page {
+    touch-action: pan-y;
+  }
+
+  /* 链接 / 按钮去除点击高亮（统一交互反馈） */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ================================================================ *
+ * 9. 动画性能优化
+ * ================================================================ */
+
+/* 使用 transform / opacity 做过渡，避免触发 layout / paint */
+@media (max-width: 768px) {
+  .bazi-tab-content,
+  .dayun-item,
+  .bazi-history-item,
+  .bazi-toc-item {
+    will-change: transform, opacity;
+  }
+
+  /* 折叠展开使用 transform 而非 height 动画 */
+  .dayun-item--expanded .dayun-item-detail,
+  .bazi-toc-list {
+    transition: transform 0.25s var(--ease-elegant, ease),
+                opacity 0.25s var(--ease-elegant, ease);
+  }
+}
+
+/* 全局：GPU 加速提示（仅对动画元素，避免滥用） */
+.bazi-tab-content {
+  transform: translateZ(0);
+}
+
+/* 尊重用户「减少动态」偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* 关闭进入淡入动画 */
+  .bazi-tab-content {
+    animation: none;
+  }
+
+  /* 关闭点击缩放 */
+  .bazi-tab:active,
+  .bazi-toc-item:active,
+  button:active {
+    transform: none;
+  }
+}
+
+/* ================================================================ *
+ * 10. 图片 / 可视化加载优化
+ * ================================================================ */
+
+/* 所有图片启用懒加载视觉（配合 <img loading="lazy" decoding="async">） */
+.bazi-chart-content img {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 200px;
+}
+
+/* SVG 可视化（五行环 / 雷达图）按需绘制，避免首屏全量 */
+.bazi-chart-content svg {
+  shape-rendering: geometricPrecision;
+  will-change: transform;
+}
+
+/* 占位骨架（图片加载前） */
+.bazi-chart-content img:not([src]),
+.bazi-chart-content img[src=''] {
+  background: linear-gradient(
+    90deg,
+    rgba(232, 197, 106, 0.04) 25%,
+    rgba(232, 197, 106, 0.12) 37%,
+    rgba(232, 197, 106, 0.04) 63%
+  );
+  background-size: 400% 100%;
+  animation: bazi-skeleton 1.4s ease infinite;
+}
+
+@keyframes bazi-skeleton {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* ================================================================ *
+ * 11. 横屏适配
+ * ================================================================ */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 500px) {
+  /* 横屏矮视口：评分区与四柱横向并排，节省纵向空间 */
+  .bazi-score-section {
+    padding: var(--space-3, 12px) 0;
+  }
+
+  .bazi-pillars {
+    margin-bottom: var(--space-4, 16px);
+  }
+
+  .card-title {
+    margin-bottom: var(--space-2, 8px);
+  }
+}
+
+/* ================================================================ *
+ * 12. 安全区（notch / Home Indicator）
+ * ================================================================ */
+@supports (padding: max(0px)) {
+  .bazi-chart-page {
+    padding-left: max(var(--space-4, 16px), env(safe-area-inset-left));
+    padding-right: max(var(--space-4, 16px), env(safe-area-inset-right));
+    padding-bottom: max(var(--space-16, 64px), env(safe-area-inset-bottom));
+  }
+}
+
+/* 底部固定操作栏避免被 Home Indicator 遮挡 */
+.bazi-chart-content > :last-child {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ================================================================ *
+ * 13. 字体渲染优化（移动端抗锯齿）
+ * ================================================================ */
+@media (max-width: 768px) {
+  .bazi-chart-page {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 中文字体在移动端使用系统字体栈，减少 webfont 加载 */
+  .pillar-gan,
+  .pillar-zhi,
+  .overview-value,
+  .wuxing-name {
+    font-family: var(--font-serif, serif);
+  }
+}

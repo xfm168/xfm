@@ -1,0 +1,303 @@
+.bazi-input-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.bazi-input-content {
+  padding: var(--space-8) var(--space-4);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.bazi-form-card {
+  margin-bottom: var(--space-8);
+}
+
+.bazi-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 var(--space-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.form-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+/* ---- 农历/公历切换 toggle-selector（复用 gender-selector 模式） ---- */
+.toggle-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.toggle-btn {
+  height: 48px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.toggle-btn:hover {
+  border-color: var(--accent-light);
+  color: var(--text-primary);
+}
+
+.toggle-btn.active {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---- select 下拉菜单样式 ---- */
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-4) center;
+  padding-right: var(--space-10);
+  cursor: pointer;
+}
+
+.form-select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: var(--space-2);
+}
+
+/* ---- 精确时间输入 ---- */
+.exact-time-input {
+  margin-top: var(--space-2);
+}
+
+/* ---- 农历提示 ---- */
+.calendar-hint {
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-left: var(--space-1);
+  font-weight: 400;
+}
+
+/* ---- 性别选择器 ---- */
+.gender-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.gender-btn {
+  height: 48px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.gender-btn:hover {
+  border-color: var(--accent-light);
+  color: var(--text-primary);
+}
+
+.gender-btn.active {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---- Toggle Switch（真太阳时 / 夏令时） ---- */
+.toggle-row {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-switch-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.toggle-switch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.toggle-switch .toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--text-tertiary);
+  border-radius: 50%;
+  transition: all 0.3s;
+  pointer-events: none;
+}
+
+.toggle-switch.active {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: var(--accent);
+}
+
+.toggle-switch.active .toggle-thumb {
+  left: 24px;
+  background: var(--accent);
+}
+
+.toggle-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+/* ---- 子表单组（出生城市等条件输入） ---- */
+.form-sub-group {
+  margin-top: var(--space-3);
+  animation: fadeSlideIn 0.3s ease;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- 提示信息 ---- */
+.form-note {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  line-height: 1.8;
+}
+
+.form-note p {
+  margin: 0;
+}
+
+.form-note-highlight {
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+/* ---- 下方介绍 ---- */
+.bazi-intro {
+  padding: var(--space-6);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.intro-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 var(--space-4) 0;
+  letter-spacing: 0.1em;
+}
+
+.intro-text {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.intro-text:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- 移动端适配 ---- */
+@media (max-width: 480px) {
+  .bazi-input-content {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .form-input {
+    height: 44px;
+    font-size: 0.95rem;
+  }
+
+  .toggle-btn,
+  .gender-btn {
+    height: 44px;
+    font-size: 0.95rem;
+  }
+
+  .toggle-switch {
+    width: 44px;
+    height: 24px;
+  }
+
+  .toggle-switch .toggle-thumb {
+    width: 18px;
+    height: 18px;
+  }
+
+  .toggle-switch.active .toggle-thumb {
+    left: 22px;
+  }
+
+  .form-select {
+    padding-right: var(--space-8);
+  }
+}

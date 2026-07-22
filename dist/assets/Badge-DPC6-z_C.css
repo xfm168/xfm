@@ -1,0 +1,136 @@
+.xui-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-base) var(--ease-standard);
+}
+
+.xui-card--clickable {
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+/* ── Variants ── */
+.xui-card--default {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.xui-card--highlight {
+  background: var(--bg-card);
+  border: 1px solid var(--gold-500);
+  box-shadow: var(--shadow-gold);
+}
+
+.xui-card--ghost {
+  background: transparent;
+  border: none;
+}
+
+.xui-card--feature {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Padding ── */
+.xui-card--p-sm {
+  padding: var(--space-3) var(--space-4);
+}
+
+.xui-card--p-md {
+  padding: var(--space-5) var(--space-6);
+}
+
+.xui-card--p-lg {
+  padding: var(--space-8);
+}
+
+/* ── Hover ── */
+.xui-card--hoverable:hover,
+.xui-card--clickable:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: var(--shadow-gold-md);
+  transform: translateY(-2px);
+}
+
+.xui-card--feature:hover {
+  border-color: var(--gold-500);
+  box-shadow: var(--shadow-gold-md);
+}
+.xui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+/* ── Sizes ── */
+.xui-badge--sm {
+  height: 20px;
+  padding: 0 var(--space-2);
+  font-size: 0.6875rem;
+}
+
+.xui-badge--md {
+  height: 24px;
+  padding: 0 var(--space-3);
+  font-size: 0.75rem;
+}
+
+/* ── Variants ── */
+.xui-badge--default {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.xui-badge--gold {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold-500);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.xui-badge--success {
+  background: rgba(107, 158, 122, 0.1);
+  color: var(--success);
+  border-color: rgba(107, 158, 122, 0.3);
+}
+
+.xui-badge--warning {
+  background: rgba(196, 162, 74, 0.1);
+  color: var(--warning);
+  border-color: rgba(196, 162, 74, 0.3);
+}
+
+.xui-badge--error {
+  background: rgba(196, 96, 96, 0.1);
+  color: var(--error);
+  border-color: rgba(196, 96, 96, 0.3);
+}
+
+/* ── Dot variant ── */
+.xui-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+}
+
+.xui-badge__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  line-height: 1;
+}

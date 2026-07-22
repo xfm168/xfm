@@ -19,14 +19,14 @@ import type { ProReportData } from '../types/proReport'
 import { usePageSEO } from '../hooks/usePageSEO'
 
 // 报告子组件
-import { ReportSummary } from '../components/report/ReportSummary'
-import { FiveElementCard } from '../components/report/FiveElementCard'
-import { PatternCard } from '../components/report/PatternCard'
-import { XiYongCard } from '../components/report/XiYongCard'
-import { TenGodCard } from '../components/report/TenGodCard'
-import { FortuneTimeline } from '../components/report/FortuneTimeline'
-import { RiskAdviceCard } from '../components/report/RiskAdviceCard'
-import { ConfidenceBadge } from '../components/report/ConfidenceBadge'
+import ReportSummary from '../components/report/ReportSummary'
+import FiveElementCard from '../components/report/FiveElementCard'
+import PatternCard from '../components/report/PatternCard'
+import XiYongCard from '../components/report/XiYongCard'
+import TenGodCard from '../components/report/TenGodCard'
+import FortuneTimeline from '../components/report/FortuneTimeline'
+import RiskAdviceCard from '../components/report/RiskAdviceCard'
+import ConfidenceBadge from '../components/report/ConfidenceBadge'
 import ReportFeedbackForm from '../components/report/ReportFeedbackForm'
 import './ProReportPage.css'
 
@@ -84,7 +84,7 @@ export default function ProReportPage() {
   // SEO
   usePageSEO({
     title: '专业命理报告 | 玄风门',
-    description: '玄风门专业三层命理报告，含核心摘要、五维评分、格局分析、喜用神、十神、大运流年及AI解读。',
+    description: '玄风门专业三层命理报告，含核心摘要、五维评分、格局分析、喜用神、十神、大运流年及玄机推演解读。',
     keywords: '专业命理报告,八字分析,五维评分,格局分析,喜用神,大运流年',
     canonical: 'https://xuanfengmen.com/pro-report',
   })
@@ -227,7 +227,7 @@ export default function ProReportPage() {
         />
       </CollapsibleSection>
 
-      <CollapsibleSection title="AI 命理解释" subtitle="古籍引用 · 现代解读">
+      <CollapsibleSection title="玄机命理解释" subtitle="古籍引用 · 现代解读">
         <div className="xr-explains">
           {(report.analysis.explains as unknown as Array<{
             topic: string

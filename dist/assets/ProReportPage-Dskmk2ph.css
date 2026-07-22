@@ -1,0 +1,1399 @@
+/**
+ * ReportSummary - 第一层核心摘要样式
+ * 展示四柱、命盘定位、一句话总结、优势/风险
+ * 前缀: xr-
+ */
+
+.xr-summary {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--space-4);
+  box-sizing: border-box;
+}
+
+/* ── 四柱网格 ── */
+.xr-summary__pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.xr-summary__pillar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.2s ease;
+}
+
+.xr-summary__pillar--active {
+  border-color: var(--accent, #c8a951);
+  box-shadow: 0 1px 3px rgba(200, 169, 81, 0.15);
+}
+
+.xr-summary__pillar-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  letter-spacing: 0.05em;
+}
+
+.xr-summary__pillar-gan {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--ink, #333);
+  font-family: var(--font-serif, serif);
+}
+
+.xr-summary__pillar-zhi {
+  font-size: 1.125rem;
+  color: var(--ink, #333);
+  font-family: var(--font-serif, serif);
+}
+
+/* ── 命盘定位标签 ── */
+.xr-summary__identity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.xr-summary__identity-text {
+  font-size: 0.9375rem;
+  color: var(--muted, #666);
+  font-family: var(--font-serif, serif);
+}
+
+/* ── 一句话总结 ── */
+.xr-summary__headline {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink, #333);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-2);
+}
+
+/* ── 人生定位 ── */
+.xr-summary__positioning {
+  font-size: 0.9375rem;
+  color: var(--muted, #666);
+  text-align: center;
+  line-height: 1.7;
+  margin-bottom: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}
+
+/* ── 优势列表 ── */
+.xr-summary__strengths {
+  margin-bottom: var(--space-4);
+}
+
+.xr-summary__section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.03em;
+}
+
+.xr-summary__strength-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--success, #27ae60);
+  line-height: 1.6;
+  padding: var(--space-1) 0;
+}
+
+.xr-summary__strength-icon {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* ── 风险列表 ── */
+.xr-summary__risks {
+  margin-bottom: var(--space-4);
+}
+
+.xr-summary__risk-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--warning, #f39c12);
+  line-height: 1.6;
+  padding: var(--space-1) 0;
+}
+
+.xr-summary__risk-icon {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* ── 开发方向 ── */
+.xr-summary__direction {
+  font-size: 0.9375rem;
+  color: var(--ink, #333);
+  line-height: 1.7;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent, #c8a951);
+}
+
+/* ── 移动端适配 ── */
+@media (max-width: 480px) {
+  .xr-summary__pillars {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .xr-summary__headline {
+    font-size: 1.05rem;
+  }
+}
+/**
+ * FiveElementCard - 五行分析卡片样式
+ * 展示五维评分（事业/财富/婚姻/健康/学业）及总分
+ * 前缀: xr-fe-
+ */
+
+.xr-fe {
+  padding: var(--space-4);
+}
+
+/* ── 维度列表 ── */
+.xr-fe__dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.xr-fe__dimension {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.xr-fe__dimension-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.xr-fe__dimension-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+}
+
+.xr-fe__dimension-level {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  padding: 2px var(--space-2);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 4px;
+}
+
+.xr-fe__dimension-score {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent, #c8a951);
+}
+
+/* ── 总分 ── */
+.xr-fe__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+  border: 1px solid var(--border, #e5e5e5);
+}
+
+.xr-fe__total-label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+}
+
+.xr-fe__total-score {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent, #c8a951);
+  font-family: var(--font-serif, serif);
+}
+/**
+ * PatternCard - 格局分析卡片样式
+ * 展示主格、成格评分、副格、格局描述
+ * 前缀: xr-pat-
+ */
+
+.xr-pat {
+  padding: var(--space-4);
+}
+
+/* ── 主格名称 ── */
+.xr-pat__main {
+  margin-bottom: var(--space-4);
+}
+
+.xr-pat__main-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-1);
+}
+
+.xr-pat__main-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink, #333);
+  font-family: var(--font-serif, serif);
+}
+
+/* ── 成格评分 ── */
+.xr-pat__score {
+  margin-bottom: var(--space-4);
+}
+
+/* ── 副格列表 ── */
+.xr-pat__sub {
+  margin-bottom: var(--space-4);
+}
+
+.xr-pat__sub-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.xr-pat__sub-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ── 格局描述 ── */
+.xr-pat__desc {
+  font-size: 0.875rem;
+  color: var(--muted, #666);
+  line-height: 1.7;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}
+/**
+ * XiYongCard - 喜用神分析卡片样式
+ * 展示日主强弱、五神列表、调理方向
+ * 前缀: xr-xy-
+ */
+
+.xr-xy {
+  padding: var(--space-4);
+}
+
+/* ── 日主强弱 ── */
+.xr-xy__strength {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.xr-xy__strength-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  letter-spacing: 0.05em;
+}
+
+/* ── 五神列表 ── */
+.xr-xy__gods {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.xr-xy__god-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.xr-xy__god-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink, #333);
+  min-width: 4em;
+}
+
+/* ── 调理方向 ── */
+.xr-xy__direction {
+  font-size: 0.875rem;
+  color: var(--muted, #666);
+  line-height: 1.7;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent, #c8a951);
+}
+/**
+ * TenGodCard - 十神分析卡片样式
+ * 展示主要十神、十神结构描述
+ * 前缀: xr-tg-
+ */
+
+.xr-tg {
+  padding: var(--space-4);
+}
+
+/* ── 十神标签列表 ── */
+.xr-tg__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+/* ── 十神结构描述 ── */
+.xr-tg__structure {
+  font-size: 0.875rem;
+  color: var(--muted, #666);
+  line-height: 1.7;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}
+/**
+ * FortuneTimeline - 大运流年时间轴样式
+ * 竖向时间轴，展示人生各阶段运势
+ * 前缀: xr-ft-
+ */
+
+.xr-ft {
+  padding: var(--space-4);
+}
+
+.xr-ft__list {
+  position: relative;
+  padding-left: var(--space-6);
+}
+
+/* ── 左侧竖线 ── */
+.xr-ft__list::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border, #e5e5e5);
+}
+
+/* ── 单个阶段 ── */
+.xr-ft__stage {
+  position: relative;
+  padding-bottom: var(--space-5);
+}
+
+.xr-ft__stage:last-child {
+  padding-bottom: 0;
+}
+
+/* ── 圆点 ── */
+.xr-ft__dot {
+  position: absolute;
+  left: calc(-1 * var(--space-6) - 1px);
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent, #c8a951);
+  border: 2px solid var(--bg-card, #fff);
+  box-shadow: 0 0 0 2px var(--accent, #c8a951);
+}
+
+/* ── 内容区 ── */
+.xr-ft__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.xr-ft__stage-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+}
+
+.xr-ft__age-range {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+}
+
+.xr-ft__summary {
+  font-size: 0.875rem;
+  color: var(--ink, #333);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.xr-ft__influence {
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+/* ── 关键事件 ── */
+.xr-ft__events {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.xr-ft__event {
+  font-size: 0.8125rem;
+  color: var(--accent2, #5b8def);
+  padding-left: var(--space-4);
+  position: relative;
+  line-height: 1.5;
+}
+
+.xr-ft__event::before {
+  content: '\2022';
+  position: absolute;
+  left: var(--space-1);
+  color: var(--accent2, #5b8def);
+}
+
+/* ── 移动端适配 ── */
+@media (max-width: 480px) {
+  .xr-ft__list {
+    padding-left: var(--space-5);
+  }
+
+  .xr-ft__dot {
+    left: calc(-1 * var(--space-5) - 1px);
+  }
+}
+.xui-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.xui-section__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.xui-section__icon {
+  font-size: 1.25rem;
+  color: var(--gold-500);
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.xui-section__titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.xui-section__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+}
+
+.xui-section__subtitle {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.xui-section__body {
+  width: 100%;
+}
+/**
+ * RiskAdviceCard - 风险与建议关联卡片样式
+ * 风险列表（等级颜色区分）、机会列表、建议列表
+ * 前缀: xr-ra-
+ */
+
+.xr-ra {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── 区域标题 ── */
+.xr-ra__section-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: var(--space-3);
+  letter-spacing: 0.03em;
+}
+
+/* ── 风险卡片 ── */
+.xr-ra__risks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.xr-ra__risk {
+  padding: var(--space-3) var(--space-4);
+  border-radius: 8px;
+  border: 1px solid var(--border, #e5e5e5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.xr-ra__risk--high {
+  background: rgba(231, 76, 60, 0.06);
+  border-color: rgba(231, 76, 60, 0.2);
+}
+
+.xr-ra__risk--medium {
+  background: rgba(243, 156, 18, 0.06);
+  border-color: rgba(243, 156, 18, 0.2);
+}
+
+.xr-ra__risk--low {
+  background: rgba(241, 196, 15, 0.06);
+  border-color: rgba(241, 196, 15, 0.2);
+}
+
+.xr-ra__risk-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.xr-ra__risk-reason {
+  font-size: 0.875rem;
+  color: var(--ink, #333);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.xr-ra__risk-suggestion {
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.xr-ra__risk-avoidance {
+  font-size: 0.8125rem;
+  color: var(--accent2, #5b8def);
+  line-height: 1.6;
+  padding: var(--space-2) var(--space-3);
+  background: rgba(91, 141, 239, 0.06);
+  border-radius: 4px;
+}
+
+.xr-ra__risk-avoidance-label {
+  font-weight: 600;
+  margin-right: var(--space-1);
+}
+
+/* ── 机会卡片 ── */
+.xr-ra__opportunities {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.xr-ra__opportunity {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(39, 174, 96, 0.25);
+  border-radius: 8px;
+  background: rgba(39, 174, 96, 0.04);
+}
+
+.xr-ra__opportunity-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.xr-ra__opportunity-reason {
+  font-size: 0.875rem;
+  color: var(--ink, #333);
+  line-height: 1.6;
+}
+
+/* ── 建议列表 ── */
+.xr-ra__recommendations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.xr-ra__recommendation {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}
+
+.xr-ra__recommendation-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.xr-ra__recommendation-content {
+  font-size: 0.875rem;
+  color: var(--ink, #333);
+  line-height: 1.6;
+  margin-bottom: var(--space-2);
+}
+
+.xr-ra__recommendation-reasoning {
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ── 移动端适配 ── */
+@media (max-width: 480px) {
+  .xr-ra__risk,
+  .xr-ra__opportunity,
+  .xr-ra__recommendation {
+    padding: var(--space-3);
+  }
+}
+/**
+ * ConfidenceBadge - 置信度展示样式
+ * 置信度总览、警告列表、TraceChain 入口
+ * 前缀: xr-cf-
+ */
+
+.xr-cf {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── 总览区域 ── */
+.xr-cf__overview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.xr-cf__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+}
+
+.xr-cf__status--passed {
+  color: var(--success, #27ae60);
+}
+
+.xr-cf__status--failed {
+  color: var(--danger, #e74c3c);
+}
+
+/* ── 置信度进度条 ── */
+.xr-cf__bar {
+  width: 100%;
+}
+
+/* ── 百分比展示 ── */
+.xr-cf__percentage {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent, #c8a951);
+  font-family: var(--font-serif, serif);
+  text-align: center;
+}
+
+.xr-cf__percentage-label {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ── 警告列表 ── */
+.xr-cf__warnings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.xr-cf__warnings-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--warning, #f39c12);
+  letter-spacing: 0.03em;
+}
+
+.xr-cf__warning {
+  font-size: 0.8125rem;
+  color: var(--muted, #666);
+  line-height: 1.5;
+  padding-left: var(--space-4);
+  position: relative;
+}
+
+.xr-cf__warning::before {
+  content: '\2022';
+  position: absolute;
+  left: var(--space-1);
+  color: var(--warning, #f39c12);
+}
+
+/* ── TraceChain 入口 ── */
+.xr-cf__trace {
+  margin-top: var(--space-1);
+}
+
+.xr-cf__trace-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  color: var(--accent2, #5b8def);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--accent2, #5b8def);
+  border-radius: 6px;
+  padding: var(--space-2) var(--space-3);
+  transition: background 0.2s ease, color 0.2s ease;
+  font-family: inherit;
+}
+
+.xr-cf__trace-btn:hover {
+  background: rgba(91, 141, 239, 0.08);
+  color: var(--accent2, #5b8def);
+}
+
+.xr-cf__trace-steps {
+  font-size: 0.75rem;
+  color: var(--muted, #666);
+}
+
+/* ── 移动端适配 ── */
+@media (max-width: 480px) {
+  .xr-cf__overview {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+/* ReportFeedbackForm -- 报告内嵌反馈组件 */
+/* 前缀: xf- (xuanfeng feedback) */
+
+.xf-form {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background: var(--bg-card, #fff);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.xf-form__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin: 0 0 0.25rem;
+  text-align: center;
+}
+
+.xf-form__subtitle {
+  font-size: 0.85rem;
+  color: var(--muted, #666);
+  margin: 0 0 1.25rem;
+  text-align: center;
+}
+
+/* ─── 星星评分 ─── */
+.xf-rating-group {
+  margin-bottom: 1rem;
+}
+
+.xf-rating-group__label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: 0.4rem;
+}
+
+.xf-rating-group__stars {
+  display: flex;
+  gap: 0.25rem;
+  flex-direction: row;
+}
+
+.xf-star {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--rule, #e0e0e0);
+  transition: color 0.15s, transform 0.15s;
+}
+
+.xf-star:hover {
+  transform: scale(1.15);
+}
+
+.xf-star--filled {
+  color: #c8a951;
+}
+
+.xf-star--hover {
+  color: #dabb6a;
+}
+
+.xf-star--overall {
+  font-size: 2rem;
+}
+
+/* ─── 维度评分列表 ─── */
+.xf-dimensions {
+  margin-bottom: 1.25rem;
+}
+
+.xf-dimensions__title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin: 0 0 0.75rem;
+}
+
+.xf-dimension-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--rule, #e0e0e0);
+}
+
+.xf-dimension-row:last-child {
+  border-bottom: none;
+}
+
+.xf-dimension-row__name {
+  font-size: 0.85rem;
+  color: var(--ink, #333);
+  flex-shrink: 0;
+  min-width: 100px;
+}
+
+.xf-dimension-row__stars {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.xf-dimension-row__stars .xf-star {
+  font-size: 1.3rem;
+}
+
+/* ─── 文字反馈 ─── */
+.xf-textarea-group {
+  margin-bottom: 1rem;
+}
+
+.xf-textarea-group__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.xf-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink, #333);
+  background: var(--bg-page, #f5f5f5);
+  border: 1px solid var(--rule, #e0e0e0);
+  border-radius: 6px;
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.xf-textarea:focus {
+  outline: none;
+  border-color: var(--accent, #c8a951);
+  box-shadow: 0 0 0 2px rgba(200, 169, 81, 0.2);
+}
+
+/* ─── Select ─── */
+.xf-select-group {
+  margin-bottom: 1rem;
+}
+
+.xf-select-group__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.xf-select {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--ink, #333);
+  background: var(--bg-page, #f5f5f5);
+  border: 1px solid var(--rule, #e0e0e0);
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-family: inherit;
+  appearance: auto;
+}
+
+.xf-select:focus {
+  outline: none;
+  border-color: var(--accent, #c8a951);
+  box-shadow: 0 0 0 2px rgba(200, 169, 81, 0.2);
+}
+
+/* ─── Checkbox ─── */
+.xf-checkbox-group {
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.xf-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent, #c8a951);
+  cursor: pointer;
+}
+
+.xf-checkbox-group__label {
+  font-size: 0.85rem;
+  color: var(--ink, #333);
+}
+
+/* ─── 提交按钮 ─── */
+.xf-submit {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent, #c8a951);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+
+.xf-submit:hover {
+  opacity: 0.9;
+}
+
+.xf-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── 错误信息 ─── */
+.xf-error {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  color: var(--danger, #e74c3c);
+  background: rgba(231, 76, 60, 0.08);
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* ─── 感谢页面 ─── */
+.xf-thankyou {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.xf-thankyou__icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.xf-thankyou__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: 0.3rem;
+}
+
+.xf-thankyou__text {
+  font-size: 0.85rem;
+  color: var(--muted, #666);
+}
+
+/* ─── 移动端适配 ─── */
+@media (max-width: 680px) {
+  .xf-form {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .xf-star--overall {
+    font-size: 1.8rem;
+  }
+
+  .xf-dimension-row {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .xf-dimension-row__stars .xf-star {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .xf-form {
+    padding: 0.75rem;
+  }
+
+  .xf-star--overall {
+    font-size: 1.6rem;
+  }
+
+  .xf-dimension-row__name {
+    min-width: 80px;
+    font-size: 0.8rem;
+  }
+}
+/* Professional Report Page — 三层报告架构页面容器 */
+/* 前缀: xr-page */
+
+.xr-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--ink, #333);
+  line-height: 1.6;
+}
+
+/* 加载状态 */
+.xr-loading {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.xr-loading__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--rule, #e0e0e0);
+  border-top-color: var(--accent, #c8a951);
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: xr-spin 0.8s linear infinite;
+}
+
+@keyframes xr-spin {
+  to { transform: rotate(360deg); }
+}
+
+.xr-loading__text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: 0.5rem;
+}
+
+.xr-loading__hint {
+  font-size: 0.85rem;
+  color: var(--muted, #666);
+}
+
+/* 错误状态 */
+.xr-error {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.xr-error__title {
+  font-size: 1.2rem;
+  color: var(--danger, #e74c3c);
+  margin-bottom: 0.5rem;
+}
+
+.xr-error__message {
+  color: var(--muted, #666);
+  margin-bottom: 1.5rem;
+}
+
+.xr-error__retry {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background: var(--accent, #c8a951);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.xr-error__retry:hover {
+  opacity: 0.9;
+}
+
+/* 折叠模块 */
+.xr-collapsible {
+  margin: 1rem 0;
+  background: var(--bg-card, #fff);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.xr-collapsible__header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 0.5rem;
+  color: var(--ink, #333);
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+
+.xr-collapsible__header:hover {
+  background: var(--bg-page, #f5f5f5);
+}
+
+.xr-collapsible__header--open {
+  border-bottom: 1px solid var(--rule, #e0e0e0);
+}
+
+.xr-collapsible__title {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.xr-collapsible__subtitle {
+  font-size: 0.82rem;
+  color: var(--muted, #666);
+  flex: 1;
+}
+
+.xr-collapsible__arrow {
+  font-size: 0.9rem;
+  color: var(--muted, #666);
+  flex-shrink: 0;
+}
+
+.xr-collapsible__body {
+  padding: 0.5rem 1rem 1rem;
+}
+
+/* AI 解释列表 */
+.xr-explains {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.xr-explain-item {
+  padding: 0.8rem;
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+}
+
+.xr-explain-item__topic {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink, #333);
+  margin-bottom: 0.5rem;
+}
+
+.xr-explain-item__plain {
+  font-size: 0.9rem;
+  color: var(--ink, #333);
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.xr-explain-item__pro {
+  font-size: 0.82rem;
+  color: var(--muted, #666);
+  margin-bottom: 0.3rem;
+}
+
+.xr-explain-item__ref {
+  font-size: 0.78rem;
+  color: var(--muted, #888);
+  font-style: italic;
+}
+
+.xr-explain-item__ref-label {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.xr-explain-item__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.xr-explain-item__tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: var(--accent, #c8a951);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.72rem;
+}
+
+/* Trace 详情 */
+.xr-trace-detail {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--bg-page, #f5f5f5);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.xr-trace-detail h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.xr-trace-module {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--rule, #e0e0e0);
+}
+
+.xr-trace-module:last-child {
+  border-bottom: none;
+}
+
+.xr-trace-module__name {
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.xr-trace-module__count {
+  color: var(--accent, #c8a951);
+  font-weight: 600;
+}
+
+.xr-trace-module__desc {
+  color: var(--muted, #666);
+  flex: 1;
+}
+
+/* 底部操作 */
+.xr-footer-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.xr-footer-actions__btn {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.xr-footer-actions__btn:hover {
+  opacity: 0.9;
+}
+
+.xr-footer-actions__btn--primary {
+  background: var(--accent, #c8a951);
+  color: #fff;
+}
+
+.xr-footer-actions__btn--secondary {
+  background: var(--bg-page, #f5f5f5);
+  color: var(--ink, #333);
+  border: 1px solid var(--rule, #e0e0e0);
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+  .xr-page {
+    padding: 0.5rem;
+  }
+
+  .xr-collapsible__header {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .xr-collapsible__subtitle {
+    display: none;
+  }
+
+  .xr-footer-actions {
+    flex-direction: column;
+  }
+
+  .xr-footer-actions__btn {
+    width: 100%;
+  }
+}
