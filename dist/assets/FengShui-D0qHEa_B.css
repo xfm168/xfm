@@ -166,7 +166,22 @@
 }
 
 .hidden-input {
-  display: none;
+  /* 修复 P0-3: display:none 在 Android/iOS WebView 中会导致 ref.click() 无法触发文件选择器
+     改为绝对定位 + 透明 + 不可交互，仍可被 click() 程序化触发 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  margin: -1px;
+  clip: rect(0 0 0 0);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
 }
 
 /* Preview */

@@ -73,8 +73,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px 48px;
-  gap: 36px;
+  /* P0-1: 增加 Hero 整体高度，加大上下内边距 */
+  padding: 72px 20px 64px;
+  /* P0-1: 加大元素间距，避免八卦文字与「玄风门」标题遮挡 */
+  gap: 56px;
   max-width: 720px;
   margin: 0 auto;
 }
@@ -83,9 +85,12 @@
 .taiji-wrap {
   position: relative;
   width: 100%;
-  max-width: min(80vw, 480px);
+  /* P0-1: 缩小太极图，给八卦文字与下方「玄风门」标题留出安全边距 */
+  max-width: min(68vw, 380px);
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
+  /* P0-1: 八卦文字安全边距，下方额外留白避免与标题遮挡 */
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,12 +346,13 @@
 
 @media (min-width: 640px) {
   .hero {
-    padding: 80px 32px 64px;
-    gap: 48px;
+    padding: 96px 32px 80px;
+    gap: 64px;
   }
 
   .taiji-wrap {
-    max-width: min(65vw, 440px);
+    max-width: min(58vw, 420px);
+    margin-bottom: 12px;
   }
 
   .brand-title {
@@ -470,32 +476,34 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   RESPONSIVE — 小屏幕（320px ~ 375px）
+   RESPONSIVE — 小屏幕（320px ~ 414px）P0-1: 全部重新适配
    ═══════════════════════════════════════════════════════════════════ */
 
-@media (max-width: 375px) {
+/* iPhone 12/13/14/15 Pro Max & Plus / Android 大屏 */
+@media (max-width: 414px) {
   .hero {
-    padding: 48px 16px 36px;
-    gap: 28px;
+    padding: 56px 18px 48px;
+    gap: 40px;
   }
 
   .taiji-wrap {
-    max-width: min(75vw, 280px);
+    max-width: min(66vw, 300px);
+    margin-bottom: 8px;
   }
 
   .brand-title {
-    font-size: 2.5rem;
+    font-size: 2.6rem;
     letter-spacing: 0.25em;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
 
   .brand-tagline p {
-    font-size: 0.85rem;
-    letter-spacing: 0.2em;
+    font-size: 0.88rem;
+    letter-spacing: 0.22em;
   }
 
   .features-section {
-    padding: 36px 16px 44px;
+    padding: 36px 18px 44px;
   }
 
   .features-grid {
@@ -503,7 +511,7 @@
   }
 
   .features-grid .xbiz-feature-card {
-    min-height: 88px;
+    min-height: 90px;
     padding: var(--space-4) var(--space-3);
     gap: var(--space-2);
   }
@@ -527,7 +535,7 @@
   }
 
   .slogan-section {
-    padding: 48px 16px 64px;
+    padding: 48px 18px 64px;
   }
 
   .slogan-text {
@@ -547,30 +555,31 @@
   }
 }
 
-@media (max-width: 320px) {
+/* iPhone 12/13/14/15 / iPhone X / iPhone 11 Pro */
+@media (max-width: 390px) {
   .hero {
-    padding: 40px 12px 32px;
-    gap: 24px;
+    padding: 52px 16px 44px;
+    gap: 36px;
   }
 
   .taiji-wrap {
-    max-width: 240px;
+    max-width: min(64vw, 280px);
+    margin-bottom: 6px;
   }
 
   .brand-title {
-    font-size: 2.2rem;
-    letter-spacing: 0.2em;
-    margin-bottom: 12px;
+    font-size: 2.4rem;
+    letter-spacing: 0.24em;
+    margin-bottom: 16px;
   }
 
   .brand-tagline p {
-    font-size: 0.78rem;
-    letter-spacing: 0.15em;
-    gap: 8px;
+    font-size: 0.84rem;
+    letter-spacing: 0.2em;
   }
 
   .features-section {
-    padding: 28px 12px 36px;
+    padding: 32px 16px 40px;
   }
 
   .features-grid {
@@ -578,7 +587,83 @@
   }
 
   .features-grid .xbiz-feature-card {
-    min-height: 80px;
+    min-height: 86px;
+  }
+}
+
+/* iPhone SE / iPhone 6/7/8 */
+@media (max-width: 375px) {
+  .hero {
+    padding: 48px 16px 40px;
+    gap: 32px;
+  }
+
+  .taiji-wrap {
+    max-width: min(62vw, 260px);
+    margin-bottom: 4px;
+  }
+
+  .brand-title {
+    font-size: 2.2rem;
+    letter-spacing: 0.22em;
+    margin-bottom: 14px;
+  }
+
+  .brand-tagline p {
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+  }
+
+  .features-section {
+    padding: 28px 16px 36px;
+  }
+
+  .features-grid {
+    gap: 10px;
+  }
+
+  .features-grid .xbiz-feature-card {
+    min-height: 82px;
+  }
+}
+
+/* 极小屏（Galaxy Fold / iPhone 5 等） */
+@media (max-width: 320px) {
+  .hero {
+    padding: 40px 12px 32px;
+    gap: 28px;
+  }
+
+  .taiji-wrap {
+    max-width: 220px;
+    margin-bottom: 4px;
+  }
+
+  .brand-title {
+    font-size: 1.9rem;
+    letter-spacing: 0.18em;
+    margin-bottom: 12px;
+  }
+
+  .brand-tagline p {
+    font-size: 0.74rem;
+    letter-spacing: 0.15em;
+  }
+
+  .brand-tagline {
+    gap: 6px;
+  }
+
+  .features-section {
+    padding: 24px 12px 32px;
+  }
+
+  .features-grid {
+    gap: 10px;
+  }
+
+  .features-grid .xbiz-feature-card {
+    min-height: 76px;
     padding: var(--space-3) var(--space-2);
   }
 
@@ -593,11 +678,11 @@
   }
 
   .features-grid .xbiz-feature-card__title {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
   }
 
   .features-grid .xbiz-feature-card__subtitle {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
   }
 
   .slogan-text {

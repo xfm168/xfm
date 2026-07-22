@@ -364,29 +364,73 @@ export default function BaziChart() {
     )
   }
 
+  // P0-2 修复：pipelineResult 为 null 时不进入主渲染，避免 daYun.steps 等 undefined 报错
+  // 显示加载中状态，等待 pipeline 完成或失败后由 catch 设置 analysisReady
+  if (!pipelineResult) {
+    return (
+      <div className="bazi-chart-page">
+        <PageTitle
+          icon="☰"
+          label="玄风命理"
+          title="命盘总览"
+          subtitle="八字排盘结果"
+        />
+        <div className="container bazi-chart-content">
+          <div className="bazi-loading-container">
+            <div className="bazi-loading-progress">
+              <div className="bazi-loading-progress-bar" style={{ width: `${Math.min(loadingStep / 8 * 100, 100)}%` }} />
+            </div>
+            <div className="bazi-loading-steps">
+              <div className="bazi-loading-step bazi-loading-step--active">
+                <span className="bazi-loading-step-icon bazi-loading-pulse">☰</span>
+                <span className="bazi-loading-step-text">{loadingText || '正在推演命盘…'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const { sixLines, fiveElementCount, dayMaster, xiYongShen, overallScore, birthInfo: chartBirth } = chart
 
   // V4.4 Enterprise: 所有分析数据统一从 Pipeline Result 读取
   // 禁止直接调用底层分析函数，形成 Single Source of Truth
+  // 注意：pipelineResult 可能为 null（异常或仍在加载），所有字段必须使用可选链 + 默认值
+  // P0-2: 默认值必须覆盖 JSX 中访问的所有字段，确保不会出现 undefined.xxx 报错
   const p = pipelineResult
-  const geJu = p?.geJu!
+  const geJu = p?.geJu ?? null as any
 
   // shenShaDetail 由下方 useMemo 提供
-  const shenShiAnalysis = p?.shenShiAnalysis!
-  const fiveElementPower = p?.fiveElementPower!
-  const daYun = p?.daYun!
-  const liuNian = p?.liuNian!
-  const liuYue = p?.liuYue!
-  const marriage = p?.marriage!
-  const career = p?.career!
-  const wealth = p?.wealth!
-  const health = p?.health!
-  const fengshui = p?.fengshui!
-  const fullReport = p?.fullReport
+  const shenShiAnalysis = p?.shenShiAnalysis ?? {
+    details: [], summary: '', dominantShenShi: [], sortedByPower: [],
+    personalityTraits: [], personality: '', careerTendency: '',
+    careerSuggestions: [], relationshipTraits: '',
+    relationshipStrengths: [], relationshipChallenges: [], combinations: [],
+  } as any
+  const fiveElementPower = p?.fiveElementPower ?? {
+    elements: [], total: 0, dominant: '', weakest: '',
+    mostWang: '', mostShuai: '', sortedByPower: [],
+  } as any
+  const daYun = p?.daYun ?? {
+    steps: [], currentStepIndex: 0,
+    qiYun: { qiYunAge: 0, isShun: true, qiYunDate: new Date() },
+  } as any
+  const liuNian = p?.liuNian ?? { years: [], startYear: 0, endYear: 0 } as any
+  const liuYue = p?.liuYue ?? {
+    months: [], year: 0, yearGanZhi: { gan: '', zhi: '' },
+  } as any
+  const marriage = p?.marriage ?? null as any
+  const career = p?.career ?? null as any
+  const wealth = p?.wealth ?? null as any
+  const health = p?.health ?? null as any
+  const fengshui = p?.fengshui ?? null as any
+  const fullReport = p?.fullReport ?? null
 
   // ===== V4.4 虚拟列表（大运 / 流年长列表性能优化） =====
   // useVirtualList 为纯函数，可在此直接调用；列表短或展开某项时退回全量渲染
-  const dayunSteps = daYun.steps
+  // daYun.steps / liuNian.years 已通过默认值保证非 undefined
+  const dayunSteps: any[] = daYun.steps || []
   const dayunVirtual = useVirtualList(
     dayunSteps,
     DAYUN_ITEM_HEIGHT,
@@ -397,7 +441,7 @@ export default function BaziChart() {
   // 大运条目少（通常 8 步），不触发虚拟化；保留接口以便统一处理
   const dayunVirtualized = dayunSteps.length > VIRTUAL_THRESHOLD && expandedDayun === null
 
-  const liunianYears = liuNian.years
+  const liunianYears: any[] = liuNian.years || []
   const liunianVirtual = useVirtualList(
     liunianYears,
     LIUNIAN_ITEM_HEIGHT,
