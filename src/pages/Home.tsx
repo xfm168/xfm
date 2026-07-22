@@ -12,9 +12,15 @@ var ValueProps = React.lazy(function() { return import('../components/business/V
 const featureCards = [
   {
     icon: 'bagua' as const,
-    name: '今日卦象',
+    name: '今日卦运',
     subtitle: '每日指引 · 趋吉避凶',
     path: '/daily',
+  },
+  {
+    icon: 'bazi' as const,
+    name: '八字命理',
+    subtitle: '四柱排盘 · 喜用分析',
+    path: '/bazi',
   },
   {
     icon: 'coins' as const,
@@ -27,12 +33,6 @@ const featureCards = [
     name: '风水堪测',
     subtitle: '观宅察势 · 调和宅气',
     path: '/fengshui',
-  },
-  {
-    icon: 'records' as const,
-    name: '卦象记录',
-    subtitle: '7天 · 30天 · 全部',
-    path: '/records',
   },
 ]
 
@@ -60,7 +60,9 @@ export default function Home() {
         {/* 太极八卦核心 */}
         <div className="taiji-wrap">
           <div className="taiji-glow"></div>
-          <Compass size={480} />
+          <div className="taiji-compass">
+            <Compass size={480} />
+          </div>
         </div>
 
         {/* 品牌标题 */}

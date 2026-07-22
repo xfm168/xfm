@@ -6,7 +6,7 @@ const menuItems = [
   { name: '今日卦运', path: '/daily', icon: '☯' },
   { name: '六爻占卜', path: '/liuyao', icon: '☰' },
   { name: '风水堪测', path: '/fengshui', icon: '⌂' },
-  { name: '八字命理', path: '/daily', icon: '☷' },
+  { name: '八字命理', path: '/bazi', icon: '☷' },
   { name: '会员中心', path: '/membership', icon: '✦' },
 ]
 

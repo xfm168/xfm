@@ -24,7 +24,7 @@ function TrialEntry(props: TrialEntryProps) {
     guest: {
       icon: '\u2728',
       headline: '开启您的命理探索之旅',
-      subtitle: '免费注册，即刻体验八字排盘与 AI 解读',
+      subtitle: '免费注册，即刻体验八字排盘与国学推演',
       btnText: '免费注册',
       btnClass: 'te-btn-gold',
       onClick: onRegister,
@@ -40,7 +40,7 @@ function TrialEntry(props: TrialEntryProps) {
     member: {
       icon: '\u2606',
       headline: '欢迎回来',
-      subtitle: '查看您的专属命理报告与 AI 深度解读',
+      subtitle: '查看您的专属命理报告与深度推演解读',
       btnText: '查看我的报告',
       btnClass: 'te-btn-outline',
       onClick: onViewReports,

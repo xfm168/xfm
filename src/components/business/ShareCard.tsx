@@ -63,7 +63,7 @@ function renderCardBody(type: string, data: any) {
     return React.createElement('div', { className: 'sc-report' },
       React.createElement('div', { className: 'sc-report-title' }, data.title || '命理分析报告'),
       React.createElement('div', { className: 'sc-report-summary' }, data.summary || ''),
-      React.createElement('div', { className: 'sc-report-badge' }, 'VIP Report')
+      React.createElement('div', { className: 'sc-report-badge' }, '专属命理报告')
     )
   }
   return React.createElement('div', { className: 'sc-empty' }, '暂无数据')
@@ -78,7 +78,7 @@ function generateShareText(type: string, data: any): string {
     return '今日运势：' + (data.type || '平') + '。事业运' + ((data.areas && data.areas[0] && data.areas[0].text) || '') + '。查看你的每日运势→'
   }
   if (type === 'report') {
-    return '玄风门专业命理报告：' + (data.title || '') + '。AI 深度解读 + 五维分析，了解你的事业、财运、感情走向。'
+    return '玄风门专业命理报告：' + (data.title || '') + '。深度推演 + 五维分析，了解你的事业、财运、感情走向。'
   }
   return '来玄风门测测你的八字命理→'
 }

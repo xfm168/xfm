@@ -73,19 +73,42 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 80px 20px 60px;
-  gap: 48px;
-  max-width: 640px;
+  padding: 60px 20px 48px;
+  gap: 36px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
 /* ── 太极八卦核心 ── */
 .taiji-wrap {
   position: relative;
-  width: min(85vw, 420px);
-  height: min(85vw, 420px);
+  width: 100%;
+  max-width: min(80vw, 480px);
+  aspect-ratio: 1 / 1;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: fadeInUp 1.2s ease-out 0.3s both;
+}
+
+.taiji-compass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.taiji-compass > .xbiz-compass {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.taiji-compass > .xbiz-compass svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* 柔和神光（替代放射线） */
@@ -94,12 +117,15 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 110%;
-  height: 110%;
+  width: 100%;
+  height: 100%;
+  max-width: 520px;
+  max-height: 520px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   background: radial-gradient(circle,
-    rgba(212, 175, 55, 0.08) 0%,
-    rgba(212, 175, 55, 0.04) 40%,
+    rgba(212, 175, 55, 0.1) 0%,
+    rgba(212, 175, 55, 0.05) 40%,
     transparent 65%
   );
   pointer-events: none;
@@ -131,37 +157,39 @@
 .brand-section {
   text-align: center;
   animation: fadeInUp 1.2s ease-out 0.8s both;
+  width: 100%;
 }
 
 .brand-title {
-  font-size: clamp(3.5rem, 12vw, 5.5rem);
+  font-size: clamp(2.8rem, 10vw, 5rem);
   font-weight: 700;
-  letter-spacing: 0.25em;
-  line-height: 1.1;
-  margin-bottom: 28px;
+  letter-spacing: 0.3em;
+  line-height: 1.2;
+  margin-bottom: 20px;
   background: linear-gradient(180deg,
-    #E8C56A 0%,
-    #D4AF37 35%,
-    #B8860B 65%,
+    #F0D078 0%,
+    #E8C56A 20%,
+    #D4AF37 50%,
+    #B8860B 80%,
     #8B6914 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 2px 20px rgba(212, 175, 55, 0.2));
+  filter: drop-shadow(0 2px 24px rgba(212, 175, 55, 0.25));
   font-family: 'Noto Serif SC', 'STKaiti', 'KaiTi', Georgia, serif;
 }
 
 .brand-tagline {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .brand-tagline p {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: var(--gold);
-  letter-spacing: 0.25em;
+  letter-spacing: 0.3em;
   line-height: 1.8;
   text-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
 }
@@ -173,8 +201,8 @@
 .features-section {
   position: relative;
   z-index: 1;
-  padding: 40px 20px;
-  max-width: 640px;
+  padding: 48px 20px 56px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
@@ -184,90 +212,40 @@
   gap: 16px;
 }
 
-.feature-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-2xl);  /* 18px */
-  box-shadow: var(--shadow-md);
-  transition: all 0.4s ease;
-  opacity: 0;
-  animation: cardAppear 0.8s ease-out forwards;
+.features-grid .xbiz-feature-card {
+  min-height: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.features-grid .xbiz-feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.03) 50%,
+    transparent 100%
+  );
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.features-grid .xbiz-feature-card:hover::before {
+  left: 100%;
+}
+
+.home-feature-card {
+  animation: cardAppear 0.7s ease-out both;
 }
 
 @keyframes cardAppear {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-.feature-card:hover {
-  background: var(--bg-card-hover);
-  border-color: rgba(212, 175, 55, 0.4);
-  box-shadow:
-    var(--shadow-lg),
-    0 0 30px rgba(212, 175, 55, 0.12);
-  transform: translateY(-2px);
-}
-
-.feature-card:active {
-  transform: scale(0.98);
-}
-
-/* 图标圆形容器 */
-.card-icon-wrap {
-  flex-shrink: 0;
-  width: 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(212, 175, 55, 0.1) 0%,
-    transparent 70%
-  );
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  color: var(--gold);
-  transition: all 0.3s ease;
-}
-
-.card-icon-wrap svg {
-  width: 30px;
-  height: 30px;
-}
-
-.feature-card:hover .card-icon-wrap {
-  background: radial-gradient(circle,
-    rgba(212, 175, 55, 0.18) 0%,
-    rgba(212, 175, 55, 0.06) 70%,
-    transparent 100%
-  );
-  border-color: rgba(212, 175, 55, 0.45);
-  box-shadow: 0 0 16px rgba(212, 175, 55, 0.15);
-}
-
-/* 文字 */
-.card-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.card-text h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-  letter-spacing: 0.1em;
-}
-
-.card-text p {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.05em;
-  line-height: 1.5;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -344,12 +322,18 @@
 .v12-trial-section,
 .v12-value-section,
 .v12-faq-section {
-  padding: 2rem 1.5rem;
-  max-width: 900px;
+  padding: 2rem 1.25rem;
+  max-width: 720px;
   margin: 0 auto;
 }
-.v12-ops-section { padding-top: 1rem; }
-.v12-faq-section { padding-bottom: 1rem; }
+
+.v12-ops-section {
+  padding-top: 0.5rem;
+}
+
+.v12-faq-section {
+  padding-bottom: 2rem;
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    RESPONSIVE — 平板 / 桌面
@@ -357,60 +341,44 @@
 
 @media (min-width: 640px) {
   .hero {
-    padding: 100px 32px 80px;
-    gap: 56px;
+    padding: 80px 32px 64px;
+    gap: 48px;
   }
 
   .taiji-wrap {
-    width: min(75vw, 480px);
-    height: min(75vw, 480px);
+    max-width: min(65vw, 440px);
+  }
+
+  .brand-title {
+    font-size: clamp(3.5rem, 8vw, 5.5rem);
+  }
+
+  .brand-tagline p {
+    font-size: 1rem;
   }
 
   .features-section {
-    padding: 60px 32px;
+    padding: 48px 32px;
   }
 
   .features-grid {
     gap: 20px;
   }
-
-  .feature-card {
-    padding: 24px 20px;
-    gap: 18px;
-  }
-
-  .card-icon-wrap {
-    width: 56px;
-    height: 56px;
-  }
-
-  .card-icon-wrap svg {
-    width: 34px;
-    height: 34px;
-  }
-
-  .card-text h3 {
-    font-size: 1.05rem;
-  }
-
-  .card-text p {
-    font-size: 0.78rem;
-  }
 }
 
 @media (min-width: 768px) {
   .hero {
-    padding: 120px 40px 100px;
+    padding: 100px 40px 80px;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    max-width: 900px;
-    gap: 60px;
+    max-width: 1000px;
+    gap: 48px;
   }
 
   .taiji-wrap {
-    width: 420px;
-    height: 420px;
+    max-width: 400px;
+    flex: 0 0 auto;
     order: 0;
   }
 
@@ -420,45 +388,220 @@
   }
 
   .features-section {
-    max-width: 900px;
+    max-width: 1000px;
   }
 
   .features-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
   }
-
-  .feature-card {
-    flex-direction: column;
-    text-align: center;
-    padding: 32px 20px;
-    min-height: 160px;
-  }
 }
 
 @media (min-width: 1024px) {
   .hero {
-    padding: 140px 60px 120px;
+    padding: 120px 60px 100px;
     max-width: 1200px;
+    gap: 60px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .taiji-wrap {
+    max-width: 480px;
+  }
+
+  .brand-section {
+    width: 100%;
+  }
+
+  .brand-title {
+    font-size: clamp(4rem, 7vw, 6.5rem);
+    letter-spacing: 0.35em;
+  }
+
+  .brand-tagline p {
+    font-size: 1.1rem;
+    letter-spacing: 0.35em;
+  }
+
+  .features-section {
+    padding: 60px 40px;
+  }
+
+  .slogan-section {
+    padding: 80px 40px 100px;
+  }
+
+  .v12-ops-section,
+  .v12-trial-section,
+  .v12-value-section,
+  .v12-faq-section {
+    max-width: 1000px;
+    padding: 2rem 2.5rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .hero {
+    max-width: 1400px;
+    padding: 140px 80px 120px;
     gap: 80px;
   }
 
   .taiji-wrap {
-    width: 500px;
-    height: 500px;
+    max-width: 560px;
   }
 
   .brand-title {
-    font-size: 6rem;
-    letter-spacing: 0.3em;
+    font-size: clamp(4.5rem, 6vw, 7.5rem);
+  }
+
+  .features-section {
+    max-width: 1200px;
+    padding: 72px 60px;
+  }
+
+  .v12-ops-section,
+  .v12-trial-section,
+  .v12-value-section,
+  .v12-faq-section {
+    max-width: 1200px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE — 小屏幕（320px ~ 375px）
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 375px) {
+  .hero {
+    padding: 48px 16px 36px;
+    gap: 28px;
+  }
+
+  .taiji-wrap {
+    max-width: min(75vw, 280px);
+  }
+
+  .brand-title {
+    font-size: 2.5rem;
+    letter-spacing: 0.25em;
+    margin-bottom: 16px;
   }
 
   .brand-tagline p {
-    font-size: 1.15rem;
-    letter-spacing: 0.3em;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+  }
+
+  .features-section {
+    padding: 36px 16px 44px;
+  }
+
+  .features-grid {
+    gap: 12px;
+  }
+
+  .features-grid .xbiz-feature-card {
+    min-height: 88px;
+    padding: var(--space-4) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .features-grid .xbiz-feature-card__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .features-grid .xbiz-feature-card__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .features-grid .xbiz-feature-card__title {
+    font-size: 0.9rem;
+  }
+
+  .features-grid .xbiz-feature-card__subtitle {
+    font-size: 0.7rem;
   }
 
   .slogan-section {
-    padding: 80px 40px 120px;
+    padding: 48px 16px 64px;
+  }
+
+  .slogan-text {
+    font-size: 1.3rem;
+    letter-spacing: 0.25em;
+  }
+
+  .slogan-divider {
+    width: 160px;
+  }
+
+  .v12-ops-section,
+  .v12-trial-section,
+  .v12-value-section,
+  .v12-faq-section {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .hero {
+    padding: 40px 12px 32px;
+    gap: 24px;
+  }
+
+  .taiji-wrap {
+    max-width: 240px;
+  }
+
+  .brand-title {
+    font-size: 2.2rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+  }
+
+  .brand-tagline p {
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    gap: 8px;
+  }
+
+  .features-section {
+    padding: 28px 12px 36px;
+  }
+
+  .features-grid {
+    gap: 10px;
+  }
+
+  .features-grid .xbiz-feature-card {
+    min-height: 80px;
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .features-grid .xbiz-feature-card__icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .features-grid .xbiz-feature-card__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .features-grid .xbiz-feature-card__title {
+    font-size: 0.82rem;
+  }
+
+  .features-grid .xbiz-feature-card__subtitle {
+    font-size: 0.65rem;
+  }
+
+  .slogan-text {
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
   }
 }
