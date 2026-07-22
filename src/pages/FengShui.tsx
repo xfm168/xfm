@@ -671,42 +671,51 @@ export default function FengShui() {
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
-              onClick={() => !uploadedImage && fileInputRef.current?.click()}
             >
-              {uploadedImage ? (
-                <div className="preview-container">
-                  <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
-                  <button
-                    className="change-btn"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setUploadedImage(null)
-                      setError(null)
-                    }}
-                  >
-                    更换照片
-                  </button>
-                </div>
-              ) : (
-                <div className="upload-placeholder">
-                  <div className="upload-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
+              {/* P0-5: 用 label 包裹整个上传区域，利用浏览器原生 label→input 关联触发文件选择器
+                  不依赖 ref.click()，兼容微信 WebView / Android Chrome / iOS Safari */}
+              <label className="upload-zone-label" htmlFor="fengshui-file-input">
+                {uploadedImage ? (
+                  <div className="preview-container">
+                    <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
+                    <button
+                      type="button"
+                      className="change-btn"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        setUploadedImage(null)
+                        setError(null)
+                        // 重置 input value 以便重复选择同一文件
+                        if (fileInputRef.current) fileInputRef.current.value = ''
+                      }}
+                    >
+                      更换照片
+                    </button>
                   </div>
-                  <p className="upload-text">点击或拖拽上传照片</p>
-                  <p className="upload-hint">支持 JPG、PNG 格式</p>
-                </div>
-              )}
-            </div>
+                ) : (
+                  <div className="upload-placeholder">
+                    <div className="upload-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                      </svg>
+                    </div>
+                    <p className="upload-text">点击或拖拽上传照片</p>
+                    <p className="upload-hint">支持 JPG、PNG 格式</p>
+                  </div>
+                )}
+              </label>
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              onChange={handleInputChange}
-              className="hidden-input"
-            />
+              <input
+                id="fengshui-file-input"
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                capture="environment"
+                onChange={handleInputChange}
+                className="hidden-input"
+              />
+            </div>
 
             {/* Tips */}
             <div className="tips-card">

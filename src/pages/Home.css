@@ -73,10 +73,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* P0-1: 增加 Hero 整体高度，加大上下内边距 */
-  padding: 72px 20px 64px;
-  /* P0-1: 加大元素间距，避免八卦文字与「玄风门」标题遮挡 */
-  gap: 56px;
+  /* P0-6: Hero 整体高度增加，上下留白充足 */
+  padding: 72px 20px 72px;
+  /* P0-6: 太极图与标题之间留出大安全距离，杜绝遮挡 */
+  gap: 64px;
   max-width: 720px;
   margin: 0 auto;
 }
@@ -85,12 +85,14 @@
 .taiji-wrap {
   position: relative;
   width: 100%;
-  /* P0-1: 缩小太极图，给八卦文字与下方「玄风门」标题留出安全边距 */
-  max-width: min(68vw, 380px);
+  /* P0-6: 手机端默认更小，给八卦文字留出充足安全边距 */
+  max-width: min(62vw, 340px);
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
-  /* P0-1: 八卦文字安全边距，下方额外留白避免与标题遮挡 */
-  margin-bottom: 8px;
+  /* P0-6: 八卦文字外溢安全 padding，防止文字被裁切 */
+  padding: 8px;
+  /* P0-6: 与下方「玄风门」标题之间的明确分隔距离 */
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,6 +165,8 @@
   text-align: center;
   animation: fadeInUp 1.2s ease-out 0.8s both;
   width: 100%;
+  /* P0-6: 标题区域与上方太极图的明确分隔，防止视觉拥挤 */
+  padding-top: 8px;
 }
 
 .brand-title {
@@ -347,12 +351,13 @@
 @media (min-width: 640px) {
   .hero {
     padding: 96px 32px 80px;
-    gap: 64px;
+    gap: 72px;
   }
 
   .taiji-wrap {
-    max-width: min(58vw, 420px);
-    margin-bottom: 12px;
+    max-width: min(54vw, 400px);
+    padding: 10px;
+    margin-bottom: 16px;
   }
 
   .brand-title {
@@ -476,30 +481,38 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   RESPONSIVE — 小屏幕（320px ~ 414px）P0-1: 全部重新适配
+   RESPONSIVE — 小屏幕（320px ~ 414px）P0-6: 重新设计手机 Hero
+   核心：太极图大幅缩小 + 八卦安全 padding + 标题大间距 + slogan 分隔
    ═══════════════════════════════════════════════════════════════════ */
 
-/* iPhone 12/13/14/15 Pro Max & Plus / Android 大屏 */
+/* iPhone 12/13/14/15 Pro Max & Plus / Android 大屏 (414px) */
 @media (max-width: 414px) {
   .hero {
-    padding: 56px 18px 48px;
-    gap: 40px;
+    padding: 56px 18px 56px;
+    gap: 56px;
   }
 
   .taiji-wrap {
-    max-width: min(66vw, 300px);
-    margin-bottom: 8px;
+    /* 太极图缩到 58vw，给八卦文字留出充足安全空间 */
+    max-width: min(58vw, 280px);
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .brand-section {
+    padding-top: 12px;
   }
 
   .brand-title {
-    font-size: 2.6rem;
+    font-size: 2.4rem;
     letter-spacing: 0.25em;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }
 
   .brand-tagline p {
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     letter-spacing: 0.22em;
+    line-height: 2;
   }
 
   .features-section {
@@ -535,7 +548,7 @@
   }
 
   .slogan-section {
-    padding: 48px 18px 64px;
+    padding: 56px 18px 72px;
   }
 
   .slogan-text {
@@ -555,27 +568,33 @@
   }
 }
 
-/* iPhone 12/13/14/15 / iPhone X / iPhone 11 Pro */
+/* iPhone 12/13/14/15 / iPhone X / iPhone 11 Pro (390px) */
 @media (max-width: 390px) {
   .hero {
-    padding: 52px 16px 44px;
-    gap: 36px;
+    padding: 52px 16px 52px;
+    gap: 52px;
   }
 
   .taiji-wrap {
-    max-width: min(64vw, 280px);
-    margin-bottom: 6px;
+    max-width: min(56vw, 260px);
+    padding: 10px;
+    margin-bottom: 18px;
+  }
+
+  .brand-section {
+    padding-top: 10px;
   }
 
   .brand-title {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     letter-spacing: 0.24em;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
 
   .brand-tagline p {
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     letter-spacing: 0.2em;
+    line-height: 1.9;
   }
 
   .features-section {
@@ -591,27 +610,33 @@
   }
 }
 
-/* iPhone SE / iPhone 6/7/8 */
+/* iPhone SE / iPhone 6/7/8 / Android 中屏 (375px) */
 @media (max-width: 375px) {
   .hero {
-    padding: 48px 16px 40px;
-    gap: 32px;
+    padding: 48px 16px 48px;
+    gap: 48px;
   }
 
   .taiji-wrap {
-    max-width: min(62vw, 260px);
-    margin-bottom: 4px;
+    max-width: min(56vw, 240px);
+    padding: 8px;
+    margin-bottom: 16px;
+  }
+
+  .brand-section {
+    padding-top: 10px;
   }
 
   .brand-title {
-    font-size: 2.2rem;
+    font-size: 2.0rem;
     letter-spacing: 0.22em;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .brand-tagline p {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     letter-spacing: 0.18em;
+    line-height: 1.9;
   }
 
   .features-section {
@@ -627,27 +652,63 @@
   }
 }
 
-/* 极小屏（Galaxy Fold / iPhone 5 等） */
-@media (max-width: 320px) {
+/* Android 常见尺寸 (360px) - 介于 375 和 320 之间 */
+@media (max-width: 360px) {
   .hero {
-    padding: 40px 12px 32px;
-    gap: 28px;
+    padding: 44px 14px 44px;
+    gap: 44px;
   }
 
   .taiji-wrap {
-    max-width: 220px;
-    margin-bottom: 4px;
+    max-width: min(54vw, 220px);
+    padding: 8px;
+    margin-bottom: 14px;
+  }
+
+  .brand-section {
+    padding-top: 8px;
   }
 
   .brand-title {
     font-size: 1.9rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 14px;
+  }
+
+  .brand-tagline p {
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    line-height: 1.8;
+  }
+}
+
+/* 极小屏（Galaxy Fold / iPhone 5 等）(320px) */
+@media (max-width: 320px) {
+  .hero {
+    padding: 36px 12px 36px;
+    gap: 36px;
+  }
+
+  .taiji-wrap {
+    max-width: 200px;
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+
+  .brand-section {
+    padding-top: 8px;
+  }
+
+  .brand-title {
+    font-size: 1.7rem;
     letter-spacing: 0.18em;
     margin-bottom: 12px;
   }
 
   .brand-tagline p {
-    font-size: 0.74rem;
-    letter-spacing: 0.15em;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    line-height: 1.8;
   }
 
   .brand-tagline {

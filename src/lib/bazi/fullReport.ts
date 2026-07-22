@@ -996,22 +996,265 @@ function getElementPersonality(element: FiveElement): string {
   return map[element] || ''
 }
 
+// P1: 新增章节 — 人生总论（综合命局、走势、特点、喜忌、五行平衡）
+function generateChapter15_lifeOverview(input: FullReportInput): string {
+  const { chart, dayMaster, sixLines, geJu, xiYongShen, fiveElementPower, shenShiAnalysis } = input
+  const lines: string[] = [
+    `## 十五、人生总论`,
+    ``,
+    `### 整体命局`,
+    ``,
+    `命主生于${sixLines.year.gan}${sixLines.year.zhi}年，日主为${dayMaster.dayGan}（${dayMaster.dayGanElement}），格局为${geJu.name}。日主${dayMaster.wangShuai}，力量评分${dayMaster.strengthScore}分，五行综合${fiveElementPower.wangShuaiLevel}。`,
+    ``,
+    `四柱排列为：年柱${sixLines.year.gan}${sixLines.year.zhi}（${sixLines.year.naYin}）、月柱${sixLines.month.gan}${sixLines.month.zhi}（${sixLines.month.naYin}）、日柱${sixLines.day.gan}${sixLines.day.zhi}（${sixLines.day.naYin}）、时柱${sixLines.hour.gan}${sixLines.hour.zhi}（${sixLines.hour.naYin}）。`,
+    ``,
+    `### 人生走势`,
+    ``,
+    `综合格局层次（${geJu.grade}）与日主旺衰（${dayMaster.wangShuai}），命主一生运势呈${dayMaster.wangShuai === '旺' || dayMaster.wangShuai === '强' ? '先扬后抑，宜趁旺运时积累资本，中年之后转为守成' : dayMaster.wangShuai === '弱' || dayMaster.wangShuai === '衰' ? '先抑后扬，早年磨砺积累，中年后运势渐入佳境' : '平稳发展，起伏不大，宜循序渐进'}之势。`,
+    ``,
+    `### 命格特点`,
+    ``,
+    `- **格局特点**：${geJu.description}`,
+    `- **十神主导**：${shenShiAnalysis.primaryShenShi?.join('、') || '无明显主导十神'}`,
+    `- **性格倾向**：${shenShiAnalysis.personality}`,
+    `- **职业天赋**：${shenShiAnalysis.careerTendency}`,
+    ``,
+    `### 喜用神`,
+    ``,
+    `命局所喜五行为**${xiYongShen.bestElement}**，此五行能补命局之不足，增福添寿。日常生活中宜多接触${xiYongShen.bestElement}行相关事物（颜色、方位、数字、行业等）。`,
+    ``,
+    `### 忌神`,
+    ``,
+    `命局所忌五行为**${xiYongShen.avoidedElements.join('、')}**，此五行会加重命局之失衡，带来不顺。日常生活中应尽量避免接触忌神五行相关事物，尤其是重大决策（投资、合作、婚配）时更需谨慎。`,
+    ``,
+    `### 五行平衡`,
+    ``,
+    `命局五行分布：`,
+  ]
+  for (const el of fiveElementPower.elements) {
+    lines.push(`- ${el.element}：${el.percentage}%（${el.wangShuai}）`)
+  }
+  const dominant = fiveElementPower.dominant
+  const weakest = fiveElementPower.weakest || '无明显弱势'
+  lines.push(``)
+  lines.push(`五行${dominant}最旺，${weakest}最弱。整体五行${fiveElementPower.wangShuaiLevel}，${dominant === weakest ? '五行力量较为均衡' : `五行偏${dominant}，需以${xiYongShen.bestElement}调和`}。`)
+  return lines.join('\n')
+}
+
+// P1: 新增章节 — 性格分析（优点、缺点、待改善、人际、领导、执行）
+function generateChapter16_personality(input: FullReportInput): string {
+  const { shenShiAnalysis, dayMaster, fiveElementPower } = input
+  const el = dayMaster.dayGanElement
+  const personalityMap: Record<string, { strengths: string[]; weaknesses: string[]; improvements: string[] }> = {
+    '木': {
+      strengths: ['仁慈宽厚，有恻隐之心', '为人正直，举止优雅', '富有同情心，乐于助人', '有上进心，追求成长'],
+      weaknesses: ['性格固执，不撞南墙不回头', '过于理想化，脱离实际', '优柔寡断，难以决断'],
+      improvements: ['学会变通，不可过于执着', '增强决断力，果断行事', '平衡理想与现实'],
+    },
+    '火': {
+      strengths: ['热情开朗，富有感染力', '有礼有节，尊师重道', '行动迅速，雷厉风行', '富有领导魅力'],
+      weaknesses: ['性急冲动，容易得罪人', '情绪波动大，喜怒形于色', '缺乏耐心，半途而废'],
+      improvements: ['学会控制情绪，三思后行', '增强耐心，坚持到底', '沉稳应对，不可急躁'],
+    },
+    '土': {
+      strengths: ['稳重踏实，诚实守信', '有包容心，能容人容事', '重视承诺，一诺千金', '勤奋努力，任劳任怨'],
+      weaknesses: ['过于保守，缺乏创新', '反应迟缓，错失良机', '固执己见，难以沟通'],
+      improvements: ['增强灵活性，学会变通', '把握时机，敢于尝试', '开放心态，接受新事物'],
+    },
+    '金': {
+      strengths: ['刚毅果敢，有原则', '讲义气，重情重义', '做事认真，追求完美', '意志坚定，不屈不挠'],
+      weaknesses: ['过于刚硬，缺乏圆融', '刻板守旧，不懂变通', '好胜心强，易与人冲突'],
+      improvements: ['学会柔和处事，刚柔并济', '增强灵活性，圆融待人', '放下胜负欲，和为贵'],
+    },
+    '水': {
+      strengths: ['聪明智慧，反应敏捷', '灵活变通，善于应变', '富有想象力，创造力强', '善于交际，人脉广泛'],
+      weaknesses: ['情绪多变，难以捉摸', '缺乏定性，见异思迁', '过于圆滑，缺乏真诚'],
+      improvements: ['增强定性，专注一事', '真诚待人，不可过于圆滑', '稳定情绪，保持平和'],
+    },
+  }
+  const p = personalityMap[el] || personalityMap['土']
+  const lines: string[] = [
+    `## 十六、性格分析`,
+    ``,
+    `命主日主为${dayMaster.dayGan}（${el}），${getElementPersonality(el)}。`,
+    ``,
+    `### 优点`,
+    ``,
+    ...p.strengths.map(s => `- ${s}`),
+    ``,
+    `### 缺点`,
+    ``,
+    ...p.weaknesses.map(s => `- ${s}`),
+    ``,
+    `### 待改善`,
+    ``,
+    ...p.improvements.map(s => `- ${s}`),
+    ``,
+    `### 人际关系`,
+    ``,
+    `${shenShiAnalysis.relationshipTraits || '人际关系一般，需主动经营人脉。'}`,
+    ``,
+    `### 领导能力`,
+    ``,
+    `${shenShiAnalysis.primaryShenShi?.includes('正官') || shenShiAnalysis.primaryShenShi?.includes('偏官') ? '命带官星，有领导天赋，善于统筹全局，适合担任管理职务。' : shenShiAnalysis.primaryShenShi?.includes('比肩') || shenShiAnalysis.primaryShenShi?.includes('劫财') ? '比劫旺盛，善于团队合作，但领导力需培养，宜合伙经营。' : '领导能力一般，更适合专业岗位或技术工作，宜辅佐他人成就事业。'}`,
+    ``,
+    `### 执行能力`,
+    ``,
+    `${shenShiAnalysis.primaryShenShi?.includes('食神') || shenShiAnalysis.primaryShenShi?.includes('伤官') ? '食伤吐秀，执行力强，善于将想法落地，行动力充沛。' : shenShiAnalysis.primaryShenShi?.includes('正官') || shenShiAnalysis.primaryShenShi?.includes('偏官') ? '官星护身，执行力稳健，按部就班，条理清晰。' : '执行力中等，需明确目标与计划，方能有效推进。'}`,
+  ]
+  return lines.join('\n')
+}
+
+// P1: 新增章节 — 家庭分析（父母、兄弟姐妹、子女、家庭运势、晚年运）
+function generateChapter17_family(input: FullReportInput): string {
+  const { sixLines, shenShiAnalysis, shenSha } = input
+  const lines: string[] = [
+    `## 十七、家庭分析`,
+    ``,
+    `### 父母`,
+    ``,
+    `年柱代表父母宫。年柱${sixLines.year.gan}${sixLines.year.zhi}，${sixLines.year.gan}为父位，${sixLines.year.zhi}为母位。`,
+    ``,
+    `${shenShiAnalysis.details.find(d => d.name === '正印')?.power && shenShiAnalysis.details.find(d => d.name === '正印')!.power > 50 ? '印星有力，与父母缘分深厚，得长辈庇护，家境良好。' : '印星力量一般，与父母关系平淡，宜主动尽孝，珍惜亲情。'}`,
+    ``,
+    `### 兄弟姐妹`,
+    ``,
+    `月柱代表兄弟姐妹宫。月柱${sixLines.month.gan}${sixLines.month.zhi}。`,
+    ``,
+    `${shenShiAnalysis.details.find(d => d.name === '比肩')?.power && shenShiAnalysis.details.find(d => d.name === '比肩')!.power > 50 ? '比肩有力，兄弟姐妹和睦，手足情深，能互相扶持。' : shenShiAnalysis.details.find(d => d.name === '劫财')?.power && shenShiAnalysis.details.find(d => d.name === '劫财')!.power > 50 ? '劫财旺盛，兄弟姐妹间易有竞争，需注意财物分明。' : '兄弟姐妹缘分一般，各自发展，保持联络即可。'}`,
+    ``,
+    `### 子女`,
+    ``,
+    `时柱代表子女宫。时柱${sixLines.hour.gan}${sixLines.hour.zhi}。`,
+    ``,
+    `${shenShiAnalysis.details.find(d => d.name === '食神')?.power && shenShiAnalysis.details.find(d => d.name === '食神')!.power > 50 ? '食神有力，子女缘分深厚，子女聪明孝顺，晚年享福。' : shenShiAnalysis.details.find(d => d.name === '伤官')?.power && shenShiAnalysis.details.find(d => d.name === '伤官')!.power > 50 ? '伤官旺盛，子女个性较强，需注重教育方式，培养其品行。' : '子女缘分平稳，注重子女教育，陪伴成长，自有福报。'}`,
+    ``,
+    `### 家庭运势`,
+    ``,
+    `综合四柱与十神分析，命主家庭运势${shenShiAnalysis.details.find(d => d.name === '正财')?.power && shenShiAnalysis.details.find(d => d.name === '正财')!.power > 50 ? '较好，家庭经济基础稳固，夫妻感情和睦，子女孝顺有出息。' : '平稳，需夫妻共同经营，注重家庭沟通，方能家庭和睦。'}`,
+    ``,
+    `### 晚年运`,
+    ``,
+    `时柱为晚年宫位。时柱${sixLines.hour.gan}${sixLines.hour.zhi}（${sixLines.hour.naYin}）。`,
+    ``,
+    `${shenShiAnalysis.details.find(d => d.name === '食神')?.power && shenShiAnalysis.details.find(d => d.name === '食神')!.power > 50 ? '食神在时柱，晚年福禄双全，儿孙绕膝，安享天伦。' : shenShiAnalysis.details.find(d => d.name === '正官')?.power && shenShiAnalysis.details.find(d => d.name === '正官')!.power > 50 ? '官星在时柱，晚年地位尊崇，受人敬重。' : '晚年运势平稳，宜提前规划养老，保持身心健康，自然安享晚年。'}`,
+  ]
+  return lines.join('\n')
+}
+
+// P1: 新增章节 — 贵人分析（贵人类型、方向、生肖、行业、小人提醒）
+function generateChapter18_noble(input: FullReportInput): string {
+  const { xiYongShen, shenSha, shenShiAnalysis } = input
+  const bestEl = xiYongShen.bestElement
+  const nobleDirectionMap: Record<string, string> = {
+    '木': '东方、东南方',
+    '火': '南方',
+    '土': '中央、东北方、西南方',
+    '金': '西方、西北方',
+    '水': '北方',
+  }
+  const nobleZodiacMap: Record<string, string[]> = {
+    '木': ['虎', '兔', '猫'],
+    '火': ['蛇', '马'],
+    '土': ['牛', '龙', '羊', '狗'],
+    '金': ['猴', '鸡'],
+    '水': ['鼠', '猪'],
+  }
+  const nobleIndustryMap: Record<string, string[]> = {
+    '木': ['林业', '木材', '家具', '纺织', '服装', '教育', '文化', '出版', '医药', '宗教'],
+    '火': ['能源', '电力', '光学', '电子', '餐饮', '食品', '美容', '化妆品', '摄影', '娱乐'],
+    '土': ['房地产', '建筑', '建材', '陶瓷', '石材', '农业', '畜牧', '保险', '仓储', '殡葬'],
+    '金': ['金融', '银行', '证券', '机械', '汽车', '五金', '刀具', '珠宝', '钟表', '武术'],
+    '水': ['航运', '水产', '旅游', '酒店', '贸易', '物流', '清洁', '饮料', '酒类', '信息'],
+  }
+  const lines: string[] = [
+    `## 十八、贵人分析`,
+    ``,
+    `### 贵人类型`,
+    ``,
+    `命主喜用神为${bestEl}，故贵人多出现于${bestEl}行相关领域。`,
+    ``,
+    `${shenShiAnalysis.details.find(d => d.name === '正官')?.power && shenShiAnalysis.details.find(d => d.name === '正官')!.power > 50 ? '命带官星，贵人多为领导、上司、长辈，能在事业上给予提拔。' : ''}`,
+    `${shenShiAnalysis.details.find(d => d.name === '正印')?.power && shenShiAnalysis.details.find(d => d.name === '正印')!.power > 50 ? '印星有力，贵人多为老师、学者、长辈，能在学业与思想上给予指点。' : ''}`,
+    `${shenShiAnalysis.details.find(d => d.name === '食神')?.power && shenShiAnalysis.details.find(d => d.name === '食神')!.power > 50 ? '食神吐秀，贵人多为同事、朋友、晚辈，能在创意与人脉上给予帮助。' : ''}`,
+    ``,
+    `### 贵人方向`,
+    ``,
+    `贵方位于：**${nobleDirectionMap[bestEl] || '四方皆有'}**。出行、办公、求贵人，宜朝此方位。`,
+    ``,
+    `### 贵人生肖`,
+    ``,
+    `贵人生肖：**${(nobleZodiacMap[bestEl] || []).join('、')}**。在人际交往中，与这些生肖的人合作或交往，易得助力。`,
+    ``,
+    `### 贵人行业`,
+    ``,
+    `贵人所在行业：`,
+    ...((nobleIndustryMap[bestEl] || []).map(ind => `- ${ind}`)),
+    ``,
+    `### 小人提醒`,
+    ``,
+    `命局忌神为${xiYongShen.avoidedElements.join('、')}，此五行旺盛之人易为小人，需谨慎交往。`,
+    ``,
+    `${shenShiAnalysis.details.find(d => d.name === '劫财')?.power && shenShiAnalysis.details.find(d => d.name === '劫财')!.power > 50 ? '劫财旺盛，易因朋友、合伙人破财，合伙需谨慎，借贷需担保。' : ''}`,
+    `${shenShiAnalysis.details.find(d => d.name === '伤官')?.power && shenShiAnalysis.details.find(d => d.name === '伤官')!.power > 50 ? '伤官旺盛，易因口舌是非得罪小人，宜谨言慎行，低调做人。' : ''}`,
+    `${shenShiAnalysis.details.find(d => d.name === '偏官')?.power && shenShiAnalysis.details.find(d => d.name === '偏官')!.power > 50 ? '七杀旺盛，易招小人暗算，需提高警惕，凡事留有余地。' : ''}`,
+  ]
+  return lines.join('\n')
+}
+
+// P1: 新增章节 — 学业分析（学习能力、考试运、学历潜力、发展方向）
+function generateChapter19_study(input: FullReportInput): string {
+  const { shenShiAnalysis, dayMaster, xiYongShen } = input
+  const yinPower = shenShiAnalysis.details.find(d => d.name === '正印')?.power || 0
+  const pianYinPower = shenShiAnalysis.details.find(d => d.name === '偏印')?.power || 0
+  const totalYin = yinPower + pianYinPower
+  const lines: string[] = [
+    `## 十九、学业分析`,
+    ``,
+    `### 学习能力`,
+    ``,
+    `印星主学业。命主正印力量${yinPower}分，偏印力量${pianYinPower}分，印星总力量${totalYin}分。`,
+    ``,
+    `${totalYin > 60 ? '印星有力，学习能力强，领悟力高，善于吸收新知识，适合深造。' : totalYin > 30 ? '印星力量中等，学习能力尚可，需勤勉努力，方能有所成就。' : '印星力量较弱，学习需付出更多努力，宜选择实用型学科，扬长避短。'}`,
+    ``,
+    `### 考试运`,
+    ``,
+    `${totalYin > 60 ? '考试运佳，逢印星大运流年，考试顺利，金榜题名。' : totalYin > 30 ? '考试运平稳，需踏实备考，不可侥幸。' : '考试运一般，需加倍努力，把握印星流年考试。'}`,
+    ``,
+    `### 学历潜力`,
+    ``,
+    `${totalYin > 70 ? '学历潜力高，可攻读至硕士、博士，适合学术研究。' : totalYin > 50 ? '学历潜力中上，可攻读至本科、硕士，适合专业技术。' : totalYin > 30 ? '学历潜力中等，可完成本科教育，注重实用技能。' : '学历潜力一般，宜注重实用技能，职业教育亦可成才。'}`,
+    ``,
+    `### 适合发展方向`,
+    ``,
+    `${dayMaster.dayGanElement === '木' ? '适合教育、文化、出版、医药、宗教、哲学等方向。' : ''}${dayMaster.dayGanElement === '火' ? '适合电子、能源、光学、传媒、艺术、心理学等方向。' : ''}${dayMaster.dayGanElement === '土' ? '适合建筑、房地产、农业、地理、历史、考古等方向。' : ''}${dayMaster.dayGanElement === '金' ? '适合金融、机械、法律、军事、武术、精密仪器等方向。' : ''}${dayMaster.dayGanElement === '水' ? '适合哲学、数学、物理、信息、传播、旅游等方向。' : ''}`,
+    ``,
+    `喜用神为${xiYongShen.bestElement}，选择与喜用神五行相关的专业与方向，更能发挥潜能，事半功倍。`,
+  ]
+  return lines.join('\n')
+}
+
 export function generateFullReport(input: FullReportInput): FullReportResult {
   const chapters: ReportChapter[] = [
     { id: 'overview', title: '命局概况', content: generateChapter1_overview(input) },
+    { id: 'life-overview', title: '人生总论', content: generateChapter15_lifeOverview(input) },
     { id: 'wangshuai', title: '旺衰分析', content: generateChapter2_wangshuai(input) },
     { id: 'geju', title: '格局分析', content: generateChapter3_geju(input) },
     { id: 'shishen', title: '十神分析', content: generateChapter4_shishen(input) },
+    { id: 'personality', title: '性格分析', content: generateChapter16_personality(input) },
     { id: 'shensha', title: '神煞分析', content: generateChapter5_shensha(input) },
     { id: 'xiyong', title: '喜用神', content: generateChapter6_xiyong(input) },
-    { id: 'marriage', title: '婚姻分析', content: generateChapter7_marriage(input) },
-    { id: 'wealth', title: '财富分析', content: generateChapter8_wealth(input) },
+    { id: 'study', title: '学业分析', content: generateChapter19_study(input) },
     { id: 'career', title: '事业分析', content: generateChapter9_career(input) },
+    { id: 'wealth', title: '财富分析', content: generateChapter8_wealth(input) },
+    { id: 'marriage', title: '婚姻分析', content: generateChapter7_marriage(input) },
     { id: 'health', title: '健康分析', content: generateChapter10_health(input) },
+    { id: 'family', title: '家庭分析', content: generateChapter17_family(input) },
+    { id: 'noble', title: '贵人分析', content: generateChapter18_noble(input) },
     { id: 'dayun', title: '大运分析', content: generateChapter11_dayun(input) },
     { id: 'liunian', title: '流年分析', content: generateChapter12_liunian(input) },
-    { id: 'suggestions', title: '改运建议', content: generateChapter13_suggestions(input) },
     { id: 'liuyue', title: '流月分析', content: generateChapter14_liuyue(input) },
+    { id: 'suggestions', title: '改运建议', content: generateChapter13_suggestions(input) },
   ]
 
   const fullText = chapters.map(c => c.content).join('\n\n')

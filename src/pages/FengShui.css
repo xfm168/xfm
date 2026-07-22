@@ -131,6 +131,24 @@
   background: rgba(212, 168, 71, 0.05);
 }
 
+/* P0-5: label 撑满整个 upload-zone，作为原生点击触发层 */
+.upload-zone-label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  /* 防止 iOS 双击缩放 */
+  touch-action: manipulation;
+}
+
+.upload-zone.has-image .upload-zone-label {
+  cursor: default;
+}
+
 .upload-placeholder {
   display: flex;
   flex-direction: column;
@@ -166,15 +184,15 @@
 }
 
 .hidden-input {
-  /* 修复 P0-3: display:none 在 Android/iOS WebView 中会导致 ref.click() 无法触发文件选择器
-     改为绝对定位 + 透明 + 不可交互，仍可被 click() 程序化触发 */
+  /* P0-5: 使用 visually-hidden 模式，保留 input 可被 label 触发的能力
+     不能用 display:none（部分 WebView 会忽略 label 关联）
+     不能用 pointer-events:none（会导致 input 无法接收点击） */
   position: absolute;
   top: 0;
   left: 0;
   width: 1px;
   height: 1px;
   opacity: 0;
-  pointer-events: none;
   overflow: hidden;
   border: 0;
   padding: 0;
@@ -182,6 +200,7 @@
   clip: rect(0 0 0 0);
   -webkit-clip-path: inset(50%);
   clip-path: inset(50%);
+  /* 不设置 pointer-events:none，保留 label→input 原生触发链 */
 }
 
 /* Preview */
