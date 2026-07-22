@@ -297,102 +297,12 @@ export default function BaziChart() {
     { step: 8, text: '正在生成命书……', icon: '✎' },
   ]
 
-  if (!analysisReady && chart) {
-    const currentStep = LOADING_STEPS.find(s => s.step === loadingStep)
-    const completedSteps = LOADING_STEPS.filter(s => s.step < loadingStep)
-    return (
-      <div className="bazi-chart-page">
-        <PageTitle
-          icon="☯"
-          label="玄风命理"
-          title="命盘推演"
-          subtitle={`${chart.birthInfo.birthDate} ${chart.birthInfo.birthTime} ${chart.birthInfo.gender === 'male' ? '男命' : '女命'}`}
-        />
-        <div className="container bazi-chart-content">
-          <div className="bazi-loading-container">
-            <div className="bazi-loading-progress">
-              <div className="bazi-loading-progress-bar" style={{ width: `${Math.min(loadingStep / 8 * 100, 100)}%` }} />
-            </div>
-            <div className="bazi-loading-steps">
-              {completedSteps.map((s, i) => (
-                <div key={i} className="bazi-loading-step bazi-loading-step--done">
-                  <span className="bazi-loading-step-icon">{s.icon}</span>
-                  <span className="bazi-loading-step-text">{s.text.replace('……', '')}</span>
-                  <span className="bazi-loading-step-check">✓</span>
-                </div>
-              ))}
-              {currentStep && (
-                <div className="bazi-loading-step bazi-loading-step--active">
-                  <span className="bazi-loading-step-icon bazi-loading-pulse">{currentStep.icon}</span>
-                  <span className="bazi-loading-step-text">{loadingText}</span>
-                  <span className="bazi-loading-step-dots">
-                    <span className="dot">·</span>
-                    <span className="dot">·</span>
-                    <span className="dot">·</span>
-                  </span>
-                </div>
-              )}
-              {LOADING_STEPS.filter(s => s.step > loadingStep).map((s, i) => (
-                <div key={`pending-${i}`} className="bazi-loading-step bazi-loading-step--pending">
-                  <span className="bazi-loading-step-icon">{s.icon}</span>
-                  <span className="bazi-loading-step-text">{s.text.replace('……', '')}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (!chart) {
-    return (
-      <div className="bazi-chart-page">
-        <PageTitle
-          icon="☰"
-          label="玄风命理"
-          title="命盘总览"
-          subtitle="八字排盘结果"
-        />
-        <div className="container bazi-empty">
-          <p>暂无命盘数据</p>
-          <Button variant="primary" onClick={() => navigate('/bazi')}>
-            立即排盘
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
-  // P0-2 修复：pipelineResult 为 null 时不进入主渲染，避免 daYun.steps 等 undefined 报错
-  // 显示加载中状态，等待 pipeline 完成或失败后由 catch 设置 analysisReady
-  if (!pipelineResult) {
-    return (
-      <div className="bazi-chart-page">
-        <PageTitle
-          icon="☰"
-          label="玄风命理"
-          title="命盘总览"
-          subtitle="八字排盘结果"
-        />
-        <div className="container bazi-chart-content">
-          <div className="bazi-loading-container">
-            <div className="bazi-loading-progress">
-              <div className="bazi-loading-progress-bar" style={{ width: `${Math.min(loadingStep / 8 * 100, 100)}%` }} />
-            </div>
-            <div className="bazi-loading-steps">
-              <div className="bazi-loading-step bazi-loading-step--active">
-                <span className="bazi-loading-step-icon bazi-loading-pulse">☰</span>
-                <span className="bazi-loading-step-text">{loadingText || '正在推演命盘…'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const { sixLines, fiveElementCount, dayMaster, xiYongShen, overallScore, birthInfo: chartBirth } = chart
+  const sixLines = chart?.sixLines
+  const fiveElementCount = chart?.fiveElementCount
+  const dayMaster = chart?.dayMaster
+  const xiYongShen = chart?.xiYongShen
+  const overallScore = chart?.overallScore
+  const chartBirth = chart?.birthInfo ?? { birthDate: '' } as any
 
   // V4.4 Enterprise: 所有分析数据统一从 Pipeline Result 读取
   // 禁止直接调用底层分析函数，形成 Single Source of Truth
@@ -633,6 +543,101 @@ export default function BaziChart() {
     downloadShareImage(canvas, `命盘分享_${chartBirth.birthDate}`)
     incrementStat('share')
   }, [chart, geJu, dayMaster, xiYongShen, overallScore, chartBirth.birthDate])
+
+  if (!analysisReady && chart) {
+    const currentStep = LOADING_STEPS.find(s => s.step === loadingStep)
+    const completedSteps = LOADING_STEPS.filter(s => s.step < loadingStep)
+    return (
+      <div className="bazi-chart-page">
+        <PageTitle
+          icon="☯"
+          label="玄风命理"
+          title="命盘推演"
+          subtitle={`${chart.birthInfo.birthDate} ${chart.birthInfo.birthTime} ${chart.birthInfo.gender === 'male' ? '男命' : '女命'}`}
+        />
+        <div className="container bazi-chart-content">
+          <div className="bazi-loading-container">
+            <div className="bazi-loading-progress">
+              <div className="bazi-loading-progress-bar" style={{ width: `${Math.min(loadingStep / 8 * 100, 100)}%` }} />
+            </div>
+            <div className="bazi-loading-steps">
+              {completedSteps.map((s, i) => (
+                <div key={i} className="bazi-loading-step bazi-loading-step--done">
+                  <span className="bazi-loading-step-icon">{s.icon}</span>
+                  <span className="bazi-loading-step-text">{s.text.replace('……', '')}</span>
+                  <span className="bazi-loading-step-check">✓</span>
+                </div>
+              ))}
+              {currentStep && (
+                <div className="bazi-loading-step bazi-loading-step--active">
+                  <span className="bazi-loading-step-icon bazi-loading-pulse">{currentStep.icon}</span>
+                  <span className="bazi-loading-step-text">{loadingText}</span>
+                  <span className="bazi-loading-step-dots">
+                    <span className="dot">·</span>
+                    <span className="dot">·</span>
+                    <span className="dot">·</span>
+                  </span>
+                </div>
+              )}
+              {LOADING_STEPS.filter(s => s.step > loadingStep).map((s, i) => (
+                <div key={`pending-${i}`} className="bazi-loading-step bazi-loading-step--pending">
+                  <span className="bazi-loading-step-icon">{s.icon}</span>
+                  <span className="bazi-loading-step-text">{s.text.replace('……', '')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!chart) {
+    return (
+      <div className="bazi-chart-page">
+        <PageTitle
+          icon="☰"
+          label="玄风命理"
+          title="命盘总览"
+          subtitle="八字排盘结果"
+        />
+        <div className="container bazi-empty">
+          <p>暂无命盘数据</p>
+          <Button variant="primary" onClick={() => navigate('/bazi')}>
+            立即排盘
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // P0-2 修复：pipelineResult 为 null 时不进入主渲染，避免 daYun.steps 等 undefined 报错
+  // 显示加载中状态，等待 pipeline 完成或失败后由 catch 设置 analysisReady
+  if (!pipelineResult) {
+    return (
+      <div className="bazi-chart-page">
+        <PageTitle
+          icon="☰"
+          label="玄风命理"
+          title="命盘总览"
+          subtitle="八字排盘结果"
+        />
+        <div className="container bazi-chart-content">
+          <div className="bazi-loading-container">
+            <div className="bazi-loading-progress">
+              <div className="bazi-loading-progress-bar" style={{ width: `${Math.min(loadingStep / 8 * 100, 100)}%` }} />
+            </div>
+            <div className="bazi-loading-steps">
+              <div className="bazi-loading-step bazi-loading-step--active">
+                <span className="bazi-loading-step-icon bazi-loading-pulse">☰</span>
+                <span className="bazi-loading-step-text">{loadingText || '正在推演命盘…'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   function renderComparePanel() {
     if (!compareTarget || !chart) return null
