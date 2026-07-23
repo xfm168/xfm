@@ -4,11 +4,13 @@
  */
 
 import { useState, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { useMembership } from '../hooks/useMembership'
 import { useOrder } from '../hooks/useOrder'
 import { usePoints } from '../hooks/usePoints'
 import { useCoupons } from '../hooks/useCoupons'
 import { usePayment } from '../hooks/usePayment'
+import { useAuth } from '../hooks/useAuth'
 import type { MembershipTier } from '../lib/database/types'
 import type { MembershipPlan, GrowthLevel } from '../lib/business/types'
 import './Membership.css'
@@ -160,6 +162,7 @@ export default function Membership() {
   var pointsHook = usePoints()
   var couponsHook = useCoupons()
   var paymentHook = usePayment()
+  var auth = useAuth()
 
   var couponInputHook = useState('')
   var couponInput = couponInputHook[0]
@@ -200,12 +203,12 @@ export default function Membership() {
   }, [couponInput, couponsHook])
 
   // 升级计划
-  var handleUpgrade = useCallback(function(plan: MembershipPlan) {
+  var handleUpgrade = useCallback(async function(plan: MembershipPlan) {
     if (plan.tier === 'free') return
     if (plan.tier === membership.membership.tier) return
 
     // 创建订单
-    var newOrder = orderHook.createOrder('membership', plan.id, plan.priceCents)
+    var newOrder = await orderHook.createOrder('membership', plan.id, plan.priceCents)
     if (!newOrder) return
 
     // 创建支付会话（模拟微信支付）
@@ -228,6 +231,18 @@ export default function Membership() {
   var currentPlan = membership.membership.plan
   var growthLevel = getGrowthLevel(pointsHook.balance)
   var growthProgress = getGrowthProgress(pointsHook.balance)
+
+  if (!auth.isAuthenticated) {
+    return (
+      <div className="membership-page">
+        <div className="membership-login-required">
+          <h2>登录后查看会员权益</h2>
+          <p>升级会员，解锁更多专业推演功能</p>
+          <Link to="/login" className="membership-login-btn">立即登录</Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="membership-page">

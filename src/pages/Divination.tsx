@@ -280,7 +280,7 @@ export default function Divination() {
 
     const lines: RawLine[] = Array.from({ length: 6 }, throwOneLine)
     setAllLines(lines)
-    fetchResult(lines)
+    fetchResult(lines).catch(() => {})
 
     at(T2, () => {
       setCStage(2)
@@ -344,15 +344,30 @@ export default function Divination() {
         changedHexagram = getHexagramByNumber(changedHexagramNumber)
       }
     } else {
-      const [{ data: hexRow }, changedRow] = await Promise.all([
-        supabase.from('hexagrams').select('*').eq('number', hexagramNumber).single(),
-        changedHexagramNumber
-          ? supabase.from('hexagrams').select('*').eq('number', changedHexagramNumber).single()
-          : Promise.resolve({ data: null }),
-      ])
-      if (!hexRow) return
-      hexagram = hexRow as Hexagram
-      changedHexagram = changedRow.data as Hexagram | null
+      try {
+        const [{ data: hexRow }, changedRow] = await Promise.all([
+          supabase.from('hexagrams').select('*').eq('number', hexagramNumber).single(),
+          changedHexagramNumber
+            ? supabase.from('hexagrams').select('*').eq('number', changedHexagramNumber).single()
+            : Promise.resolve({ data: null }),
+        ])
+        if (hexRow) {
+          hexagram = hexRow as Hexagram
+          changedHexagram = changedRow.data as Hexagram | null
+        } else {
+          const { getHexagramByNumber } = await import('../lib/hexagram')
+          hexagram = getHexagramByNumber(hexagramNumber)
+          if (changedHexagramNumber) {
+            changedHexagram = getHexagramByNumber(changedHexagramNumber)
+          }
+        }
+      } catch {
+        const { getHexagramByNumber } = await import('../lib/hexagram')
+        hexagram = getHexagramByNumber(hexagramNumber)
+        if (changedHexagramNumber) {
+          changedHexagram = getHexagramByNumber(changedHexagramNumber)
+        }
+      }
     }
 
     setResult({
@@ -367,7 +382,7 @@ export default function Divination() {
       raw_lines:               lines,
       changing_lines:          changingPositions,
       ai_analysis:             buildAnalysis(hexagram, changedHexagram, category, question),
-      analysis_status:         'pending',
+      analysis_status:         'done',
       created_at:              new Date().toISOString(),
       hexagram,
       changed_hexagram:        changedHexagram,
@@ -378,6 +393,12 @@ export default function Divination() {
   async function saveRecord() {
     if (!result) return
     if (!supabase) {
+      try {
+        const key = 'xuanfengmen_divination_records'
+        const existing = JSON.parse(localStorage.getItem(key) || '[]')
+        existing.unshift({ ...result, id: 'local-' + Date.now() })
+        localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)))
+      } catch { /* localStorage 不可用时静默降级 */ }
       setSaveStatus('saved')
       return
     }

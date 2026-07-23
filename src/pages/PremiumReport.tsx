@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
+import { useLocation, useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import './PremiumReport.css'
 
@@ -263,7 +263,7 @@ function UnlockedView({ data, roomName, score, onBack }: {
         {/* Actions */}
         <div className="unlocked-actions">
           <button className="ul-btn-secondary" onClick={onBack}>分析其他空间</button>
-          <button className="ul-btn-primary" onClick={() => window.location.href = '/'}>返回首页</button>
+          <Link className="ul-btn-primary" to="/">返回首页</Link>
         </div>
       </div>
     </div>

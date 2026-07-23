@@ -28,6 +28,7 @@ interface UseAuthResult {
   profile: UserProfile | null
   loading: boolean
   error: string | null
+  setError: (error: string | null) => void
   isAuthenticated: boolean
   isGuest: boolean
   login: (email: string, password: string) => Promise<AuthUser | null>
@@ -109,7 +110,11 @@ export function useAuth(): UseAuthResult {
 
   // 初始化：检查当前认证状态
   useEffect(function() {
-    if (!supabaseClient || initializedRef.current) return
+    if (!supabaseClient) {
+      setLoading(false)
+      return
+    }
+    if (initializedRef.current) return
     initializedRef.current = true
 
     supabaseClient.auth.getSession().then(function(session) {
@@ -382,6 +387,7 @@ export function useAuth(): UseAuthResult {
     profile: profile,
     loading: loading,
     error: error,
+    setError: setError,
     isAuthenticated: isAuthenticated,
     isGuest: isGuest,
     login: login,

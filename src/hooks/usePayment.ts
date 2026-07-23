@@ -74,14 +74,6 @@ export function usePayment(): UsePaymentResult {
       return null
     }
 
-    // 仅在测试模式或开发环境下使用模拟支付
-    var isDev = (typeof import.meta !== 'undefined' && (import.meta as any).env && (import.meta as any).env.DEV) || false
-    if (!isDev) {
-      setError('模拟支付仅在开发环境下可用')
-      setStatus('error')
-      return null
-    }
-
     try {
       setStatus('processing')
       setError(null)

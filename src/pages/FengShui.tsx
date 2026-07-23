@@ -686,8 +686,10 @@ export default function FengShui() {
                         e.stopPropagation()
                         setUploadedImage(null)
                         setError(null)
-                        // 重置 input value 以便重复选择同一文件
-                        if (fileInputRef.current) fileInputRef.current.value = ''
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = ''
+                          fileInputRef.current.click()
+                        }
                       }}
                     >
                       更换照片
@@ -711,7 +713,6 @@ export default function FengShui() {
                 ref={fileInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif"
-                capture="environment"
                 onChange={handleInputChange}
                 className="hidden-input"
               />

@@ -143,8 +143,8 @@ function UserCenter() {
       .catch(function() {})
   }, [activeTab])
 
-  var handleLogout = useCallback(function() {
-    auth.logout()
+  var handleLogout = useCallback(async function() {
+    await auth.logout()
     navigate('/')
   }, [auth, navigate])
 
@@ -287,7 +287,8 @@ function UserCenter() {
     var daysLeft = calculateDaysRemaining(expiresAt)
     var expired = tier !== 'free' && isExpired(expiresAt)
     var tierName = tierLabel[tier] || tier
-    var plan = getPlan(tier as any)
+    var tierMap: Record<string, string> = { free: 'free', basic: 'pro', premium: 'pro', vip: 'master' }
+    var plan = getPlan((tierMap[tier] || 'free') as any)
 
     var features = plan ? plan.features : []
 

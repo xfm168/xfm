@@ -106,6 +106,9 @@ export function useDailyHexagram(): UseDailyHexagramResult {
             if (retry && !cancelled) {
               setData(retry as DailyHexagramWithDetail)
               setStatus('ready')
+            } else if (!cancelled) {
+              setError('数据加载失败，请刷新重试')
+              setStatus('error')
             }
             return
           }

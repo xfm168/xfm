@@ -4,7 +4,7 @@
  * 使用单引号 + concatenation
  */
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import type { SocialProvider } from '../hooks/useAuth'
@@ -77,9 +77,8 @@ function Login() {
     }
   }, [isRegister, mode, email, password, username, otp, auth, navigate])
 
-  var handleSendOTP = useCallback(function() {
+  var handleSendOTP = useCallback(async function() {
     if (!email) return
-    setOtpSent(true)
     setOtpCountdown(60)
     var timer = setInterval(function() {
       setOtpCountdown(function(prev) {
@@ -90,7 +89,14 @@ function Login() {
         return prev - 1
       })
     }, 1000)
-  }, [email])
+    try {
+      await auth.loginWithOtp(email)
+      setOtpSent(true)
+    } catch {
+      setOtpCountdown(0)
+      clearInterval(timer)
+    }
+  }, [email, auth])
 
   var handleSocialLogin = useCallback(async function(provider: SocialProvider) {
     var ok = await auth.loginWithSocial(provider)
@@ -99,8 +105,13 @@ function Login() {
     }
   }, [auth, navigate])
 
+  useEffect(function() {
+    if (auth.isAuthenticated) {
+      navigate('/user-center')
+    }
+  }, [auth.isAuthenticated, navigate])
+
   if (auth.isAuthenticated) {
-    navigate('/user-center')
     return null
   }
 
@@ -109,8 +120,8 @@ function Login() {
       React.createElement('h1', null, isRegister ? '注册账号' : '欢迎回来'),
       React.createElement('p', { className: 'login-subtitle' },
         isRegister
-          ? '创建旋风门账号，开始您的命理之旅'
-          : '登录旋风门，探索命理奥秘'
+          ? '创建玄风门账号，开始您的命理之旅'
+          : '登录玄风门，探索命理奥秘'
       ),
 
       auth.error && React.createElement('div', { className: 'login-error' }, auth.error),
@@ -229,7 +240,7 @@ function Login() {
           className: 'login-switch-link',
           onClick: function() {
             setIsRegister(!isRegister)
-            auth.error && auth.error.length > 0 && void 0
+            auth.setError(null)
           }
         }, isRegister ? '立即登录' : '立即注册')
       )
