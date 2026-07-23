@@ -205,6 +205,7 @@ export default function FengShui() {
   }, [])
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("选择图片", e.target.files);
     const file = e.target.files?.[0]
     if (file) handleFileSelect(file)
   }, [handleFileSelect])
@@ -675,9 +676,11 @@ export default function FengShui() {
               <label 
                 className="upload-zone-label"
                 onClick={(e) => {
-                  if (!uploadedImage && fileInputRef.current) {
+                  console.log("点击上传");
+                  console.log(fileInputRef.current);
+                  if (!uploadedImage) {
                     e.preventDefault()
-                    fileInputRef.current.click()
+                    fileInputRef.current?.click();
                   }
                 }}
               >
