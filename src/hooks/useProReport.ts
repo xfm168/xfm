@@ -9,7 +9,6 @@
  */
 
 import { useState, useCallback } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import type {
   ProReportRequest,
   ProReportData,
@@ -26,19 +25,12 @@ import type {
   ProConfidenceSummary,
   ProTraceSummary,
 } from '../types/proReport'
+import { supabase as supabaseClient } from '../lib/supabase'
 
 // ─── 常量 ───
 
 var PRO_API_BASE = '/api/pro'
 var PRO_REPORT_ENDPOINT = '/master-report'
-
-// ─── Supabase 客户端 ───
-
-var supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
-var supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
-var supabaseClient = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null
 
 // ─── Hook 状态类型 ───
 

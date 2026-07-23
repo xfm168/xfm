@@ -13,8 +13,8 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import type { UserProfile } from '../lib/database/types'
+import { supabase as supabaseClient } from '../lib/supabase'
 
 export type SocialProvider = 'wechat' | 'google' | 'apple'
 
@@ -41,13 +41,6 @@ interface UseAuthResult {
   updateProfile: (data: { display_name?: string | null; avatar_url?: string | null }) => Promise<UserProfile | null>
   onAuthStateChange: (callback: (user: AuthUser | null) => void) => () => void
 }
-
-var supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
-var supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
-
-var supabaseClient = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null
 
 var API_BASE = '/api/auth'
 

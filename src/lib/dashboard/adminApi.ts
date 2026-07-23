@@ -11,14 +11,7 @@ import type { RetentionData } from './types'
 import type { ConversionData } from './types'
 import type { TrendsData } from './types'
 
-import { createClient } from '@supabase/supabase-js'
-
-var supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
-var supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
-
-var supabaseClient = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null
+import { supabase as supabaseClient } from '../supabase'
 
 var API_BASE = '/api/admin/analytics'
 

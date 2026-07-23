@@ -10,14 +10,7 @@ import type { Announcement } from './types'
 import type { Campaign } from './types'
 import type { Coupon } from './types'
 
-import { createClient } from '@supabase/supabase-js'
-
-var supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
-var supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
-
-var supabaseClient = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null
+import { supabase as supabaseClient } from '../supabase'
 
 /** 获取 Bearer token */
 async function getToken(): Promise<string> {
