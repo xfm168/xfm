@@ -73,7 +73,6 @@ export default function FengShui() {
   // V3.2: 分享面板
   const [sharePanelOpen, setSharePanelOpen] = useState(false)
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const resultScrollRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
 
@@ -204,8 +203,7 @@ export default function FengShui() {
     setIsDragging(false)
   }, [])
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("选择图片", e.target.files);
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) handleFileSelect(file)
   }, [handleFileSelect])
@@ -673,58 +671,53 @@ export default function FengShui() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
             >
-              <label 
-                className="upload-zone-label"
-                onClick={(e) => {
-                  console.log("点击上传");
-                  console.log(fileInputRef.current);
-                  if (!uploadedImage) {
-                    e.preventDefault()
-                    fileInputRef.current?.click();
-                  }
-                }}
-              >
-                {uploadedImage ? (
-                  <div className="preview-container">
-                    <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
-                    <button
-                      type="button"
-                      className="change-btn"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        setUploadedImage(null)
-                        setError(null)
-                        if (fileInputRef.current) {
-                          fileInputRef.current.value = ''
-                          fileInputRef.current.click()
-                        }
-                      }}
-                    >
-                      更换照片
-                    </button>
+              {uploadedImage ? (
+                <div className="preview-container">
+                  <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
+                  <button
+                    type="button"
+                    className="change-btn"
+                    onClick={() => {
+                      setUploadedImage(null)
+                      setError(null)
+                      const input = document.getElementById('fengshui-upload') as HTMLInputElement
+                      if (input) {
+                        input.value = ''
+                        input.click()
+                      }
+                    }}
+                  >
+                    更换照片
+                  </button>
+                </div>
+              ) : (
+                <div className="upload-placeholder">
+                  <div className="upload-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
                   </div>
-                ) : (
-                  <div className="upload-placeholder">
-                    <div className="upload-icon">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                      </svg>
-                    </div>
-                    <p className="upload-text">点击或拖拽上传照片</p>
-                    <p className="upload-hint">支持 JPG、PNG 格式</p>
-                  </div>
-                )}
+                  <p className="upload-text">点击下方按钮上传照片</p>
+                  <p className="upload-hint">支持 JPG、PNG、WebP 格式</p>
+                  <button
+                    type="button"
+                    className="upload-trigger-btn"
+                    onClick={() => {
+                      document.getElementById('fengshui-upload')?.click()
+                    }}
+                  >
+                    上传图片
+                  </button>
+                </div>
+              )}
 
-                <input
-                  id="fengshui-file-input"
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  onChange={handleInputChange}
-                  className="hidden-input"
-                />
-              </label>
+              <input
+                id="fengshui-upload"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
             </div>
 
             {/* Tips */}
