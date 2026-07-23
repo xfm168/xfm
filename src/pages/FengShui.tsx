@@ -715,7 +715,7 @@ export default function FengShui() {
                 id="fengshui-upload"
                 type="file"
                 accept="image/*"
-                style={{ display: 'none' }}
+                className="hidden-input"
                 onChange={handleFileChange}
               />
             </div>
