@@ -672,9 +672,15 @@ export default function FengShui() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
             >
-              {/* P0-5: 用 label 包裹整个上传区域，利用浏览器原生 label→input 关联触发文件选择器
-                  不依赖 ref.click()，兼容微信 WebView / Android Chrome / iOS Safari */}
-              <label className="upload-zone-label" htmlFor="fengshui-file-input">
+              <label 
+                className="upload-zone-label"
+                onClick={(e) => {
+                  if (!uploadedImage && fileInputRef.current) {
+                    e.preventDefault()
+                    fileInputRef.current.click()
+                  }
+                }}
+              >
                 {uploadedImage ? (
                   <div className="preview-container">
                     <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
@@ -706,16 +712,16 @@ export default function FengShui() {
                     <p className="upload-hint">支持 JPG、PNG 格式</p>
                   </div>
                 )}
-              </label>
 
-              <input
-                id="fengshui-file-input"
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-                onChange={handleInputChange}
-                className="hidden-input"
-              />
+                <input
+                  id="fengshui-file-input"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={handleInputChange}
+                  className="hidden-input"
+                />
+              </label>
             </div>
 
             {/* Tips */}
