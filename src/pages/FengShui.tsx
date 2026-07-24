@@ -74,6 +74,7 @@ export default function FengShui() {
   const [sharePanelOpen, setSharePanelOpen] = useState(false)
 
   const resultScrollRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
 
   // CountUp 动画 + 模块依次出现
@@ -680,10 +681,9 @@ export default function FengShui() {
                     onClick={() => {
                       setUploadedImage(null)
                       setError(null)
-                      const input = document.getElementById('fengshui-upload') as HTMLInputElement
-                      if (input) {
-                        input.value = ''
-                        input.click()
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = ''
+                        fileInputRef.current.click()
                       }
                     }}
                   >
@@ -702,9 +702,7 @@ export default function FengShui() {
                   <button
                     type="button"
                     className="upload-trigger-btn"
-                    onClick={() => {
-                      document.getElementById('fengshui-upload')?.click()
-                    }}
+                    onClick={() => fileInputRef.current?.click()}
                   >
                     上传图片
                   </button>
@@ -712,6 +710,7 @@ export default function FengShui() {
               )}
 
               <input
+                ref={fileInputRef}
                 id="fengshui-upload"
                 type="file"
                 accept="image/*"
