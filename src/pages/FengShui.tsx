@@ -209,6 +209,33 @@ export default function FengShui() {
     if (file) handleFileSelect(file)
   }, [handleFileSelect])
 
+  // === 调试：上传按钮点击诊断 ===
+  const handleUploadClick = () => {
+    console.log("上传按钮点击")
+
+    if (!fileInputRef.current) {
+      console.log("input ref 不存在")
+      return
+    }
+
+    console.log("准备打开文件选择器")
+    fileInputRef.current.click()
+    console.log("click 已调用")
+  }
+
+  // === 调试：环境检测 ===
+  useEffect(() => {
+    const inIframe = window.top !== window.self
+    console.log("=== 环境检测 ===")
+    console.log("iframe 内运行:", inIframe)
+    console.log("window.top !== window.self:", window.top !== window.self)
+    console.log("window.parent !== window:", window.parent !== window)
+    console.log("userAgent:", navigator.userAgent)
+    console.log("vendor:", navigator.vendor)
+    console.log("platform:", navigator.platform)
+    console.log("=== 环境检测结束 ===")
+  }, [])
+
   const handleAnalyze = async () => {
     if (!uploadedImage || !selectedRoom) return
 
@@ -666,6 +693,25 @@ export default function FengShui() {
               上传{selectedRoom ? roomTypes.find(r => r.id === selectedRoom)?.name : ''}照片
             </h2>
 
+            {/* === 调试：原生 file input 测试 === */}
+            <div style={{ padding: '16px', background: '#222', borderRadius: '8px', marginBottom: '16px' }}>
+              <p style={{ color: '#d4a847', fontSize: '14px', marginBottom: '8px' }}>调试：原生文件选择器测试</p>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ fontSize: '16px', padding: '8px' }}
+                onChange={(e) => {
+                  console.log("原生 input onChange 触发", e.target.files)
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    console.log("原生 input 选到文件:", file.name)
+                    handleFileSelect(file)
+                  }
+                }}
+              />
+            </div>
+            {/* === 调试结束 === */}
+
             <div
               className={`upload-zone ${isDragging ? 'dragging' : ''} ${uploadedImage ? 'has-image' : ''}`}
               onDrop={handleDrop}
@@ -702,7 +748,7 @@ export default function FengShui() {
                   <button
                     type="button"
                     className="upload-trigger-btn"
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={handleUploadClick}
                   >
                     上传图片
                   </button>
