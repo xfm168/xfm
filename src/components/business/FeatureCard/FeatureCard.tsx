@@ -1,14 +1,31 @@
 import { ReactNode, CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  Sparkles,
+  CalendarDays,
+  Coins,
+  Home,
+  History,
+} from 'lucide-react'
 import './FeatureCard.css'
 
-export type FeatureIconType = 'bagua' | 'coins' | 'house' | 'records' | 'bazi' | 'custom'
+export type FeatureIconType =
+  | 'bagua'
+  | 'coins'
+  | 'house'
+  | 'records'
+  | 'bazi'
+  | 'sparkles'
+  | 'calendar'
+  | 'history'
+  | 'custom'
 
 export interface FeatureCardBaseProps {
   icon: FeatureIconType | ReactNode
   title: string
   subtitle: string
   className?: string
+  accentColor?: string
 }
 
 export type FeatureCardProps = FeatureCardBaseProps & (
@@ -17,7 +34,8 @@ export type FeatureCardProps = FeatureCardBaseProps & (
   | { path?: never; onClick?: never; style?: CSSProperties }
 )
 
-const iconSvgs: Record<Exclude<FeatureIconType, 'custom'>, ReactNode> = {
+/* ── 内联 SVG 版本：保留对旧 key 的兼容 ── */
+const legacySvg: Record<string, ReactNode> = {
   bagua: (
     <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="1.2" opacity="0.3" />
@@ -57,7 +75,6 @@ const iconSvgs: Record<Exclude<FeatureIconType, 'custom'>, ReactNode> = {
       <line x1="16" y1="22" x2="28" y2="22" stroke="currentColor" strokeWidth="1" opacity="0.4" />
       <line x1="16" y1="28" x2="32" y2="28" stroke="currentColor" strokeWidth="1" opacity="0.5" />
       <line x1="16" y1="34" x2="26" y2="34" stroke="currentColor" strokeWidth="1" opacity="0.4" />
-      <rect x="16" y="37" width="6" height="3" rx="1" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
     </svg>
   ),
   bazi: (
@@ -71,12 +88,32 @@ const iconSvgs: Record<Exclude<FeatureIconType, 'custom'>, ReactNode> = {
       <text x="19.5" y="19" textAnchor="middle" fill="currentColor" fontSize="7">月</text>
       <text x="28.5" y="19" textAnchor="middle" fill="currentColor" fontSize="7">日</text>
       <text x="37.5" y="19" textAnchor="middle" fill="currentColor" fontSize="7">时</text>
-      <circle cx="10.5" cy="32" r="2.5" stroke="currentColor" strokeWidth="0.8" fill="currentColor" fillOpacity="0.15" />
-      <circle cx="19.5" cy="32" r="2.5" stroke="currentColor" strokeWidth="0.8" fill="currentColor" fillOpacity="0.15" />
-      <circle cx="28.5" cy="32" r="2.5" stroke="currentColor" strokeWidth="0.8" fill="currentColor" fillOpacity="0.15" />
-      <circle cx="37.5" cy="32" r="2.5" stroke="currentColor" strokeWidth="0.8" fill="currentColor" fillOpacity="0.15" />
     </svg>
   ),
+}
+
+const LucideWrapper = ({ Icon, color }: { Icon: any; color?: string }) => (
+  <span
+    className="xbiz-fc-lucide-wrap"
+    style={color ? { color } : undefined}
+  >
+    <Icon size={22} strokeWidth={1.8} />
+  </span>
+)
+
+const getIconContent = (icon: FeatureCardProps['icon'], accentColor?: string): ReactNode => {
+  if (typeof icon !== 'string') return icon
+
+  // 新的 lucide key
+  if (icon === 'sparkles') return <LucideWrapper Icon={Sparkles} color={accentColor} />
+  if (icon === 'calendar') return <LucideWrapper Icon={CalendarDays} color={accentColor} />
+  if (icon === 'coins') return <LucideWrapper Icon={Coins} color={accentColor} />
+  if (icon === 'home') return <LucideWrapper Icon={Home} color={accentColor} />
+  if (icon === 'history') return <LucideWrapper Icon={History} color={accentColor} />
+
+  // 兼容旧 key
+  if (legacySvg[icon]) return legacySvg[icon]
+  return icon
 }
 
 export default function FeatureCard({
@@ -87,32 +124,46 @@ export default function FeatureCard({
   onClick,
   className = '',
   style,
+  accentColor,
 }: FeatureCardProps) {
-  const classes = [
-    'xbiz-feature-card',
-    className,
-  ].filter(Boolean).join(' ')
+  const classes = ['xbiz-feature-card', 'xfm-feature-card-v2', className]
+    .filter(Boolean)
+    .join(' ')
 
-  const iconContent = typeof icon === 'string' && icon !== 'custom'
-    ? iconSvgs[icon as Exclude<FeatureIconType, 'custom'>]
-    : icon
+  const accent = accentColor ?? '#d4a847'
+  const cardStyle: CSSProperties = {
+    ...style,
+    ['--xfm-fc-accent' as any]: accent,
+  }
+
+  const iconContent = getIconContent(icon, accentColor)
 
   const content = (
     <>
-      <div className="xbiz-feature-card__icon">
-        {iconContent}
+      <div className="xbiz-feature-card__icon xfm-fc-icon-v2">{iconContent}</div>
+      <div className="xbiz-feature-card__text xfm-fc-text-v2">
+        <h3 className="xbiz-feature-card__title xfm-fc-title-v2">{title}</h3>
+        <p className="xbiz-feature-card__subtitle xfm-fc-sub-v2">{subtitle}</p>
       </div>
-      <div className="xbiz-feature-card__text">
-        <h3 className="xbiz-feature-card__title">{title}</h3>
-        <p className="xbiz-feature-card__subtitle">{subtitle}</p>
+      <div className="xbiz-feature-card__arrow xfm-fc-arrow-v2" aria-hidden>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path
+            d="M6 3 L11 8 L6 13"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
-      <div className="xbiz-feature-card__arrow">›</div>
+      <span className="xfm-fc-shine-v2" aria-hidden />
+      <span className="xfm-fc-border-v2" aria-hidden />
     </>
   )
 
   if (path) {
     return (
-      <Link to={path} className={classes} style={style}>
+      <Link to={path} className={classes} style={cardStyle}>
         {content}
       </Link>
     )
@@ -120,11 +171,15 @@ export default function FeatureCard({
 
   if (onClick) {
     return (
-      <button className={classes} onClick={onClick} style={style}>
+      <button type="button" className={classes} onClick={onClick} style={cardStyle}>
         {content}
       </button>
     )
   }
 
-  return <div className={classes}>{content}</div>
+  return (
+    <div className={classes} style={cardStyle}>
+      {content}
+    </div>
+  )
 }
