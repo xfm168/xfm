@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { motion, Variants } from 'framer-motion'
+import { checkImageQuality } from '../lib/fengshui/utils/imageQuality'
 import {
   Sofa,
   Bed,
@@ -36,14 +36,13 @@ import { PIPELINE_STEPS, type PipelineStep } from '../lib/fengshui/pipeline'
 import { validateImageType, validateFileSize } from '../lib/security/inputValidation'
 import { sanitizeHtml, encodeForHtml } from '../lib/security/sanitize'
 import { usePageSEO } from '../hooks/usePageSEO'
-import type { ImageQualityCheck, ProfessionalFengShuiReport, FengShuiTerm } from '../lib/fengshui/types'
+import type { ImageQualityCheck, FengShuiTerm } from '../lib/fengshui/types'
 import { getTermExplanation } from '../lib/fengshui/knowledge/rulesKnowledgeBase'
 import { saveFengShuiHistory } from '../lib/fengshui/history'
 import { generatePDFReport } from '../lib/fengshui/v31/pdf'
 import { saveHistoryFromReportV31 } from '../lib/fengshui/v31/history'
 import AnnotationViewer from '../components/business/AnnotationViewer/AnnotationViewer'
 import { SharePanel } from '../components/business'
-import type { FengShuiHistoryRecordV31 } from '../lib/fengshui/v31/types'
 
 // UI 层简化房间类型（面向用户选择）
 type UIRoomType = 'living' | 'bedroom' | 'kitchen' | 'balcony' | 'study' | 'bathroom' | 'entrance' | 'dining'
@@ -131,7 +130,6 @@ export default function FengShui() {
   const [sharePanelOpen, setSharePanelOpen] = useState(false)
 
   const resultScrollRef = useRef<HTMLDivElement>(null)
-  const navigate = useNavigate()
 
   // CountUp 动画 + 模块依次出现
   useEffect(() => {
@@ -224,7 +222,6 @@ export default function FengShui() {
 
       // V3.0: 图片质量检测
       try {
-        const { checkImageQuality } = require('../lib/fengshui/utils/imageQuality')
         const quality = checkImageQuality(dataUrl)
         setImageQuality(quality)
         if (!quality.passed) {
@@ -641,8 +638,8 @@ export default function FengShui() {
                         includeRadarChart: true,
                         pageSize: 'A4',
                       },
-                      pipelineResult.v31.professionalReport,
-                      pipelineResult.v31.annotations
+                      pipelineResult.v31!.professionalReport,
+                      pipelineResult.v31!.annotations
                     )
                     const a = document.createElement('a')
                     a.href = pdfUrl
@@ -680,7 +677,7 @@ export default function FengShui() {
               overallScore: pipelineResult.report.overallScore,
               credibility: pipelineResult.v31?.credibility || { score: 70, level: 'medium', factors: {} as any, explanation: '' },
               mainIssues: pipelineResult.v31?.professionalReport?.issues?.map(i => i.title) || [],
-              remediationPlans: pipelineResult.v31?.professionalReport?.remediationPlans?.map(r => r.title) || [],
+              remediationPlans: pipelineResult.v31?.professionalReport?.remediationPlans?.map(r => r.issue) || [],
               annotations: pipelineResult.v31?.annotations || [],
               createdAt: new Date().toISOString(),
               analysisDurationMs: pipelineResult.totalTime || 0,
@@ -849,10 +846,11 @@ export default function FengShui() {
                   transition={{ duration: 0.4 }}
                 >
                   <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
-                  <label className="change-btn xfm-change-btn-v2">
+                  <label className="change-btn xfm-change-btn-v2" htmlFor="fengshui-change-input">
                     <UploadCloud size={16} />
                     更换照片
                     <input
+                      id="fengshui-change-input"
                       type="file"
                       accept="image/*"
                       className="xfm-upload-input-native"
@@ -882,10 +880,11 @@ export default function FengShui() {
                   <p className="upload-text">点击下方按钮上传照片</p>
                   <p className="upload-hint">支持 JPG、PNG、WebP 格式 · 最大 10MB</p>
 
-                  <label className="upload-trigger-btn xfm-upload-trigger-v2">
+                  <label className="upload-trigger-btn xfm-upload-trigger-v2" htmlFor="fengshui-upload-input">
                     <Camera size={20} />
                     <span>上传图片</span>
                     <input
+                      id="fengshui-upload-input"
                       type="file"
                       accept="image/*"
                       className="xfm-upload-input-native"

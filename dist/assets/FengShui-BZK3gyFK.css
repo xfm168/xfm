@@ -375,10 +375,8 @@
 
 .upload-trigger-btn {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
+  display: inline-block;
+  text-align: center;
   margin-top: var(--space-4);
   padding: var(--space-3) var(--space-8);
   background: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-600) 100%);
@@ -403,7 +401,8 @@
 /* V2 上传触发按钮 */
 .upload-trigger-btn.xfm-upload-trigger-v2 {
   position: relative;
-  display: inline-flex;
+  display: inline-block;
+  text-align: center;
   padding: var(--space-4) var(--space-10);
   border-radius: 14px;
   font-size: 1.02rem;
