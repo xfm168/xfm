@@ -838,34 +838,6 @@ export default function FengShui() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             >
-              {/* 全局透明覆盖层 - 桌面端可靠 */}
-              <input
-                type="file"
-                accept="image/*"
-                className="xfm-global-file-input"
-                onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) handleFileSelect(file)
-                  e.target.value = ''
-                }}
-              />
-
-              {/* 移动端原生后备按钮 - 绝对可靠 */}
-              <div className="xfm-mobile-upload-fallback">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="xfm-native-file-btn"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) handleFileSelect(file)
-                    e.target.value = ''
-                  }}
-                />
-                <Camera size={20} />
-                <span>{uploadedImage ? '更换照片' : '上传图片'}</span>
-              </div>
-
               {uploadedImage ? (
                 <motion.div
                   className="preview-container"
@@ -875,6 +847,16 @@ export default function FengShui() {
                 >
                   <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
                   <div className="change-btn xfm-change-btn-v2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="xfm-file-button-input"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) handleFileSelect(file)
+                        e.target.value = ''
+                      }}
+                    />
                     <UploadCloud size={16} />
                     <span>点击更换照片</span>
                   </div>
@@ -894,8 +876,23 @@ export default function FengShui() {
                   >
                     <UploadCloud size={40} />
                   </motion.div>
-                  <p className="upload-text">点击任意位置上传照片</p>
+                  <p className="upload-text">点击下方按钮上传照片</p>
                   <p className="upload-hint">支持 JPG、PNG、WebP 格式 · 最大 10MB</p>
+
+                  <div className="upload-trigger-btn xfm-upload-trigger-v2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="xfm-file-button-input"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) handleFileSelect(file)
+                        e.target.value = ''
+                      }}
+                    />
+                    <Camera size={20} />
+                    <span>上传图片</span>
+                  </div>
 
                   <p className="upload-drag-hint">
                     或将图片拖拽到此处

@@ -432,77 +432,28 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   双保险上传方案：
-   1. 全局透明覆盖层（桌面端、平板端可靠）
-   2. 原生可见 file 按钮（移动端绝对可靠）
+   文件按钮方案：input 覆盖按钮容器，视觉元素在底层
+   input 直接接收点击，不经过任何中转
    ═══════════════════════════════════════════════════════════════════ */
 
-/* 1. 全局透明覆盖层 */
-.upload-zone .xfm-global-file-input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.01;
-  z-index: 1000;
-  cursor: pointer;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  -webkit-appearance: none;
-  appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  display: block;
-  background: transparent;
-  color: transparent;
-  overflow: hidden;
-}
-
-/* 2. 移动端原生后备按钮：可见的黑金按钮 + 内嵌原生 file input */
-.xfm-mobile-upload-fallback {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-10);
-  border-radius: 14px;
-  font-size: 1.02rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  background: linear-gradient(135deg, #f5e6b8 0%, #d4a847 40%, #b88a2f 100%);
-  color: #0a0803;
-  box-shadow:
-    0 6px 24px rgba(212, 168, 71, 0.35),
-    0 0 0 1px rgba(212, 168, 71, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  border: none;
-  cursor: pointer;
-  overflow: hidden;
-  z-index: 1001;
-  pointer-events: auto;
-  margin-top: var(--space-4);
-}
-
-.xfm-mobile-upload-fallback svg,
-.xfm-mobile-upload-fallback span {
-  position: relative;
-  z-index: 2;
+/* 视觉元素在 input 之下，不拦截点击 */
+.upload-trigger-btn svg,
+.upload-trigger-btn span,
+.change-btn svg,
+.change-btn span {
   pointer-events: none;
+  position: relative;
+  z-index: 1;
 }
 
-/* 原生 file input：完全可见、原生交互、移动端 100% 兼容 */
-.xfm-native-file-btn {
+/* file input 覆盖整个按钮容器 */
+.xfm-file-button-input {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 1;
-  z-index: 2000;
+  opacity: 0.01;
+  z-index: 2;
   cursor: pointer;
   margin: 0;
   padding: 0;
@@ -515,27 +466,32 @@
   background: transparent;
   color: transparent;
   font-size: 0;
-  line-height: 0;
+  pointer-events: auto !important;
 }
 
-.xfm-native-file-btn::file-selector-button {
-  display: none;
+/* 确保按钮容器有 position:relative */
+.upload-trigger-btn.xfm-upload-trigger-v2,
+.change-btn.xfm-change-btn-v2 {
+  position: relative !important;
 }
 
-/* 视觉层：所有上传区内的非 input 元素都不拦截点击 */
-.upload-zone .upload-placeholder,
-.upload-zone .preview-container,
+/* 视觉层：上传区内的非 input 元素都不拦截点击 */
 .upload-zone .upload-icon,
 .upload-zone .upload-text,
 .upload-zone .upload-hint,
 .upload-zone .upload-drag-hint,
-.upload-zone .upload-trigger-btn,
-.upload-zone .change-btn,
 .upload-zone .preview-image,
-.upload-zone .xfm-upload-icon-v2 {
+.upload-zone .xfm-upload-icon-v2,
+.upload-zone .preview-container img {
   pointer-events: none !important;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* 保留 upload-placeholder 的 pointer-events: auto，
+   但让其中的具体元素不拦截 */
+.upload-placeholder {
+  pointer-events: auto;
 }
 
 .upload-placeholder {
