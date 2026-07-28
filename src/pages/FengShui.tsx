@@ -846,21 +846,20 @@ export default function FengShui() {
                   transition={{ duration: 0.4 }}
                 >
                   <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
-                  <label className="change-btn xfm-change-btn-v2" htmlFor="fengshui-change-input">
-                    <UploadCloud size={16} />
-                    更换照片
+                  <div className="change-btn xfm-change-btn-v2 xfm-file-btn">
+                    <UploadCloud size={16} className="xfm-btn-visual" />
+                    <span className="xfm-btn-visual">更换照片</span>
                     <input
-                      id="fengshui-change-input"
                       type="file"
                       accept="image/*"
-                      className="xfm-upload-input-native"
+                      className="xfm-file-input-layer"
                       onChange={(e) => {
                         const file = e.target.files?.[0]
                         if (file) handleFileSelect(file)
                         e.target.value = ''
                       }}
                     />
-                  </label>
+                  </div>
                 </motion.div>
               ) : (
                 <div className="upload-placeholder">
@@ -880,21 +879,20 @@ export default function FengShui() {
                   <p className="upload-text">点击下方按钮上传照片</p>
                   <p className="upload-hint">支持 JPG、PNG、WebP 格式 · 最大 10MB</p>
 
-                  <label className="upload-trigger-btn xfm-upload-trigger-v2" htmlFor="fengshui-upload-input">
-                    <Camera size={20} />
-                    <span>上传图片</span>
+                  <div className="upload-trigger-btn xfm-upload-trigger-v2 xfm-file-btn">
+                    <Camera size={20} className="xfm-btn-visual" />
+                    <span className="xfm-btn-visual">上传图片</span>
                     <input
-                      id="fengshui-upload-input"
                       type="file"
                       accept="image/*"
-                      className="xfm-upload-input-native"
+                      className="xfm-file-input-layer"
                       onChange={(e) => {
                         const file = e.target.files?.[0]
                         if (file) handleFileSelect(file)
                         e.target.value = ''
                       }}
                     />
-                  </label>
+                  </div>
 
                   <p className="upload-drag-hint">
                     或将图片拖拽到此处
