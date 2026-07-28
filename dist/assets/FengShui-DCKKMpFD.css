@@ -431,6 +431,51 @@
   transform: translateY(-1px) scale(0.98);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   标准文件上传按钮：容器 + 视觉层 + 原生 input 覆盖层
+   完全不依赖 label，input 直接接收点击，跨浏览器 100% 可靠
+   ═══════════════════════════════════════════════════════════════════ */
+.xfm-file-btn {
+  /* 不设置 position，继承父类的 relative/absolute 定位上下文 */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+/* 特殊处理：更换照片按钮原本是 position:absolute；这里保留但加 inline-flex */
+.change-btn.xfm-file-btn {
+  display: inline-flex !important;
+}
+
+/* 视觉层（图标、文字）：不拦截点击，让 input 层接收 */
+.xfm-file-btn .xfm-btn-visual {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 原生 input 覆盖层：填满容器、透明、最上层、直接接收点击 */
+.xfm-file-input-layer {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0.001;
+  cursor: pointer;
+  z-index: 50;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  display: block !important;
+}
+
 .upload-placeholder {
   display: flex;
   flex-direction: column;
