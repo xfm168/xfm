@@ -24,5 +24,5 @@ export const DEFAULT_CALENDAR_TYPE = 'solar' as const
 // 默认子时策略
 export const DEFAULT_ZISHI_STRATEGY = 'late' as const
 
-// 默认是否启用真太阳时
-export const DEFAULT_USE_TRUE_SOLAR_TIME = false
+// 默认是否启用真太阳时（玄风门默认开启，以专业排盘精度优先）
+export const DEFAULT_USE_TRUE_SOLAR_TIME = true

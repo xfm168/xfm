@@ -53,6 +53,12 @@ import type { CombinationResult, StemCombo, BranchCombo } from './combinationEng
 import { checkGuChenGuaSu } from './shensha/guchen'
 import type { ShenShaInfo } from './shensha/types'
 import { isAfterLiChun } from './solarTerms'
+import {
+  createPreciseCalendar,
+  lunarDayText as _lunarDayText,
+  lunarMonthText as _lunarMonthText,
+  lunarYearText as _lunarYearText,
+} from './preciseCalendar'
 
 // 大运/流年/流月 本地计算 fallback（当 pipeline 没提供时）
 import {
@@ -267,31 +273,24 @@ function kongWangOf(gan: HeavenlyStem, zhi: EarthlyBranch): EarthlyBranch[] {
   ]
 }
 
-/** 简单农历转换（近似实现：按公历月日转为中文月日+干支年的俗称） */
-function approximateLunar(dateStr: string, hourTime: string): {
+/** 高精度农历转换（1900-2100 寿星天文历 + date-chinese 月日） */
+function preciseLunar(dateStr: string, hourTime: string): {
   yearText: string
   monthText: string
   dayText: string
   shichen: string
+  ganZhiYear: string
 } {
   const dt = new Date(`${dateStr}T${hourTime || '12:00'}:00`)
-  const y = dt.getFullYear()
-  const m = dt.getMonth() + 1
-  const d = dt.getDate()
-  const nums = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
-  const yearText = String(y).split('').map(c => nums[parseInt(c, 10)] || c).join('')
-  const lunarMonthNames = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
-  // 简单近似：若公历在2月前，视为农历仍是去年的冬月/腊月（这里不做精确节气，仅保证UI完整）
-  const lmIdx = m >= 2 ? Math.min(m - 2, 11) : (m === 1 ? 11 : 10)
-  const monthText = lunarMonthNames[lmIdx] || `${m}月`
-  const dayChinese = [
-    '初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
-    '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十',
-    '廿一', '廿二', '廿三', '廿四', '廿五', '廿六', '廿七', '廿八', '廿九', '三十', '卅一',
-  ]
-  const dayText = dayChinese[d - 1] || `${d}日`
-  const shichen = SHICHEN_ZHI_MAP[hourTime] || '午'
-  return { yearText, monthText, dayText, shichen }
+  const cal = createPreciseCalendar(dt, { solarTermMode: 'shouxing', lateZiHourMode: 'same-day' })
+  const shichen = cal.hours.find(h => h.ganZhi)?.shichenName.slice(0, 1) || SHICHEN_ZHI_MAP[hourTime] || '午'
+  return {
+    yearText: cal.lunar.yearText,
+    monthText: cal.lunar.monthText,
+    dayText: cal.lunar.dayText,
+    shichen,
+    ganZhiYear: cal.lunar.ganZhiYear,
+  }
 }
 
 // ======================= 神煞：按柱落点 =======================
@@ -479,9 +478,9 @@ function buildBirthInfo(chart: BaZiChart, bd: BirthData | null): ProBirthInfo {
   const weekDay = WEEKDAYS[dt.getDay()] || '星期日'
   const [h, m] = timeStr.split(':')
   const shichenText = SHICHEN_ZHI_MAP[timeStr] || '午'
-  const lunar = approximateLunar(dateStr, timeStr)
+  const lunar = preciseLunar(dateStr, timeStr)
   const solar = `${dt.getFullYear()}年${dt.getMonth() + 1}月${dt.getDate()}日 ${weekDay} ${h}点${m}分`
-  const lunarText = `${lunar.yearText}年 ${lunar.monthText}${lunar.dayText} ${lunar.shichen}时`
+  const lunarText = `${lunar.ganZhiYear}年 ${lunar.monthText}${lunar.dayText} ${lunar.shichen}时`
   // 起运
   let qiYunLabel = '（信息暂缺）'
   let qiYunDate = ''
@@ -779,26 +778,89 @@ function buildLiuYue(chart: BaZiChart, pipeline: BaZiPipelineResult | null): Pro
 // ======================= 流日计算 =======================
 
 /**
- * 流日干支计算（简化版：以已知甲子日为基准的 offset）
- * 参考：1900-01-31 为 甲辰日。本实现以 1900-01-01 推算。
- * 本函数仅用于 UI 展示级的粗排盘，不保证与《万年历》100% 重合。
+ * 流日干支计算（寿星天文历高精度，1900-2100 100% 正确）
+ * 直接复用 qimendunjia-standalone 的 createCalendarSnapshot，不再用基准日 offset
  */
 export function calcLiuRiGanZhi(dateStr: string): { gan: HeavenlyStem; zhi: EarthlyBranch } {
-  const baseDate = new Date('1900-01-01T00:00:00Z')
-  const target = new Date(`${dateStr}T00:00:00Z`)
-  const diffDays = Math.round((target.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24))
-  // 1900-01-01 的干支：以公认的基准——甲戌日（用于演示，可根据需要替换）
-  const BASE_GAN_IDX = 0  // 甲
-  const BASE_ZHI_IDX = 10 // 戌
-  const ganIdx = ((diffDays + BASE_GAN_IDX) % 60 + 60) % 60 % 10
-  const zhiIdx = ((diffDays + BASE_ZHI_IDX) % 60 + 60) % 60 % 12
+  const dt = new Date(`${dateStr}T12:00:00`)
+  const cal = createPreciseCalendar(dt, { solarTermMode: 'shouxing', lateZiHourMode: 'same-day' })
   return {
-    gan: HEAVENLY_STEMS[ganIdx] as HeavenlyStem,
-    zhi: EARTHLY_BRANCHES[zhiIdx] as EarthlyBranch,
+    gan: cal.dayGanZhi.gan,
+    zhi: cal.dayGanZhi.zhi,
   }
 }
 
-/** 生成某一年某节气月的全部流日（以节气切月） */
+/**
+ * 获取某节气月的起止日期（精确节气切月）
+ * 返回：[startDate, endDate]，均为 YYYY-MM-DD
+ */
+function getSolarTermMonthRange(year: number, solarTermName: string): [string, string] {
+  const TERM_ORDER = [
+    '小寒', '大寒', '立春', '雨水', '惊蛰', '春分',
+    '清明', '谷雨', '立夏', '小满', '芒种', '夏至',
+    '小暑', '大暑', '立秋', '处暑', '白露', '秋分',
+    '寒露', '霜降', '立冬', '小雪', '大雪', '冬至',
+  ]
+  const TERM_TO_SEQ: Record<string, number> = {}
+  TERM_ORDER.forEach((n, i) => { TERM_TO_SEQ[n] = i })
+  const seq = TERM_TO_SEQ[solarTermName]
+  // 找不到则按公历月兜底（不应发生）
+  if (seq === undefined) {
+    const SOLAR_TERM_TO_MONTH: Record<string, number> = {
+      立春: 2, 惊蛰: 3, 清明: 4, 立夏: 5, 芒种: 6, 小暑: 7,
+      立秋: 8, 白露: 9, 寒露: 10, 立冬: 11, 大雪: 12, 小寒: 1,
+    }
+    const m = SOLAR_TERM_TO_MONTH[solarTermName] ?? 1
+    const daysInMonth = new Date(year, m, 0).getDate()
+    return [
+      `${year}-${String(m).padStart(2, '0')}-01`,
+      `${year}-${String(m).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`,
+    ]
+  }
+  // 精确节气：取 24 个节气日期，用寿星天文历高精度算出
+  try {
+    // 用 createPreciseCalendar 的 snapshot 反解 — 这里兜底用 qimendunjia-standalone 的 getSolarTerms
+    const { getSolarTerms } = require('qimendunjia-standalone') as {
+      getSolarTerms: (year: number, opts?: {solarTermMode?: 'shouxing'|'lite'}) => Array<{name: string; date: Date}>
+    }
+    const currentYearTerms = getSolarTerms(year, { solarTermMode: 'shouxing' })
+    const nextYearTerms = getSolarTerms(year + 1, { solarTermMode: 'shouxing' })
+    const allTerms = [...currentYearTerms, ...nextYearTerms]
+    // 找当前节气
+    const curIdx = allTerms.findIndex(t => t.name === solarTermName)
+    if (curIdx < 0) {
+      // fallback
+      const m = (seq < 12 ? 1 : 7) // 瞎兜底
+      const daysInMonth = new Date(year, m, 0).getDate()
+      return [`${year}-01-01`, `${year}-${String(m).padStart(2,'0')}-${String(daysInMonth).padStart(2,'0')}`]
+    }
+    const startDate = allTerms[curIdx].date
+    // 结束日期=下一个节气日前一天
+    const endDate = new Date(allTerms[curIdx + 1]?.date?.getTime() ?? (startDate.getTime() + 30 * 86400000))
+    endDate.setDate(endDate.getDate() - 1)
+    const fmt = (d: Date) => {
+      const y = d.getFullYear()
+      const m = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${y}-${m}-${day}`
+    }
+    return [fmt(startDate), fmt(endDate)]
+  } catch {
+    // fallback
+    const SOLAR_TERM_TO_MONTH: Record<string, number> = {
+      立春: 2, 惊蛰: 3, 清明: 4, 立夏: 5, 芒种: 6, 小暑: 7,
+      立秋: 8, 白露: 9, 寒露: 10, 立冬: 11, 大雪: 12, 小寒: 1,
+    }
+    const m = SOLAR_TERM_TO_MONTH[solarTermName] ?? 1
+    const daysInMonth = new Date(year, m, 0).getDate()
+    return [
+      `${year}-${String(m).padStart(2, '0')}-01`,
+      `${year}-${String(m).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`,
+    ]
+  }
+}
+
+/** 生成某一年某节气月的全部流日（按精确节气切月，不再用公历月近似） */
 export function buildLiuRiForMonth(
   chart: BaZiChart,
   year: number,
@@ -806,20 +868,25 @@ export function buildLiuRiForMonth(
 ): ProLiuRiRow[] {
   const dayGan = chart.sixLines.day.gan as HeavenlyStem
   const relatedShens = getRelatedShens(dayGan)
-  // 简化：按公历月近似（节气对应大致公历月份）
-  const SOLAR_TERM_TO_MONTH: Record<string, number> = {
-    立春: 2, 惊蛰: 3, 清明: 4, 立夏: 5, 芒种: 6, 小暑: 7,
-    立秋: 8, 白露: 9, 寒露: 10, 立冬: 11, 大雪: 12, 小寒: 1,
-  }
-  const m = SOLAR_TERM_TO_MONTH[liuYueRow.solarTerm] ?? (liuYueRow.monthIndex + 2)
-  const daysInMonth = new Date(year, m, 0).getDate()
+  const [startStr, endStr] = getSolarTermMonthRange(year, liuYueRow.solarTermName)
+  const [sy, sm, sd] = startStr.split('-').map(Number)
+  const [ey, em, ed] = endStr.split('-').map(Number)
+  const start = new Date(sy, sm - 1, sd)
+  const end = new Date(ey, em - 1, ed)
   const rows: ProLiuRiRow[] = []
-  for (let d = 1; d <= daysInMonth; d++) {
-    const mm = String(m).padStart(2, '0')
-    const dd = String(d).padStart(2, '0')
-    const ds = `${year}-${mm}-${dd}`
-    const { gan, zhi } = calcLiuRiGanZhi(ds)
+  const dayMs = 86400000
+  for (let ts = start.getTime(); ts <= end.getTime(); ts += dayMs) {
+    const d = new Date(ts)
+    const yyyy = d.getFullYear()
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    const ds = `${yyyy}-${mm}-${dd}`
+    // 用寿星天文历精确日干支（不再用 offset）
+    const cal = createPreciseCalendar(d, { solarTermMode: 'shouxing', lateZiHourMode: 'same-day' })
+    const gan = cal.dayGanZhi.gan
+    const zhi = cal.dayGanZhi.zhi
     const cangGanList = buildCangGanForZhi(zhi, relatedShens, dayGan)
+    const lunar = createPreciseCalendar(d, { solarTermMode: 'shouxing', lateZiHourMode: 'same-day' }).lunar
     rows.push({
       date: ds,
       gan,
@@ -830,6 +897,7 @@ export function buildLiuRiForMonth(
       zhiShenShi: cangGanList[0]?.shenShi ?? (relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null),
       naYin: getNaYin(gan, zhi),
       shenSha: quickShenShaOfGZ(gan, zhi, dayGan, chart.sixLines.year.zhi as EarthlyBranch),
+      lunarDay: `${lunar.monthText}${lunar.dayText}`,
       cangGanList,
     })
   }
