@@ -756,13 +756,13 @@ function Tab2DetailChartV2({
         </table>
       </section>
 
-      {/* === 流年行（10 年一行） === */}
+      {/* === 流年行（12 年，以当前流年为中心） === */}
       <section className="p-scroll p-scroll-x">
         <table className="p-grid-table">
           <thead>
             <tr>
               <th className="pg-th pg-th-label" style={{ width: 80 }}>流年</th>
-              {(pro.liuNian.slice(0, 12)).map(ln => (
+              {pro.liuNian.map(ln => (
                 <th key={ln.year} className={`pg-th ${ln.isCurrent ? 'pg-th-cur' : ''}`}>{ln.year}</th>
               ))}
             </tr>
@@ -770,7 +770,7 @@ function Tab2DetailChartV2({
           <tbody>
             <tr>
               <td className="pg-td-label">流年</td>
-              {(pro.liuNian.slice(0, 12)).map(ln => (
+              {pro.liuNian.map(ln => (
                 <td key={ln.year} className={`pg-td ${ln.isCurrent ? 'sel' : ''}`}>
                   <div className="pg-liunian-year">{ln.year}</div>
                   <div className="pg-liunian-gz">

@@ -52,6 +52,7 @@ import { analyzeCombinations } from './combinationEngine'
 import type { CombinationResult, StemCombo, BranchCombo } from './combinationEngine'
 import { checkGuChenGuaSu } from './shensha/guchen'
 import type { ShenShaInfo } from './shensha/types'
+import { isAfterLiChun } from './solarTerms'
 
 // 大运/流年/流月 本地计算 fallback（当 pipeline 没提供时）
 import {
@@ -689,18 +690,23 @@ function buildLiuNian(chart: BaZiChart, pipeline: BaZiPipelineResult | null): Pr
   const relatedShens = getRelatedShens(dayGan)
   const birthYear = parseInt((chart.birthInfo.birthDate || '1990').split('-')[0], 10)
   const years: any[] = pipeline?.liuNian?.years ?? []
-  const nowY = new Date().getFullYear()
+
+  // 万年历自动更新：按立春确定当前干支年
+  const now = new Date()
+  const nowY = now.getFullYear()
+  // 如果今天还没到立春，则当前干支年仍属于上一年
+  const currentGanZhiYear = isAfterLiChun(now, nowY) ? nowY : nowY - 1
 
   let allYears: any[] = []
   if (years && years.length > 0) {
     allYears = years
   } else {
-    // Fallback: 以当前年份为中心 前后 15 年（共31年）
-    const start = nowY - 15
-    const end = nowY + 15
+    // 以当前干支年为中心，前 6 年后 5 年（共 12 年展示）
+    const start = currentGanZhiYear - 6
+    const end = currentGanZhiYear + 5
     for (let y = start; y <= end; y++) {
       const gz = localGetLiuNian(y)
-      allYears.push({ year: y, ganZhi: { gan: gz.gan, zhi: gz.zhi }, isCurrentYear: y === nowY })
+      allYears.push({ year: y, ganZhi: { gan: gz.gan, zhi: gz.zhi }, isCurrentYear: y === currentGanZhiYear })
     }
   }
 
@@ -720,7 +726,7 @@ function buildLiuNian(chart: BaZiChart, pipeline: BaZiPipelineResult | null): Pr
       naYin: getNaYin(gan, zhi),
       changSheng: getChangSheng(dayGan, zhi),
       shenSha: quickShenShaOfGZ(gan, zhi, dayGan, chart.sixLines.year.zhi as EarthlyBranch),
-      isCurrent: y.year === nowY || y.isCurrentYear === true,
+      isCurrent: y.year === currentGanZhiYear || y.isCurrentYear === true,
       cangGanList,
     }
   })
