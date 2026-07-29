@@ -1,4 +1,5 @@
-import type { EvidenceBundle, EvidenceItem } from './types';
+import type { EvidenceBundle, EvidenceItem, StandardInferenceResult, Confidence } from './types';
+import { buildDefaultConfidence } from './confidenceEngine';
 
 let _evidenceCounter = 0;
 
@@ -18,7 +19,12 @@ export function makeEvidenceItem(
   };
 }
 
-export function mergeEvidence(bundles: EvidenceBundle[], finalConclusion: string): EvidenceBundle {
+/**
+ * 合并多个 EvidenceBundle
+ * @param bundles 待合并的 bundle 数组
+ * @param finalConclusion 最终结论（V④ 开始支持省略，默认为空字符串）
+ */
+export function mergeEvidence(bundles: EvidenceBundle[], finalConclusion?: string): EvidenceBundle {
   const items: EvidenceItem[] = [];
   let coreSatisfied = 0;
   let coreTotal = 0;
@@ -50,7 +56,7 @@ export function mergeEvidence(bundles: EvidenceBundle[], finalConclusion: string
   }
 
   return {
-    conclusion: finalConclusion,
+    conclusion: finalConclusion ?? '',
     direction,
     items,
     coreSatisfied,
@@ -102,4 +108,25 @@ export function calcEvidenceScore(bundle: EvidenceBundle): number {
 
   const baseScore = totalWeight > 0 ? weightedSum / totalWeight : 0;
   return Math.max(0, Math.min(100, Math.round(baseScore * coreRatio * counterPenalty * 100)));
+}
+
+/** V④ 包装三元返回（result + evidence 合并 + confidence 合并）*/
+export function buildInferenceResult<T>(
+  result: T,
+  evidenceBundles: EvidenceBundle | EvidenceBundle[],
+  confidence?: Confidence,
+): StandardInferenceResult<T> {
+  const bundle = Array.isArray(evidenceBundles)
+    ? mergeEvidence(evidenceBundles)
+    : evidenceBundles
+  return {
+    result,
+    evidence: bundle.items,
+    confidence: confidence ?? buildDefaultConfidence({
+      coreSatisfied: bundle.coreSatisfied,
+      coreTotal: bundle.coreTotal,
+      counterHits: bundle.counterHits,
+      counterThreshold: bundle.counterThreshold,
+    }),
+  }
 }

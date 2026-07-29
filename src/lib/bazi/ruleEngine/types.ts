@@ -36,7 +36,7 @@ export interface RuleDefinition<TInput = any, TResult = any> {
   category: RuleCategory;
   description: string;
   source?: string;
-  evaluate: (input: TInput, context?: any) => EvidenceBundle | Promise<EvidenceBundle>;
+  evaluate: (input: TInput, context?: any) => (EvidenceBundle & { result?: TResult }) | Promise<EvidenceBundle & { result?: TResult }>;
   priority: number;
 }
 
@@ -76,4 +76,40 @@ export interface ComprehensiveScore {
   level: string;
   dimensionScores: DimensionScore[];
   radarData: Record<string, number>;
+}
+
+/** 推演标准返回（V④ 三元约定）：任何核心推演必须返回 {result, evidence, confidence} */
+export interface StandardInferenceResult<TResult> {
+  /** 推演结论（可以是评分对象、格局名称、喜用神数组等任意结构） */
+  result: TResult
+  /** 论断依据（AI / UI / 专业模式共用） */
+  evidence: EvidenceItem[]
+  /** 可信度（拆分原局/大运/流年/调候/格局权重） */
+  confidence: Confidence
+}
+
+/**
+ * V④ 简化维度评分（三元约定专用）
+ * 与现有 DimensionScore（含 evidence/confidence 的完整结构）并行，
+ * 用于 StandardInferenceResult 的 result 字段
+ */
+export interface StandardDimensionScore {
+  score: number          // 0~100
+  level: 'great'|'good'|'neutral'|'bad'|'terrible'
+  stars: number          // 1~5
+  dimensions?: Record<string, number>  // 五行/十神子维度分
+}
+
+/** V④ 维度评分三元返回 */
+export type DimensionScoreResult = StandardInferenceResult<StandardDimensionScore>
+
+/**
+ * Confidence 扩展字段（V⑤ ConfidenceEngine 独立入口需要）
+ * 通过 TypeScript declaration merging 附加到原有 Confidence 接口
+ */
+export interface Confidence {
+  /** 各组件权重（原局/大运/流年/调候/格局/其他） */
+  components?: Partial<Record<'yuanju' | 'dayun' | 'liunian' | 'tiaohou' | 'geju' | 'other', number>>
+  /** 可信度备注（附加说明、扣分项说明等） */
+  notes?: string[]
 }

@@ -31,11 +31,39 @@ export interface Coordinate {
   latitude: number   // 纬度（北纬为正，南纬为负）
 }
 
+/** 真太阳时全过程追踪（V⑧：方便排查） */
+export interface SolarTimeTrace {
+  /** 时区标准时间（本地钟表时间） */
+  standardTime: Date
+  /** 出生地经度（东经为正，西经为负） */
+  longitude: number
+  /** 出生地纬度 */
+  latitude: number
+  /** IANA 时区标识（如 Asia/Shanghai） */
+  timezone: string
+  /** 相对 UTC 的时区偏移（分钟） */
+  timezoneOffsetMin: number
+  /** 时区标准经度（如 UTC+8 = 120°） */
+  timezoneStandardLongitude: number
+  /** 均时差 EoT（分钟） */
+  eotMinutes: number
+  /** 经度校正（分钟） */
+  longitudeCorrectionMinutes: number
+  /** 总校正（分钟）= EoT + 经度校正 */
+  totalCorrectionMinutes: number
+  /** 计算出的真太阳时（未考虑是否启用开关） */
+  trueSolarTime: Date
+  /** 最终采用时间：useTrueSolarTime=true 时 = trueSolarTime，否则 = standardTime */
+  finalAdoptedTime: Date
+  /** 是否启用了真太阳时校正 */
+  useTrueSolarTime: boolean
+}
+
 /** 真太阳时计算结果 */
 export interface SolarTimeResult {
-  /** 原始本地时间 */
+  /** 原始本地时间（钟表时间 = standardTime） */
   originalTime: Date
-  /** 真太阳时（校正后） */
+  /** 真太阳时（校正后，仅当 useTrueSolarTime=true 时生效） */
   solarTime: Date
   /** 均时差（分钟） */
   equationOfTime: number
@@ -47,6 +75,8 @@ export interface SolarTimeResult {
   coordinate: Coordinate
   /** 时区标准经度 */
   standardLongitude: number
+  /** 全过程追踪信息（V⑧ 验收新增） */
+  trace: SolarTimeTrace
 }
 
 /**
@@ -101,30 +131,88 @@ export function getLongitudeCorrection(
  *
  * 真太阳时 = 本地时间 + 均时差(EoT) + 经度校正
  *
- * @param birth 本地出生时间
+ * @param birth 本地出生时间（时区标准时间/钟表时间）
  * @param coordinate 出生地坐标（优先使用）
- * @param standardLongitude 时区标准经度（默认 120°）
- * @returns 真太阳时计算结果
+ * @param opts 可选：时区信息，用于补全 trace
+ * @returns 真太阳时计算结果（含完整 trace）
  */
 export function calculateSolarTime(
   birth: Date,
   coordinate: Coordinate,
-  standardLongitude: number = 120,
+  opts?: {
+    standardLongitude?: number
+    timezone?: string
+    timezoneOffsetMin?: number
+    useTrueSolarTime?: boolean
+  },
 ): SolarTimeResult {
+  const standardLon = opts?.standardLongitude ?? 120
   const eot = getEquationOfTime(birth)
-  const lonCorrection = getLongitudeCorrection(coordinate.longitude, standardLongitude)
+  const lonCorrection = getLongitudeCorrection(coordinate.longitude, standardLon)
   const totalCorrection = eot + lonCorrection
 
-  const solarTime = new Date(birth.getTime() + totalCorrection * 60 * 1000)
+  const trueSolarTimeDate = new Date(birth.getTime() + totalCorrection * 60 * 1000)
+  const useTST = opts?.useTrueSolarTime ?? true
+  const finalTime = useTST ? trueSolarTimeDate : new Date(birth.getTime())
+
+  const trace: SolarTimeTrace = {
+    standardTime: new Date(birth.getTime()),
+    longitude: coordinate.longitude,
+    latitude: coordinate.latitude,
+    timezone: opts?.timezone ?? timezoneForLongitude(standardLon),
+    timezoneOffsetMin: opts?.timezoneOffsetMin ?? Math.round(standardLon / 15) * 60,
+    timezoneStandardLongitude: standardLon,
+    eotMinutes: Math.round(eot * 100) / 100,
+    longitudeCorrectionMinutes: Math.round(lonCorrection * 100) / 100,
+    totalCorrectionMinutes: Math.round(totalCorrection * 100) / 100,
+    trueSolarTime: trueSolarTimeDate,
+    finalAdoptedTime: new Date(finalTime.getTime()),
+    useTrueSolarTime: useTST,
+  }
 
   return {
     originalTime: new Date(birth.getTime()),
-    solarTime,
-    equationOfTime: Math.round(eot * 100) / 100,
-    longitudeCorrection: Math.round(lonCorrection * 100) / 100,
-    totalCorrection: Math.round(totalCorrection * 100) / 100,
+    solarTime: finalTime,
+    equationOfTime: trace.eotMinutes,
+    longitudeCorrection: trace.longitudeCorrectionMinutes,
+    totalCorrection: trace.totalCorrectionMinutes,
     coordinate,
-    standardLongitude,
+    standardLongitude: standardLon,
+    trace,
+  }
+}
+
+/** 根据标准经度推导常见时区（仅用于 trace 的兜底，不影响精度） */
+function timezoneForLongitude(lon: number): string {
+  if (Math.abs(lon - 120) < 1) return 'Asia/Shanghai'
+  if (Math.abs(lon - 135) < 1) return 'Asia/Tokyo'
+  if (Math.abs(lon - 105) < 1) return 'Asia/Bangkok'
+  if (Math.abs(lon - 90) < 1) return 'Asia/Dhaka'
+  if (Math.abs(lon - 75) < 1) return 'Asia/Kolkata'
+  if (Math.abs(lon - 0) < 1) return 'UTC'
+  if (Math.abs(lon + 75) < 1) return 'America/New_York'
+  if (Math.abs(lon + 120) < 1) return 'America/Los_Angeles'
+  const utcOff = Math.round(lon / 15)
+  return utcOff >= 0 ? `UTC+${utcOff}` : `UTC${utcOff}`
+}
+
+/**
+ * 修正最终采用时间（根据 useTrueSolarTime 开关）
+ * 若之前调用 calculateSolarTime 时 useTrueSolarTime 未给出，可用此函数补全
+ */
+export function finalizeSolarTime(
+  result: SolarTimeResult,
+  useTrueSolarTime: boolean,
+): SolarTimeResult {
+  const finalTime = useTrueSolarTime ? result.trace.trueSolarTime : result.trace.standardTime
+  return {
+    ...result,
+    solarTime: new Date(finalTime.getTime()),
+    trace: {
+      ...result.trace,
+      finalAdoptedTime: new Date(finalTime.getTime()),
+      useTrueSolarTime,
+    },
   }
 }
 

@@ -1,20 +1,7 @@
-import { createCalendarSnapshot, CalendarSnapshot, CalendarHour } from 'qimendunjia-standalone'
+import { getPreciseCalendar } from './calendar'
 import { HEAVENLY_STEMS, EARTHLY_BRANCHES } from '../core/constants'
 import type { HeavenlyStem, EarthlyBranch } from '../core/types'
-
-interface ChineseCalendar {
-  new (): {
-    fromDate(date: Date): ChineseCalendarInstance
-    get(): [number, number, number, number, number]
-  }
-}
-
-interface ChineseCalendarInstance {
-  fromDate(date: Date): ChineseCalendarInstance
-  get(): [number, number, number, number, number]
-}
-
-const { CalendarChinese } = require('date-chinese') as { CalendarChinese: ChineseCalendar }
+import type { CalendarSnapshot } from 'qimendunjia-standalone'
 
 export interface PreciseLunarInfo {
   cycleYear: number
@@ -64,7 +51,6 @@ export function getWeekdayText(dayIndex: number): string {
 
 export function lunarDayText(d: number): string {
   if (d < 1 || d > 30) return ''
-  const digits = ['初', '十', '廿', '三']
   const nums = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
   if (d <= 10) {
     return d === 10 ? '初十' : '初' + nums[d - 1]
@@ -119,87 +105,6 @@ export function createPreciseCalendar(
   date: Date,
   options?: { solarTermMode?: 'shouxing' | 'lite'; lateZiHourMode?: 'same-day' | 'next-day' }
 ): PreciseCalendarResult {
-  const snapshot = createCalendarSnapshot(date, {
-    solarTermMode: options?.solarTermMode ?? 'shouxing',
-    lateZiHourMode: options?.lateZiHourMode ?? 'same-day',
-  })
-
-  const pad = (n: number) => String(n).padStart(2, '0')
-  const solarDate = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-  const solarTime = `${pad(date.getHours())}:${pad(date.getMinutes())}`
-  const weekday = getWeekdayText(date.getDay())
-  const solarTermName = snapshot.solarTermName || ''
-
-  const cal = new CalendarChinese()
-  cal.fromDate(date)
-  const [cycle, lunarYear, lunarMonth, leapNum, lunarDay] = cal.get()
-  const isLeap = leapNum === 1
-  const cycleYear = (cycle - 1) * 60 + 1864 + (lunarYear - 1)
-  const yearText = lunarYearText(cycleYear)
-  const ganZhiYear = snapshot.yearGanZhi
-  const monthText = lunarMonthText(lunarMonth, isLeap)
-  const dayText = lunarDayText(lunarDay)
-  const fullText = `${ganZhiYear}年 ${monthText} ${dayText}`
-
-  const lunar: PreciseLunarInfo = {
-    cycleYear,
-    year: lunarYear,
-    yearText,
-    ganZhiYear,
-    month: lunarMonth,
-    leap: isLeap,
-    monthText,
-    day: lunarDay,
-    dayText,
-    fullText,
-  }
-
-  const yearPair = getGanZhiFromPair(snapshot.yearGanZhi)
-  const monthPair = getGanZhiFromPair(snapshot.monthGanZhi)
-  const dayPair = getGanZhiFromPair(snapshot.dayGanZhi)
-
-  const yearGanZhi: PreciseGanZhi = {
-    gan: yearPair.gan,
-    zhi: yearPair.zhi,
-    ganZhi: snapshot.yearGanZhi,
-    ...getXunAndKongWang(yearPair.zhi),
-  }
-
-  const monthGanZhi: PreciseGanZhi = {
-    gan: monthPair.gan,
-    zhi: monthPair.zhi,
-    ganZhi: snapshot.monthGanZhi,
-    ...getXunAndKongWang(monthPair.zhi),
-  }
-
-  const dayGanZhi: PreciseGanZhi = {
-    gan: dayPair.gan,
-    zhi: dayPair.zhi,
-    ganZhi: snapshot.dayGanZhi,
-    ...getXunAndKongWang(dayPair.zhi),
-  }
-
-  const hours: PreciseHour[] = snapshot.hours.map((h: CalendarHour, idx: number) => {
-    const pair = getGanZhiFromPair(h.ganZhi)
-    const shichenName = EARTHLY_BRANCHES[idx] + '时'
-    return {
-      shichenIndex: idx,
-      shichenName,
-      ganZhi: h.ganZhi,
-      xun: getXunAndKongWang(pair.zhi).xun,
-    }
-  })
-
-  return {
-    solarDate,
-    solarTime,
-    weekday,
-    solarTermName,
-    lunar,
-    yearGanZhi,
-    monthGanZhi,
-    dayGanZhi,
-    hours,
-    snapshot,
-  }
+  const result = getPreciseCalendar(date, options)
+  return result as PreciseCalendarResult
 }
