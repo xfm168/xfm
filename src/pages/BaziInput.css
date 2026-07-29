@@ -1,303 +1,330 @@
-.bazi-input-page {
+/* ═══════════════════════════════════════════════════════════════════
+   八字输入页 V2 - 黑金国风主题
+   ═══════════════════════════════════════════════════════════════════ */
+
+.bazi-input-v2 {
   min-height: 100vh;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-.bazi-input-content {
-  padding: var(--space-8) var(--space-4);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.bazi-form-card {
-  margin-bottom: var(--space-8);
-}
-
-.bazi-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.form-label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  letter-spacing: 0.05em;
-}
-
-.form-input {
-  width: 100%;
-  height: 48px;
-  padding: 0 var(--space-4);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-}
-
-.form-input::-webkit-calendar-picker-indicator {
-  filter: invert(0.7);
-  cursor: pointer;
-}
-
-/* ---- 农历/公历切换 toggle-selector（复用 gender-selector 模式） ---- */
-.toggle-selector {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
-.toggle-btn {
-  height: 48px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
-  font-size: 1rem;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.toggle-btn:hover {
-  border-color: var(--accent-light);
-  color: var(--text-primary);
-}
-
-.toggle-btn.active {
-  background: rgba(212, 175, 55, 0.1);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* ---- select 下拉菜单样式 ---- */
-.form-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right var(--space-4) center;
-  padding-right: var(--space-10);
-  cursor: pointer;
-}
-
-.form-select option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: var(--space-2);
-}
-
-/* ---- 精确时间输入 ---- */
-.exact-time-input {
-  margin-top: var(--space-2);
-}
-
-/* ---- 农历提示 ---- */
-.calendar-hint {
-  font-size: 0.8rem;
-  color: var(--accent);
-  margin-left: var(--space-1);
-  font-weight: 400;
-}
-
-/* ---- 性别选择器 ---- */
-.gender-selector {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
-.gender-btn {
-  height: 48px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
-  font-size: 1rem;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.gender-btn:hover {
-  border-color: var(--accent-light);
-  color: var(--text-primary);
-}
-
-.gender-btn.active {
-  background: rgba(212, 175, 55, 0.1);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* ---- Toggle Switch（真太阳时 / 夏令时） ---- */
-.toggle-row {
-  display: flex;
-  align-items: center;
-}
-
-.toggle-switch-wrap {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.toggle-switch {
+  background: #0a0a0f;
+  color: #e8e0d0;
   position: relative;
-  width: 48px;
-  height: 26px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  cursor: pointer;
-  transition: all 0.3s;
-  flex-shrink: 0;
-  padding: 0;
+  overflow: hidden;
 }
 
-.toggle-switch:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.toggle-switch .toggle-thumb {
+/* 太极背景 */
+.bazi-input-bg {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  background: var(--text-tertiary);
-  border-radius: 50%;
-  transition: all 0.3s;
+  inset: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 
-.toggle-switch.active {
-  background: rgba(212, 175, 55, 0.2);
-  border-color: var(--accent);
+.bazi-taiji {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(212, 168, 71, 0.04) 0deg,
+    rgba(212, 168, 71, 0.01) 180deg,
+    rgba(212, 168, 71, 0.04) 360deg
+  );
+  animation: bazi-taiji-spin 60s linear infinite;
 }
 
-.toggle-switch.active .toggle-thumb {
-  left: 24px;
-  background: var(--accent);
+@keyframes bazi-taiji-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-.toggle-label {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  user-select: none;
+/* 容器 */
+.bazi-input-container {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 80px 20px 60px;
 }
 
-/* ---- 子表单组（出生城市等条件输入） ---- */
-.form-sub-group {
-  margin-top: var(--space-3);
-  animation: fadeSlideIn 0.3s ease;
+/* 标题 */
+.bazi-input-header {
+  text-align: center;
+  margin-bottom: 40px;
 }
 
-@keyframes fadeSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.bazi-input-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #d4a847;
+  letter-spacing: 0.15em;
+  margin: 0 0 8px;
+  text-shadow: 0 0 20px rgba(212, 168, 71, 0.3);
 }
 
-/* ---- 提示信息 ---- */
-.form-note {
-  font-size: 0.8rem;
-  color: var(--text-tertiary);
-  line-height: 1.8;
-}
-
-.form-note p {
+.bazi-input-subtitle {
+  font-size: 0.95rem;
+  color: #8a8275;
+  letter-spacing: 0.1em;
   margin: 0;
 }
 
-.form-note-highlight {
-  color: var(--accent);
-  opacity: 0.85;
+/* 表单 */
+.bazi-input-form {
+  background: linear-gradient(145deg, rgba(20, 18, 28, 0.85), rgba(12, 10, 18, 0.85));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 168, 71, 0.2);
+  border-radius: 20px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* ---- 下方介绍 ---- */
-.bazi-intro {
-  padding: var(--space-6);
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+/* 字段 */
+.bazi-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.intro-title {
-  font-size: 1.1rem;
+.bazi-field-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #a0987a;
+  letter-spacing: 0.05em;
+}
+
+.bazi-field-label svg {
+  color: #d4a847;
+  flex-shrink: 0;
+}
+
+/* 输入框 */
+.bazi-field-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  background: rgba(8, 6, 14, 0.6);
+  border: 1px solid rgba(212, 168, 71, 0.15);
+  border-radius: 12px;
+  color: #e8e0d0;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+.bazi-field-input:focus {
+  outline: none;
+  border-color: rgba(212, 168, 71, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 168, 71, 0.08);
+}
+
+.bazi-field-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.6) sepia(1) hue-rotate(15deg);
+  cursor: pointer;
+}
+
+/* Select */
+.bazi-select-wrap {
+  position: relative;
+}
+
+.bazi-field-select {
+  width: 100%;
+  height: 52px;
+  padding: 0 44px 0 16px;
+  background: rgba(8, 6, 14, 0.6);
+  border: 1px solid rgba(212, 168, 71, 0.15);
+  border-radius: 12px;
+  color: #e8e0d0;
+  font-size: 1rem;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.bazi-field-select:focus {
+  outline: none;
+  border-color: rgba(212, 168, 71, 0.5);
+}
+
+.bazi-field-select option {
+  background: #1a1620;
+  color: #e8e0d0;
+}
+
+.bazi-select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #d4a847;
+  pointer-events: none;
+}
+
+/* 性别 */
+.bazi-gender-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bazi-gender-btn {
+  height: 52px;
+  background: rgba(8, 6, 14, 0.6);
+  border: 1px solid rgba(212, 168, 71, 0.15);
+  border-radius: 12px;
+  color: #8a8275;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.bazi-gender-btn:hover {
+  border-color: rgba(212, 168, 71, 0.3);
+  color: #c0b898;
+}
+
+.bazi-gender-btn.active {
+  background: linear-gradient(135deg, rgba(212, 168, 71, 0.15), rgba(212, 168, 71, 0.05));
+  border-color: rgba(212, 168, 71, 0.5);
+  color: #d4a847;
+  box-shadow: 0 0 16px rgba(212, 168, 71, 0.1);
+}
+
+/* 提示 */
+.bazi-field-hint {
+  font-size: 0.8rem;
+  color: #6a6555;
+  line-height: 1.7;
+}
+
+.bazi-field-hint p {
+  margin: 0;
+}
+
+.bazi-hint-warn {
+  color: #c4a050 !important;
+}
+
+/* 按钮 */
+.bazi-submit-btn {
+  height: 54px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #d4a847 0%, #b88a2f 50%, #d4a847 100%);
+  background-size: 200% 100%;
+  color: #0a0803;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s;
+  box-shadow:
+    0 6px 24px rgba(212, 168, 71, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.bazi-submit-btn:hover:not(.loading) {
+  background-position: 100% 0;
+  box-shadow:
+    0 8px 32px rgba(212, 168, 71, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.bazi-submit-btn:active:not(.loading) {
+  transform: translateY(0) scale(0.99);
+}
+
+.bazi-submit-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.bazi-btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(10, 8, 3, 0.3);
+  border-top-color: #0a0803;
+  border-radius: 50%;
+  animation: bazi-spin 0.7s linear infinite;
+}
+
+@keyframes bazi-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 简介 */
+.bazi-input-intro {
+  margin-top: 32px;
+  padding: 24px;
+  background: rgba(20, 18, 28, 0.5);
+  border: 1px solid rgba(212, 168, 71, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.bazi-input-intro h3 {
+  font-size: 1rem;
   font-weight: 600;
-  color: var(--accent);
-  margin: 0 0 var(--space-4) 0;
+  color: #d4a847;
+  margin: 0 0 12px;
   letter-spacing: 0.1em;
 }
 
-.intro-text {
-  font-size: 0.9rem;
+.bazi-input-intro p {
+  font-size: 0.85rem;
   line-height: 1.8;
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-4) 0;
+  color: #8a8275;
+  margin: 0 0 10px;
 }
 
-.intro-text:last-child {
+.bazi-input-intro p:last-child {
   margin-bottom: 0;
 }
 
-/* ---- 移动端适配 ---- */
+/* 移动端 */
 @media (max-width: 480px) {
-  .bazi-input-content {
-    padding: var(--space-4) var(--space-3);
+  .bazi-input-container {
+    padding: 60px 16px 40px;
   }
 
-  .form-input {
-    height: 44px;
-    font-size: 0.95rem;
+  .bazi-input-title {
+    font-size: 1.6rem;
   }
 
-  .toggle-btn,
-  .gender-btn {
-    height: 44px;
-    font-size: 0.95rem;
+  .bazi-input-form {
+    padding: 24px 16px;
+    gap: 20px;
   }
 
-  .toggle-switch {
-    width: 44px;
-    height: 24px;
+  .bazi-field-input,
+  .bazi-field-select,
+  .bazi-gender-btn {
+    height: 48px;
   }
 
-  .toggle-switch .toggle-thumb {
-    width: 18px;
-    height: 18px;
-  }
-
-  .toggle-switch.active .toggle-thumb {
-    left: 22px;
-  }
-
-  .form-select {
-    padding-right: var(--space-8);
+  .bazi-submit-btn {
+    height: 50px;
+    font-size: 1rem;
   }
 }
