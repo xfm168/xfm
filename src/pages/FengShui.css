@@ -437,7 +437,7 @@
    方案 B：黑金美化按钮（透明覆盖层，桌面端美观）
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ===== 方案 A：浏览器原生可见的选择文件按钮（任何环境 100% 能用）===== */
+/* ===== 方案 A：最纯净的原生 file input，零样式干扰 ===== */
 .xfm-native-upload-row {
   margin-top: var(--space-3);
   margin-bottom: var(--space-4);
@@ -447,41 +447,31 @@
   pointer-events: auto !important;
 }
 
-/* 完全可见的原生 file input，不做任何 opacity:0 隐藏 */
+/* 完全不做任何自定义样式，使用浏览器默认渲染，最大化兼容性 */
 .xfm-visible-file-input {
+  /* 只控制尺寸和对齐，不改变原生外观 */
   display: inline-block !important;
-  width: auto !important;
-  min-width: 220px;
-  height: auto !important;
+  width: 240px !important;
+  height: 44px !important;
   opacity: 1 !important;
   pointer-events: auto !important;
   cursor: pointer;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, #0d1428 0%, #0a0e1c 100%);
-  border: 1.5px solid rgba(212, 168, 71, 0.5);
-  border-radius: 12px;
-  color: #f5e6b8;
-  font-size: 0.95rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-  touch-action: manipulation;
-  -webkit-appearance: none;
-  appearance: none;
+  /* 恢复默认外观 */
+  -webkit-appearance: default !important;
+  appearance: default !important;
+  background: transparent !important;
+  border: initial !important;
+  color: initial !important;
+  font: initial !important;
+  padding: initial !important;
+  margin: initial !important;
+  box-shadow: none !important;
+  border-radius: initial !important;
+  -webkit-tap-highlight-color: initial;
+  touch-action: auto !important;
 }
-.xfm-visible-file-input::file-selector-button {
-  background: linear-gradient(135deg, #f5e6b8 0%, #d4a847 100%);
-  color: #0a0803;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-right: 12px;
-  -webkit-appearance: none;
-  appearance: none;
-}
-.xfm-visible-file-input:active {
-  transform: scale(0.98);
-}
+
+/* 不要自定义 ::file-selector-button，使用浏览器默认样式 */
 
 /* 预览图后更换照片按钮：label 包裹 */
 .xfm-change-label {
