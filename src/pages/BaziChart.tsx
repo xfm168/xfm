@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBazi } from '../hooks/useBazi'
@@ -6,7 +6,7 @@ import { useAIAnalysis } from '../hooks/useAIAnalysis'
 import { calculateBaZiFromBirthData } from '../lib/bazi'
 import { runBaZiPipelineFromBirthData } from '../lib/bazi/pipeline'
 import type { BaZiPipelineResult } from '../lib/bazi/pipeline/types'
-import type { BaZiChart, BaZiAnalysis } from '../lib/bazi/types'
+import type { BaZiChart, BaZiAnalysis, ShenShi } from '../lib/bazi/types'
 import type { BirthData } from '@/lib/core'
 import { DEFAULT_BAZI_ANALYSIS } from '../constants/defaultAnalysis'
 import { usePageSEO } from '../hooks/usePageSEO'
@@ -14,36 +14,23 @@ import type { ReactNode } from 'react'
 import {
   ChevronDown, ChevronRight, Loader2, Sparkles, Crown,
   FileText, Table2, BookOpen, LayoutGrid,
-  Calendar, User, RefreshCw, Lock,
+  Calendar, User, RefreshCw, Lock, ChevronLeft,
 } from 'lucide-react'
+
+import {
+  buildProPaiPan,
+  buildLiuRiForMonth,
+  WUXING_COLORS,
+  type ProPaiPan,
+  type ProPillarInfo,
+  type ProShenShaItem,
+  type ProDaYunRow,
+  type ProLiuNianRow,
+  type ProLiuYueRow,
+  type ProLiuRiRow,
+} from '../lib/bazi/proPaipan'
+
 import './BaziChart.css'
-
-// ===== 常量 =====
-const STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
-const BRANCHES: string[] = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
-
-const STEM_ELEMENT: Record<string, string> = {
-  甲: '木', 乙: '木', 丙: '火', 丁: '火', 戊: '土', 己: '土',
-  庚: '金', 辛: '金', 壬: '水', 癸: '水',
-}
-const BRANCH_ELEMENT: Record<string, string> = {
-  寅: '木', 卯: '木', 巳: '火', 午: '火', 申: '金', 酉: '金',
-  亥: '水', 子: '水', 辰: '土', 丑: '土', 未: '土', 戌: '土',
-}
-
-const ELEMENT_COLORS: Record<string, string> = {
-  木: '#4ade80', 火: '#f87171', 土: '#fbbf24', 金: '#e2e8f0', 水: '#60a5fa',
-}
-
-const PILLAR_KEYS = ['year', 'month', 'day', 'hour'] as const
-type PillarKey = typeof PILLAR_KEYS[number]
-const PILLAR_NAMES = ['年柱', '月柱', '日柱', '时柱']
-const PILLAR_KEYWORD: Record<PillarKey, string> = { year: '年', month: '月', day: '日', hour: '时' }
-
-const ZODIAC: Record<string, string> = {
-  子: '鼠', 丑: '牛', 寅: '虎', 卯: '兔', 辰: '龙', 巳: '蛇',
-  午: '马', 未: '羊', 申: '猴', 酉: '鸡', 戌: '狗', 亥: '猪',
-}
 
 // ===== Tab 定义 =====
 type TabKey = 'basic' | 'detail' | 'brief' | 'full'
@@ -60,29 +47,20 @@ const TAB_ICONS: Record<TabKey, typeof LayoutGrid> = {
   full: FileText,
 }
 
-// ===== 空亡计算（内联实现） =====
-function getKongwang(gan: string, zhi: string): string[] {
-  const ganIdx = STEMS.indexOf(gan)
-  const zhiIdx = BRANCHES.indexOf(zhi)
-  const offset = (zhiIdx - ganIdx + 12) % 12
-  return [BRANCHES[(offset + 10) % 12], BRANCHES[(offset + 11) % 12]]
-}
-
-function elColor(el?: string | null): string {
+// 五行颜色工具（颜色值由 proPaipan 常量统一）
+function wxColor(el?: string | null): string {
   if (!el) return '#e8e0d0'
-  return ELEMENT_COLORS[el] || '#e8e0d0'
+  return (WUXING_COLORS as any)[el] || '#e8e0d0'
 }
 
-function stemEl(gan?: string | null): string {
-  if (!gan) return ''
-  return STEM_ELEMENT[gan] || ''
-}
-function branchEl(zhi?: string | null): string {
-  if (!zhi) return ''
-  return BRANCH_ELEMENT[zhi] || ''
+// 十神简化字（用于细盘表格顶部小字展示：比肩→比，偏印→枭等）
+const SHENSHI_SHORT: Record<ShenShi | string, string> = {
+  比肩: '比', 劫财: '劫', 食神: '食', 伤官: '伤',
+  偏财: '偏', 正财: '才', 偏官: '杀', 正官: '官',
+  偏印: '枭', 正印: '印',
 }
 
-// 将长文本按段落拆分（去掉 markdown 标题行）
+// 将长文本按段落拆分
 function toParagraphs(text: string | null | undefined): string[] {
   if (!text) return []
   return text
@@ -98,7 +76,7 @@ export default function BaziChart() {
   const navigate = useNavigate()
   const { charts } = useBazi()
 
-  const birthData = (location.state as { birthData?: BirthData } | null)?.birthData
+  const birthData = (location.state as { birthData?: BirthData } | null)?.birthData ?? null
 
   const [chart] = useState<BaZiChart | null>(() => {
     if (birthData) {
@@ -128,10 +106,11 @@ export default function BaziChart() {
   useEffect(() => {
     if (!chart || analysisReady) return undefined
     let cancelled = false
-    const bd: BirthData = {
+    const bd: BirthData = birthData ?? {
       birthday: chart.birthInfo.birthDate,
       birthTime: chart.birthInfo.birthTime,
       gender: chart.birthInfo.gender,
+      timezone: 'Asia/Shanghai',
     }
     runBaZiPipelineFromBirthData(
       {
@@ -165,7 +144,13 @@ export default function BaziChart() {
     return () => {
       cancelled = true
     }
-  }, [chart, analysisReady])
+  }, [chart, analysisReady, birthData])
+
+  // 专业排盘聚合层（基于 chart + pipelineResult）
+  const proPaiPan: ProPaiPan | null = useMemo(() => {
+    if (!chart) return null
+    return buildProPaiPan(chart, pipelineResult, birthData)
+  }, [chart, pipelineResult, birthData])
 
   const birthDateTime = chart ? `${chart.birthInfo.birthDate} ${chart.birthInfo.birthTime}` : ''
   const gender = chart ? (chart.birthInfo.gender === 'male' ? '男' : '女') : ''
@@ -182,7 +167,6 @@ export default function BaziChart() {
     autoFetch: activeTab === 'full' && !!chart,
   })
 
-  // 无数据
   if (!chart) {
     return (
       <div className="bazi-page">
@@ -201,7 +185,7 @@ export default function BaziChart() {
       {/* 顶部返回栏 */}
       <div className="bazi-topbar">
         <button className="bazi-back-btn" onClick={() => navigate('/bazi')}>
-          <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} />
+          <ChevronLeft size={16} />
           返回
         </button>
         <div className="bazi-topbar-title">八字命盘</div>
@@ -246,14 +230,20 @@ export default function BaziChart() {
             {!analysisReady ? (
               <LoadingScreen text={loadingText} progress={progress} />
             ) : activeTab === 'basic' ? (
-              <Tab1BasicInfo chart={chart} pipelineResult={pipelineResult} />
+              proPaiPan ? <Tab1BasicInfoV2 pro={proPaiPan} /> : <LoadingScreen text="生成排盘" progress={90} />
             ) : activeTab === 'detail' ? (
-              <Tab2DetailChart chart={chart} pipelineResult={pipelineResult} />
+              proPaiPan ? (
+                <Tab2DetailChartV2
+                  pro={proPaiPan}
+                  chart={chart!}
+                  pipeline={pipelineResult}
+                />
+              ) : <LoadingScreen text="生成细盘" progress={90} />
             ) : activeTab === 'brief' ? (
-              <Tab3BriefAnalysis chart={chart} pipelineResult={pipelineResult} />
+              <Tab3BriefAnalysis chart={chart!} pipelineResult={pipelineResult} />
             ) : (
               <Tab4FullReport
-                chart={chart}
+                chart={chart!}
                 pipelineResult={pipelineResult}
                 analysis={analysis}
                 aiLoading={aiLoading}
@@ -288,381 +278,629 @@ function LoadingScreen({ text, progress }: { text: string; progress: number }) {
   )
 }
 
-// ===== Tab 1: 基本信息（排盘表格） =====
-function Tab1BasicInfo({
-  chart,
-  pipelineResult,
-}: {
-  chart: BaZiChart
-  pipelineResult: BaZiPipelineResult | null
-}) {
-  const { sixLines, cangGan, dayMaster, fiveElementCount, xiYongShen } = chart
-  const pillars = PILLAR_KEYS.map((k) => sixLines[k])
+// ============================================================================
+//  Tab 1：基本信息（完全按截图一：出生头信息 + 四柱卡 + 排盘表 + 神煞表 + 留意）
+// ============================================================================
 
-  // 空亡：从日柱计算
-  const kongwang = useMemo(
-    () => getKongwang(sixLines.day.gan, sixLines.day.zhi),
-    [sixLines.day],
-  )
-  const kongSet = useMemo(() => new Set(kongwang), [kongwang])
+function Tab1BasicInfoV2({ pro }: { pro: ProPaiPan }) {
+  const [Y, M, D, H] = pro.pillars
+  const b = pro.birth
 
-  // 神煞按柱筛选
-  const shenShaItems = pipelineResult?.shenShaDetail?.items ?? []
-  const shenShaByPillar = useMemo(() => {
-    const map: Record<PillarKey, string[]> = { year: [], month: [], day: [], hour: [] }
-    for (const item of shenShaItems) {
-      const pos = item.position || ''
-      ;(PILLAR_KEYS as readonly PillarKey[]).forEach((k) => {
-        if (pos.includes(PILLAR_KEYWORD[k])) map[k].push(item.name)
-      })
-    }
-    return map
-  }, [shenShaItems])
-
-  const geJu = pipelineResult?.geJu
-
-  const rows: { label: string; cells: ReactNode[] }[] = [
-    {
-      label: '天干',
-      cells: pillars.map((p) => (
-        <span className="cell-el" style={{ color: elColor(stemEl(p.gan)) }}>
-          {p.gan}
-          <small className="cell-sub">{stemEl(p.gan)}</small>
-        </span>
-      )),
-    },
-    {
-      label: '地支',
-      cells: pillars.map((p) => (
-        <span className="cell-el" style={{ color: elColor(branchEl(p.zhi)) }}>
-          {p.zhi}
-          <small className="cell-sub">{branchEl(p.zhi)}</small>
-        </span>
-      )),
-    },
-    {
-      label: '藏干',
-      cells: pillars.map((p) => {
-        const cg = cangGan?.[p.zhi]
-        const parts = [cg?.ben, cg?.zhong, cg?.yao].filter(Boolean) as string[]
-        return <span className="cell-text">{parts.length ? parts.join(' · ') : '-'}</span>
-      }),
-    },
-    {
-      label: '纳音',
-      cells: pillars.map((p) => <span className="cell-text">{p.naYin || '-'}</span>),
-    },
-    {
-      label: '空亡',
-      cells: pillars.map((p) => (
-        <span className={kongSet.has(p.zhi) ? 'cell-kong' : 'cell-text'}>
-          {kongSet.has(p.zhi) ? '空亡' : '-'}
-        </span>
-      )),
-    },
-    {
-      label: '神煞',
-      cells: PILLAR_KEYS.map((k) => {
-        const list = shenShaByPillar[k]
-        return (
-          <span className="cell-shensha">
-            {list.length ? list.join('、') : '-'}
-          </span>
-        )
-      }),
-    },
-    {
-      label: '十神',
-      cells: PILLAR_KEYS.map((k, i) => (
-        <span className="cell-text">{k === 'year' ? '-' : pillars[i].shenShi || '-'}</span>
-      )),
-    },
-    {
-      label: '旺衰',
-      cells: pillars.map((p) => (
-        <span className="cell-text">{p.changSheng || '-'}</span>
-      )),
-    },
+  // 天干留意文字拼接：先六合+冲，再生克
+  const ganLiuYi: string[] = [
+    ...pro.relations.tianGanLiuYi,
+    ...pro.relations.tianGanShengKe,
+  ]
+  // 地支留意：冲/合/三会/三合/半合/刑/害/破/穿
+  const zhiLiuYi: string[] = [
+    ...pro.relations.diZhiChong,
+    ...pro.relations.diZhiHe,
+    ...pro.relations.diZhiSanHui,
+    ...pro.relations.diZhiSanHe,
+    ...pro.relations.diZhiBanHe,
+    ...pro.relations.diZhiXing,
+    ...pro.relations.diZhiHai,
+    ...pro.relations.diZhiPo,
+    ...pro.relations.diZhiChuan,
   ]
 
   return (
-    <div className="tab1">
-      <div className="tab1-scroll">
-        <table className="paipan-table">
+    <div className="tab1v2">
+      {/* === 顶部出生信息 === */}
+      <section className="p-birth">
+        <div className="p-birth-title">
+          <span className="p-birth-ganzao">{b.ganZaoLabel}</span>
+          <span className="p-birth-sep">（</span>
+          <span className="p-birth-nan">{b.gender === 'male' ? '男' : '女'}</span>
+          <span className="p-birth-sep">）</span>
+          <span className="p-birth-sep">·</span>
+          <span>生肖属{b.zodiac}</span>
+          <span className="p-birth-sep">·</span>
+          <span className="p-birth-nayin">{b.yearNaYin}命</span>
+        </div>
+        <div className="p-birth-line">
+          <span className="p-birth-label">公历时间：</span>
+          <span>{b.solarDate}</span>
+        </div>
+        <div className="p-birth-line">
+          <span className="p-birth-label">农历时间：</span>
+          <span>{b.lunarDate}</span>
+        </div>
+        <div className="p-birth-line p-birth-qiyun">
+          <span>{b.qiYunLabel}</span>
+        </div>
+        {b.qiYunDate && (
+          <div className="p-birth-line p-birth-qiyun-date">
+            <span>{b.qiYunDate}</span>
+          </div>
+        )}
+      </section>
+
+      {/* === 四柱卡片区（按截图一的 4 列） === */}
+      <section className="p-pillars">
+        {pro.pillars.map((p) => (
+          <PillarCardV2 key={p.pillarKey} p={p} isDay={p.pillarKey === 'day'} gender={pro.birth.gender} />
+        ))}
+      </section>
+
+      {/* === 排盘数据表 === */}
+      <section className="p-scroll">
+        <table className="p-table">
           <thead>
             <tr>
-              <th className="col-label">柱位</th>
-              {PILLAR_NAMES.map((n) => (
-                <th key={n} className="col-pillar">
-                  {n}
-                </th>
+              <th className="p-th-label">柱位</th>
+              {pro.pillars.map(p => (
+                <th key={p.pillarKey} className="p-th-pillar">{p.pillarName}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.label}>
-                <td className="row-label">{r.label}</td>
-                {r.cells.map((c, i) => (
-                  <td key={i} className="row-cell">
-                    {c}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {/* 天干行 */}
+            <tr>
+              <td className="p-td-label">天干</td>
+              {pro.pillars.map(p => (
+                <td key={p.pillarKey} className="p-td-center">
+                  <span className="p-gan-char" style={{ color: p.ganColor }}>{p.gan}</span>
+                  {p.ganShenShi && <span className="p-shishen-top">{p.ganShenShi}</span>}
+                </td>
+              ))}
+            </tr>
+            {/* 地支行 */}
+            <tr>
+              <td className="p-td-label">地支</td>
+              {pro.pillars.map(p => (
+                <td key={p.pillarKey} className="p-td-center">
+                  <span className="p-zhi-char" style={{ color: p.zhiColor }}>{p.zhi}</span>
+                  {p.zhiShenShi && <span className="p-shishen-top">{p.zhiShenShi}</span>}
+                </td>
+              ))}
+            </tr>
+            {/* 藏干行 */}
+            <tr>
+              <td className="p-td-label">藏干</td>
+              {pro.pillars.map(p => (
+                <td key={p.pillarKey} className="p-td-center">
+                  <div className="p-canggan-col">
+                    {p.cangGanList.length === 0 && <span className="p-canggan-empty">-</span>}
+                    {p.cangGanList.map((c, i) => (
+                      <div key={i} className="p-canggan-row">
+                        <span style={{ color: wxColor(c.element) }}>{c.gan}</span>
+                        <span className="p-canggan-el">（{c.element}）</span>
+                        {c.shenShi && <span className="p-canggan-ss">{c.shenShi}</span>}
+                      </div>
+                    ))}
+                  </div>
+                </td>
+              ))}
+            </tr>
+            {/* 纳音行 */}
+            <tr>
+              <td className="p-td-label">纳音</td>
+              {pro.pillars.map(p => (
+                <td key={p.pillarKey} className="p-td-center">
+                  <span className="p-nayin">{p.naYin}</span>
+                </td>
+              ))}
+            </tr>
+            {/* 空亡行 */}
+            <tr>
+              <td className="p-td-label">空亡</td>
+              {pro.pillars.map(p => (
+                <td key={p.pillarKey} className="p-td-center">
+                  <span className="p-kongwang">{p.kongWang.join('、')}</span>
+                </td>
+              ))}
+            </tr>
           </tbody>
         </table>
-      </div>
+      </section>
 
-      <div className="kongwang-note">日柱空亡：{kongwang.join('、')}</div>
-
-      {/* 底部信息 */}
-      <div className="tab1-info">
-        <div className="info-block">
-          <div className="info-block-title">
-            <Crown size={14} /> 日主
-          </div>
-          <div className="info-block-body">
-            <span style={{ color: elColor(dayMaster.dayGanElement) }}>
-              {dayMaster.dayGan}（{dayMaster.dayGanElement} · {dayMaster.dayGanYinYang}）
-            </span>
-            <span className="info-tag">旺衰 {dayMaster.wangShuai}</span>
-            <span className="info-tag">强度 {dayMaster.strengthScore}</span>
-          </div>
-        </div>
-
-        <div className="info-block">
-          <div className="info-block-title">
-            <Sparkles size={14} /> 五行分布
-          </div>
-          <div className="wuxing-row">
-            {(['木', '火', '土', '金', '水'] as const).map((el) => {
-              const v = fiveElementCount?.[el] ?? 0
-              const total = Object.values(fiveElementCount ?? {}).reduce((a, b) => a + (b || 0), 0) || 1
-              const pct = Math.round((v / total) * 100)
-              return (
-                <div className="wuxing-item" key={el}>
-                  <span className="wuxing-name" style={{ color: elColor(el) }}>{el}</span>
-                  <div className="wuxing-bar">
-                    <motion.div
-                      className="wuxing-bar-fill"
-                      style={{ background: elColor(el) }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${pct}%` }}
-                      transition={{ duration: 0.5 }}
-                    />
+      {/* === 神煞按柱表 === */}
+      <section className="p-scroll">
+        <table className="p-table">
+          <thead>
+            <tr>
+              <th className="p-th-label">神煞</th>
+              {pro.pillars.map(p => (
+                <th key={p.pillarKey} className="p-th-pillar">{p.pillarName}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="p-td-label">本柱神煞</td>
+              {pro.pillars.map(p => (
+                <td key={p.pillarKey} className="p-td-center">
+                  <div className="p-shensha-col">
+                    {p.shenShaList.length === 0 && <span className="p-shensha-empty">-</span>}
+                    {p.shenShaList.map((s, i) => (
+                      <span
+                        key={i}
+                        className={`p-shensha-tag ${s.auspicious === '吉' ? 'ji' : s.auspicious === '凶' ? 'xiong' : ''}`}
+                      >
+                        {s.name}
+                      </span>
+                    ))}
                   </div>
-                  <span className="wuxing-count">{v}</span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-        <div className="info-block">
-          <div className="info-block-title">
-            <Sparkles size={14} /> 喜用神
-          </div>
-          <div className="info-block-body">
-            <span className="info-tag info-tag-gold">喜用 {xiYongShen?.bestElement ?? '-'}</span>
-            <span className="info-tag">忌神 {(xiYongShen?.avoidedElements ?? []).join('、') || '-'}</span>
-            <span className="info-tag">仇神 {(xiYongShen?.enemyElements ?? []).join('、') || '-'}</span>
-            <span className="info-tag">闲神 {(xiYongShen?.idleElements ?? []).join('、') || '-'}</span>
-          </div>
+      {/* === 天干留意 / 地支留意 === */}
+      <section className="p-liuyi">
+        <div className="p-liuyi-row">
+          <span className="p-liuyi-label">天干留意</span>
+          <span className="p-liuyi-text">
+            {ganLiuYi.length ? ganLiuYi.join(' / ') : '无明显冲合克'}
+          </span>
         </div>
+        <div className="p-liuyi-row">
+          <span className="p-liuyi-label">地支留意</span>
+          <span className="p-liuyi-text">
+            {zhiLiuYi.length ? zhiLiuYi.join(' / ') : '无明显冲合刑害'}
+          </span>
+        </div>
+      </section>
+    </div>
+  )
+}
 
-        <div className="info-block">
-          <div className="info-block-title">
-            <Crown size={14} /> 格局
-          </div>
-          <div className="info-block-body">
-            <span className="info-tag info-tag-gold">{geJu?.name ?? '分析中…'}</span>
-            <span className="info-tag">{geJu?.category ?? ''}</span>
-            <span className="info-tag">成格 {geJu?.score ?? '-'}</span>
-            <span className="info-tag">可信 {geJu?.confidence ?? '-'}%</span>
-            {geJu?.poGe && <span className="info-tag info-tag-warn">破格</span>}
-          </div>
-          {geJu?.description && <p className="info-desc">{geJu.description}</p>}
+// 四柱卡片（截图一上部：每柱 = 纳音 + 天干大字 + 地支大字 + 藏干 3 小字）
+function PillarCardV2({ p, isDay, gender }: { p: ProPillarInfo; isDay: boolean; gender: 'male' | 'female' }) {
+  return (
+    <div className={`p-card ${isDay ? 'day-card' : ''}`}>
+      <div className="p-card-nayin">{p.naYin}</div>
+      <div className="p-card-gan-wrap">
+        {p.ganShenShi && <div className="p-card-ss-top">{p.ganShenShi}</div>}
+        <div className="p-card-gan" style={{ color: p.ganColor }}>
+          {p.gan}
+          {isDay && <span className="p-card-yuan">{gender === 'male' ? '男' : '女'}</span>}
         </div>
+      </div>
+      <div className="p-card-zhi-wrap">
+        {p.zhiShenShi && <div className="p-card-ss-top">{p.zhiShenShi}</div>}
+        <div className="p-card-zhi" style={{ color: p.zhiColor }}>{p.zhi}</div>
+      </div>
+      <div className="p-card-canggan">
+        {p.cangGanList.map((c, i) => (
+          <div key={i} className="p-card-cg-row">
+            <span style={{ color: wxColor(c.element) }}>{c.gan}</span>
+            {c.shenShi && <span className="p-card-cg-ss">{SHENSHI_SHORT[c.shenShi] || c.shenShi}</span>}
+          </div>
+        ))}
       </div>
     </div>
   )
 }
 
-// ===== Tab 2: 细盘模式 =====
-function Tab2DetailChart({
+// ============================================================================
+//  Tab 2：细盘模式（按截图二：列=日期/流日/流月/流年/大运/年/月/日/时，行=岁年/天干/地支/空亡 + 大运行 + 流年行 + 流月行 + 流日行 + 留意 + 神煞）
+// ============================================================================
+
+function Tab2DetailChartV2({
+  pro,
   chart,
-  pipelineResult,
+  pipeline,
 }: {
+  pro: ProPaiPan
   chart: BaZiChart
-  pipelineResult: BaZiPipelineResult | null
+  pipeline: BaZiPipelineResult | null
 }) {
-  const daYun = pipelineResult?.daYun
-  const liuNian = pipelineResult?.liuNian
-  const liuYue = pipelineResult?.liuYue
+  // 列：9 列（日期、流日、流月、流年、大运、年、月、日、时）
+  // 行：岁年、天干、地支、空亡、大运、流年、流月、流日、天干留意、地支留意、大运神煞、流年神煞、流月神煞、流日神煞
 
-  const birthYear = useMemo(() => {
-    const m = chart.birthInfo.birthDate?.match(/(\d{4})/)
-    return m ? Number(m[1]) : new Date().getFullYear()
-  }, [chart.birthInfo.birthDate])
+  const birthYear = parseInt((chart.birthInfo.birthDate || '1990').split('-')[0], 10)
 
-  const [selectedDy, setSelectedDy] = useState<number>(
-    daYun?.currentStepIndex != null && daYun.currentStepIndex >= 0
-      ? daYun.currentStepIndex
-      : 0,
-  )
+  // 流月选中状态（用于展示流日）
+  const [selLiuYueIdx, setSelLiuYueIdx] = useState<number>(0)
+  // 流日缓存（懒加载）
+  const [liuRiRows, setLiuRiRows] = useState<ProLiuRiRow[]>([])
+  const [liuRiLoading, setLiuRiLoading] = useState(false)
+  const selLiuYue = pro.liuYue[selLiuYueIdx] ?? null
 
-  // 当前选中的大运
-  const curDy = daYun?.steps?.[selectedDy] ?? null
+  const loadLiuRi = useCallback((idx: number) => {
+    setSelLiuYueIdx(idx)
+    const yue = pro.liuYue[idx]
+    if (!yue) return
+    // 如果该月已在本年范围内，按当前流年的年份（或当前年）
+    const baseYear = pro.liuNian.find(x => x.isCurrent)?.year ?? new Date().getFullYear()
+    setLiuRiLoading(true)
+    setTimeout(() => {
+      const rows = buildLiuRiForMonth(chart, baseYear, yue)
+      setLiuRiRows(rows)
+      setLiuRiLoading(false)
+    }, 30)
+  }, [pro.liuYue, pro.liuNian, chart])
 
-  // 当前大运下的流年
-  const filteredLiuNian = useMemo(() => {
-    const years = liuNian?.years ?? []
-    if (!curDy) return years
-    return years.filter(
-      (y) => y.year >= (curDy.startYear ?? 0) && y.year <= (curDy.endYear ?? 9999),
-    )
-  }, [liuNian, curDy])
+  // 构造列集合：前 5 列（日期、流日、流月、流年、大运）动态生成内容，后 4 列 = 四柱
+  const pillarCols = pro.pillars
 
-  const months = liuYue?.months ?? []
-  const liuYueYear = liuYue?.year
+  // 选中的大运
+  const curDaYun: ProDaYunRow | undefined = pro.daYun.find(x => x.isCurrent) ?? pro.daYun[0]
+  // 选中的流年（当前年或大运首年）
+  const curLiuNian: ProLiuNianRow | undefined = pro.liuNian.find(x => x.isCurrent)
+    ?? (curDaYun ? pro.liuNian.find(x => x.year >= curDaYun.startYear && x.year <= curDaYun.endYear) : undefined)
+
+  // 当前流年下的流月（如果当前 pipeline 的liuYue不是本年，则尝试匹配）
+  const liuYueRows = pro.liuYue
 
   return (
-    <div className="tab2">
-      <section className="detail-section">
-        <div className="detail-section-title">
-          <Table2 size={15} /> 大运
-          {daYun?.qiYun && (
-            <span className="detail-section-meta">
-              起运 {daYun.qiYun.qiYunAge}岁 · {daYun.qiYun.isShun ? '顺行' : '逆行'}
-            </span>
-          )}
-        </div>
-        <div className="tab2-scroll">
-          <table className="detail-table">
-            <thead>
-              <tr>
-                <th>序</th>
-                <th>起运</th>
-                <th>止运</th>
-                <th>起始年</th>
-                <th>终止年</th>
-                <th>天干</th>
-                <th>地支</th>
-                <th>十神</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(daYun?.steps ?? []).map((s, i) => {
-                const isCur = i === daYun?.currentStepIndex
-                const isSel = i === selectedDy
-                return (
-                  <tr
-                    key={i}
-                    className={`detail-row ${isSel ? 'sel' : ''} ${isCur ? 'cur' : ''}`}
-                    onClick={() => setSelectedDy(i)}
-                  >
-                    <td>{i + 1}{isCur && <span className="cur-mark">●</span>}</td>
-                    <td>{s.startAge}</td>
-                    <td>{s.endAge}</td>
-                    <td>{s.startYear}</td>
-                    <td>{s.endYear}</td>
-                    <td style={{ color: elColor(stemEl(s.ganZhi?.gan)) }}>{s.ganZhi?.gan ?? '-'}</td>
-                    <td style={{ color: elColor(branchEl(s.ganZhi?.zhi)) }}>{s.ganZhi?.zhi ?? '-'}</td>
-                    <td>{s.shenShi?.gan ?? '-'}/{s.shenShi?.zhi ?? '-'}</td>
-                  </tr>
-                )
-              })}
-              {(!daYun?.steps || daYun.steps.length === 0) && (
-                <tr>
-                  <td colSpan={8} className="empty-row">大运数据加载中…</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+    <div className="tab2v2">
+      {/* === 主表格：前 5 列 + 4 柱 === */}
+      <section className="p-scroll p-scroll-x">
+        <table className="p-grid-table">
+          <thead>
+            <tr>
+              <th className="pg-th pg-th-label">日期</th>
+              <th className="pg-th">流日</th>
+              <th className="pg-th">流月</th>
+              <th className="pg-th">流年</th>
+              <th className="pg-th">大运</th>
+              {pillarCols.map(p => (
+                <th key={p.pillarKey} className="pg-th pg-th-pillar">{p.pillarName}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {/* 岁年行 */}
+            <tr>
+              <td className="pg-td-label">岁年</td>
+              <td className="pg-td">-</td>
+              <td className="pg-td">-</td>
+              <td className="pg-td">
+                <div className="pg-age">{curLiuNian ? `${curLiuNian.age}岁` : '-'}</div>
+                <div className="pg-year">{curLiuNian?.year ?? '-'}</div>
+              </td>
+              <td className="pg-td">
+                <div className="pg-age">{curDaYun ? `${curDaYun.startAge}岁` : '-'}</div>
+                <div className="pg-year">{curDaYun?.startYear ?? '-'}</div>
+              </td>
+              {pillarCols.map(p => (
+                <td key={p.pillarKey} className="pg-td pg-star">*</td>
+              ))}
+            </tr>
+
+            {/* 天干行 */}
+            <tr>
+              <td className="pg-td-label">天干</td>
+              <td className="pg-td">-</td>
+              <td className="pg-td">
+                {selLiuYue && (
+                  <div className="pg-gz-stack">
+                    <span className="pg-shi">{SHENSHI_SHORT[selLiuYue.ganShenShi || ''] || selLiuYue.ganShenShi || '　'}</span>
+                    <span style={{ color: wxColor(selLiuYue.ganElement) }} className="pg-gz-gan">{selLiuYue.gan}</span>
+                  </div>
+                )}
+              </td>
+              <td className="pg-td">
+                {curLiuNian && (
+                  <div className="pg-gz-stack">
+                    <span className="pg-shi">{SHENSHI_SHORT[curLiuNian.ganShenShi || ''] || curLiuNian.ganShenShi || '　'}</span>
+                    <span style={{ color: wxColor(curLiuNian.ganElement) }} className="pg-gz-gan">{curLiuNian.gan}</span>
+                  </div>
+                )}
+              </td>
+              <td className="pg-td">
+                {curDaYun && (
+                  <div className="pg-gz-stack">
+                    <span className="pg-shi">{SHENSHI_SHORT[curDaYun.ganShenShi || ''] || curDaYun.ganShenShi || '　'}</span>
+                    <span style={{ color: wxColor(curDaYun.ganElement) }} className="pg-gz-gan">{curDaYun.gan}</span>
+                  </div>
+                )}
+              </td>
+              {pillarCols.map(p => (
+                <td key={p.pillarKey} className="pg-td">
+                  <div className="pg-gz-stack">
+                    <span className="pg-shi">{SHENSHI_SHORT[p.ganShenShi || ''] || p.ganShenShi || (p.pillarKey === 'day' ? '元' : '　')}</span>
+                    <span style={{ color: p.ganColor }} className="pg-gz-gan">
+                      {p.gan}
+                      {p.pillarKey === 'day' && <span className="pg-yuan-badge">{pro.birth.gender === 'male' ? '男' : '女'}</span>}
+                    </span>
+                  </div>
+                </td>
+              ))}
+            </tr>
+
+            {/* 地支行（含地支上方十神和叠字十神，截图二：伤官/偏财等） */}
+            <tr>
+              <td className="pg-td-label">地支</td>
+              <td className="pg-td">-</td>
+              <td className="pg-td">
+                {selLiuYue && (
+                  <div className="pg-gz-stack">
+                    <div className="pg-zhi-ss-stack">
+                      {selLiuYue.zhiShenShi && <span className="pg-shi pg-shi-red">{SHENSHI_SHORT[selLiuYue.zhiShenShi] || selLiuYue.zhiShenShi}</span>}
+                    </div>
+                    <span style={{ color: wxColor(selLiuYue.zhiElement) }} className="pg-gz-zhi">{selLiuYue.zhi}</span>
+                  </div>
+                )}
+              </td>
+              <td className="pg-td">
+                {curLiuNian && (
+                  <div className="pg-gz-stack">
+                    <div className="pg-zhi-ss-stack">
+                      {curLiuNian.zhiShenShi && <span className="pg-shi pg-shi-red">{SHENSHI_SHORT[curLiuNian.zhiShenShi] || curLiuNian.zhiShenShi}</span>}
+                    </div>
+                    <span style={{ color: wxColor(curLiuNian.zhiElement) }} className="pg-gz-zhi">{curLiuNian.zhi}</span>
+                  </div>
+                )}
+              </td>
+              <td className="pg-td">
+                {curDaYun && (
+                  <div className="pg-gz-stack">
+                    <div className="pg-zhi-ss-stack">
+                      {curDaYun.zhiShenShi && <span className="pg-shi pg-shi-red">{SHENSHI_SHORT[curDaYun.zhiShenShi] || curDaYun.zhiShenShi}</span>}
+                    </div>
+                    <span style={{ color: wxColor(curDaYun.zhiElement) }} className="pg-gz-zhi">{curDaYun.zhi}</span>
+                  </div>
+                )}
+              </td>
+              {pillarCols.map(p => (
+                <td key={p.pillarKey} className="pg-td">
+                  <div className="pg-gz-stack">
+                    <div className="pg-zhi-ss-stack">
+                      {p.zhiShenShi && <span className="pg-shi pg-shi-red">{SHENSHI_SHORT[p.zhiShenShi] || p.zhiShenShi}</span>}
+                      {p.zhiCangGanShenShis.slice(0, 2).map((ss, i) => (
+                        <span key={i} className="pg-shi">{SHENSHI_SHORT[ss] || ss}</span>
+                      ))}
+                    </div>
+                    <span style={{ color: p.zhiColor }} className="pg-gz-zhi">{p.zhi}</span>
+                  </div>
+                </td>
+              ))}
+            </tr>
+
+            {/* 空亡行 */}
+            <tr>
+              <td className="pg-td-label">空亡</td>
+              <td className="pg-td">-</td>
+              <td className="pg-td pg-kw">{selLiuYue ? getKW(selLiuYue.gan, selLiuYue.zhi) : '-'}</td>
+              <td className="pg-td pg-kw">{curLiuNian ? getKW(curLiuNian.gan, curLiuNian.zhi) : '-'}</td>
+              <td className="pg-td pg-kw">{curDaYun ? getKW(curDaYun.gan, curDaYun.zhi) : '-'}</td>
+              {pillarCols.map(p => (
+                <td key={p.pillarKey} className="pg-td pg-kw">{p.kongWang.join('')}</td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
       </section>
 
-      <section className="detail-section">
-        <div className="detail-section-title">
-          <Table2 size={15} /> 流年
-          {curDy && (
-            <span className="detail-section-meta">
-              当前大运：{curDy.ganZhi?.gan}{curDy.ganZhi?.zhi}（{curDy.startYear}–{curDy.endYear}）
-            </span>
-          )}
-        </div>
-        <div className="tab2-scroll">
-          <table className="detail-table">
-            <thead>
-              <tr>
-                <th>年份</th>
-                <th>年龄</th>
-                <th>流年干支</th>
-                <th>十神</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLiuNian.map((y) => (
-                <tr key={y.year} className={y.isCurrentYear ? 'cur' : ''}>
-                  <td>{y.year}{y.isCurrentYear && <span className="cur-mark">●</span>}</td>
-                  <td>{y.year - birthYear}</td>
-                  <td>
-                    <span style={{ color: elColor(stemEl(y.ganZhi?.gan)) }}>{y.ganZhi?.gan}</span>
-                    <span style={{ color: elColor(branchEl(y.ganZhi?.zhi)) }}>{y.ganZhi?.zhi}</span>
-                  </td>
-                  <td>{y.shenShi?.gan ?? '-'}/{y.shenShi?.zhi ?? '-'}</td>
-                </tr>
+      {/* === 大运行（截图二：单列 7 步大运，每格=年龄/年份+长生+干支，灰色高亮当前） === */}
+      <section className="p-scroll p-scroll-x">
+        <table className="p-grid-table">
+          <thead>
+            <tr>
+              <th className="pg-th pg-th-label" style={{ width: 80 }}>大运</th>
+              {pro.daYun.map(d => (
+                <th key={d.index} className={`pg-th ${d.isCurrent ? 'pg-th-cur' : ''}`}>{d.startAge}岁</th>
               ))}
-              {filteredLiuNian.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="empty-row">暂无流年数据</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="pg-td-label">大运</td>
+              {pro.daYun.map(d => (
+                <td key={d.index} className={`pg-td pg-dayun-cell ${d.isCurrent ? 'sel' : ''}`}>
+                  <div className="pg-dayun-age">{d.startAge}岁</div>
+                  <div className="pg-dayun-year">{d.startYear}</div>
+                  <div className="pg-dayun-cs">（{d.changSheng ?? '-'}）</div>
+                  <div className="pg-dayun-gz">
+                    <span style={{ color: wxColor(d.ganElement) }}>{d.gan}</span>
+                    <span style={{ color: wxColor(d.zhiElement) }}>{d.zhi}</span>
+                  </div>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
       </section>
 
-      <section className="detail-section">
-        <div className="detail-section-title">
-          <Table2 size={15} /> 流月
-          {liuYueYear && <span className="detail-section-meta">{liuYueYear}年</span>}
-        </div>
-        <div className="tab2-scroll">
-          <table className="detail-table">
-            <thead>
-              <tr>
-                <th>月份</th>
-                <th>月干支</th>
-                <th>十神</th>
-              </tr>
-            </thead>
-            <tbody>
-              {months.map((m) => (
-                <tr key={m.monthIndex}>
-                  <td>{m.monthName ?? `${m.monthIndex + 1}月`}</td>
-                  <td>
-                    <span style={{ color: elColor(stemEl(m.ganZhi?.gan)) }}>{m.ganZhi?.gan}</span>
-                    <span style={{ color: elColor(branchEl(m.ganZhi?.zhi)) }}>{m.ganZhi?.zhi}</span>
-                  </td>
-                  <td>{m.shenShi?.gan ?? '-'}/{m.shenShi?.zhi ?? '-'}</td>
-                </tr>
+      {/* === 流年行（10 年一行） === */}
+      <section className="p-scroll p-scroll-x">
+        <table className="p-grid-table">
+          <thead>
+            <tr>
+              <th className="pg-th pg-th-label" style={{ width: 80 }}>流年</th>
+              {(pro.liuNian.slice(0, 12)).map(ln => (
+                <th key={ln.year} className={`pg-th ${ln.isCurrent ? 'pg-th-cur' : ''}`}>{ln.year}</th>
               ))}
-              {months.length === 0 && (
-                <tr>
-                  <td colSpan={3} className="empty-row">暂无流月数据</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="pg-td-label">流年</td>
+              {(pro.liuNian.slice(0, 12)).map(ln => (
+                <td key={ln.year} className={`pg-td ${ln.isCurrent ? 'sel' : ''}`}>
+                  <div className="pg-liunian-year">{ln.year}</div>
+                  <div className="pg-liunian-gz">
+                    <span style={{ color: wxColor(ln.ganElement) }}>{ln.gan}</span>
+                    <span style={{ color: wxColor(ln.zhiElement) }}>{ln.zhi}</span>
+                  </div>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      {/* === 流月行（12 节气月 + 可点击切换） === */}
+      <section className="p-scroll p-scroll-x">
+        <table className="p-grid-table">
+          <thead>
+            <tr>
+              <th className="pg-th pg-th-label" style={{ width: 80 }}>流月</th>
+              {liuYueRows.map((ly, i) => (
+                <th key={i} className={`pg-th ${i === selLiuYueIdx ? 'pg-th-cur' : ''}`}>{ly.solarTerm}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="pg-td-label">流月</td>
+              {liuYueRows.map((ly, i) => (
+                <td
+                  key={i}
+                  className={`pg-td pg-clickable ${i === selLiuYueIdx ? 'sel' : ''}`}
+                  onClick={() => loadLiuRi(i)}
+                >
+                  <div className="pg-liuyue-term">{ly.solarTerm}</div>
+                  <div className="pg-liuyue-gz">
+                    <span style={{ color: wxColor(ly.ganElement) }}>{ly.gan}</span>
+                    <span style={{ color: wxColor(ly.zhiElement) }}>{ly.zhi}</span>
+                  </div>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      {/* === 流日行（点击流月后出现，未选则显示"请选择流月"） === */}
+      <section className="p-scroll p-scroll-x">
+        <table className="p-grid-table">
+          <tbody>
+            <tr>
+              <td className="pg-td-label" style={{ width: 80 }}>流日</td>
+              <td
+                colSpan={Math.max(12, liuRiRows.length)}
+                className="pg-td pg-liuri-wrap"
+              >
+                {!selLiuYue && <span className="pg-liuri-empty">请选择流月</span>}
+                {selLiuYue && liuRiLoading && (
+                  <span className="pg-liuri-loading">
+                    <Loader2 size={14} className="spin" /> 正在加载流日…
+                  </span>
+                )}
+                {selLiuYue && !liuRiLoading && (
+                  <div className="pg-liuri-grid">
+                    {liuRiRows.map(r => (
+                      <div key={r.date} className="pg-liuri-cell">
+                        <div className="pg-liuri-d">{r.date.slice(5)}</div>
+                        <div className="pg-liuri-gz">
+                          <span style={{ color: wxColor(r.ganElement) }}>{r.gan}</span>
+                          <span style={{ color: wxColor(r.zhiElement) }}>{r.zhi}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      {/* === 天干留意 / 地支留意 / 神煞 行 === */}
+      <section className="p-scroll p-scroll-x">
+        <table className="p-grid-table pg-relation-table">
+          <tbody>
+            <tr>
+              <td className="pg-td-label" style={{ width: 100 }}>天干留意</td>
+              <td className="pg-td pg-left">
+                {[...pro.relations.tianGanLiuYi, ...pro.relations.tianGanShengKe].join(' / ') || '无'}
+              </td>
+            </tr>
+            <tr>
+              <td className="pg-td-label">地支留意</td>
+              <td className="pg-td pg-left">
+                {[
+                  ...pro.relations.diZhiChong,
+                  ...pro.relations.diZhiHe,
+                  ...pro.relations.diZhiSanHui,
+                  ...pro.relations.diZhiSanHe,
+                  ...pro.relations.diZhiBanHe,
+                  ...pro.relations.diZhiXing,
+                  ...pro.relations.diZhiHai,
+                  ...pro.relations.diZhiPo,
+                  ...pro.relations.diZhiChuan,
+                ].join(' / ') || '无'}
+              </td>
+            </tr>
+            <tr>
+              <td className="pg-td-label">大运神煞</td>
+              <td className="pg-td pg-left">
+                {curDaYun ? shenShaInline(curDaYun.shenSha) : '-'}
+              </td>
+            </tr>
+            <tr>
+              <td className="pg-td-label">流年神煞</td>
+              <td className="pg-td pg-left">
+                {curLiuNian ? shenShaInline(curLiuNian.shenSha) : '-'}
+              </td>
+            </tr>
+            <tr>
+              <td className="pg-td-label">流月神煞</td>
+              <td className="pg-td pg-left">
+                {selLiuYue ? shenShaInline(selLiuYue.shenSha) : '-'}
+              </td>
+            </tr>
+            <tr>
+              <td className="pg-td-label">流日神煞</td>
+              <td className="pg-td pg-left">
+                {selLiuYue && liuRiRows.length > 0 ? (
+                  <div className="pg-liuri-shensha">
+                    {liuRiRows.slice(0, 10).map(r => (
+                      <span key={r.date} className="pg-liuri-ss-cell">
+                        <span className="pg-liuri-ss-date">{r.date.slice(5)}</span>
+                        <span className="pg-liuri-ss-text">{shenShaInline(r.shenSha)}</span>
+                      </span>
+                    ))}
+                    {liuRiRows.length > 10 && <span className="pg-liuri-ss-more">…等共 {liuRiRows.length} 日</span>}
+                  </div>
+                ) : '-'}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </section>
     </div>
   )
 }
 
-// ===== Tab 3: 简析测试 =====
+// 工具：内联神煞展示（以空格分隔，吉金、凶红）
+function shenShaInline(list: ProShenShaItem[]): string {
+  if (!list || list.length === 0) return '-'
+  return list.map(x => x.name).join('、')
+}
+
+// 工具：空亡计算（复用 proPaipan 里的算法）
+function getKW(gan: string, zhi: string): string {
+  const S = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸']
+  const B: string[] = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
+  const gi = S.indexOf(gan)
+  const zi = B.indexOf(zhi)
+  if (gi < 0 || zi < 0) return '-'
+  const off = ((zi - gi) % 12 + 12) % 12
+  return B[(off + 10) % 12] + B[(off + 11) % 12]
+}
+
+// ============================================================================
+//  Tab 3：简析测试（保留原先展开式，轻量调整适配风格）
+// ============================================================================
+
 interface BriefModule {
   title: string
   icon: typeof BookOpen
@@ -676,6 +914,11 @@ function Tab3BriefAnalysis({
   pipelineResult: BaZiPipelineResult | null
 }) {
   const [openIdx, setOpenIdx] = useState<number | null>(0)
+
+  const ZODIAC: Record<string, string> = {
+    子: '鼠', 丑: '牛', 寅: '虎', 卯: '兔', 辰: '龙', 巳: '蛇',
+    午: '马', 未: '羊', 申: '猴', 酉: '鸡', 戌: '狗', 亥: '猪',
+  }
 
   const modules: BriefModule[] = useMemo(() => {
     const { dayMaster, sixLines } = chart
@@ -693,18 +936,15 @@ function Tab3BriefAnalysis({
         title: '日柱命理',
         icon: Crown,
         paragraphs: [
-          `日主为${dayMaster.dayGan}，五行属${dayMaster.dayGanElement}（${dayMaster.dayGanYinYang}干）。` +
-            `当前旺衰为「${dayMaster.wangShuai}」，日主强度评分约 ${dayMaster.strengthScore} 分。`,
-          `日柱为${sixLines.day.gan}${sixLines.day.zhi}，纳音「${sixLines.day.naYin || '—'}」，` +
-            `代表命主自身的先天禀赋与中年运势走向。`,
+          `日主为${dayMaster.dayGan}，五行属${dayMaster.dayGanElement}（${dayMaster.dayGanYinYang}干）。当前旺衰为「${dayMaster.wangShuai}」，日主强度评分约 ${dayMaster.strengthScore} 分。`,
+          `日柱为${sixLines.day.gan}${sixLines.day.zhi}，纳音「${sixLines.day.naYin || '—'}」，代表命主自身的先天禀赋与中年运势走向。`,
         ],
       },
       {
         title: '生肖分析',
         icon: User,
         paragraphs: [
-          `命主生于${sixLines.year.gan}${sixLines.year.zhi}年，` +
-            `生肖属${zodiac || '—'}，年柱纳音「${sixLines.year.naYin || '—'}」。`,
+          `命主生于${sixLines.year.gan}${sixLines.year.zhi}年，生肖属${zodiac || '—'}，年柱纳音「${sixLines.year.naYin || '—'}」。`,
           `年柱代表祖业根基与早年运势，生肖${zodiac || ''}的性格特质会在命主早年与家庭关系中有所体现。`,
         ],
       },
@@ -716,8 +956,7 @@ function Tab3BriefAnalysis({
             ? `五行力量综合判定日主为「${fp.wangShuaiLevel}」。`
             : `日主旺衰为「${dayMaster.wangShuai}」，强度评分 ${dayMaster.strengthScore}。`,
           fp
-            ? `得令：${fp.deLing ? '是' : '否'}；得地：${fp.deDi ? '是' : '否'}；得势：${fp.deShi ? '是' : '否'}。` +
-              `主导五行为${fp.dominant ?? '—'}，最弱五行为${fp.weakest ?? '—'}。`
+            ? `得令：${fp.deLing ? '是' : '否'}；得地：${fp.deDi ? '是' : '否'}；得势：${fp.deShi ? '是' : '否'}。主导五行为${fp.dominant ?? '—'}，最弱五行为${fp.weakest ?? '—'}。`
             : `日主${dayMaster.dayGan}${dayMaster.dayGanElement}的力量需结合月令、通根、透干综合判定。`,
         ],
       },
@@ -726,9 +965,7 @@ function Tab3BriefAnalysis({
         icon: Crown,
         paragraphs: [
           geJu?.name
-            ? `命局主格为「${geJu.name}」（${geJu.category ?? ''}），` +
-              `成格评分 ${geJu.score ?? '-'}，可信度 ${geJu.confidence ?? '-'}%。` +
-              `${geJu.poGe ? '此格存在破格之象。' : ''}`
+            ? `命局主格为「${geJu.name}」（${geJu.category ?? ''}），成格评分 ${geJu.score ?? '-'}，可信度 ${geJu.confidence ?? '-'}%。${geJu.poGe ? '此格存在破格之象。' : ''}`
             : '格局分析中…',
           ...(geJu?.description ? [geJu.description] : []),
           ...(geJu?.reasons?.length ? [`成格依据：${geJu.reasons.join('；')}`] : []),
@@ -753,8 +990,7 @@ function Tab3BriefAnalysis({
             ? `婚姻评分 ${marriage.score ?? '-'}。${marriage.summary}`
             : '婚姻分析中…',
           marriage?.spousePalace
-            ? `夫妻宫为${marriage.spousePalace.zhi}（${marriage.spousePalace.element ?? ''}）：` +
-              `${marriage.spousePalace.description ?? ''}`
+            ? `夫妻宫为${marriage.spousePalace.zhi}（${marriage.spousePalace.element ?? ''}）：${marriage.spousePalace.description ?? ''}`
             : '',
           ...(marriage?.suggestions ?? []).map((s) => `· ${s}`),
         ].filter(Boolean),
@@ -769,8 +1005,8 @@ function Tab3BriefAnalysis({
           career?.bestPath ? `最佳路径：${career.bestPath}` : '',
           ...(career?.industries ?? [])
             .slice(0, 3)
-            .map((ind) => `· 适合行业：${ind.industry}（${ind.score}分）`),
-          ...(career?.risks ?? []).slice(0, 2).map((r) => `· 风险提示：${r}`),
+            .map((ind: any) => `· 适合行业：${ind.industry}（${ind.score}分）`),
+          ...(career?.risks ?? []).slice(0, 2).map((r: string) => `· 风险提示：${r}`),
         ].filter(Boolean),
       },
       {
@@ -785,7 +1021,7 @@ function Tab3BriefAnalysis({
             : '',
           ...(health?.diseaseRisks ?? [])
             .slice(0, 2)
-            .map((d) => `· 需注意：${d.organ}（${d.diseases?.join('、') ?? ''}）`),
+            .map((d: any) => `· 需注意：${d.organ}（${d.diseases?.join('、') ?? ''}）`),
         ].filter(Boolean),
       },
     ]
@@ -840,7 +1076,9 @@ function Tab3BriefAnalysis({
   )
 }
 
-// ===== Tab 4: 详解分析 =====
+// ============================================================================
+//  Tab 4：详解分析（长文报告 + 会员入口）
+// ============================================================================
 function Tab4FullReport({
   chart,
   pipelineResult,
@@ -859,16 +1097,14 @@ function Tab4FullReport({
   const fullReport = pipelineResult?.fullReport
   const hasReport = !!fullReport && (fullReport.chapters?.length ?? 0) > 0
 
-  // 章节列表
   const chapters = useMemo(() => {
     if (hasReport && fullReport) {
-      return fullReport.chapters.map((c) => ({
+      return fullReport.chapters.map((c: any) => ({
         id: c.id,
         title: c.title,
         paragraphs: toParagraphs(c.content),
       }))
     }
-    // 回退：使用 AI 分析
     const a = analysis
     return [
       { id: 'overall', title: '命局总论', paragraphs: toParagraphs(a.overall) },
@@ -910,7 +1146,7 @@ function Tab4FullReport({
       )}
 
       <div className="tab4-chapters">
-        {chapters.map((ch, i) => (
+        {chapters.map((ch: any, i) => (
           <section className="chapter" key={ch.id || i}>
             <h3 className="chapter-title">
               <span className="chapter-no">{i + 1}</span>
@@ -918,7 +1154,7 @@ function Tab4FullReport({
             </h3>
             <div className="chapter-body">
               {ch.paragraphs.length > 0 ? (
-                ch.paragraphs.map((p, j) => (
+                ch.paragraphs.map((p: string, j: number) => (
                   <p key={j} className="chapter-para">{p}</p>
                 ))
               ) : (

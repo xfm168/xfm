@@ -432,48 +432,120 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   标准文件上传按钮：容器 + 视觉层 + 原生 input 覆盖层
-   完全不依赖 label，input 直接接收点击，跨浏览器 100% 可靠
+   双方案上传：
+   方案 A：原生 label 包裹可见 input（所有浏览器/环境 100% 可靠）
+   方案 B：黑金美化按钮（透明覆盖层，桌面端美观）
    ═══════════════════════════════════════════════════════════════════ */
-.xfm-file-btn {
-  /* 不设置 position，继承父类的 relative/absolute 定位上下文 */
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: var(--space-2);
-  cursor: pointer;
-}
 
-/* 特殊处理：更换照片按钮原本是 position:absolute；这里保留但加 inline-flex */
-.change-btn.xfm-file-btn {
-  display: inline-flex !important;
-}
-
-/* 视觉层（图标、文字）：不拦截点击，让 input 层接收 */
-.xfm-file-btn .xfm-btn-visual {
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-select: none;
-  display: inline-flex;
-  align-items: center;
+/* ===== 方案 A：最纯净的原生 file input，零样式干扰 ===== */
+.xfm-native-upload-row {
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-4);
+  width: 100%;
+  display: flex;
   justify-content: center;
+  pointer-events: auto !important;
 }
 
-/* 原生 input 覆盖层：填满容器、透明、最上层、直接接收点击 */
-.xfm-file-input-layer {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  opacity: 0.001;
+/* 完全不做任何自定义样式，使用浏览器默认渲染，最大化兼容性 */
+.xfm-visible-file-input {
+  /* 只控制尺寸和对齐，不改变原生外观 */
+  display: inline-block !important;
+  width: 240px !important;
+  height: 44px !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
   cursor: pointer;
-  z-index: 50;
+  /* 恢复默认外观 */
+  -webkit-appearance: default !important;
+  appearance: default !important;
+  background: transparent !important;
+  border: initial !important;
+  color: initial !important;
+  font: initial !important;
+  padding: initial !important;
+  margin: initial !important;
+  box-shadow: none !important;
+  border-radius: initial !important;
+  -webkit-tap-highlight-color: initial;
+  touch-action: auto !important;
+}
+
+/* 不要自定义 ::file-selector-button，使用浏览器默认样式 */
+
+/* 预览图后更换照片按钮：label 包裹 */
+.xfm-change-label {
+  /* 保留原 absolute 定位 */
+  pointer-events: auto !important;
+}
+.xfm-change-file-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+  pointer-events: auto !important;
+}
+
+/* ===== 方案 B：美化视觉按钮（桌面端） ===== */
+
+/* 视觉元素在 input 之下，不拦截点击 */
+.upload-trigger-btn svg,
+.upload-trigger-btn span,
+.change-btn svg,
+.change-btn span {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+/* file input 覆盖整个按钮容器 */
+.xfm-file-button-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.01;
+  z-index: 2;
+  cursor: pointer;
   margin: 0;
   padding: 0;
   border: 0;
+  -webkit-appearance: none;
+  appearance: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  display: block !important;
+  display: block;
+  background: transparent;
+  color: transparent;
+  font-size: 0;
+  pointer-events: auto !important;
+}
+
+/* 确保按钮容器有 position:relative */
+.upload-trigger-btn.xfm-upload-trigger-v2,
+.change-btn.xfm-change-btn-v2 {
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+/* 视觉层：上传区内的纯装饰性元素不拦截点击 */
+.upload-zone .upload-icon,
+.upload-zone .upload-text,
+.upload-zone .upload-hint,
+.upload-zone .upload-drag-hint,
+.upload-zone .preview-image,
+.upload-zone .xfm-upload-icon-v2 {
+  pointer-events: none !important;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 上传占位容器本身允许点击（点击穿透到全局覆盖层时用） */
+.upload-placeholder {
+  pointer-events: auto;
 }
 
 .upload-placeholder {
