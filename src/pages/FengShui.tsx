@@ -846,11 +846,12 @@ export default function FengShui() {
                   transition={{ duration: 0.4 }}
                 >
                   <img src={uploadedImage} alt="上传预览" className="preview-image" loading="eager" decoding="async" />
-                  <div className="change-btn xfm-change-btn-v2">
+                  {/* 更换照片：原生可见 label + input，最可靠 */}
+                  <label className="change-btn xfm-change-btn-v2 xfm-change-label">
                     <input
                       type="file"
                       accept="image/*"
-                      className="xfm-file-button-input"
+                      className="xfm-change-file-input"
                       onChange={(e) => {
                         const file = e.target.files?.[0]
                         if (file) handleFileSelect(file)
@@ -859,7 +860,7 @@ export default function FengShui() {
                     />
                     <UploadCloud size={16} />
                     <span>点击更换照片</span>
-                  </div>
+                  </label>
                 </motion.div>
               ) : (
                 <div className="upload-placeholder">
@@ -879,7 +880,22 @@ export default function FengShui() {
                   <p className="upload-text">点击下方按钮上传照片</p>
                   <p className="upload-hint">支持 JPG、PNG、WebP 格式 · 最大 10MB</p>
 
-                  <div className="upload-trigger-btn xfm-upload-trigger-v2">
+                  {/* 方案 A：浏览器原生可见的选择文件按钮（任何环境都 100% 能用） */}
+                  <div className="xfm-native-upload-row">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="xfm-visible-file-input"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) handleFileSelect(file)
+                        e.target.value = ''
+                      }}
+                    />
+                  </div>
+
+                  {/* 方案 B：美化视觉按钮（透明覆盖层） */}
+                  <div className="upload-trigger-btn xfm-upload-trigger-v2 xfm-visual-btn">
                     <input
                       type="file"
                       accept="image/*"

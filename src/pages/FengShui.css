@@ -432,9 +432,74 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   文件按钮方案：input 覆盖按钮容器，视觉元素在底层
-   input 直接接收点击，不经过任何中转
+   双方案上传：
+   方案 A：原生 label 包裹可见 input（所有浏览器/环境 100% 可靠）
+   方案 B：黑金美化按钮（透明覆盖层，桌面端美观）
    ═══════════════════════════════════════════════════════════════════ */
+
+/* ===== 方案 A：浏览器原生可见的选择文件按钮（任何环境 100% 能用）===== */
+.xfm-native-upload-row {
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-4);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: auto !important;
+}
+
+/* 完全可见的原生 file input，不做任何 opacity:0 隐藏 */
+.xfm-visible-file-input {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 220px;
+  height: auto !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  cursor: pointer;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #0d1428 0%, #0a0e1c 100%);
+  border: 1.5px solid rgba(212, 168, 71, 0.5);
+  border-radius: 12px;
+  color: #f5e6b8;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  touch-action: manipulation;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.xfm-visible-file-input::file-selector-button {
+  background: linear-gradient(135deg, #f5e6b8 0%, #d4a847 100%);
+  color: #0a0803;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 12px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.xfm-visible-file-input:active {
+  transform: scale(0.98);
+}
+
+/* 预览图后更换照片按钮：label 包裹 */
+.xfm-change-label {
+  /* 保留原 absolute 定位 */
+  pointer-events: auto !important;
+}
+.xfm-change-file-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+  pointer-events: auto !important;
+}
+
+/* ===== 方案 B：美化视觉按钮（桌面端） ===== */
 
 /* 视觉元素在 input 之下，不拦截点击 */
 .upload-trigger-btn svg,
@@ -473,23 +538,22 @@
 .upload-trigger-btn.xfm-upload-trigger-v2,
 .change-btn.xfm-change-btn-v2 {
   position: relative !important;
+  pointer-events: auto !important;
 }
 
-/* 视觉层：上传区内的非 input 元素都不拦截点击 */
+/* 视觉层：上传区内的纯装饰性元素不拦截点击 */
 .upload-zone .upload-icon,
 .upload-zone .upload-text,
 .upload-zone .upload-hint,
 .upload-zone .upload-drag-hint,
 .upload-zone .preview-image,
-.upload-zone .xfm-upload-icon-v2,
-.upload-zone .preview-container img {
+.upload-zone .xfm-upload-icon-v2 {
   pointer-events: none !important;
   -webkit-user-select: none;
   user-select: none;
 }
 
-/* 保留 upload-placeholder 的 pointer-events: auto，
-   但让其中的具体元素不拦截 */
+/* 上传占位容器本身允许点击（点击穿透到全局覆盖层时用） */
 .upload-placeholder {
   pointer-events: auto;
 }
