@@ -600,10 +600,18 @@
 .pg-td {
   position: relative;
 }
+/* 截图：当前选中的大运/流年/流月 —— 浅灰背景高亮（不是金色） */
+.pg-th-cur,
+.p-grid-table thead th.pg-th-cur {
+  background: rgba(200, 200, 200, 0.14);
+  color: #e8e0d0;
+  border: 1px solid rgba(200, 200, 200, 0.22);
+  border-bottom: none;
+}
 .pg-td.sel,
 .p-grid-table td.sel {
-  background: rgba(240, 204, 116, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(240, 204, 116, 0.35);
+  background: rgba(200, 200, 200, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(200, 200, 200, 0.22);
 }
 .pg-td.pg-left {
   text-align: left !important;
@@ -644,8 +652,14 @@
   line-height: 1;
   min-height: 11px;
   letter-spacing: 0;
+  font-weight: 500;
 }
 .pg-shi-red { color: #c2362a; }
+.pg-shi-yuan {
+  color: #d4a847 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+}
 .pg-gz-gan, .pg-gz-zhi {
   font-family: 'KaiTi', 'STKaiti', serif;
   font-weight: 500;
@@ -670,7 +684,7 @@
   font-weight: 700;
 }
 
-/* 地支上的十神叠字（截图二：伤官+偏财这种多字） */
+/* 地支上的十神叠字（截图二：伤官+偏财这种多字） —— 已废弃，保留兼容 */
 .pg-zhi-ss-stack {
   display: flex;
   flex-direction: column;
@@ -678,6 +692,38 @@
   gap: 1px;
   margin-bottom: 1px;
   min-height: 22px;
+}
+
+/* ===== 细盘地支格子（按截图二100%） ===== */
+.pg-zhi-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  position: relative;
+}
+.pg-zhi-top-ss {
+  min-height: 11px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1px;
+}
+.pg-zhi-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.pg-zhi-right-ss {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-width: 12px;
+  padding-left: 1px;
 }
 
 .pg-kw {

@@ -53,6 +53,15 @@ import type { CombinationResult, StemCombo, BranchCombo } from './combinationEng
 import { checkGuChenGuaSu } from './shensha/guchen'
 import type { ShenShaInfo } from './shensha/types'
 
+// 大运/流年/流月 本地计算 fallback（当 pipeline 没提供时）
+import {
+  generateDaYun as localGenerateDaYun,
+  calcDaYunStart as localCalcDaYunStart,
+  getLiuNian as localGetLiuNian,
+  getLiuYue as localGetLiuYue,
+  type DaYunStep as LocalDaYunStep,
+} from './rules/dashunRules'
+
 // ======================= 类型定义 =======================
 
 /** 五行颜色方案（专业排盘：木绿、火红、土棕、金橙、水蓝） */
@@ -143,6 +152,8 @@ export interface ProDaYunRow {
   wangShuai: WuXingWangShuai | null
   shenSha: ProShenShaItem[]
   isCurrent: boolean
+  /** 地支藏干列表（本气→中气→余气，各带十神、五行） */
+  cangGanList: ProCangGanItem[]
 }
 
 /** 流年年行 */
@@ -159,6 +170,7 @@ export interface ProLiuNianRow {
   changSheng: ShiErChangSheng | null
   shenSha: ProShenShaItem[]
   isCurrent: boolean
+  cangGanList: ProCangGanItem[]
 }
 
 /** 流月月行 */
@@ -172,6 +184,7 @@ export interface ProLiuYueRow {
   ganShenShi: ShenShi | null
   zhiShenShi: ShenShi | null
   shenSha: ProShenShaItem[]
+  cangGanList: ProCangGanItem[]
 }
 
 /** 流日日行 */
@@ -186,6 +199,7 @@ export interface ProLiuRiRow {
   naYin: string
   shenSha: ProShenShaItem[]
   lunarDay?: string
+  cangGanList: ProCangGanItem[]
 }
 
 /** 出生信息摘要（截图一顶部） */
@@ -427,6 +441,29 @@ function summarizeRelations(chart: BaZiChart): ProGanZhiRelations {
   }
 }
 
+/** 通用：构建某地支的藏干+十神（按本/中/余气）。用于大运/流年/流月/流日的地支格子。 */
+function buildCangGanForZhi(zhi: EarthlyBranch, relatedShens: Record<string, ShenShi>, dayGan: HeavenlyStem): ProCangGanItem[] {
+  const raw: CangGan | undefined = CANG_GAN?.[zhi]
+  const list: ProCangGanItem[] = []
+  const roles: ('本气' | '中气' | '余气')[] = ['本气', '中气', '余气']
+  const cands = [raw?.ben, raw?.zhong, raw?.yao]
+  cands.forEach((g, idx) => {
+    if (!g) return
+    const cg = g as HeavenlyStem
+    const el = getStemElement(cg) as FiveElement
+    const yy = getStemYinYang(cg) as '阳' | '阴'
+    list.push({
+      gan: cg,
+      element: el,
+      yinYang: yy,
+      // 大运/流年/流月/流日 的藏干如果刚好是日主干本身，十神为空（避免比肩重复）
+      shenShi: (cg === dayGan) ? null : (relatedShens[cg] ?? null),
+      role: roles[idx],
+    })
+  })
+  return list
+}
+
 // ======================= 出生信息摘要 =======================
 
 function buildBirthInfo(chart: BaZiChart, bd: BirthData | null): ProBirthInfo {
@@ -583,11 +620,48 @@ function buildDaYun(chart: BaZiChart, pipeline: BaZiPipelineResult | null): ProD
   const relatedShens = getRelatedShens(dayGan)
   const birthYear = parseInt((chart.birthInfo.birthDate || '1990').split('-')[0], 10)
   const steps: any[] = pipeline?.daYun?.steps ?? []
-  if (steps.length === 0) return []
-  const curIdx = pipeline?.daYun?.currentStepIndex ?? -1
-  return steps.map((s: any, idx: number) => {
+
+  // 解析 birthDate 为 Date（Asia/Shanghai 近似用本地 parse，之后校正）
+  function getBirthDate(): Date {
+    const b = chart.birthInfo.birthDate || '1990-01-01'
+    const t = chart.birthInfo.birthTime || '00:00'
+    return new Date(`${b}T${t}:00`)
+  }
+
+  let allSteps: any[] = []
+  let curIdx = pipeline?.daYun?.currentStepIndex ?? -1
+
+  if (steps && steps.length > 0) {
+    allSteps = steps
+  } else {
+    try {
+      const birthDate = getBirthDate()
+      const monthZhi = chart.sixLines.month.zhi as EarthlyBranch
+      const gender = (chart.birthInfo.gender === '女' || chart.birthInfo.gender === 'female') ? 'female' : 'male'
+      const local = localGenerateDaYun(birthDate, dayGan, gender, monthZhi, 8) || []
+      // 转换本地 LocalDaYunStep 为 allSteps 通用格式
+      allSteps = local.map((s: LocalDaYunStep, idx: number) => ({
+        index: s.index,
+        startAge: s.startAge,
+        endAge: s.endAge,
+        startYear: s.startYear,
+        endYear: s.endYear,
+        ganZhi: { gan: s.ganZhi.gan, zhi: s.ganZhi.zhi },
+      }))
+      // 计算当前大运索引（按当前年份）
+      const nowY = new Date().getFullYear()
+      curIdx = allSteps.findIndex((s: any) => nowY >= s.startYear && nowY <= s.endYear)
+    } catch (e) {
+      allSteps = []
+    }
+  }
+
+  if (allSteps.length === 0) return []
+
+  return allSteps.map((s: any, idx: number) => {
     const gan = s.ganZhi?.gan as HeavenlyStem
     const zhi = s.ganZhi?.zhi as EarthlyBranch
+    const cangGanList = buildCangGanForZhi(zhi, relatedShens, dayGan)
     return {
       index: idx,
       startAge: s.startAge ?? 0,
@@ -599,12 +673,13 @@ function buildDaYun(chart: BaZiChart, pipeline: BaZiPipelineResult | null): ProD
       ganElement: getStemElement(gan) as FiveElement,
       zhiElement: getBranchElement(zhi) as FiveElement,
       ganShenShi: relatedShens[gan] ?? null,
-      zhiShenShi: relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null,
+      zhiShenShi: cangGanList[0]?.shenShi ?? (relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null),
       naYin: getNaYin(gan, zhi),
       changSheng: getChangSheng(dayGan, zhi),
       wangShuai: s.wangShuai ?? null,
       shenSha: quickShenShaOfGZ(gan, zhi, dayGan, chart.sixLines.year.zhi as EarthlyBranch),
       isCurrent: idx === curIdx,
+      cangGanList,
     }
   })
 }
@@ -615,9 +690,24 @@ function buildLiuNian(chart: BaZiChart, pipeline: BaZiPipelineResult | null): Pr
   const birthYear = parseInt((chart.birthInfo.birthDate || '1990').split('-')[0], 10)
   const years: any[] = pipeline?.liuNian?.years ?? []
   const nowY = new Date().getFullYear()
-  return years.map((y: any) => {
+
+  let allYears: any[] = []
+  if (years && years.length > 0) {
+    allYears = years
+  } else {
+    // Fallback: 以当前年份为中心 前后 15 年（共31年）
+    const start = nowY - 15
+    const end = nowY + 15
+    for (let y = start; y <= end; y++) {
+      const gz = localGetLiuNian(y)
+      allYears.push({ year: y, ganZhi: { gan: gz.gan, zhi: gz.zhi }, isCurrentYear: y === nowY })
+    }
+  }
+
+  return allYears.map((y: any) => {
     const gan = y.ganZhi?.gan as HeavenlyStem
     const zhi = y.ganZhi?.zhi as EarthlyBranch
+    const cangGanList = buildCangGanForZhi(zhi, relatedShens, dayGan)
     return {
       year: y.year,
       age: y.year - birthYear,
@@ -626,11 +716,12 @@ function buildLiuNian(chart: BaZiChart, pipeline: BaZiPipelineResult | null): Pr
       ganElement: getStemElement(gan) as FiveElement,
       zhiElement: getBranchElement(zhi) as FiveElement,
       ganShenShi: relatedShens[gan] ?? null,
-      zhiShenShi: relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null,
+      zhiShenShi: cangGanList[0]?.shenShi ?? (relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null),
       naYin: getNaYin(gan, zhi),
       changSheng: getChangSheng(dayGan, zhi),
       shenSha: quickShenShaOfGZ(gan, zhi, dayGan, chart.sixLines.year.zhi as EarthlyBranch),
       isCurrent: y.year === nowY || y.isCurrentYear === true,
+      cangGanList,
     }
   })
 }
@@ -639,10 +730,31 @@ function buildLiuYue(chart: BaZiChart, pipeline: BaZiPipelineResult | null): Pro
   const dayGan = chart.sixLines.day.gan as HeavenlyStem
   const relatedShens = getRelatedShens(dayGan)
   const months: any[] = pipeline?.liuYue?.months ?? []
-  if (months.length === 0) return []
-  return months.map((m: any) => {
+
+  let allMonths: any[] = []
+  if (months && months.length > 0) {
+    allMonths = months
+  } else {
+    // Fallback: 取当前公历年 12 个节气月（1月至12月）
+    const defaultYear = new Date().getFullYear()
+    const SOLAR_TERMS: string[] = [
+      '立春','惊蛰','清明','立夏','芒种','小暑',
+      '立秋','白露','寒露','立冬','大雪','小寒',
+    ]
+    for (let m = 1; m <= 12; m++) {
+      const gz = localGetLiuYue(defaultYear, m)
+      allMonths.push({
+        monthName: SOLAR_TERMS[m - 1],
+        monthIndex: m,
+        ganZhi: { gan: gz.gan, zhi: gz.zhi },
+      })
+    }
+  }
+
+  return allMonths.map((m: any) => {
     const gan = m.ganZhi?.gan as HeavenlyStem
     const zhi = m.ganZhi?.zhi as EarthlyBranch
+    const cangGanList = buildCangGanForZhi(zhi, relatedShens, dayGan)
     return {
       solarTerm: m.monthName ?? '',
       monthIndex: m.monthIndex ?? 0,
@@ -651,8 +763,9 @@ function buildLiuYue(chart: BaZiChart, pipeline: BaZiPipelineResult | null): Pro
       ganElement: getStemElement(gan) as FiveElement,
       zhiElement: getBranchElement(zhi) as FiveElement,
       ganShenShi: relatedShens[gan] ?? null,
-      zhiShenShi: relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null,
+      zhiShenShi: cangGanList[0]?.shenShi ?? (relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null),
       shenSha: quickShenShaOfGZ(gan, zhi, dayGan, chart.sixLines.year.zhi as EarthlyBranch),
+      cangGanList,
     }
   })
 }
@@ -700,6 +813,7 @@ export function buildLiuRiForMonth(
     const dd = String(d).padStart(2, '0')
     const ds = `${year}-${mm}-${dd}`
     const { gan, zhi } = calcLiuRiGanZhi(ds)
+    const cangGanList = buildCangGanForZhi(zhi, relatedShens, dayGan)
     rows.push({
       date: ds,
       gan,
@@ -707,9 +821,10 @@ export function buildLiuRiForMonth(
       ganElement: getStemElement(gan) as FiveElement,
       zhiElement: getBranchElement(zhi) as FiveElement,
       ganShenShi: relatedShens[gan] ?? null,
-      zhiShenShi: relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null,
+      zhiShenShi: cangGanList[0]?.shenShi ?? (relatedShens[(CANG_GAN?.[zhi]?.ben as HeavenlyStem)] ?? null),
       naYin: getNaYin(gan, zhi),
       shenSha: quickShenShaOfGZ(gan, zhi, dayGan, chart.sixLines.year.zhi as EarthlyBranch),
+      cangGanList,
     })
   }
   return rows

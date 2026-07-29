@@ -468,6 +468,47 @@ function Tab1BasicInfoV2({ pro }: { pro: ProPaiPan }) {
   )
 }
 
+// 通用：渲染十神简化字+颜色（若有五行）
+function ShiShenBadge({ text, color }: { text?: string | null; color: string }) {
+  if (!text) return <span className="pg-shi">&nbsp;</span>
+  const short = (SHENSHI_SHORT as any)[text] || text
+  return <span className="pg-shi" style={{ color }}>{short}</span>
+}
+
+// Tab2 地支行格子：按截图二 100% 复刻
+// 结构：顶（本气十神）+ 中央（地支大字）+ 右侧竖排（中气/余气十神）
+function Tab2ZhiCell({
+  zhi,
+  zhiColor,
+  cangGanList,
+}: {
+  zhi: string
+  zhiColor: string
+  cangGanList: { element: string; shenShi: string | null }[]
+}) {
+  const first = cangGanList[0]
+  const rest = cangGanList.slice(1)
+  return (
+    <div className="pg-zhi-cell">
+      {first && (
+        <div className="pg-zhi-top-ss">
+          <ShiShenBadge text={first.shenShi} color={wxColor(first.element)} />
+        </div>
+      )}
+      <div className="pg-zhi-body">
+        <span style={{ color: zhiColor }} className="pg-gz-zhi">{zhi}</span>
+        {rest.length > 0 && (
+          <div className="pg-zhi-right-ss">
+            {rest.map((c, i) => (
+              <ShiShenBadge key={i} text={c.shenShi} color={wxColor(c.element)} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // 四柱卡片（截图一上部：每柱 = 纳音 + 天干大字 + 地支大字 + 藏干 3 小字）
 function PillarCardV2({ p, isDay, gender }: { p: ProPillarInfo; isDay: boolean; gender: 'male' | 'female' }) {
   return (
@@ -583,14 +624,14 @@ function Tab2DetailChartV2({
               ))}
             </tr>
 
-            {/* 天干行 */}
+            {/* 天干行：十神在天干上方，十神按对应天干五行上色 */}
             <tr>
               <td className="pg-td-label">天干</td>
               <td className="pg-td">-</td>
               <td className="pg-td">
                 {selLiuYue && (
                   <div className="pg-gz-stack">
-                    <span className="pg-shi">{SHENSHI_SHORT[selLiuYue.ganShenShi || ''] || selLiuYue.ganShenShi || '　'}</span>
+                    <ShiShenBadge text={selLiuYue.ganShenShi} color={wxColor(selLiuYue.ganElement)} />
                     <span style={{ color: wxColor(selLiuYue.ganElement) }} className="pg-gz-gan">{selLiuYue.gan}</span>
                   </div>
                 )}
@@ -598,7 +639,7 @@ function Tab2DetailChartV2({
               <td className="pg-td">
                 {curLiuNian && (
                   <div className="pg-gz-stack">
-                    <span className="pg-shi">{SHENSHI_SHORT[curLiuNian.ganShenShi || ''] || curLiuNian.ganShenShi || '　'}</span>
+                    <ShiShenBadge text={curLiuNian.ganShenShi} color={wxColor(curLiuNian.ganElement)} />
                     <span style={{ color: wxColor(curLiuNian.ganElement) }} className="pg-gz-gan">{curLiuNian.gan}</span>
                   </div>
                 )}
@@ -606,7 +647,7 @@ function Tab2DetailChartV2({
               <td className="pg-td">
                 {curDaYun && (
                   <div className="pg-gz-stack">
-                    <span className="pg-shi">{SHENSHI_SHORT[curDaYun.ganShenShi || ''] || curDaYun.ganShenShi || '　'}</span>
+                    <ShiShenBadge text={curDaYun.ganShenShi} color={wxColor(curDaYun.ganElement)} />
                     <span style={{ color: wxColor(curDaYun.ganElement) }} className="pg-gz-gan">{curDaYun.gan}</span>
                   </div>
                 )}
@@ -614,7 +655,11 @@ function Tab2DetailChartV2({
               {pillarCols.map(p => (
                 <td key={p.pillarKey} className="pg-td">
                   <div className="pg-gz-stack">
-                    <span className="pg-shi">{SHENSHI_SHORT[p.ganShenShi || ''] || p.ganShenShi || (p.pillarKey === 'day' ? '元' : '　')}</span>
+                    {p.pillarKey === 'day' ? (
+                      <span className="pg-shi pg-shi-yuan">元</span>
+                    ) : (
+                      <ShiShenBadge text={p.ganShenShi} color={p.ganColor} />
+                    )}
                     <span style={{ color: p.ganColor }} className="pg-gz-gan">
                       {p.gan}
                       {p.pillarKey === 'day' && <span className="pg-yuan-badge">{pro.birth.gender === 'male' ? '男' : '女'}</span>}
@@ -624,51 +669,44 @@ function Tab2DetailChartV2({
               ))}
             </tr>
 
-            {/* 地支行（含地支上方十神和叠字十神，截图二：伤官/偏财等） */}
+            {/* 地支行（按截图二：顶本气十神 + 大字地支 + 右侧竖排中余气十神） */}
             <tr>
               <td className="pg-td-label">地支</td>
               <td className="pg-td">-</td>
               <td className="pg-td">
                 {selLiuYue && (
-                  <div className="pg-gz-stack">
-                    <div className="pg-zhi-ss-stack">
-                      {selLiuYue.zhiShenShi && <span className="pg-shi pg-shi-red">{SHENSHI_SHORT[selLiuYue.zhiShenShi] || selLiuYue.zhiShenShi}</span>}
-                    </div>
-                    <span style={{ color: wxColor(selLiuYue.zhiElement) }} className="pg-gz-zhi">{selLiuYue.zhi}</span>
-                  </div>
+                  <Tab2ZhiCell
+                    zhi={selLiuYue.zhi}
+                    zhiColor={wxColor(selLiuYue.zhiElement)}
+                    cangGanList={selLiuYue.cangGanList || [{ element: selLiuYue.zhiElement, shenShi: selLiuYue.zhiShenShi }]}
+                  />
                 )}
               </td>
               <td className="pg-td">
                 {curLiuNian && (
-                  <div className="pg-gz-stack">
-                    <div className="pg-zhi-ss-stack">
-                      {curLiuNian.zhiShenShi && <span className="pg-shi pg-shi-red">{SHENSHI_SHORT[curLiuNian.zhiShenShi] || curLiuNian.zhiShenShi}</span>}
-                    </div>
-                    <span style={{ color: wxColor(curLiuNian.zhiElement) }} className="pg-gz-zhi">{curLiuNian.zhi}</span>
-                  </div>
+                  <Tab2ZhiCell
+                    zhi={curLiuNian.zhi}
+                    zhiColor={wxColor(curLiuNian.zhiElement)}
+                    cangGanList={curLiuNian.cangGanList || [{ element: curLiuNian.zhiElement, shenShi: curLiuNian.zhiShenShi }]}
+                  />
                 )}
               </td>
               <td className="pg-td">
                 {curDaYun && (
-                  <div className="pg-gz-stack">
-                    <div className="pg-zhi-ss-stack">
-                      {curDaYun.zhiShenShi && <span className="pg-shi pg-shi-red">{SHENSHI_SHORT[curDaYun.zhiShenShi] || curDaYun.zhiShenShi}</span>}
-                    </div>
-                    <span style={{ color: wxColor(curDaYun.zhiElement) }} className="pg-gz-zhi">{curDaYun.zhi}</span>
-                  </div>
+                  <Tab2ZhiCell
+                    zhi={curDaYun.zhi}
+                    zhiColor={wxColor(curDaYun.zhiElement)}
+                    cangGanList={curDaYun.cangGanList || [{ element: curDaYun.zhiElement, shenShi: curDaYun.zhiShenShi }]}
+                  />
                 )}
               </td>
               {pillarCols.map(p => (
                 <td key={p.pillarKey} className="pg-td">
-                  <div className="pg-gz-stack">
-                    <div className="pg-zhi-ss-stack">
-                      {p.zhiShenShi && <span className="pg-shi pg-shi-red">{SHENSHI_SHORT[p.zhiShenShi] || p.zhiShenShi}</span>}
-                      {p.zhiCangGanShenShis.slice(0, 2).map((ss, i) => (
-                        <span key={i} className="pg-shi">{SHENSHI_SHORT[ss] || ss}</span>
-                      ))}
-                    </div>
-                    <span style={{ color: p.zhiColor }} className="pg-gz-zhi">{p.zhi}</span>
-                  </div>
+                  <Tab2ZhiCell
+                    zhi={p.zhi}
+                    zhiColor={p.zhiColor}
+                    cangGanList={p.cangGanList}
+                  />
                 </td>
               ))}
             </tr>
