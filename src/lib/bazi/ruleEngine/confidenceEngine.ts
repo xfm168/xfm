@@ -1,4 +1,4 @@
-import type { Confidence, DimensionScore } from './types';
+import type { Confidence, DimensionScore, EvidenceBundle, RuleCondition } from './types';
 
 /** V⑤ 可信度组件名（权重维度）*/
 export type ConfidenceComponent = 'yuanju' | 'dayun' | 'liunian' | 'tiaohou' | 'geju' | 'other';
@@ -260,28 +260,115 @@ export function evaluateConfidence(input: {
   birthTimeUnknown?: boolean
   overrides?: Partial<Confidence>
 } = {}): Confidence {
-  const base = buildDefaultConfidence({
-    coreSatisfied: input.coreSatisfied,
-    coreTotal: input.coreTotal,
-    counterHits: input.counterHits,
-    counterThreshold: input.counterThreshold,
+  const avgConf = 0.7
+  const base5D = buildConfidence5D({
+    weights: { calendar: 0.25, geju: 0.3, xiyongshen: 0.3, shensha: 0.15 },
+    calendar: { preciseProvider: true, trueSolarTimeUsed: !input.birthTimeUnknown ? true : false, ziHourStrategy: 'true-solar', termPrecisionLevel: 2 },
+    geju: { conditions: [] },
+    xiyongshen: { consensusRate: avgConf },
+    shensha: { invalidatedRate: 0.1, destroyedRate: 0.1 },
   })
-  const composed = input.components ? composeConfidence([base], input.components) : base
-  let result = composed
-  if (input.birthTimeUnknown) {
-    result = composeConfidence([result], { yuanju: 35 })
-    result.components = result.components ?? {}
-    result.components.other = (result.components.other || 0) + 5
-    result.notes = [...(result.notes || []), '出生时辰未知，原局可信度扣减 5 分']
-  }
   if (input.overrides) {
-    result = {
-      ...result,
+    return {
+      ...base5D,
       ...input.overrides,
-      components: { ...result.components, ...(input.overrides.components || {}) },
-      breakdown: input.overrides.breakdown ? [...input.overrides.breakdown] : [...result.breakdown],
-      notes: Array.from(new Set([...(result.notes || []), ...(input.overrides.notes || [])])),
+      components: { ...base5D.components, ...(input.overrides.components || {}) },
     }
   }
-  return result
+  return base5D
+}
+
+export interface ConfidenceInput {
+  calendar?: {
+    preciseProvider?: boolean
+    trueSolarTimeUsed?: boolean
+    ziHourStrategy?: 'same-day' | 'next-day' | 'true-solar' | 'unknown'
+    termPrecisionLevel?: 0 | 1 | 2
+  }
+  geju?: {
+    conditions?: RuleCondition[]
+    hasSchoolConflict?: boolean
+  }
+  xiyongshen?: {
+    consensusRate?: number
+    hasStrongConflict?: boolean
+  }
+  shensha?: {
+    invalidatedRate?: number
+    destroyedRate?: number
+  }
+  weights?: {
+    calendar: number
+    geju: number
+    xiyongshen: number
+    shensha: number
+  }
+}
+
+const DEFAULT_WEIGHTS_5D = { calendar: 0.3, geju: 0.3, xiyongshen: 0.25, shensha: 0.15 }
+
+export function buildConfidence5D(input: ConfidenceInput): Confidence {
+  const weights = input.weights ?? DEFAULT_WEIGHTS_5D
+  const c = input.calendar ?? {}
+  const calendar = Number(Number(
+    0.2 +
+    (c.preciseProvider ? 0.2 : 0) +
+    (c.trueSolarTimeUsed ? 0.25 : 0) +
+    (c.ziHourStrategy && c.ziHourStrategy !== 'unknown' ? 0.2 : 0) +
+    (c.termPrecisionLevel === 2 ? 0.15 : c.termPrecisionLevel === 1 ? 0.1 : 0)
+  ).toFixed(2))
+
+  const g = input.geju ?? {}
+  const condSatis = g.conditions && g.conditions.length > 0
+    ? g.conditions.reduce((acc, c2) => acc + (c2.satisfied ? 1 : c2.satisfaction ?? 0), 0) / g.conditions.length
+    : 0.5
+  const geju = Number(Math.max(0.1, condSatis - (g.hasSchoolConflict ? 0.2 : 0)).toFixed(2))
+
+  const x = input.xiyongshen ?? {}
+  const consensus = x.consensusRate ?? 0.5
+  const xiyongshen = Number(Math.max(0.1, consensus - (x.hasStrongConflict ? 0.3 : 0)).toFixed(2))
+
+  const s = input.shensha ?? {}
+  const shensha = Number(Math.max(0.05, 1 - (s.invalidatedRate ?? 0) * 0.5 - (s.destroyedRate ?? 0) * 0.5).toFixed(2))
+
+  const overall = Number(
+    (calendar * weights.calendar + geju * weights.geju + xiyongshen * weights.xiyongshen + shensha * weights.shensha).toFixed(2)
+  )
+
+  const level: Confidence['level'] =
+    overall >= 0.85 ? 'very_high' : overall >= 0.7 ? 'high' : overall >= 0.5 ? 'medium' : 'low'
+
+  const breakdown = [
+    { name: 'calendar' as const, contribution: calendar, weightPct: Math.round(weights.calendar * 100) },
+    { name: 'geju' as const, contribution: geju, weightPct: Math.round(weights.geju * 100) },
+    { name: 'xiyongshen' as const, contribution: xiyongshen, weightPct: Math.round(weights.xiyongshen * 100) },
+    { name: 'shensha' as const, contribution: shensha, weightPct: Math.round(weights.shensha * 100) },
+    { name: 'overall' as const, contribution: overall, weightPct: 100 },
+  ]
+
+  return {
+    calendar,
+    geju,
+    xiyongshen,
+    shensha,
+    overall,
+    value: overall,
+    level,
+    breakdown,
+    notes: {},
+    uncertainty: [],
+  }
+}
+
+export function buildConfidenceFromEvidence(bundle: EvidenceBundle): Confidence {
+  const avgConf = bundle.items.length > 0
+    ? bundle.items.reduce((a, it) => a + (it.confidence ?? 0.5), 0) / bundle.items.length
+    : 0.5
+  return buildConfidence5D({
+    weights: { calendar: 0.2, geju: 0.3, xiyongshen: 0.3, shensha: 0.2 },
+    calendar: { preciseProvider: true, trueSolarTimeUsed: true, ziHourStrategy: 'true-solar', termPrecisionLevel: 2 },
+    geju: { conditions: [] },
+    xiyongshen: { consensusRate: avgConf },
+    shensha: { invalidatedRate: 0.1, destroyedRate: 0.1 },
+  })
 }

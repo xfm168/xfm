@@ -1,10 +1,6 @@
-export * from './taohua'
-export * from './hongluan'
-export * from './tianyi'
-export * from './wenchang'
-export * from './yangren'
-export * from './kongwang'
-export * from './jiesha'
-export * from './huagai'
-export * from './yima'
-export * from './guchen'
+export * from './types'
+export * from './shenshaRegistry'
+import { globalShenShaRegistry } from './shenshaRegistry'
+import DEFINITIONS from './definitions'
+DEFINITIONS.forEach(d => globalShenShaRegistry.register(d))
+export { DEFINITIONS }

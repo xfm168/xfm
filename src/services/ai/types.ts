@@ -50,6 +50,7 @@ export type AIPromptKey =
   | 'fengshui.room'
   | 'daily.interpretation'
   | 'bazi.basic'
+  | 'bazi.humanize'
   | 'ziwei.chart'
   | 'qimen.analysis'
   | 'couple.compatibility'

@@ -1,4 +1,5 @@
-import type { RuleCategory, RuleDefinition } from './types';
+import type { RuleCategory, RuleDefinition, RuleCondition, ConflictStrategy } from './types';
+import { DEFAULT_RULE_FALLBACKS } from './types';
 
 interface RuleRegistryStore {
   /** 正式注册的规则 */
@@ -15,6 +16,95 @@ export const registry: RuleRegistryStore = {
   executionOrderCache: new Map(),
 };
 
+const ID_PATTERN = /^[A-Z]{2,6}-[A-Z0-9]{2,6}-[0-9]{3,}$/;
+const VERSION_PATTERN = /^\d+\.\d+\.\d+.*$/;
+
+function validateAndNormalizeRule(def: Partial<RuleDefinition> & { id: string; evaluate: RuleDefinition['evaluate'] }): RuleDefinition {
+  const ruleId = def.id || 'UNKNOWN-ID';
+  const warnings: string[] = [];
+
+  const requiredFields: Array<keyof RuleDefinition> = [
+    'version',
+    'priority',
+    'source',
+    'description',
+    'condition',
+    'result',
+    'evidence',
+    'confidence',
+    'conflictStrategy',
+  ];
+
+  for (const field of requiredFields) {
+    if (def[field] === undefined || def[field] === null) {
+      warnings.push(`[B2 规范] 规则 ${ruleId} 缺失强制字段 '${field}'，已用默认值补齐`);
+    }
+  }
+
+  if (!ID_PATTERN.test(ruleId)) {
+    warnings.push(`[B2 规范] 规则 ID '${ruleId}' 建议按规范 XXX-YYY-### 命名（如 GEJU-CONG-001）`);
+  }
+
+  const version = def.version ?? DEFAULT_RULE_FALLBACKS.version;
+  if (!VERSION_PATTERN.test(version)) {
+    warnings.push(`[B2 规范] 规则 ${ruleId} 的 version '${version}' 建议使用语义化版本（如 1.0.0）`);
+  }
+
+  const source = def.source ?? DEFAULT_RULE_FALLBACKS.source;
+  const sourceEmpty =
+    (typeof source === 'string' && source.trim() === '') ||
+    (Array.isArray(source) && (source.length === 0 || source.every(s => s.trim() === '')));
+  if (sourceEmpty) {
+    warnings.push(`[B2 规范] 规则 ${ruleId} 的 source 必须是非空字符串或非空字符串数组，建议补充来源（如 '滴天髓'、'子平真诠'）`);
+  }
+
+  const condition = def.condition ?? DEFAULT_RULE_FALLBACKS.condition;
+  if (!Array.isArray(condition) || condition.length === 0) {
+    warnings.push(`[B2 规范] 规则 ${ruleId} 的 condition 必须是非空数组，已用默认值补齐`);
+  } else {
+    for (let i = 0; i < condition.length; i++) {
+      const c: RuleCondition = condition[i] as RuleCondition;
+      if (!c.description || !c.type) {
+        warnings.push(`[B2 规范] 规则 ${ruleId} 的 condition[${i}] 缺少 description 或 type 字段`);
+      }
+    }
+  }
+
+  const confidence = def.confidence ?? DEFAULT_RULE_FALLBACKS.confidence;
+  if (confidence && confidence.components) {
+    for (const [key, val] of Object.entries(confidence.components)) {
+      if (typeof val === 'number' && val < 0) {
+        warnings.push(`[B2 规范] 规则 ${ruleId} 的 confidence.components.${key} 权重为负数 (${val})，应为非负值`);
+      }
+    }
+  }
+
+  for (const w of warnings) {
+    console.warn(w);
+  }
+
+  const normalized: RuleDefinition = {
+    id: ruleId,
+    version: version,
+    priority: def.priority ?? DEFAULT_RULE_FALLBACKS.priority,
+    source: source,
+    description: def.description ?? DEFAULT_RULE_FALLBACKS.description,
+    condition: condition,
+    result: def.result ?? DEFAULT_RULE_FALLBACKS.result,
+    evidence: def.evidence ?? DEFAULT_RULE_FALLBACKS.evidence,
+    confidence: confidence,
+    conflictStrategy: (def.conflictStrategy ?? DEFAULT_RULE_FALLBACKS.conflictStrategy) as ConflictStrategy,
+    name: def.name,
+    category: def.category,
+    dependencies: def.dependencies,
+    tags: def.tags,
+    status: def.status,
+    evaluate: def.evaluate,
+  };
+
+  return normalized;
+}
+
 /** 拓扑排序：按 dependencies 排列规则执行顺序 */
 function topoSort(rules: RuleDefinition[]): RuleDefinition[] {
   const sorted: RuleDefinition[] = [];
@@ -24,7 +114,6 @@ function topoSort(rules: RuleDefinition[]): RuleDefinition[] {
   function visit(rule: RuleDefinition) {
     if (visited.has(rule.id)) return;
     if (visiting.has(rule.id)) {
-      // 检测到循环依赖，跳过
       return;
     }
     visiting.add(rule.id);
@@ -37,7 +126,6 @@ function topoSort(rules: RuleDefinition[]): RuleDefinition[] {
     sorted.push(rule);
   }
 
-  // 先按 priority 降序
   const sortedByPriority = [...rules].sort((a, b) => (b.priority || 0) - (a.priority || 0));
   for (const rule of sortedByPriority) {
     visit(rule);
@@ -50,14 +138,16 @@ export function clearCache(): void {
   registry.executionOrderCache.clear();
 }
 
-export function registerRule(def: RuleDefinition): void {
-  registry.rules.set(def.id, def);
+export function registerRule(def: Partial<RuleDefinition> & { id: string; evaluate: RuleDefinition['evaluate'] }): void {
+  const normalized = validateAndNormalizeRule(def);
+  registry.rules.set(normalized.id, normalized);
   clearCache();
 }
 
 /** P0-A3 新增：注册到 sandbox 而非正式 rules */
-export function registerSandboxRule(rule: RuleDefinition): void {
-  registry.sandbox.set(rule.id, rule);
+export function registerSandboxRule(def: Partial<RuleDefinition> & { id: string; evaluate: RuleDefinition['evaluate'] }): void {
+  const normalized = validateAndNormalizeRule(def);
+  registry.sandbox.set(normalized.id, normalized);
   clearCache();
 }
 
@@ -121,7 +211,6 @@ export function getRulesByCategory(cat: RuleCategory): RuleDefinition[] {
   const candidates: RuleDefinition[] = [];
   for (const rule of registry.rules.values()) {
     if (rule.category !== cat) continue;
-    // 只返回 status !== 'deprecated' 的规则（status 不存在视为非废弃）
     if (rule.status === 'deprecated') continue;
     candidates.push(rule);
   }
@@ -134,7 +223,6 @@ export function getRulesByCategory(cat: RuleCategory): RuleDefinition[] {
 export function getExecutionOrder(cat: RuleCategory): string[] {
   const cached = registry.executionOrderCache.get(cat);
   if (cached) return [...cached];
-  // 触发 getRulesByCategory 计算并写入缓存
   const ordered = getRulesByCategory(cat);
   return ordered.map(r => r.id);
 }

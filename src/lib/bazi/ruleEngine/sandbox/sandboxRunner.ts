@@ -107,7 +107,7 @@ export async function runSandbox(
 
   const result: SandboxTestResult = {
     ruleId,
-    ruleName: rule.name,
+    ruleName: rule.name ?? rule.id,
     timestamp: new Date().toISOString(),
     passed,
     totalCases,
