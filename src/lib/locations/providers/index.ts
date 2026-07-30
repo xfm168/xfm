@@ -33,3 +33,11 @@ export function reverseGeocode(...args: Parameters<GeoProvider['reverseGeocode']
 export function searchCity(kw: string) {
   return _provider.searchCity?.(kw) ?? []
 }
+
+export function isDST(date: Date, countryCode: string, cityName?: string): boolean {
+  return _provider.isDST?.(date, countryCode, cityName) ?? false
+}
+
+export function getUtcOffset(date: Date, countryCode: string, cityName?: string): number {
+  return _provider.getUtcOffset?.(date, countryCode, cityName) ?? 480
+}

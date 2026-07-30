@@ -38,6 +38,14 @@ export interface RuleDefinition<TInput = any, TResult = any> {
   source?: string;
   evaluate: (input: TInput, context?: any) => (EvidenceBundle & { result?: TResult }) | Promise<EvidenceBundle & { result?: TResult }>;
   priority: number;
+  /** P0-A3 新增：依赖的其他规则 ID（必须先执行这些规则） */
+  dependencies?: string[];
+  /** P0-A3 新增：规则标签（用于过滤和分组） */
+  tags?: string[];
+  /** P0-A3 新增：规则状态（sandbox=沙箱测试中, active=正式启用, deprecated=已废弃） */
+  status?: 'sandbox' | 'active' | 'deprecated';
+  /** P0-A3 新增：规则版本（用于变更追踪） */
+  version?: string;
 }
 
 export interface Confidence {

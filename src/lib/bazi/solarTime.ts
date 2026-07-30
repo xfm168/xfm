@@ -25,6 +25,9 @@
  *   - 问真八字/元亨利贞真太阳时实现
  */
 
+import { EARTHLY_BRANCHES } from '../core/constants'
+import { createPreciseCalendar } from './preciseCalendar'
+
 /** 经纬度坐标 */
 export interface Coordinate {
   longitude: number  // 经度（东经为正，西经为负）
@@ -57,6 +60,19 @@ export interface SolarTimeTrace {
   finalAdoptedTime: Date
   /** 是否启用了真太阳时校正 */
   useTrueSolarTime: boolean
+  /** P0-A2 新增：完整可追溯链 */
+  /** UTC 时间（将 standardTime 按 timezoneOffsetMin 反算） */
+  utcTime?: Date
+  /** 本地时间字符串（'YYYY-MM-DD HH:mm' 格式，用于 UI 展示） */
+  localTimeText?: string
+  /** 真太阳时是否导致跨日（与 standardTime 的日期不同） */
+  isCrossDay?: boolean
+  /** 最终采用的时辰（地支名，如 '子' '丑' '寅'...，基于 finalAdoptedTime） */
+  adoptedShichen?: string
+  /** 最终采用的时辰索引（0=子, 1=丑, ... 11=亥） */
+  adoptedShichenIndex?: number
+  /** 最终采用的时辰干支（如 '甲子' '乙丑'） */
+  adoptedShichenGanZhi?: string
 }
 
 /** 真太阳时计算结果 */
@@ -155,12 +171,21 @@ export function calculateSolarTime(
   const useTST = opts?.useTrueSolarTime ?? true
   const finalTime = useTST ? trueSolarTimeDate : new Date(birth.getTime())
 
+  const tzOffsetMin = opts?.timezoneOffsetMin ?? Math.round(standardLon / 15) * 60
+  // P0-A2 新增：完整可追溯链字段
+  const utcTime = new Date(birth.getTime() - tzOffsetMin * 60 * 1000)
+  const localTimeText = formatLocalTime(birth)
+  const isCrossDay =
+    trueSolarTimeDate.getDate() !== birth.getDate() ||
+    trueSolarTimeDate.getMonth() !== birth.getMonth()
+  const shichenInfo = computeShichenInfo(finalTime)
+
   const trace: SolarTimeTrace = {
     standardTime: new Date(birth.getTime()),
     longitude: coordinate.longitude,
     latitude: coordinate.latitude,
     timezone: opts?.timezone ?? timezoneForLongitude(standardLon),
-    timezoneOffsetMin: opts?.timezoneOffsetMin ?? Math.round(standardLon / 15) * 60,
+    timezoneOffsetMin: tzOffsetMin,
     timezoneStandardLongitude: standardLon,
     eotMinutes: Math.round(eot * 100) / 100,
     longitudeCorrectionMinutes: Math.round(lonCorrection * 100) / 100,
@@ -168,6 +193,13 @@ export function calculateSolarTime(
     trueSolarTime: trueSolarTimeDate,
     finalAdoptedTime: new Date(finalTime.getTime()),
     useTrueSolarTime: useTST,
+    // P0-A2 新增字段
+    utcTime,
+    localTimeText,
+    isCrossDay,
+    adoptedShichen: shichenInfo.shichenName,
+    adoptedShichenIndex: shichenInfo.shichenIndex,
+    adoptedShichenGanZhi: shichenInfo.shichenGanZhi,
   }
 
   return {
@@ -197,6 +229,72 @@ function timezoneForLongitude(lon: number): string {
 }
 
 /**
+ * 格式化本地时间字符串（'YYYY-MM-DD HH:mm'）
+ * P0-A2 新增：用于 trace.localTimeText 的 UI 展示
+ */
+function formatLocalTime(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  const h = String(date.getHours()).padStart(2, '0')
+  const min = String(date.getMinutes()).padStart(2, '0')
+  return `${y}-${m}-${d} ${h}:${min}`
+}
+
+/**
+ * 计算时辰信息（P0-A2 新增）
+ *
+ * 时辰索引公式：shichenIndex = Math.floor(((hour + 1) % 24) / 2)
+ *   - hour=23 → (24%24)/2=0（子时）
+ *   - hour=0  → 1/2=0（子时）
+ *   - hour=1  → 2/2=1（丑时）
+ *   - hour=3  → 4/2=2（寅时）...
+ *
+ * 时辰干支优先使用 createPreciseCalendar（与排盘保持一致）；
+ * 若 createPreciseCalendar 抛错或字段缺失，则回退到五鼠遁简化算法：
+ *   时干索引 = (日干索引 * 2 + 时辰索引) % 10
+ *
+ * @param finalTime 最终采用时间
+ * @returns 时辰索引、地支名、时辰干支
+ */
+function computeShichenInfo(finalTime: Date): {
+  shichenIndex: number
+  shichenName: string
+  shichenGanZhi: string
+} {
+  const hour = finalTime.getHours()
+  const shichenIndex = Math.floor(((hour + 1) % 24) / 2)
+  const shichenName = EARTHLY_BRANCHES[shichenIndex]
+  const HEAVENLY_STEMS = '甲乙丙丁戊己庚辛壬癸'
+
+  let dayGanIdx = -1
+  let hourGanZhi = ''
+  try {
+    const cal = createPreciseCalendar(finalTime)
+    hourGanZhi = cal.hours[shichenIndex]?.ganZhi ?? ''
+    const dayGan = cal.dayGanZhi?.gan
+    if (dayGan) dayGanIdx = HEAVENLY_STEMS.indexOf(dayGan)
+  } catch {
+    // 日期超出历法支持范围等异常，落入占位逻辑
+  }
+
+  if (hourGanZhi) {
+    return { shichenIndex, shichenName, shichenGanZhi: hourGanZhi }
+  }
+  // 回退：五鼠遁简化算法（需有日干索引）
+  if (dayGanIdx >= 0) {
+    const hourGanIdx = (dayGanIdx * 2 + shichenIndex) % 10
+    return {
+      shichenIndex,
+      shichenName,
+      shichenGanZhi: HEAVENLY_STEMS[hourGanIdx] + shichenName,
+    }
+  }
+  // 极端兜底：仅返回地支名 + 占位天干
+  return { shichenIndex, shichenName, shichenGanZhi: '?' + shichenName }
+}
+
+/**
  * 修正最终采用时间（根据 useTrueSolarTime 开关）
  * 若之前调用 calculateSolarTime 时 useTrueSolarTime 未给出，可用此函数补全
  */
@@ -205,13 +303,28 @@ export function finalizeSolarTime(
   useTrueSolarTime: boolean,
 ): SolarTimeResult {
   const finalTime = useTrueSolarTime ? result.trace.trueSolarTime : result.trace.standardTime
+  const finalDate = new Date(finalTime.getTime())
+  const standardTime = result.trace.standardTime
+
+  // P0-A2：useTrueSolarTime 变化时，重新计算依赖 finalAdoptedTime 的字段
+  const localTimeText = formatLocalTime(finalDate)
+  const isCrossDay =
+    finalDate.getDate() !== standardTime.getDate() ||
+    finalDate.getMonth() !== standardTime.getMonth()
+  const shichenInfo = computeShichenInfo(finalDate)
+
   return {
     ...result,
-    solarTime: new Date(finalTime.getTime()),
+    solarTime: finalDate,
     trace: {
       ...result.trace,
-      finalAdoptedTime: new Date(finalTime.getTime()),
+      finalAdoptedTime: finalDate,
       useTrueSolarTime,
+      localTimeText,
+      isCrossDay,
+      adoptedShichen: shichenInfo.shichenName,
+      adoptedShichenIndex: shichenInfo.shichenIndex,
+      adoptedShichenGanZhi: shichenInfo.shichenGanZhi,
     },
   }
 }
