@@ -1,0 +1,3277 @@
+[
+  {
+    "id": "REF-001",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-02-04",
+      "solarTime": "04:02",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年正月三十",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "month": {
+          "gan": "乙",
+          "zhi": "丑",
+          "ganZhi": "乙丑"
+        },
+        "day": {
+          "gan": "丁",
+          "zhi": "酉",
+          "ganZhi": "丁酉"
+        },
+        "hour": {
+          "gan": "庚",
+          "zhi": "戌",
+          "ganZhi": "庚戌"
+        }
+      },
+      "solarTerm": "立春",
+      "dayunStartAge": 10,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "丙",
+        "zhi": "寅",
+        "ganZhi": "丙寅"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "立春",
+      "换年"
+    ],
+    "notes": "2024-02-04 04:02 接近立春节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-002",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2023-03-06",
+      "solarTime": "04:36",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二三年正月三十",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "month": {
+          "gan": "甲",
+          "zhi": "寅",
+          "ganZhi": "甲寅"
+        },
+        "day": {
+          "gan": "壬",
+          "zhi": "戌",
+          "ganZhi": "壬戌"
+        },
+        "hour": {
+          "gan": "庚",
+          "zhi": "戌",
+          "ganZhi": "庚戌"
+        }
+      },
+      "solarTerm": "惊蛰",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "甲",
+        "zhi": "寅",
+        "ganZhi": "甲寅"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "惊蛰"
+    ],
+    "notes": "2023-03-06 04:36 接近惊蛰节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-003",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-04-04",
+      "solarTime": "21:34",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年二月廿六",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "卯",
+          "ganZhi": "丁卯"
+        },
+        "day": {
+          "gan": "戊",
+          "zhi": "戌",
+          "ganZhi": "戊戌"
+        },
+        "hour": {
+          "gan": "己",
+          "zhi": "未",
+          "ganZhi": "己未"
+        }
+      },
+      "solarTerm": "清明",
+      "dayunStartAge": 10,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "己",
+        "zhi": "巳",
+        "ganZhi": "己巳"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "清明"
+    ],
+    "notes": "2024-04-04 21:34 接近清明节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-004",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-05-05",
+      "solarTime": "08:09",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年三月廿五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "戊",
+          "zhi": "辰",
+          "ganZhi": "戊辰"
+        },
+        "day": {
+          "gan": "己",
+          "zhi": "巳",
+          "ganZhi": "己巳"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "子",
+          "ganZhi": "甲子"
+        }
+      },
+      "solarTerm": "立夏",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "丁",
+        "zhi": "卯",
+        "ganZhi": "丁卯"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "立夏"
+    ],
+    "notes": "2024-05-05 08:09 接近立夏节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-005",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-06-05",
+      "solarTime": "12:58",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年四月廿三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "己",
+          "zhi": "巳",
+          "ganZhi": "己巳"
+        },
+        "day": {
+          "gan": "庚",
+          "zhi": "子",
+          "ganZhi": "庚子"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        }
+      },
+      "solarTerm": "芒种",
+      "dayunStartAge": 10,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "未",
+        "ganZhi": "辛未"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "芒种"
+    ],
+    "notes": "2024-06-05 12:58 接近芒种节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-006",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-07-06",
+      "solarTime": "22:19",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年五月廿二",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "庚",
+          "zhi": "午",
+          "ganZhi": "庚午"
+        },
+        "day": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "hour": {
+          "gan": "乙",
+          "zhi": "未",
+          "ganZhi": "乙未"
+        }
+      },
+      "solarTerm": "小暑",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "小暑"
+    ],
+    "notes": "2024-07-06 22:19 接近小暑节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-007",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-08-07",
+      "solarTime": "08:08",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月廿一",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "hour": {
+          "gan": "壬",
+          "zhi": "子",
+          "ganZhi": "壬子"
+        }
+      },
+      "solarTerm": "立秋",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "立秋"
+    ],
+    "notes": "2024-08-07 08:08 接近立秋节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-008",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-09-07",
+      "solarTime": "11:11",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年七月十九",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "壬",
+          "zhi": "申",
+          "ganZhi": "壬申"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "戌",
+          "ganZhi": "甲戌"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "solarTerm": "白露",
+      "dayunStartAge": 10,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "癸",
+        "zhi": "酉",
+        "ganZhi": "癸酉"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "白露"
+    ],
+    "notes": "2024-09-07 11:11 接近白露节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-009",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-10-08",
+      "solarTime": "02:59",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年八月十八",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "癸",
+          "zhi": "酉",
+          "ganZhi": "癸酉"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "hour": {
+          "gan": "癸",
+          "zhi": "酉",
+          "ganZhi": "癸酉"
+        }
+      },
+      "solarTerm": "寒露",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "壬",
+        "zhi": "申",
+        "ganZhi": "壬申"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "寒露"
+    ],
+    "notes": "2024-10-08 02:59 接近寒露节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-010",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-11-06",
+      "solarTime": "18:20",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年九月十四",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "甲",
+          "zhi": "戌",
+          "ganZhi": "甲戌"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "戌",
+          "ganZhi": "甲戌"
+        },
+        "hour": {
+          "gan": "己",
+          "zhi": "巳",
+          "ganZhi": "己巳"
+        }
+      },
+      "solarTerm": "立冬",
+      "dayunStartAge": 9,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "丙",
+        "zhi": "子",
+        "ganZhi": "丙子"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "立冬"
+    ],
+    "notes": "2024-11-06 18:20 接近立冬节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-011",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-12-06",
+      "solarTime": "14:26",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年十月十二",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "乙",
+          "zhi": "亥",
+          "ganZhi": "乙亥"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "hour": {
+          "gan": "丁",
+          "zhi": "卯",
+          "ganZhi": "丁卯"
+        }
+      },
+      "solarTerm": "大雪",
+      "dayunStartAge": 1,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "丁",
+        "zhi": "丑",
+        "ganZhi": "丁丑"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "大雪"
+    ],
+    "notes": "2024-12-06 14:26 接近大雪节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-012",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2025-01-05",
+      "solarTime": "15:28",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二五年正月初三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "丑",
+          "ganZhi": "丁丑"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "戌",
+          "ganZhi": "甲戌"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "辰",
+          "ganZhi": "戊辰"
+        }
+      },
+      "solarTerm": "小寒",
+      "dayunStartAge": 9,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "戊",
+        "zhi": "寅",
+        "ganZhi": "戊寅"
+      }
+    },
+    "tags": [
+      "节气交界",
+      "小寒"
+    ],
+    "notes": "2025-01-05 15:28 接近小寒节气；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-013",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2023-04-20",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二三年闰二月三十",
+      "lunarLeap": true,
+      "fourPillars": {
+        "year": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "month": {
+          "gan": "丙",
+          "zhi": "辰",
+          "ganZhi": "丙辰"
+        },
+        "day": {
+          "gan": "戊",
+          "zhi": "申",
+          "ganZhi": "戊申"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "寅",
+          "ganZhi": "甲寅"
+        }
+      },
+      "solarTerm": "谷雨",
+      "dayunStartAge": 5,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "丁",
+        "zhi": "巳",
+        "ganZhi": "丁巳"
+      }
+    },
+    "tags": [
+      "农历闰月",
+      "闰二月"
+    ],
+    "notes": "2023-04-20 对应2023闰二月；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-014",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2020-05-23",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二〇年闰四月初一",
+      "lunarLeap": true,
+      "fourPillars": {
+        "year": {
+          "gan": "庚",
+          "zhi": "子",
+          "ganZhi": "庚子"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "巳",
+          "ganZhi": "辛巳"
+        },
+        "day": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        },
+        "hour": {
+          "gan": "庚",
+          "zhi": "寅",
+          "ganZhi": "庚寅"
+        }
+      },
+      "solarTerm": "小满",
+      "dayunStartAge": 4,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "壬",
+        "zhi": "午",
+        "ganZhi": "壬午"
+      }
+    },
+    "tags": [
+      "农历闰月",
+      "闰四月"
+    ],
+    "notes": "2020-05-23 对应2020闰四月；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-015",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2017-07-23",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇一七年闰六月初一",
+      "lunarLeap": true,
+      "fourPillars": {
+        "year": {
+          "gan": "丁",
+          "zhi": "酉",
+          "ganZhi": "丁酉"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "未",
+          "ganZhi": "丁未"
+        },
+        "day": {
+          "gan": "辛",
+          "zhi": "亥",
+          "ganZhi": "辛亥"
+        },
+        "hour": {
+          "gan": "庚",
+          "zhi": "寅",
+          "ganZhi": "庚寅"
+        }
+      },
+      "solarTerm": "大暑",
+      "dayunStartAge": 5,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "丙",
+        "zhi": "午",
+        "ganZhi": "丙午"
+      }
+    },
+    "tags": [
+      "农历闰月",
+      "闰六月"
+    ],
+    "notes": "2017-07-23 对应2017闰六月；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-016",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "1976-09-25",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九七六年闰八月初二",
+      "lunarLeap": true,
+      "fourPillars": {
+        "year": {
+          "gan": "丙",
+          "zhi": "辰",
+          "ganZhi": "丙辰"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "酉",
+          "ganZhi": "丁酉"
+        },
+        "day": {
+          "gan": "庚",
+          "zhi": "辰",
+          "ganZhi": "庚辰"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        }
+      },
+      "solarTerm": "秋分",
+      "dayunStartAge": 4,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "戊",
+        "zhi": "戌",
+        "ganZhi": "戊戌"
+      }
+    },
+    "tags": [
+      "农历闰月",
+      "闰八月"
+    ],
+    "notes": "1976-09-25 对应1976闰八月；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-017",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "1995-09-09",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九九五年闰八月十五",
+      "lunarLeap": true,
+      "fourPillars": {
+        "year": {
+          "gan": "乙",
+          "zhi": "亥",
+          "ganZhi": "乙亥"
+        },
+        "month": {
+          "gan": "乙",
+          "zhi": "酉",
+          "ganZhi": "乙酉"
+        },
+        "day": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "寅",
+          "ganZhi": "甲寅"
+        }
+      },
+      "solarTerm": "白露",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "甲",
+        "zhi": "申",
+        "ganZhi": "甲申"
+      }
+    },
+    "tags": [
+      "农历闰月",
+      "闰八月"
+    ],
+    "notes": "1995-09-09 对应1995闰八月；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-018",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2006-08-24",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇〇六年闰七月初一",
+      "lunarLeap": true,
+      "fourPillars": {
+        "year": {
+          "gan": "丙",
+          "zhi": "戌",
+          "ganZhi": "丙戌"
+        },
+        "month": {
+          "gan": "丙",
+          "zhi": "申",
+          "ganZhi": "丙申"
+        },
+        "day": {
+          "gan": "乙",
+          "zhi": "酉",
+          "ganZhi": "乙酉"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        }
+      },
+      "solarTerm": "处暑",
+      "dayunStartAge": 5,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "乙",
+        "zhi": "未",
+        "ganZhi": "乙未"
+      }
+    },
+    "tags": [
+      "农历闰月",
+      "闰七月"
+    ],
+    "notes": "2006-08-24 对应2006闰七月；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-019",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2009-06-23",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇〇九年闰五月初一",
+      "lunarLeap": true,
+      "fourPillars": {
+        "year": {
+          "gan": "己",
+          "zhi": "丑",
+          "ganZhi": "己丑"
+        },
+        "month": {
+          "gan": "庚",
+          "zhi": "午",
+          "ganZhi": "庚午"
+        },
+        "day": {
+          "gan": "己",
+          "zhi": "亥",
+          "ganZhi": "己亥"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "solarTerm": "夏至",
+      "dayunStartAge": 6,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "己",
+        "zhi": "巳",
+        "ganZhi": "己巳"
+      }
+    },
+    "tags": [
+      "农历闰月",
+      "闰五月"
+    ],
+    "notes": "2009-06-23 对应2009闰五月；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-020",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-06-15",
+      "solarTime": "23:05",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年四月初三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "庚",
+          "zhi": "午",
+          "ganZhi": "庚午"
+        },
+        "day": {
+          "gan": "庚",
+          "zhi": "戌",
+          "ganZhi": "庚戌"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "申",
+          "ganZhi": "甲申"
+        }
+      },
+      "dayunStartAge": 6,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "未",
+        "ganZhi": "辛未"
+      }
+    },
+    "tags": [
+      "晚子时换日",
+      "晚子时",
+      "same-day"
+    ],
+    "notes": "晚子时23:05 same-day策略；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-021",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-06-15",
+      "solarTime": "23:30",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年四月初三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "庚",
+          "zhi": "午",
+          "ganZhi": "庚午"
+        },
+        "day": {
+          "gan": "庚",
+          "zhi": "戌",
+          "ganZhi": "庚戌"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "申",
+          "ganZhi": "甲申"
+        }
+      },
+      "dayunStartAge": 6,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "未",
+        "ganZhi": "辛未"
+      }
+    },
+    "tags": [
+      "晚子时换日",
+      "晚子时",
+      "same-day"
+    ],
+    "notes": "晚子时23:30 same-day策略；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-022",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-06-15",
+      "solarTime": "23:59",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年四月初三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "庚",
+          "zhi": "午",
+          "ganZhi": "庚午"
+        },
+        "day": {
+          "gan": "庚",
+          "zhi": "戌",
+          "ganZhi": "庚戌"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "申",
+          "ganZhi": "甲申"
+        }
+      },
+      "dayunStartAge": 6,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "未",
+        "ganZhi": "辛未"
+      }
+    },
+    "tags": [
+      "晚子时换日",
+      "晚子时",
+      "same-day"
+    ],
+    "notes": "晚子时23:59 same-day策略；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-023",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-07-20",
+      "solarTime": "23:05",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月初六",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "乙",
+          "zhi": "酉",
+          "ganZhi": "乙酉"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "申",
+          "ganZhi": "甲申"
+        }
+      },
+      "solarTerm": "大暑",
+      "dayunStartAge": 4,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "晚子时换日",
+      "晚子时",
+      "next-day"
+    ],
+    "notes": "晚子时23:05 next-day策略；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-024",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-07-20",
+      "solarTime": "23:30",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月初六",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "乙",
+          "zhi": "酉",
+          "ganZhi": "乙酉"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "申",
+          "ganZhi": "甲申"
+        }
+      },
+      "solarTerm": "大暑",
+      "dayunStartAge": 4,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "晚子时换日",
+      "晚子时",
+      "next-day"
+    ],
+    "notes": "晚子时23:30 next-day策略；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-025",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-07-20",
+      "solarTime": "23:59",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月初六",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "乙",
+          "zhi": "酉",
+          "ganZhi": "乙酉"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "申",
+          "ganZhi": "甲申"
+        }
+      },
+      "solarTerm": "大暑",
+      "dayunStartAge": 4,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "晚子时换日",
+      "晚子时",
+      "next-day"
+    ],
+    "notes": "晚子时23:59 next-day策略；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-026",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-08-01",
+      "solarTime": "01:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月十五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "丙",
+          "zhi": "申",
+          "ganZhi": "丙申"
+        },
+        "hour": {
+          "gan": "丁",
+          "zhi": "酉",
+          "ganZhi": "丁酉"
+        }
+      },
+      "dayunStartAge": 2,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "真太阳时跨时辰",
+      "时辰交界"
+    ],
+    "notes": "北京 (116.4074°) 丑时交界点01:00；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-027",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-08-01",
+      "solarTime": "03:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月十五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "丙",
+          "zhi": "申",
+          "ganZhi": "丙申"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "戌",
+          "ganZhi": "戊戌"
+        }
+      },
+      "dayunStartAge": 2,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "真太阳时跨时辰",
+      "时辰交界"
+    ],
+    "notes": "北京 (116.4074°) 寅时交界点03:00；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-028",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-08-01",
+      "solarTime": "05:00",
+      "gender": "male",
+      "longitude": 75.9898,
+      "latitude": 39.4704,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "喀什"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月十五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "丙",
+          "zhi": "申",
+          "ganZhi": "丙申"
+        },
+        "hour": {
+          "gan": "己",
+          "zhi": "亥",
+          "ganZhi": "己亥"
+        }
+      },
+      "dayunStartAge": 2,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "真太阳时跨时辰",
+      "高经度校正"
+    ],
+    "notes": "喀什 (75.9898°) 喀什经度校正约-176分钟，跨时辰；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-029",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-08-01",
+      "solarTime": "07:00",
+      "gender": "male",
+      "longitude": 75.9898,
+      "latitude": 39.4704,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "喀什"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月十五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "丙",
+          "zhi": "申",
+          "ganZhi": "丙申"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "子",
+          "ganZhi": "戊子"
+        }
+      },
+      "dayunStartAge": 2,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "真太阳时跨时辰",
+      "高经度校正"
+    ],
+    "notes": "喀什 (75.9898°) 喀什经度校正约-176分钟，跨时辰；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-030",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-08-01",
+      "solarTime": "09:00",
+      "gender": "male",
+      "longitude": 87.6168,
+      "latitude": 43.8256,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "乌鲁木齐"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月十五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "丁",
+          "zhi": "酉",
+          "ganZhi": "丁酉"
+        },
+        "hour": {
+          "gan": "辛",
+          "zhi": "丑",
+          "ganZhi": "辛丑"
+        }
+      },
+      "dayunStartAge": 2,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "真太阳时跨时辰",
+      "高经度校正"
+    ],
+    "notes": "乌鲁木齐 (87.6168°) 乌鲁木齐经度校正约-129分钟，跨时辰；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-031",
+    "source": "问真八字",
+    "birth": {
+      "solarDate": "2024-08-01",
+      "solarTime": "11:00",
+      "gender": "male",
+      "longitude": 91.1322,
+      "latitude": 29.66,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "拉萨"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年六月十五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "day": {
+          "gan": "丁",
+          "zhi": "酉",
+          "ganZhi": "丁酉"
+        },
+        "hour": {
+          "gan": "壬",
+          "zhi": "寅",
+          "ganZhi": "壬寅"
+        }
+      },
+      "dayunStartAge": 2,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "午",
+        "ganZhi": "庚午"
+      }
+    },
+    "tags": [
+      "真太阳时跨时辰",
+      "高经度校正"
+    ],
+    "notes": "拉萨 (91.1322°) 拉萨经度校正约-115分钟，跨时辰；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-032",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-01-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 87.6168,
+      "latitude": 43.8256,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "乌鲁木齐"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年正月十三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "month": {
+          "gan": "乙",
+          "zhi": "丑",
+          "ganZhi": "乙丑"
+        },
+        "day": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "寅",
+          "ganZhi": "甲寅"
+        }
+      },
+      "dayunStartAge": 6,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "丙",
+        "zhi": "寅",
+        "ganZhi": "丙寅"
+      }
+    },
+    "tags": [
+      "新疆西藏高经度",
+      "乌鲁木齐"
+    ],
+    "notes": "乌鲁木齐 (87.6168°) 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-033",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-02-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 75.9898,
+      "latitude": 39.4704,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "喀什"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年正月十一",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        },
+        "day": {
+          "gan": "己",
+          "zhi": "酉",
+          "ganZhi": "己酉"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "dayunStartAge": 3,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "乙",
+        "zhi": "丑",
+        "ganZhi": "乙丑"
+      }
+    },
+    "tags": [
+      "新疆西藏高经度",
+      "喀什"
+    ],
+    "notes": "喀什 (75.9898°) 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-034",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-03-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 91.1322,
+      "latitude": 29.66,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "拉萨"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年正月初九",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "卯",
+          "ganZhi": "丁卯"
+        },
+        "day": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "寅",
+          "ganZhi": "甲寅"
+        }
+      },
+      "dayunStartAge": 6,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "戊",
+        "zhi": "辰",
+        "ganZhi": "戊辰"
+      }
+    },
+    "tags": [
+      "新疆西藏高经度",
+      "拉萨"
+    ],
+    "notes": "拉萨 (91.1322°) 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-035",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-04-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 101.7782,
+      "latitude": 36.6232,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "西宁"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年二月初七",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "戊",
+          "zhi": "辰",
+          "ganZhi": "戊辰"
+        },
+        "day": {
+          "gan": "己",
+          "zhi": "酉",
+          "ganZhi": "己酉"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "dayunStartAge": 3,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "丁",
+        "zhi": "卯",
+        "ganZhi": "丁卯"
+      }
+    },
+    "tags": [
+      "新疆西藏高经度",
+      "西宁"
+    ],
+    "notes": "西宁 (101.7782°) 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-036",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-05-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 102.7123,
+      "latitude": 25.0389,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "昆明"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年三月初五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "己",
+          "zhi": "巳",
+          "ganZhi": "己巳"
+        },
+        "day": {
+          "gan": "己",
+          "zhi": "卯",
+          "ganZhi": "己卯"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "dayunStartAge": 3,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "戊",
+        "zhi": "辰",
+        "ganZhi": "戊辰"
+      }
+    },
+    "tags": [
+      "新疆西藏高经度",
+      "昆明"
+    ],
+    "notes": "昆明 (102.7123°) 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-037",
+    "source": "寿星万年历",
+    "birth": {
+      "solarDate": "2024-06-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 103.8236,
+      "latitude": 36.058,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": true,
+      "locationLabel": "兰州"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年四月初三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "庚",
+          "zhi": "午",
+          "ganZhi": "庚午"
+        },
+        "day": {
+          "gan": "庚",
+          "zhi": "戌",
+          "ganZhi": "庚戌"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        }
+      },
+      "dayunStartAge": 7,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "未",
+        "ganZhi": "辛未"
+      }
+    },
+    "tags": [
+      "新疆西藏高经度",
+      "兰州"
+    ],
+    "notes": "兰州 (103.8236°) 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-038",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2024-04-01",
+      "solarTime": "12:00",
+      "gender": "female",
+      "longitude": 139.6917,
+      "latitude": 35.6895,
+      "timezone": "Asia/Tokyo",
+      "timezoneOffsetMin": 540,
+      "useTrueSolarTime": true,
+      "locationLabel": "东京"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年二月廿三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "卯",
+          "ganZhi": "丁卯"
+        },
+        "day": {
+          "gan": "乙",
+          "zhi": "未",
+          "ganZhi": "乙未"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        }
+      },
+      "solarTerm": "清明",
+      "dayunStartAge": 11,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "戊",
+        "zhi": "辰",
+        "ganZhi": "戊辰"
+      }
+    },
+    "tags": [
+      "海外城市",
+      "东京",
+      "UTC+9"
+    ],
+    "notes": "东京 Asia/Tokyo 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-039",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2024-05-01",
+      "solarTime": "12:00",
+      "gender": "female",
+      "longitude": 151.2093,
+      "latitude": -33.8688,
+      "timezone": "Australia/Sydney",
+      "timezoneOffsetMin": 660,
+      "useTrueSolarTime": true,
+      "locationLabel": "悉尼"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年三月廿一",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "戊",
+          "zhi": "辰",
+          "ganZhi": "戊辰"
+        },
+        "day": {
+          "gan": "乙",
+          "zhi": "丑",
+          "ganZhi": "乙丑"
+        },
+        "hour": {
+          "gan": "丁",
+          "zhi": "丑",
+          "ganZhi": "丁丑"
+        }
+      },
+      "dayunStartAge": 11,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "己",
+        "zhi": "巳",
+        "ganZhi": "己巳"
+      }
+    },
+    "tags": [
+      "海外城市",
+      "悉尼",
+      "UTC+11"
+    ],
+    "notes": "悉尼 Australia/Sydney 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-040",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2024-06-01",
+      "solarTime": "12:00",
+      "gender": "female",
+      "longitude": -0.1278,
+      "latitude": 51.5074,
+      "timezone": "Europe/London",
+      "timezoneOffsetMin": 0,
+      "useTrueSolarTime": true,
+      "locationLabel": "伦敦"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年四月十九",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "己",
+          "zhi": "巳",
+          "ganZhi": "己巳"
+        },
+        "day": {
+          "gan": "丙",
+          "zhi": "申",
+          "ganZhi": "丙申"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "午",
+          "ganZhi": "甲午"
+        }
+      },
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "戊",
+        "zhi": "辰",
+        "ganZhi": "戊辰"
+      }
+    },
+    "tags": [
+      "海外城市",
+      "伦敦",
+      "UTC+0"
+    ],
+    "notes": "伦敦 Europe/London 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-041",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2024-01-15",
+      "solarTime": "12:00",
+      "gender": "female",
+      "longitude": -73.9857,
+      "latitude": 40.7484,
+      "timezone": "America/New_York",
+      "timezoneOffsetMin": -300,
+      "useTrueSolarTime": true,
+      "locationLabel": "纽约"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年正月十三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "month": {
+          "gan": "乙",
+          "zhi": "丑",
+          "ganZhi": "乙丑"
+        },
+        "day": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        },
+        "hour": {
+          "gan": "辛",
+          "zhi": "酉",
+          "ganZhi": "辛酉"
+        }
+      },
+      "dayunStartAge": 3,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "甲",
+        "zhi": "子",
+        "ganZhi": "甲子"
+      }
+    },
+    "tags": [
+      "海外城市",
+      "纽约",
+      "UTC-5"
+    ],
+    "notes": "纽约 America/New_York 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-042",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2024-01-15",
+      "solarTime": "12:00",
+      "gender": "female",
+      "longitude": -118.2437,
+      "latitude": 34.0522,
+      "timezone": "America/Los_Angeles",
+      "timezoneOffsetMin": -480,
+      "useTrueSolarTime": true,
+      "locationLabel": "洛杉矶"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年正月十三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "month": {
+          "gan": "乙",
+          "zhi": "丑",
+          "ganZhi": "乙丑"
+        },
+        "day": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        },
+        "hour": {
+          "gan": "壬",
+          "zhi": "戌",
+          "ganZhi": "壬戌"
+        }
+      },
+      "dayunStartAge": 3,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "甲",
+        "zhi": "子",
+        "ganZhi": "甲子"
+      }
+    },
+    "tags": [
+      "海外城市",
+      "洛杉矶",
+      "UTC-8"
+    ],
+    "notes": "洛杉矶 America/Los_Angeles 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-043",
+    "source": "中国万年历",
+    "birth": {
+      "solarDate": "2024-01-15",
+      "solarTime": "12:00",
+      "gender": "female",
+      "longitude": 2.3522,
+      "latitude": 48.8566,
+      "timezone": "Europe/Paris",
+      "timezoneOffsetMin": 60,
+      "useTrueSolarTime": true,
+      "locationLabel": "巴黎"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年正月十三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "癸",
+          "zhi": "卯",
+          "ganZhi": "癸卯"
+        },
+        "month": {
+          "gan": "乙",
+          "zhi": "丑",
+          "ganZhi": "乙丑"
+        },
+        "day": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "午",
+          "ganZhi": "戊午"
+        }
+      },
+      "dayunStartAge": 2,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "甲",
+        "zhi": "子",
+        "ganZhi": "甲子"
+      }
+    },
+    "tags": [
+      "海外城市",
+      "巴黎",
+      "UTC+1"
+    ],
+    "notes": "巴黎 Europe/Paris 真太阳时校正；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-044",
+    "source": "协纪辨方书",
+    "birth": {
+      "solarDate": "1905-02-04",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九〇五年正月初一",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "丑",
+          "ganZhi": "丁丑"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "戌",
+          "ganZhi": "甲戌"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "dayunStartAge": 11,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "戊",
+        "zhi": "寅",
+        "ganZhi": "戊寅"
+      }
+    },
+    "tags": [
+      "1900-1950历史边界",
+      "1905安全边界"
+    ],
+    "notes": "1905-02-04 1900后安全边界（避开1899超范围）；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-045",
+    "source": "协纪辨方书",
+    "birth": {
+      "solarDate": "1912-02-18",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九一二年正月十四",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "壬",
+          "zhi": "子",
+          "ganZhi": "壬子"
+        },
+        "month": {
+          "gan": "壬",
+          "zhi": "寅",
+          "ganZhi": "壬寅"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "子",
+          "ganZhi": "甲子"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "solarTerm": "雨水",
+      "dayunStartAge": 5,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "癸",
+        "zhi": "卯",
+        "ganZhi": "癸卯"
+      }
+    },
+    "tags": [
+      "1900-1950历史边界",
+      "民国元年"
+    ],
+    "notes": "1912-02-18 民国元年；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-046",
+    "source": "协纪辨方书",
+    "birth": {
+      "solarDate": "1930-06-01",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九三〇年四月十九",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "庚",
+          "zhi": "午",
+          "ganZhi": "庚午"
+        },
+        "month": {
+          "gan": "辛",
+          "zhi": "巳",
+          "ganZhi": "辛巳"
+        },
+        "day": {
+          "gan": "壬",
+          "zhi": "午",
+          "ganZhi": "壬午"
+        },
+        "hour": {
+          "gan": "壬",
+          "zhi": "寅",
+          "ganZhi": "壬寅"
+        }
+      },
+      "dayunStartAge": 11,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "壬",
+        "zhi": "午",
+        "ganZhi": "壬午"
+      }
+    },
+    "tags": [
+      "1900-1950历史边界",
+      "1930年代"
+    ],
+    "notes": "1930-06-01 1930年代；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-047",
+    "source": "协纪辨方书",
+    "birth": {
+      "solarDate": "1949-10-01",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九四九年八月十一",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "己",
+          "zhi": "丑",
+          "ganZhi": "己丑"
+        },
+        "month": {
+          "gan": "癸",
+          "zhi": "酉",
+          "ganZhi": "癸酉"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "子",
+          "ganZhi": "甲子"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "dayunStartAge": 12,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "甲",
+        "zhi": "戌",
+        "ganZhi": "甲戌"
+      }
+    },
+    "tags": [
+      "1900-1950历史边界",
+      "建国"
+    ],
+    "notes": "1949-10-01 建国；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-048",
+    "source": "协纪辨方书",
+    "birth": {
+      "solarDate": "1950-02-17",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九五〇年正月十三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "庚",
+          "zhi": "寅",
+          "ganZhi": "庚寅"
+        },
+        "month": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        },
+        "day": {
+          "gan": "癸",
+          "zhi": "未",
+          "ganZhi": "癸未"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "寅",
+          "ganZhi": "甲寅"
+        }
+      },
+      "solarTerm": "雨水",
+      "dayunStartAge": 4,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "丁",
+        "zhi": "丑",
+        "ganZhi": "丁丑"
+      }
+    },
+    "tags": [
+      "1900-1950历史边界",
+      "1950边界"
+    ],
+    "notes": "1950-02-17 1950边界；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-049",
+    "source": "协纪辨方书",
+    "birth": {
+      "solarDate": "1925-08-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九二五年六月廿九",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "乙",
+          "zhi": "丑",
+          "ganZhi": "乙丑"
+        },
+        "month": {
+          "gan": "甲",
+          "zhi": "申",
+          "ganZhi": "甲申"
+        },
+        "day": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "hour": {
+          "gan": "庚",
+          "zhi": "寅",
+          "ganZhi": "庚寅"
+        }
+      },
+      "dayunStartAge": 2,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "癸",
+        "zhi": "未",
+        "ganZhi": "癸未"
+      }
+    },
+    "tags": [
+      "1900-1950历史边界",
+      "1920年代"
+    ],
+    "notes": "1925-08-15 1920年代；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-050",
+    "source": "三命通会",
+    "birth": {
+      "solarDate": "2050-01-01",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇五〇年正月廿九",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "己",
+          "zhi": "巳",
+          "ganZhi": "己巳"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "丑",
+          "ganZhi": "丁丑"
+        },
+        "day": {
+          "gan": "辛",
+          "zhi": "巳",
+          "ganZhi": "辛巳"
+        },
+        "hour": {
+          "gan": "庚",
+          "zhi": "寅",
+          "ganZhi": "庚寅"
+        }
+      },
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "丙",
+        "zhi": "子",
+        "ganZhi": "丙子"
+      }
+    },
+    "tags": [
+      "2050-2100未来边界",
+      "2050边界"
+    ],
+    "notes": "2050-01-01 2050边界；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-051",
+    "source": "三命通会",
+    "birth": {
+      "solarDate": "2060-02-02",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇六〇年正月廿八",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "己",
+          "zhi": "卯",
+          "ganZhi": "己卯"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "丑",
+          "ganZhi": "丁丑"
+        },
+        "day": {
+          "gan": "乙",
+          "zhi": "巳",
+          "ganZhi": "乙巳"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        }
+      },
+      "solarTerm": "立春",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "丙",
+        "zhi": "子",
+        "ganZhi": "丙子"
+      }
+    },
+    "tags": [
+      "2050-2100未来边界",
+      "2060年代"
+    ],
+    "notes": "2060-02-02 2060年代；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-052",
+    "source": "三命通会",
+    "birth": {
+      "solarDate": "2075-06-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇七五年四月初三",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "乙",
+          "zhi": "未",
+          "ganZhi": "乙未"
+        },
+        "month": {
+          "gan": "壬",
+          "zhi": "午",
+          "ganZhi": "壬午"
+        },
+        "day": {
+          "gan": "丁",
+          "zhi": "丑",
+          "ganZhi": "丁丑"
+        },
+        "hour": {
+          "gan": "壬",
+          "zhi": "寅",
+          "ganZhi": "壬寅"
+        }
+      },
+      "dayunStartAge": 3,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "巳",
+        "ganZhi": "辛巳"
+      }
+    },
+    "tags": [
+      "2050-2100未来边界",
+      "2070年代"
+    ],
+    "notes": "2075-06-15 2070年代；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-053",
+    "source": "三命通会",
+    "birth": {
+      "solarDate": "2088-08-08",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇八八年六月廿二",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "戊",
+          "zhi": "申",
+          "ganZhi": "戊申"
+        },
+        "month": {
+          "gan": "庚",
+          "zhi": "申",
+          "ganZhi": "庚申"
+        },
+        "day": {
+          "gan": "庚",
+          "zhi": "辰",
+          "ganZhi": "庚辰"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "寅",
+          "ganZhi": "戊寅"
+        }
+      },
+      "solarTerm": "立秋",
+      "dayunStartAge": 10,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "酉",
+        "ganZhi": "辛酉"
+      }
+    },
+    "tags": [
+      "2050-2100未来边界",
+      "2080年代"
+    ],
+    "notes": "2088-08-08 2080年代；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-054",
+    "source": "三命通会",
+    "birth": {
+      "solarDate": "2090-11-15",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇九〇年九月廿八",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "庚",
+          "zhi": "戌",
+          "ganZhi": "庚戌"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "亥",
+          "ganZhi": "丁亥"
+        },
+        "day": {
+          "gan": "己",
+          "zhi": "巳",
+          "ganZhi": "己巳"
+        },
+        "hour": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        }
+      },
+      "dayunStartAge": 8,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "丁",
+        "zhi": "亥",
+        "ganZhi": "丁亥"
+      }
+    },
+    "tags": [
+      "2050-2100未来边界",
+      "2090安全边界"
+    ],
+    "notes": "2090-11-15 2100前安全边界（避开2100-12超出库范围）；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-055",
+    "source": "三命通会",
+    "birth": {
+      "solarDate": "2055-05-05",
+      "solarTime": "12:00",
+      "gender": "male",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 480,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "二〇五五年三月廿五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "乙",
+          "zhi": "亥",
+          "ganZhi": "乙亥"
+        },
+        "month": {
+          "gan": "庚",
+          "zhi": "辰",
+          "ganZhi": "庚辰"
+        },
+        "day": {
+          "gan": "辛",
+          "zhi": "亥",
+          "ganZhi": "辛亥"
+        },
+        "hour": {
+          "gan": "庚",
+          "zhi": "寅",
+          "ganZhi": "庚寅"
+        }
+      },
+      "solarTerm": "立夏",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "辰",
+        "ganZhi": "庚辰"
+      }
+    },
+    "tags": [
+      "2050-2100未来边界",
+      "2050年代"
+    ],
+    "notes": "2055-05-05 2050年代；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-056",
+    "source": "滴天髓",
+    "birth": {
+      "solarDate": "1986-05-04",
+      "solarTime": "08:00",
+      "gender": "female",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 540,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九八六年三月廿四",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "丙",
+          "zhi": "寅",
+          "ganZhi": "丙寅"
+        },
+        "month": {
+          "gan": "壬",
+          "zhi": "辰",
+          "ganZhi": "壬辰"
+        },
+        "day": {
+          "gan": "丁",
+          "zhi": "未",
+          "ganZhi": "丁未"
+        },
+        "hour": {
+          "gan": "庚",
+          "zhi": "子",
+          "ganZhi": "庚子"
+        }
+      },
+      "solarTerm": "立夏",
+      "dayunStartAge": 1,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "卯",
+        "ganZhi": "辛卯"
+      }
+    },
+    "tags": [
+      "夏令时历史",
+      "中国DST开始"
+    ],
+    "notes": "北京 1986-05-04 中国DST开始；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-057",
+    "source": "滴天髓",
+    "birth": {
+      "solarDate": "1987-09-13",
+      "solarTime": "08:00",
+      "gender": "female",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 540,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九八七年七月廿五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "丁",
+          "zhi": "卯",
+          "ganZhi": "丁卯"
+        },
+        "month": {
+          "gan": "己",
+          "zhi": "酉",
+          "ganZhi": "己酉"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "子",
+          "ganZhi": "甲子"
+        },
+        "hour": {
+          "gan": "甲",
+          "zhi": "子",
+          "ganZhi": "甲子"
+        }
+      },
+      "dayunStartAge": 8,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "庚",
+        "zhi": "戌",
+        "ganZhi": "庚戌"
+      }
+    },
+    "tags": [
+      "夏令时历史",
+      "中国DST结束"
+    ],
+    "notes": "北京 1987-09-13 中国DST结束；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-058",
+    "source": "穷通宝鉴",
+    "birth": {
+      "solarDate": "1991-04-14",
+      "solarTime": "08:00",
+      "gender": "female",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 540,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九九一年二月初六",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "辛",
+          "zhi": "未",
+          "ganZhi": "辛未"
+        },
+        "month": {
+          "gan": "壬",
+          "zhi": "辰",
+          "ganZhi": "壬辰"
+        },
+        "day": {
+          "gan": "癸",
+          "zhi": "丑",
+          "ganZhi": "癸丑"
+        },
+        "hour": {
+          "gan": "壬",
+          "zhi": "子",
+          "ganZhi": "壬子"
+        }
+      },
+      "dayunStartAge": 3,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "辛",
+        "zhi": "卯",
+        "ganZhi": "辛卯"
+      }
+    },
+    "tags": [
+      "夏令时历史",
+      "中国DST最后一年"
+    ],
+    "notes": "北京 1991-04-14 中国DST最后一年；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-059",
+    "source": "穷通宝鉴",
+    "birth": {
+      "solarDate": "2024-03-10",
+      "solarTime": "08:00",
+      "gender": "female",
+      "longitude": -73.9857,
+      "latitude": 40.7484,
+      "timezone": "America/New_York",
+      "timezoneOffsetMin": -240,
+      "useTrueSolarTime": false,
+      "locationLabel": "纽约"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年正月初四",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "卯",
+          "ganZhi": "丁卯"
+        },
+        "day": {
+          "gan": "癸",
+          "zhi": "酉",
+          "ganZhi": "癸酉"
+        },
+        "hour": {
+          "gan": "戊",
+          "zhi": "午",
+          "ganZhi": "戊午"
+        }
+      },
+      "dayunStartAge": 8,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "戊",
+        "zhi": "辰",
+        "ganZhi": "戊辰"
+      }
+    },
+    "tags": [
+      "夏令时历史",
+      "美国DST开始"
+    ],
+    "notes": "纽约 2024-03-10 美国DST开始；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-060",
+    "source": "协纪辨方书",
+    "birth": {
+      "solarDate": "2024-03-31",
+      "solarTime": "08:00",
+      "gender": "female",
+      "longitude": 2.3522,
+      "latitude": 48.8566,
+      "timezone": "Europe/Paris",
+      "timezoneOffsetMin": 120,
+      "useTrueSolarTime": false,
+      "locationLabel": "巴黎"
+    },
+    "expect": {
+      "lunarDate": "二〇二四年二月廿五",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "甲",
+          "zhi": "辰",
+          "ganZhi": "甲辰"
+        },
+        "month": {
+          "gan": "丁",
+          "zhi": "卯",
+          "ganZhi": "丁卯"
+        },
+        "day": {
+          "gan": "甲",
+          "zhi": "午",
+          "ganZhi": "甲午"
+        },
+        "hour": {
+          "gan": "丁",
+          "zhi": "卯",
+          "ganZhi": "丁卯"
+        }
+      },
+      "dayunStartAge": 8,
+      "dayunDirection": "逆行",
+      "firstDayun": {
+        "gan": "丙",
+        "zhi": "寅",
+        "ganZhi": "丙寅"
+      }
+    },
+    "tags": [
+      "夏令时历史",
+      "欧洲DST开始"
+    ],
+    "notes": "巴黎 2024-03-31 欧洲DST开始；expect字段为程序生成，待人工复核"
+  },
+  {
+    "id": "REF-061",
+    "source": "滴天髓",
+    "birth": {
+      "solarDate": "1990-07-15",
+      "solarTime": "14:00",
+      "gender": "female",
+      "longitude": 116.4074,
+      "latitude": 39.9042,
+      "timezone": "Asia/Shanghai",
+      "timezoneOffsetMin": 540,
+      "useTrueSolarTime": false,
+      "locationLabel": "北京"
+    },
+    "expect": {
+      "lunarDate": "一九九〇年五月初一",
+      "lunarLeap": false,
+      "fourPillars": {
+        "year": {
+          "gan": "庚",
+          "zhi": "午",
+          "ganZhi": "庚午"
+        },
+        "month": {
+          "gan": "癸",
+          "zhi": "未",
+          "ganZhi": "癸未"
+        },
+        "day": {
+          "gan": "辛",
+          "zhi": "巳",
+          "ganZhi": "辛巳"
+        },
+        "hour": {
+          "gan": "辛",
+          "zhi": "卯",
+          "ganZhi": "辛卯"
+        }
+      },
+      "dayunStartAge": 7,
+      "dayunDirection": "顺行",
+      "firstDayun": {
+        "gan": "甲",
+        "zhi": "申",
+        "ganZhi": "甲申"
+      }
+    },
+    "tags": [
+      "夏令时历史",
+      "中国DST期间"
+    ],
+    "notes": "北京 1990-07-15 中国DST期间；expect字段为程序生成，待人工复核"
+  }
+]
