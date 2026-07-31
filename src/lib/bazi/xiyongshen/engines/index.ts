@@ -8,3 +8,5 @@ export * from './bridgeEngine'
 export * from './seasonEngine'
 export * from './decisionEngine'
 export * from './engineProfile'
+// Sprint3-4: Evidence Fusion Decision Engine（多证据融合决策引擎）
+export * from './fusion'
