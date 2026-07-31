@@ -781,6 +781,23 @@ export interface DecisionResult {
   strategy: string
   /** 综合摘要 */
   summary: string
+
+  // ===== DecisionResult V3：Sprint3-5 命理质量控制体系聚合字段 =====
+  // 说明：AI 层仅读取 DecisionResult，不再重新推理。所有量化指标都在这里。
+  /** AccuracyCenter 评估：当前命局的 Rule/Engine/Decision 三级准确率 */
+  accuracyScore?: import('../../quality/types').DecisionAccuracy
+  /** ExplainScore：当前 Explain 的 6 维度质量评分 */
+  explainScore?: import('../../quality/types').ExplainBreakdown
+  /** RuleBenchmark：已执行规则的基准统计快照 */
+  ruleBenchmark?: import('../../quality/types').RuleBenchmarkReport
+  /** SchoolBenchmark：8 流派的准确率排名快照（批量评估后有） */
+  schoolBenchmark?: import('../../quality/types').SchoolBenchmarkReport
+  /** CaseSimilarity：与历史命例 Top-N 相似度匹配报告 */
+  caseSimilarity?: import('../../quality/types').CaseSimilarityReport
+  /** EngineDashboard：当前引擎运维面板快照 */
+  engineHealthDashboard?: import('../../quality/types').EngineDashboardReport
+  /** 玄风门命理质量体系版本（Sprint3-5 后固定为 3.5.x） */
+  version?: string
 }
 
 // ============================================================

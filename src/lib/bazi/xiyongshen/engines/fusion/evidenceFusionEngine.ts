@@ -55,11 +55,32 @@ import {
 const WUXING_LIST: Wuxing[] = ['木', '火', '土', '金', '水']
 
 /**
+ * DecisionResult Post Processor 钩子
+ *
+ * 用于 Sprint3-5 注入 AccuracyScore / ExplainScore / RuleBenchmark /
+ * CaseSimilarity 等 DecisionResult V3 字段，避免 evidenceFusionEngine
+ * 直接依赖 quality 模块造成循环依赖（accuracy.ts 会 import fusion 模块）。
+ *
+ * quality 模块初始化时注册 enricher，engine 每次 decide 结束后自动调用。
+ */
+export type DecisionResultPostProcessor = (ctx: {
+  result: DecisionResult
+  input: SubEngineInput
+  subResults: SubEngineResult[]
+}) => DecisionResult
+
+const _postProcessors: DecisionResultPostProcessor[] = []
+
+export function registerDecisionResultPostProcessor(fn: DecisionResultPostProcessor) {
+  _postProcessors.push(fn)
+}
+
+/**
  * Evidence Fusion Decision Engine V2 - Unified Decision Core
  */
 export class EvidenceFusionDecisionEngine {
   readonly name = 'EvidenceFusionDecisionEngine'
-  readonly version = '3.0.0' // V2 Unified Decision Core
+  readonly version = '3.5.0' // Sprint3-5 DecisionResult V3
   readonly system = 'bazi' as const
 
   private engines: SubEngineInstance[]
@@ -370,7 +391,22 @@ export class EvidenceFusionDecisionEngine {
     evidenceTree = globalEvidenceTreeV2Builder.build(subResults, priorityMatrix, result)
     result.evidenceTree = evidenceTree
 
-    return result
+    // ============================================================
+    // Step 21: DecisionResult V3 — Quality 字段注入（Post Processors）
+    //   避免循环依赖：accuracy.ts 引用 fusion，因此 quality 侧注册 enricher
+    // ============================================================
+    result.version = '3.5.0' // Sprint3-5 Quality System
+    let enriched: DecisionResult = result
+    for (const fn of _postProcessors) {
+      try {
+        enriched = fn({ result: enriched, input, subResults })
+      } catch (err) {
+        // Post processor 错误不影响主决策流程
+        console.warn('[DecisionResult V3] post-processor failed:', err)
+      }
+    }
+
+    return enriched
   }
 
   // ============================================================

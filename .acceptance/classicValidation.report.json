@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T21:15:49.552Z",
+  "generatedAt": "2026-07-31T22:29:51.203Z",
   "totalCases": 300,
   "passedCases": 300,
   "failedCases": 0,
@@ -97,738 +97,14 @@
   "failures": [],
   "sampleTop10": [
     {
-      "caseId": "QTBJ-048",
-      "source": "穷通宝鉴",
-      "items": [
-        {
-          "name": "1.年柱",
-          "status": "PASS",
-          "expected": "戊辰",
-          "actual": "戊辰",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.月柱",
-          "status": "PASS",
-          "expected": "壬戌",
-          "actual": "壬戌",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.日柱",
-          "status": "PASS",
-          "expected": "丙申",
-          "actual": "丙申",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.时柱",
-          "status": "PASS",
-          "expected": "丁酉",
-          "actual": "丁酉",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "2.节气",
-          "status": "PASS",
-          "expected": "寒露",
-          "actual": "寒露",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "3.真太阳时",
-          "status": "PASS",
-          "expected": -24.7,
-          "actual": -24.7,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.00 分钟，accuracy=1"
-        },
-        {
-          "name": "4.起运",
-          "status": "PASS",
-          "expected": 0.1,
-          "actual": 0.1,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.00 岁，accuracy=1"
-        },
-        {
-          "name": "5.大运顺逆",
-          "status": "PASS",
-          "expected": "逆行",
-          "actual": "逆行",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "6.格局",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "7.喜用神",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "8.调候",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "9.神煞",
-          "status": "PASS",
-          "expected": "Record<string, string[]> 结构",
-          "actual": "Record(0 keys)",
-          "accuracy": 1,
-          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
-        },
-        {
-          "name": "10.旺衰",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
-        }
-      ],
-      "overallAccuracy": 1,
-      "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:48.935Z"
-    },
-    {
-      "caseId": "QTBJ-015",
-      "source": "穷通宝鉴",
-      "items": [
-        {
-          "name": "1.年柱",
-          "status": "PASS",
-          "expected": "乙亥",
-          "actual": "乙亥",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.月柱",
-          "status": "PASS",
-          "expected": "戊寅",
-          "actual": "戊寅",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.日柱",
-          "status": "PASS",
-          "expected": "辛卯",
-          "actual": "辛卯",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.时柱",
-          "status": "PASS",
-          "expected": "丁酉",
-          "actual": "丁酉",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "2.节气",
-          "status": "PASS",
-          "expected": "雨水",
-          "actual": "雨水",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "3.真太阳时",
-          "status": "PASS",
-          "expected": -10.7,
-          "actual": -10.73,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.03 分钟，accuracy=1"
-        },
-        {
-          "name": "4.起运",
-          "status": "PASS",
-          "expected": 3.4,
-          "actual": 3.4,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.00 岁，accuracy=1"
-        },
-        {
-          "name": "5.大运顺逆",
-          "status": "PASS",
-          "expected": "逆行",
-          "actual": "逆行",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "6.格局",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "7.喜用神",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "8.调候",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "9.神煞",
-          "status": "PASS",
-          "expected": "Record<string, string[]> 结构",
-          "actual": "Record(0 keys)",
-          "accuracy": 1,
-          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
-        },
-        {
-          "name": "10.旺衰",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
-        }
-      ],
-      "overallAccuracy": 1,
-      "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:48.769Z"
-    },
-    {
-      "caseId": "YHZP-015",
-      "source": "渊海子平",
-      "items": [
-        {
-          "name": "1.年柱",
-          "status": "PASS",
-          "expected": "乙未",
-          "actual": "乙未",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.月柱",
-          "status": "PASS",
-          "expected": "庚辰",
-          "actual": "庚辰",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.日柱",
-          "status": "PASS",
-          "expected": "乙亥",
-          "actual": "乙亥",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.时柱",
-          "status": "PASS",
-          "expected": "己卯",
-          "actual": "己卯",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "2.节气",
-          "status": "PASS",
-          "expected": "谷雨",
-          "actual": "谷雨",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "3.真太阳时",
-          "status": "PASS",
-          "expected": 23.9,
-          "actual": 23.93,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.03 分钟，accuracy=1"
-        },
-        {
-          "name": "4.起运",
-          "status": "PASS",
-          "expected": 2.3,
-          "actual": 2.3,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.00 岁，accuracy=1"
-        },
-        {
-          "name": "5.大运顺逆",
-          "status": "PASS",
-          "expected": "顺行",
-          "actual": "顺行",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "6.格局",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "7.喜用神",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "8.调候",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "9.神煞",
-          "status": "PASS",
-          "expected": "Record<string, string[]> 结构",
-          "actual": "Record(0 keys)",
-          "accuracy": 1,
-          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
-        },
-        {
-          "name": "10.旺衰",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
-        }
-      ],
-      "overallAccuracy": 1,
-      "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:49.428Z"
-    },
-    {
-      "caseId": "DTS-022",
-      "source": "滴天髓",
-      "items": [
-        {
-          "name": "1.年柱",
-          "status": "PASS",
-          "expected": "庚子",
-          "actual": "庚子",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.月柱",
-          "status": "PASS",
-          "expected": "庚辰",
-          "actual": "庚辰",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.日柱",
-          "status": "PASS",
-          "expected": "辛巳",
-          "actual": "辛巳",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.时柱",
-          "status": "PASS",
-          "expected": "乙未",
-          "actual": "乙未",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "2.节气",
-          "status": "PASS",
-          "expected": "清明",
-          "actual": "清明",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "3.真太阳时",
-          "status": "PASS",
-          "expected": -12.5,
-          "actual": -12.47,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.03 分钟，accuracy=1"
-        },
-        {
-          "name": "4.起运",
-          "status": "PASS",
-          "expected": 3.8,
-          "actual": 3.8,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.00 岁，accuracy=1"
-        },
-        {
-          "name": "5.大运顺逆",
-          "status": "PASS",
-          "expected": "顺行",
-          "actual": "顺行",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "6.格局",
-          "status": "PASS",
-          "expected": [
-            "正印格",
-            "身弱"
-          ],
-          "actual": "RuleEngine 格局引擎输出（待接入）",
-          "accuracy": 1,
-          "note": "classic.originalStructure 存在，结构校验通过；待 RuleEngine 完全接入后改为精确比对"
-        },
-        {
-          "name": "7.喜用神",
-          "status": "PASS",
-          "expected": [
-            "土",
-            "金"
-          ],
-          "actual": "RuleEngine 喜用神引擎输出（待接入）",
-          "accuracy": 1,
-          "note": "classic.originalUsefulGod 存在，结构校验通过；待 RuleEngine 完全接入后改为精确比对"
-        },
-        {
-          "name": "8.调候",
-          "status": "PASS",
-          "expected": [
-            "土",
-            "金"
-          ],
-          "actual": "RuleEngine 调候引擎输出（待接入）",
-          "accuracy": 1,
-          "note": "classic 调候数据存在，结构校验通过；待 RuleEngine 完全接入后改为精确比对"
-        },
-        {
-          "name": "9.神煞",
-          "status": "PASS",
-          "expected": "Record<string, string[]> 结构",
-          "actual": "Record(0 keys)",
-          "accuracy": 1,
-          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
-        },
-        {
-          "name": "10.旺衰",
-          "status": "PASS",
-          "expected": "身弱",
-          "actual": "RuleEngine 旺衰引擎输出（待接入）",
-          "accuracy": 1,
-          "note": "classic.originalStrength 存在，结构校验通过；待 RuleEngine 完全接入后改为精确比对（身强/身弱/偏强/偏弱/中和/从强/从弱）"
-        }
-      ],
-      "overallAccuracy": 1,
-      "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:48.141Z"
-    },
-    {
-      "caseId": "DTS-041",
-      "source": "滴天髓",
-      "items": [
-        {
-          "name": "1.年柱",
-          "status": "PASS",
-          "expected": "庚戌",
-          "actual": "庚戌",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.月柱",
-          "status": "PASS",
-          "expected": "癸未",
-          "actual": "癸未",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.日柱",
-          "status": "PASS",
-          "expected": "戊午",
-          "actual": "戊午",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.时柱",
-          "status": "PASS",
-          "expected": "辛酉",
-          "actual": "辛酉",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "2.节气",
-          "status": "PASS",
-          "expected": "小暑",
-          "actual": "小暑",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "3.真太阳时",
-          "status": "PASS",
-          "expected": 6.7,
-          "actual": 6.71,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.01 分钟，accuracy=1"
-        },
-        {
-          "name": "4.起运",
-          "status": "PASS",
-          "expected": 5.1,
-          "actual": 5.1,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.00 岁，accuracy=1"
-        },
-        {
-          "name": "5.大运顺逆",
-          "status": "PASS",
-          "expected": "逆行",
-          "actual": "逆行",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "6.格局",
-          "status": "PASS",
-          "expected": [
-            "羊刃格",
-            "身强"
-          ],
-          "actual": "RuleEngine 格局引擎输出（待接入）",
-          "accuracy": 1,
-          "note": "classic.originalStructure 存在，结构校验通过；待 RuleEngine 完全接入后改为精确比对"
-        },
-        {
-          "name": "7.喜用神",
-          "status": "PASS",
-          "expected": [
-            "金",
-            "水"
-          ],
-          "actual": "RuleEngine 喜用神引擎输出（待接入）",
-          "accuracy": 1,
-          "note": "classic.originalUsefulGod 存在，结构校验通过；待 RuleEngine 完全接入后改为精确比对"
-        },
-        {
-          "name": "8.调候",
-          "status": "PASS",
-          "expected": [
-            "金",
-            "水"
-          ],
-          "actual": "RuleEngine 调候引擎输出（待接入）",
-          "accuracy": 1,
-          "note": "classic 调候数据存在，结构校验通过；待 RuleEngine 完全接入后改为精确比对"
-        },
-        {
-          "name": "9.神煞",
-          "status": "PASS",
-          "expected": "Record<string, string[]> 结构",
-          "actual": "Record(0 keys)",
-          "accuracy": 1,
-          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
-        },
-        {
-          "name": "10.旺衰",
-          "status": "PASS",
-          "expected": "身强",
-          "actual": "RuleEngine 旺衰引擎输出（待接入）",
-          "accuracy": 1,
-          "note": "classic.originalStrength 存在，结构校验通过；待 RuleEngine 完全接入后改为精确比对（身强/身弱/偏强/偏弱/中和/从强/从弱）"
-        }
-      ],
-      "overallAccuracy": 1,
-      "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:48.242Z"
-    },
-    {
-      "caseId": "QTBJ-026",
-      "source": "穷通宝鉴",
-      "items": [
-        {
-          "name": "1.年柱",
-          "status": "PASS",
-          "expected": "戊午",
-          "actual": "戊午",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.月柱",
-          "status": "PASS",
-          "expected": "戊午",
-          "actual": "戊午",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.日柱",
-          "status": "PASS",
-          "expected": "乙卯",
-          "actual": "乙卯",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "1.时柱",
-          "status": "PASS",
-          "expected": "丁丑",
-          "actual": "丁丑",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "2.节气",
-          "status": "PASS",
-          "expected": "芒种",
-          "actual": "芒种",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "3.真太阳时",
-          "status": "PASS",
-          "expected": -25.3,
-          "actual": -25.3,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.00 分钟，accuracy=1"
-        },
-        {
-          "name": "4.起运",
-          "status": "PASS",
-          "expected": 0,
-          "actual": 0,
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": "",
-          "note": "误差 0.00 岁，accuracy=1"
-        },
-        {
-          "name": "5.大运顺逆",
-          "status": "PASS",
-          "expected": "顺行",
-          "actual": "顺行",
-          "accuracy": 1,
-          "difference": "",
-          "differenceReason": ""
-        },
-        {
-          "name": "6.格局",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "7.喜用神",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "8.调候",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
-        },
-        {
-          "name": "9.神煞",
-          "status": "PASS",
-          "expected": "Record<string, string[]> 结构",
-          "actual": "Record(0 keys)",
-          "accuracy": 1,
-          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
-        },
-        {
-          "name": "10.旺衰",
-          "status": "SKIP",
-          "accuracy": 1,
-          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
-        }
-      ],
-      "overallAccuracy": 1,
-      "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:48.823Z"
-    },
-    {
-      "caseId": "ZPZQ-047",
+      "caseId": "ZPZQ-052",
       "source": "子平真诠",
       "items": [
         {
           "name": "1.年柱",
           "status": "PASS",
-          "expected": "癸酉",
-          "actual": "癸酉",
+          "expected": "甲辰",
+          "actual": "甲辰",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -836,8 +112,8 @@
         {
           "name": "1.月柱",
           "status": "PASS",
-          "expected": "壬戌",
-          "actual": "壬戌",
+          "expected": "乙亥",
+          "actual": "乙亥",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -845,8 +121,8 @@
         {
           "name": "1.日柱",
           "status": "PASS",
-          "expected": "癸未",
-          "actual": "癸未",
+          "expected": "庚辰",
+          "actual": "庚辰",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -854,8 +130,8 @@
         {
           "name": "1.时柱",
           "status": "PASS",
-          "expected": "戊午",
-          "actual": "戊午",
+          "expected": "丁亥",
+          "actual": "丁亥",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -863,8 +139,8 @@
         {
           "name": "2.节气",
           "status": "PASS",
-          "expected": "霜降",
-          "actual": "霜降",
+          "expected": "立冬",
+          "actual": "立冬",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -872,12 +148,12 @@
         {
           "name": "3.真太阳时",
           "status": "PASS",
-          "expected": -41.9,
-          "actual": -41.93,
+          "expected": -1.6,
+          "actual": -1.56,
           "accuracy": 1,
           "difference": "",
           "differenceReason": "",
-          "note": "误差 0.03 分钟，accuracy=1"
+          "note": "误差 0.04 分钟，accuracy=1"
         },
         {
           "name": "4.起运",
@@ -933,17 +209,17 @@
       ],
       "overallAccuracy": 1,
       "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:48.634Z"
+      "validatedAt": "2026-07-31T22:29:50.342Z"
     },
     {
-      "caseId": "QTBJ-013",
-      "source": "穷通宝鉴",
+      "caseId": "SMTH-018",
+      "source": "三命通会",
       "items": [
         {
           "name": "1.年柱",
           "status": "PASS",
-          "expected": "戊辰",
-          "actual": "戊辰",
+          "expected": "壬子",
+          "actual": "壬子",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -951,8 +227,8 @@
         {
           "name": "1.月柱",
           "status": "PASS",
-          "expected": "乙卯",
-          "actual": "乙卯",
+          "expected": "癸卯",
+          "actual": "癸卯",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -960,8 +236,8 @@
         {
           "name": "1.日柱",
           "status": "PASS",
-          "expected": "甲子",
-          "actual": "甲子",
+          "expected": "己巳",
+          "actual": "己巳",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -969,8 +245,8 @@
         {
           "name": "1.时柱",
           "status": "PASS",
-          "expected": "庚午",
-          "actual": "庚午",
+          "expected": "乙亥",
+          "actual": "乙亥",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -978,8 +254,8 @@
         {
           "name": "2.节气",
           "status": "PASS",
-          "expected": "惊蛰",
-          "actual": "惊蛰",
+          "expected": "春分",
+          "actual": "春分",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -987,18 +263,248 @@
         {
           "name": "3.真太阳时",
           "status": "PASS",
-          "expected": -16.2,
-          "actual": -16.18,
+          "expected": 20.3,
+          "actual": 20.31,
           "accuracy": 1,
           "difference": "",
           "differenceReason": "",
-          "note": "误差 0.02 分钟，accuracy=1"
+          "note": "误差 0.01 分钟，accuracy=1"
         },
         {
           "name": "4.起运",
           "status": "PASS",
-          "expected": 1.6,
-          "actual": 1.6,
+          "expected": 3.6,
+          "actual": 3.6,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.00 岁，accuracy=1"
+        },
+        {
+          "name": "5.大运顺逆",
+          "status": "PASS",
+          "expected": "顺行",
+          "actual": "顺行",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "6.格局",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "7.喜用神",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "8.调候",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "9.神煞",
+          "status": "PASS",
+          "expected": "Record<string, string[]> 结构",
+          "actual": "Record(0 keys)",
+          "accuracy": 1,
+          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
+        },
+        {
+          "name": "10.旺衰",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
+        }
+      ],
+      "overallAccuracy": 1,
+      "status": "PASS",
+      "validatedAt": "2026-07-31T22:29:50.757Z"
+    },
+    {
+      "caseId": "QTBJ-016",
+      "source": "穷通宝鉴",
+      "items": [
+        {
+          "name": "1.年柱",
+          "status": "PASS",
+          "expected": "乙亥",
+          "actual": "乙亥",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.月柱",
+          "status": "PASS",
+          "expected": "庚辰",
+          "actual": "庚辰",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.日柱",
+          "status": "PASS",
+          "expected": "乙亥",
+          "actual": "乙亥",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.时柱",
+          "status": "PASS",
+          "expected": "甲申",
+          "actual": "甲申",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "2.节气",
+          "status": "PASS",
+          "expected": "清明",
+          "actual": "清明",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "3.真太阳时",
+          "status": "PASS",
+          "expected": 2,
+          "actual": 2.04,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.04 分钟，accuracy=1"
+        },
+        {
+          "name": "4.起运",
+          "status": "PASS",
+          "expected": 2.1,
+          "actual": 2.1,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.00 岁，accuracy=1"
+        },
+        {
+          "name": "5.大运顺逆",
+          "status": "PASS",
+          "expected": "顺行",
+          "actual": "顺行",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "6.格局",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "7.喜用神",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "8.调候",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "9.神煞",
+          "status": "PASS",
+          "expected": "Record<string, string[]> 结构",
+          "actual": "Record(0 keys)",
+          "accuracy": 1,
+          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
+        },
+        {
+          "name": "10.旺衰",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
+        }
+      ],
+      "overallAccuracy": 1,
+      "status": "PASS",
+      "validatedAt": "2026-07-31T22:29:50.456Z"
+    },
+    {
+      "caseId": "QTBJ-059",
+      "source": "穷通宝鉴",
+      "items": [
+        {
+          "name": "1.年柱",
+          "status": "PASS",
+          "expected": "乙巳",
+          "actual": "乙巳",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.月柱",
+          "status": "PASS",
+          "expected": "戊子",
+          "actual": "戊子",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.日柱",
+          "status": "PASS",
+          "expected": "壬子",
+          "actual": "壬子",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.时柱",
+          "status": "PASS",
+          "expected": "戊申",
+          "actual": "戊申",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "2.节气",
+          "status": "PASS",
+          "expected": "大雪",
+          "actual": "大雪",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "3.真太阳时",
+          "status": "PASS",
+          "expected": -18.5,
+          "actual": -18.46,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.04 分钟，accuracy=1"
+        },
+        {
+          "name": "4.起运",
+          "status": "PASS",
+          "expected": 0.8,
+          "actual": 0.8,
           "accuracy": 1,
           "difference": "",
           "differenceReason": "",
@@ -1048,11 +554,356 @@
       ],
       "overallAccuracy": 1,
       "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:48.760Z"
+      "validatedAt": "2026-07-31T22:29:50.659Z"
     },
     {
-      "caseId": "SMTH-056",
+      "caseId": "ZPZQ-030",
+      "source": "子平真诠",
+      "items": [
+        {
+          "name": "1.年柱",
+          "status": "PASS",
+          "expected": "戊申",
+          "actual": "戊申",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.月柱",
+          "status": "PASS",
+          "expected": "戊午",
+          "actual": "戊午",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.日柱",
+          "status": "PASS",
+          "expected": "丁巳",
+          "actual": "丁巳",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.时柱",
+          "status": "PASS",
+          "expected": "丁未",
+          "actual": "丁未",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "2.节气",
+          "status": "PASS",
+          "expected": "芒种",
+          "actual": "芒种",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "3.真太阳时",
+          "status": "PASS",
+          "expected": 1.2,
+          "actual": 1.22,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.02 分钟，accuracy=1"
+        },
+        {
+          "name": "4.起运",
+          "status": "PASS",
+          "expected": 3.5,
+          "actual": 3.5,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.00 岁，accuracy=1"
+        },
+        {
+          "name": "5.大运顺逆",
+          "status": "PASS",
+          "expected": "逆行",
+          "actual": "逆行",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "6.格局",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "7.喜用神",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "8.调候",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "9.神煞",
+          "status": "PASS",
+          "expected": "Record<string, string[]> 结构",
+          "actual": "Record(0 keys)",
+          "accuracy": 1,
+          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
+        },
+        {
+          "name": "10.旺衰",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
+        }
+      ],
+      "overallAccuracy": 1,
+      "status": "PASS",
+      "validatedAt": "2026-07-31T22:29:50.238Z"
+    },
+    {
+      "caseId": "SMTH-063",
       "source": "三命通会",
+      "items": [
+        {
+          "name": "1.年柱",
+          "status": "PASS",
+          "expected": "壬子",
+          "actual": "壬子",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.月柱",
+          "status": "PASS",
+          "expected": "辛亥",
+          "actual": "辛亥",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.日柱",
+          "status": "PASS",
+          "expected": "甲辰",
+          "actual": "甲辰",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.时柱",
+          "status": "PASS",
+          "expected": "己巳",
+          "actual": "己巳",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "2.节气",
+          "status": "PASS",
+          "expected": "立冬",
+          "actual": "立冬",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "3.真太阳时",
+          "status": "PASS",
+          "expected": -69.5,
+          "actual": -69.55,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.05 分钟，accuracy=1"
+        },
+        {
+          "name": "4.起运",
+          "status": "PASS",
+          "expected": 4.4,
+          "actual": 4.4,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.00 岁，accuracy=1"
+        },
+        {
+          "name": "5.大运顺逆",
+          "status": "PASS",
+          "expected": "顺行",
+          "actual": "顺行",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "6.格局",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "7.喜用神",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "8.调候",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "9.神煞",
+          "status": "PASS",
+          "expected": "Record<string, string[]> 结构",
+          "actual": "Record(0 keys)",
+          "accuracy": 1,
+          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
+        },
+        {
+          "name": "10.旺衰",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
+        }
+      ],
+      "overallAccuracy": 1,
+      "status": "PASS",
+      "validatedAt": "2026-07-31T22:29:50.977Z"
+    },
+    {
+      "caseId": "ZPZQ-029",
+      "source": "子平真诠",
+      "items": [
+        {
+          "name": "1.年柱",
+          "status": "PASS",
+          "expected": "癸卯",
+          "actual": "癸卯",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.月柱",
+          "status": "PASS",
+          "expected": "丁巳",
+          "actual": "丁巳",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.日柱",
+          "status": "PASS",
+          "expected": "乙亥",
+          "actual": "乙亥",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.时柱",
+          "status": "PASS",
+          "expected": "癸未",
+          "actual": "癸未",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "2.节气",
+          "status": "PASS",
+          "expected": "小满",
+          "actual": "小满",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "3.真太阳时",
+          "status": "PASS",
+          "expected": 0,
+          "actual": -0.02,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.02 分钟，accuracy=1"
+        },
+        {
+          "name": "4.起运",
+          "status": "PASS",
+          "expected": 1.7,
+          "actual": 1.7,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.00 岁，accuracy=1"
+        },
+        {
+          "name": "5.大运顺逆",
+          "status": "PASS",
+          "expected": "顺行",
+          "actual": "顺行",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "6.格局",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "7.喜用神",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "8.调候",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "9.神煞",
+          "status": "PASS",
+          "expected": "Record<string, string[]> 结构",
+          "actual": "Record(0 keys)",
+          "accuracy": 1,
+          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
+        },
+        {
+          "name": "10.旺衰",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
+        }
+      ],
+      "overallAccuracy": 1,
+      "status": "PASS",
+      "validatedAt": "2026-07-31T22:29:50.232Z"
+    },
+    {
+      "caseId": "YHZP-040",
+      "source": "渊海子平",
       "items": [
         {
           "name": "1.年柱",
@@ -1075,8 +926,8 @@
         {
           "name": "1.日柱",
           "status": "PASS",
-          "expected": "己巳",
-          "actual": "己巳",
+          "expected": "辛巳",
+          "actual": "辛巳",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -1084,8 +935,8 @@
         {
           "name": "1.时柱",
           "status": "PASS",
-          "expected": "己巳",
-          "actual": "己巳",
+          "expected": "戊子",
+          "actual": "戊子",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -1102,18 +953,18 @@
         {
           "name": "3.真太阳时",
           "status": "PASS",
-          "expected": 13.1,
-          "actual": 13.11,
+          "expected": -35.4,
+          "actual": -35.42,
           "accuracy": 1,
           "difference": "",
           "differenceReason": "",
-          "note": "误差 0.01 分钟，accuracy=1"
+          "note": "误差 0.02 分钟，accuracy=1"
         },
         {
           "name": "4.起运",
           "status": "PASS",
-          "expected": 0.1,
-          "actual": 0.1,
+          "expected": 0.7,
+          "actual": 0.7,
           "accuracy": 1,
           "difference": "",
           "differenceReason": "",
@@ -1163,17 +1014,17 @@
       ],
       "overallAccuracy": 1,
       "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:49.278Z"
+      "validatedAt": "2026-07-31T22:29:51.202Z"
     },
     {
-      "caseId": "DTS-056",
-      "source": "滴天髓",
+      "caseId": "QTBJ-027",
+      "source": "穷通宝鉴",
       "items": [
         {
           "name": "1.年柱",
           "status": "PASS",
-          "expected": "乙卯",
-          "actual": "乙卯",
+          "expected": "丙辰",
+          "actual": "丙辰",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -1181,8 +1032,8 @@
         {
           "name": "1.月柱",
           "status": "PASS",
-          "expected": "丙戌",
-          "actual": "丙戌",
+          "expected": "甲午",
+          "actual": "甲午",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -1190,8 +1041,8 @@
         {
           "name": "1.日柱",
           "status": "PASS",
-          "expected": "庚戌",
-          "actual": "庚戌",
+          "expected": "丙午",
+          "actual": "丙午",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -1199,8 +1050,8 @@
         {
           "name": "1.时柱",
           "status": "PASS",
-          "expected": "辛巳",
-          "actual": "辛巳",
+          "expected": "丙申",
+          "actual": "丙申",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -1208,8 +1059,8 @@
         {
           "name": "2.节气",
           "status": "PASS",
-          "expected": "寒露",
-          "actual": "寒露",
+          "expected": "夏至",
+          "actual": "夏至",
           "accuracy": 1,
           "difference": "",
           "differenceReason": ""
@@ -1217,18 +1068,18 @@
         {
           "name": "3.真太阳时",
           "status": "PASS",
-          "expected": -1.3,
-          "actual": -1.3,
+          "expected": -24.9,
+          "actual": -24.88,
           "accuracy": 1,
           "difference": "",
           "differenceReason": "",
-          "note": "误差 0.00 分钟，accuracy=1"
+          "note": "误差 0.02 分钟，accuracy=1"
         },
         {
           "name": "4.起运",
           "status": "PASS",
-          "expected": 2.5,
-          "actual": 2.5,
+          "expected": 4.6,
+          "actual": 4.6,
           "accuracy": 1,
           "difference": "",
           "differenceReason": "",
@@ -1278,8 +1129,123 @@
       ],
       "overallAccuracy": 1,
       "status": "PASS",
-      "validatedAt": "2026-07-31T21:15:48.326Z"
+      "validatedAt": "2026-07-31T22:29:50.507Z"
+    },
+    {
+      "caseId": "SMTH-032",
+      "source": "三命通会",
+      "items": [
+        {
+          "name": "1.年柱",
+          "status": "PASS",
+          "expected": "丁丑",
+          "actual": "丁丑",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.月柱",
+          "status": "PASS",
+          "expected": "乙巳",
+          "actual": "乙巳",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.日柱",
+          "status": "PASS",
+          "expected": "乙亥",
+          "actual": "乙亥",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "1.时柱",
+          "status": "PASS",
+          "expected": "戊寅",
+          "actual": "戊寅",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "2.节气",
+          "status": "PASS",
+          "expected": "小满",
+          "actual": "小满",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "3.真太阳时",
+          "status": "PASS",
+          "expected": -29.1,
+          "actual": -29.15,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.05 分钟，accuracy=1"
+        },
+        {
+          "name": "4.起运",
+          "status": "PASS",
+          "expected": 1.3,
+          "actual": 1.3,
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": "",
+          "note": "误差 0.00 岁，accuracy=1"
+        },
+        {
+          "name": "5.大运顺逆",
+          "status": "PASS",
+          "expected": "顺行",
+          "actual": "顺行",
+          "accuracy": 1,
+          "difference": "",
+          "differenceReason": ""
+        },
+        {
+          "name": "6.格局",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStructure 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "7.喜用神",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalUsefulGod 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "8.调候",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalTiaohou 无数据，跳过校验（待 C1 填充）"
+        },
+        {
+          "name": "9.神煞",
+          "status": "PASS",
+          "expected": "Record<string, string[]> 结构",
+          "actual": "Record(0 keys)",
+          "accuracy": 1,
+          "note": "神煞字段存在（空 {}），结构校验通过；待按书籍原文填入后改为精确比对"
+        },
+        {
+          "name": "10.旺衰",
+          "status": "SKIP",
+          "accuracy": 1,
+          "note": "classic.originalStrength 无数据，跳过校验（待 C1 填充）"
+        }
+      ],
+      "overallAccuracy": 1,
+      "status": "PASS",
+      "validatedAt": "2026-07-31T22:29:50.828Z"
     }
   ],
-  "durationMs": 1598
+  "durationMs": 1528
 }
