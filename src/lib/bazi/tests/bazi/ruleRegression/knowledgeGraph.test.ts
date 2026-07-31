@@ -44,4 +44,38 @@ describe('C5 命理知识图谱（Knowledge Graph）', () => {
     const ovrRels = globalKG.queryRelations(mu!.id, 'overcomes')
     expect(ovrRels!.relations.find(r => r.target.name === '土')).toBeDefined()
   })
+
+  it('C6-3: 至少 30 条边有 relationWeight/evidenceCount/classicSupport', () => {
+    const graph = globalKG.exportGraph()
+    const enriched = graph.edges.filter(e =>
+      e.relationWeight !== undefined &&
+      e.evidenceCount !== undefined &&
+      e.classicSupport !== undefined
+    )
+    expect(enriched.length).toBeGreaterThanOrEqual(30)
+  })
+
+  it('C6-3: 五行相生相克边 consensusScore=1.0 且无争议', () => {
+    const graph = globalKG.exportGraph()
+    const mu = globalKG.getNodeByName('木', 'wuxing')!
+    const genRels = globalKG.queryRelations(mu.id, 'generates')
+    const fireEdge = genRels.relations.find(r => r.target.name === '火')!
+    expect(fireEdge.edge.consensusScore).toBe(1.0)
+    expect(fireEdge.edge.conflictOpinion?.hasConflict).toBe(false)
+  })
+
+  it('C6-3: 至少有 3 条边存在流派争议（conflictOpinion.hasConflict=true）', () => {
+    const graph = globalKG.exportGraph()
+    const conflicts = graph.edges.filter(e => e.conflictOpinion?.hasConflict === true)
+    expect(conflicts.length).toBeGreaterThanOrEqual(3)
+  })
+
+  it('C6-3: classicSupport.count 最大为 5（5部经典全支持）', () => {
+    const graph = globalKG.exportGraph()
+    const maxSupport = Math.max(...graph.edges
+      .filter(e => e.classicSupport)
+      .map(e => e.classicSupport!.count))
+    expect(maxSupport).toBeLessThanOrEqual(7) // 7部经典
+    expect(maxSupport).toBeGreaterThanOrEqual(5) // 至少有一条被5部经典支持
+  })
 })

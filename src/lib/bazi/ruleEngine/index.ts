@@ -22,6 +22,9 @@ export * from './categories';
 // P0-A7 Rule Sandbox
 export * from './sandbox';
 
+// C6-4 Explainable Rule Engine
+export * from './explainableRule';
+
 // V③ 保证导入本 index 时，所有分类目录的规则文件被加载（registerRule 副作用执行）
 // 放在最底部避免循环依赖
 import './categories';

@@ -108,93 +108,154 @@ const allNodes: KGNode[] = [
 
 const edges: KGEdge[] = []
 
+// C6-3: 经典支持列表常量
+const ALL_FIVE_CLASSICS = ['滴天髓', '子平真诠', '三命通会', '渊海子平', '穷通宝鉴']
+const TIANGAN_HE_CLASSICS = ['滴天髓', '子平真诠', '三命通会']
+const DIZHI_CLASSICS = ['渊海子平', '三命通会']
+
 // ---------- 五行相生：木→火→土→金→水→木（5条） ----------
 edges.push(
-  { id: 'e:wx-gen-1', from: 'wx:木', to: 'wx:火', type: 'generates', reason: '木生火', classicSource: '渊海子平', originalText: '木生火，火生土，土生金，金生水，水生木' },
-  { id: 'e:wx-gen-2', from: 'wx:火', to: 'wx:土', type: 'generates', reason: '火生土', classicSource: '渊海子平' },
-  { id: 'e:wx-gen-3', from: 'wx:土', to: 'wx:金', type: 'generates', reason: '土生金', classicSource: '渊海子平' },
-  { id: 'e:wx-gen-4', from: 'wx:金', to: 'wx:水', type: 'generates', reason: '金生水', classicSource: '渊海子平' },
-  { id: 'e:wx-gen-5', from: 'wx:水', to: 'wx:木', type: 'generates', reason: '水生木', classicSource: '渊海子平' },
+  { id: 'e:wx-gen-1', from: 'wx:木', to: 'wx:火', type: 'generates', reason: '木生火', classicSource: '渊海子平', originalText: '木生火，火生土，土生金，金生水，水生木',
+    relationWeight: { base: 1.0 }, evidenceCount: 10, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
+  { id: 'e:wx-gen-2', from: 'wx:火', to: 'wx:土', type: 'generates', reason: '火生土', classicSource: '渊海子平',
+    relationWeight: { base: 1.0 }, evidenceCount: 10, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
+  { id: 'e:wx-gen-3', from: 'wx:土', to: 'wx:金', type: 'generates', reason: '土生金', classicSource: '渊海子平',
+    relationWeight: { base: 1.0 }, evidenceCount: 9, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
+  { id: 'e:wx-gen-4', from: 'wx:金', to: 'wx:水', type: 'generates', reason: '金生水', classicSource: '渊海子平',
+    relationWeight: { base: 1.0 }, evidenceCount: 9, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
+  { id: 'e:wx-gen-5', from: 'wx:水', to: 'wx:木', type: 'generates', reason: '水生木', classicSource: '渊海子平',
+    relationWeight: { base: 1.0 }, evidenceCount: 10, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
 )
 
 // ---------- 五行相克：木→土→水→火→金→木（5条） ----------
 edges.push(
-  { id: 'e:wx-ovr-1', from: 'wx:木', to: 'wx:土', type: 'overcomes', reason: '木克土', classicSource: '渊海子平', originalText: '木克土，土克水，水克火，火克金，金克木' },
-  { id: 'e:wx-ovr-2', from: 'wx:土', to: 'wx:水', type: 'overcomes', reason: '土克水', classicSource: '渊海子平' },
-  { id: 'e:wx-ovr-3', from: 'wx:水', to: 'wx:火', type: 'overcomes', reason: '水克火', classicSource: '渊海子平' },
-  { id: 'e:wx-ovr-4', from: 'wx:火', to: 'wx:金', type: 'overcomes', reason: '火克金', classicSource: '渊海子平' },
-  { id: 'e:wx-ovr-5', from: 'wx:金', to: 'wx:木', type: 'overcomes', reason: '金克木', classicSource: '渊海子平' },
+  { id: 'e:wx-ovr-1', from: 'wx:木', to: 'wx:土', type: 'overcomes', reason: '木克土', classicSource: '渊海子平', originalText: '木克土，土克水，水克火，火克金，金克木',
+    relationWeight: { base: 1.0 }, evidenceCount: 10, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
+  { id: 'e:wx-ovr-2', from: 'wx:土', to: 'wx:水', type: 'overcomes', reason: '土克水', classicSource: '渊海子平',
+    relationWeight: { base: 1.0 }, evidenceCount: 9, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
+  { id: 'e:wx-ovr-3', from: 'wx:水', to: 'wx:火', type: 'overcomes', reason: '水克火', classicSource: '渊海子平',
+    relationWeight: { base: 1.0 }, evidenceCount: 9, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
+  { id: 'e:wx-ovr-4', from: 'wx:火', to: 'wx:金', type: 'overcomes', reason: '火克金', classicSource: '渊海子平',
+    relationWeight: { base: 1.0 }, evidenceCount: 9, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
+  { id: 'e:wx-ovr-5', from: 'wx:金', to: 'wx:木', type: 'overcomes', reason: '金克木', classicSource: '渊海子平',
+    relationWeight: { base: 1.0 }, evidenceCount: 10, classicSupport: { count: 5, classics: ALL_FIVE_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 1.0 },
 )
 
 // ---------- 天干喜忌（20条） ----------
 edges.push(
-  { id: 'e:tg-like-1', from: 'tg:甲', to: 'tg:丙', type: 'likes', reason: '寒木向阳', classicSource: '穷通宝鉴', originalText: '甲木参天，三春甲木先用丙火后用癸水', chapter: '春木' },
-  { id: 'e:tg-like-2', from: 'tg:甲', to: 'tg:庚', type: 'likes', reason: '栋梁之材须庚金雕琢', classicSource: '滴天髓', originalText: '甲木参天，脱胎要火；春不容金，秋不容土', chapter: '天干十论' },
-  { id: 'e:tg-like-3', from: 'tg:乙', to: 'tg:丙', type: 'likes', reason: '寒木向阳', classicSource: '穷通宝鉴', originalText: '乙木如花草，丙火照暖方生', chapter: '春木' },
-  { id: 'e:tg-like-4', from: 'tg:乙', to: 'tg:庚', type: 'dislikes', reason: '乙庚合金失木性', classicSource: '滴天髓', originalText: '乙木虽柔，刲羊解牛；怀丁抱丙，跨凤乘猴', chapter: '天干十论' },
-  { id: 'e:tg-like-5', from: 'tg:丙', to: 'tg:壬', type: 'likes', reason: '水火既济', classicSource: '滴天髓', originalText: '丙火猛烈，欺霜侮雪；壬水汪洋，水火既济', chapter: '天干十论' },
-  { id: 'e:tg-like-6', from: 'tg:丙', to: 'tg:己', type: 'dislikes', reason: '土晦火光', classicSource: '穷通宝鉴', originalText: '丙火忌己土晦其光', chapter: '夏火' },
-  { id: 'e:tg-like-7', from: 'tg:丁', to: 'tg:甲', type: 'likes', reason: '木生火，丁火依附甲木', classicSource: '滴天髓', originalText: '丁火柔中，内性昭融；抱乙而孝，合壬而忠', chapter: '天干十论' },
-  { id: 'e:tg-like-8', from: 'tg:戊', to: 'tg:甲', type: 'likes', reason: '木疏厚土', classicSource: '子平真诠', originalText: '戊土厚重，用甲木疏之', chapter: '论用神' },
-  { id: 'e:tg-like-9', from: 'tg:己', to: 'tg:丙', type: 'likes', reason: '火生土，己土喜丙火照暖', classicSource: '穷通宝鉴', originalText: '己土卑湿，喜丙火暖之', chapter: '四季土' },
-  { id: 'e:tg-like-10', from: 'tg:庚', to: 'tg:丁', type: 'likes', reason: '火炼真金', classicSource: '滴天髓', originalText: '庚金须火炼，丁火为炉冶', chapter: '天干十论' },
-  { id: 'e:tg-like-11', from: 'tg:辛', to: 'tg:壬', type: 'likes', reason: '金水相生，辛金喜壬水洗淘', classicSource: '穷通宝鉴', originalText: '辛金软弱，温润而清；畏土之叠，乐水之盈', chapter: '秋金' },
-  { id: 'e:tg-like-12', from: 'tg:壬', to: 'tg:戊', type: 'likes', reason: '土克水为堤，壬水奔腾喜戊土为堤', classicSource: '滴天髓', originalText: '壬水通河，能泄金气；刚中之德，周流不滞', chapter: '天干十论' },
-  { id: 'e:tg-like-13', from: 'tg:癸', to: 'tg:辛', type: 'likes', reason: '金生水，癸水喜辛金为源', classicSource: '穷通宝鉴', originalText: '癸水至弱，达于天津；得龙而润，功化斯神', chapter: '冬水' },
+  { id: 'e:tg-like-1', from: 'tg:甲', to: 'tg:丙', type: 'likes', reason: '寒木向阳', classicSource: '穷通宝鉴', originalText: '甲木参天，三春甲木先用丙火后用癸水', chapter: '春木',
+    relationWeight: { base: 0.9, dynamic: 0.95, effective: 0.855 }, evidenceCount: 8, classicSupport: { count: 3, classics: ['穷通宝鉴', '滴天髓', '渊海子平'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
+  { id: 'e:tg-like-2', from: 'tg:甲', to: 'tg:庚', type: 'likes', reason: '栋梁之材须庚金雕琢', classicSource: '滴天髓', originalText: '甲木参天，脱胎要火；春不容金，秋不容土', chapter: '天干十论',
+    relationWeight: { base: 0.8, dynamic: 0.7, effective: 0.56 }, evidenceCount: 6, classicSupport: { count: 2, classics: ['滴天髓', '子平真诠'] }, conflictOpinion: { hasConflict: true, description: '甲木秋生是否喜庚金雕琢存在流派争议', dissentingClassics: ['神峰通考'], focus: '甲木喜庚金的季节条件' }, consensusScore: 0.5 },
+  { id: 'e:tg-like-3', from: 'tg:乙', to: 'tg:丙', type: 'likes', reason: '寒木向阳', classicSource: '穷通宝鉴', originalText: '乙木如花草，丙火照暖方生', chapter: '春木',
+    relationWeight: { base: 0.9, dynamic: 0.95, effective: 0.855 }, evidenceCount: 7, classicSupport: { count: 2, classics: ['穷通宝鉴', '滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:tg-like-4', from: 'tg:乙', to: 'tg:庚', type: 'dislikes', reason: '乙庚合金失木性', classicSource: '滴天髓', originalText: '乙木虽柔，刲羊解牛；怀丁抱丙，跨凤乘猴', chapter: '天干十论',
+    relationWeight: { base: 0.7 }, evidenceCount: 5, classicSupport: { count: 2, classics: ['滴天髓', '渊海子平'] }, conflictOpinion: { hasConflict: true, description: '乙木是否喜庚金存在争议（合化失木性 vs 庚金劈木引丁）', dissentingClassics: ['神峰通考'], focus: '乙木与庚金的喜忌取向' }, consensusScore: 0.4 },
+  { id: 'e:tg-like-5', from: 'tg:丙', to: 'tg:壬', type: 'likes', reason: '水火既济', classicSource: '滴天髓', originalText: '丙火猛烈，欺霜侮雪；壬水汪洋，水火既济', chapter: '天干十论',
+    relationWeight: { base: 0.85 }, evidenceCount: 6, classicSupport: { count: 2, classics: ['滴天髓', '穷通宝鉴'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:tg-like-6', from: 'tg:丙', to: 'tg:己', type: 'dislikes', reason: '土晦火光', classicSource: '穷通宝鉴', originalText: '丙火忌己土晦其光', chapter: '夏火',
+    relationWeight: { base: 0.8 }, evidenceCount: 5, classicSupport: { count: 2, classics: ['穷通宝鉴', '滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.8 },
+  { id: 'e:tg-like-7', from: 'tg:丁', to: 'tg:甲', type: 'likes', reason: '木生火，丁火依附甲木', classicSource: '滴天髓', originalText: '丁火柔中，内性昭融；抱乙而孝，合壬而忠', chapter: '天干十论',
+    relationWeight: { base: 0.9 }, evidenceCount: 7, classicSupport: { count: 2, classics: ['滴天髓', '渊海子平'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
+  { id: 'e:tg-like-8', from: 'tg:戊', to: 'tg:甲', type: 'likes', reason: '木疏厚土', classicSource: '子平真诠', originalText: '戊土厚重，用甲木疏之', chapter: '论用神',
+    relationWeight: { base: 0.85, dynamic: 0.9, effective: 0.765 }, evidenceCount: 6, classicSupport: { count: 2, classics: ['子平真诠', '滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:tg-like-9', from: 'tg:己', to: 'tg:丙', type: 'likes', reason: '火生土，己土喜丙火照暖', classicSource: '穷通宝鉴', originalText: '己土卑湿，喜丙火暖之', chapter: '四季土',
+    relationWeight: { base: 0.85 }, evidenceCount: 5, classicSupport: { count: 2, classics: ['穷通宝鉴', '滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.8 },
+  { id: 'e:tg-like-10', from: 'tg:庚', to: 'tg:丁', type: 'likes', reason: '火炼真金', classicSource: '滴天髓', originalText: '庚金须火炼，丁火为炉冶', chapter: '天干十论',
+    relationWeight: { base: 0.85, dynamic: 0.9, effective: 0.765 }, evidenceCount: 6, classicSupport: { count: 2, classics: ['滴天髓', '穷通宝鉴'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:tg-like-11', from: 'tg:辛', to: 'tg:壬', type: 'likes', reason: '金水相生，辛金喜壬水洗淘', classicSource: '穷通宝鉴', originalText: '辛金软弱，温润而清；畏土之叠，乐水之盈', chapter: '秋金',
+    relationWeight: { base: 0.9 }, evidenceCount: 7, classicSupport: { count: 2, classics: ['穷通宝鉴', '滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
+  { id: 'e:tg-like-12', from: 'tg:壬', to: 'tg:戊', type: 'likes', reason: '土克水为堤，壬水奔腾喜戊土为堤', classicSource: '滴天髓', originalText: '壬水通河，能泄金气；刚中之德，周流不滞', chapter: '天干十论',
+    relationWeight: { base: 0.85 }, evidenceCount: 6, classicSupport: { count: 2, classics: ['滴天髓', '子平真诠'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:tg-like-13', from: 'tg:癸', to: 'tg:辛', type: 'likes', reason: '金生水，癸水喜辛金为源', classicSource: '穷通宝鉴', originalText: '癸水至弱，达于天津；得龙而润，功化斯神', chapter: '冬水',
+    relationWeight: { base: 0.8 }, evidenceCount: 5, classicSupport: { count: 2, classics: ['穷通宝鉴', '滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.8 },
   // 补足至 20 条（忌神关系）
-  { id: 'e:tg-like-14', from: 'tg:丁', to: 'tg:癸', type: 'dislikes', reason: '癸水克丁火，雨露灭灯烛', classicSource: '穷通宝鉴', chapter: '夏火' },
-  { id: 'e:tg-like-15', from: 'tg:戊', to: 'tg:壬', type: 'dislikes', reason: '壬水泛滥冲堤', classicSource: '滴天髓', chapter: '天干十论' },
-  { id: 'e:tg-like-16', from: 'tg:己', to: 'tg:乙', type: 'dislikes', reason: '乙木克己土，田园被根穿', classicSource: '子平真诠', chapter: '论用神' },
-  { id: 'e:tg-like-17', from: 'tg:庚', to: 'tg:丙', type: 'dislikes', reason: '丙火熔金，过炼反损', classicSource: '滴天髓', chapter: '天干十论' },
-  { id: 'e:tg-like-18', from: 'tg:辛', to: 'tg:己', type: 'dislikes', reason: '己土埋金，珠玉失光', classicSource: '穷通宝鉴', chapter: '四季土' },
-  { id: 'e:tg-like-19', from: 'tg:壬', to: 'tg:乙', type: 'dislikes', reason: '乙木泄水过多', classicSource: '滴天髓', chapter: '天干十论' },
-  { id: 'e:tg-like-20', from: 'tg:癸', to: 'tg:己', type: 'dislikes', reason: '己土克癸水，雨露被燥土所吸', classicSource: '穷通宝鉴', chapter: '四季土' },
+  { id: 'e:tg-like-14', from: 'tg:丁', to: 'tg:癸', type: 'dislikes', reason: '癸水克丁火，雨露灭灯烛', classicSource: '穷通宝鉴', chapter: '夏火',
+    relationWeight: { base: 0.8 }, evidenceCount: 4, classicSupport: { count: 1, classics: ['穷通宝鉴'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.75 },
+  { id: 'e:tg-like-15', from: 'tg:戊', to: 'tg:壬', type: 'dislikes', reason: '壬水泛滥冲堤', classicSource: '滴天髓', chapter: '天干十论',
+    relationWeight: { base: 0.8 }, evidenceCount: 4, classicSupport: { count: 1, classics: ['滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.75 },
+  { id: 'e:tg-like-16', from: 'tg:己', to: 'tg:乙', type: 'dislikes', reason: '乙木克己土，田园被根穿', classicSource: '子平真诠', chapter: '论用神',
+    relationWeight: { base: 0.75 }, evidenceCount: 4, classicSupport: { count: 1, classics: ['子平真诠'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.7 },
+  { id: 'e:tg-like-17', from: 'tg:庚', to: 'tg:丙', type: 'dislikes', reason: '丙火熔金，过炼反损', classicSource: '滴天髓', chapter: '天干十论',
+    relationWeight: { base: 0.75 }, evidenceCount: 4, classicSupport: { count: 1, classics: ['滴天髓'] }, conflictOpinion: { hasConflict: true, description: '庚金是否忌丙火存在争议（火炼真金 vs 火多克金）', dissentingClassics: ['神峰通考'], focus: '庚金对丙火的喜忌' }, consensusScore: 0.5 },
+  { id: 'e:tg-like-18', from: 'tg:辛', to: 'tg:己', type: 'dislikes', reason: '己土埋金，珠玉失光', classicSource: '穷通宝鉴', chapter: '四季土',
+    relationWeight: { base: 0.8 }, evidenceCount: 5, classicSupport: { count: 1, classics: ['穷通宝鉴'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.8 },
+  { id: 'e:tg-like-19', from: 'tg:壬', to: 'tg:乙', type: 'dislikes', reason: '乙木泄水过多', classicSource: '滴天髓', chapter: '天干十论',
+    relationWeight: { base: 0.7 }, evidenceCount: 3, classicSupport: { count: 1, classics: ['滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.7 },
+  { id: 'e:tg-like-20', from: 'tg:癸', to: 'tg:己', type: 'dislikes', reason: '己土克癸水，雨露被燥土所吸', classicSource: '穷通宝鉴', chapter: '四季土',
+    relationWeight: { base: 0.8 }, evidenceCount: 4, classicSupport: { count: 1, classics: ['穷通宝鉴'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.75 },
 )
 
 // ---------- 天干五合（5条） ----------
 edges.push(
-  { id: 'e:tg-combine-1', from: 'tg:甲', to: 'tg:己', type: 'combines', reason: '甲己合化土', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化土', chapter: '论化合' },
-  { id: 'e:tg-combine-2', from: 'tg:乙', to: 'tg:庚', type: 'combines', reason: '乙庚合化金', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化金', chapter: '论化合' },
-  { id: 'e:tg-combine-3', from: 'tg:丙', to: 'tg:辛', type: 'combines', reason: '丙辛合化水', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化水', chapter: '论化合' },
-  { id: 'e:tg-combine-4', from: 'tg:丁', to: 'tg:壬', type: 'combines', reason: '丁壬合化木', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化木', chapter: '论化合' },
-  { id: 'e:tg-combine-5', from: 'tg:戊', to: 'tg:癸', type: 'combines', reason: '戊癸合化火', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化火', chapter: '论化合' },
+  { id: 'e:tg-combine-1', from: 'tg:甲', to: 'tg:己', type: 'combines', reason: '甲己合化土', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化土', chapter: '论化合',
+    relationWeight: { base: 0.8, dynamic: 0.9, effective: 0.72 }, evidenceCount: 5, classicSupport: { count: 3, classics: TIANGAN_HE_CLASSICS }, conflictOpinion: { hasConflict: true, description: '化气格成立条件存在流派争议', dissentingClassics: ['神峰通考'], focus: '化气成立条件' }, consensusScore: 0.8 },
+  { id: 'e:tg-combine-2', from: 'tg:乙', to: 'tg:庚', type: 'combines', reason: '乙庚合化金', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化金', chapter: '论化合',
+    relationWeight: { base: 0.8, dynamic: 0.85, effective: 0.68 }, evidenceCount: 4, classicSupport: { count: 3, classics: TIANGAN_HE_CLASSICS }, conflictOpinion: { hasConflict: true, description: '化气格成立条件存在流派争议', dissentingClassics: ['神峰通考'], focus: '化气成立条件' }, consensusScore: 0.8 },
+  { id: 'e:tg-combine-3', from: 'tg:丙', to: 'tg:辛', type: 'combines', reason: '丙辛合化水', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化水', chapter: '论化合',
+    relationWeight: { base: 0.8, dynamic: 0.85, effective: 0.68 }, evidenceCount: 3, classicSupport: { count: 3, classics: TIANGAN_HE_CLASSICS }, conflictOpinion: { hasConflict: true, description: '化气格成立条件存在流派争议', dissentingClassics: ['神峰通考'], focus: '化气成立条件' }, consensusScore: 0.8 },
+  { id: 'e:tg-combine-4', from: 'tg:丁', to: 'tg:壬', type: 'combines', reason: '丁壬合化木', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化木', chapter: '论化合',
+    relationWeight: { base: 0.8, dynamic: 0.9, effective: 0.72 }, evidenceCount: 4, classicSupport: { count: 3, classics: TIANGAN_HE_CLASSICS }, conflictOpinion: { hasConflict: true, description: '化气格成立条件存在流派争议', dissentingClassics: ['神峰通考'], focus: '化气成立条件' }, consensusScore: 0.8 },
+  { id: 'e:tg-combine-5', from: 'tg:戊', to: 'tg:癸', type: 'combines', reason: '戊癸合化火', classicSource: '渊海子平', condition: '两干紧贴、得月令化气则化火', chapter: '论化合',
+    relationWeight: { base: 0.8, dynamic: 0.85, effective: 0.68 }, evidenceCount: 3, classicSupport: { count: 3, classics: TIANGAN_HE_CLASSICS }, conflictOpinion: { hasConflict: true, description: '化气格成立条件存在流派争议', dissentingClassics: ['神峰通考'], focus: '化气成立条件' }, consensusScore: 0.8 },
 )
 
 // ---------- 地支六冲（6条） ----------
 edges.push(
-  { id: 'e:dz-clash-1', from: 'dz:子', to: 'dz:午', type: 'clashes', reason: '子午冲，水火相战', classicSource: '渊海子平', chapter: '论地支' },
-  { id: 'e:dz-clash-2', from: 'dz:丑', to: 'dz:未', type: 'clashes', reason: '丑未冲，湿燥土相战', classicSource: '渊海子平', chapter: '论地支' },
-  { id: 'e:dz-clash-3', from: 'dz:寅', to: 'dz:申', type: 'clashes', reason: '寅申冲，金木相战', classicSource: '渊海子平', chapter: '论地支' },
-  { id: 'e:dz-clash-4', from: 'dz:卯', to: 'dz:酉', type: 'clashes', reason: '卯酉冲，金木相战', classicSource: '渊海子平', chapter: '论地支' },
-  { id: 'e:dz-clash-5', from: 'dz:辰', to: 'dz:戌', type: 'clashes', reason: '辰戌冲，湿燥土相战', classicSource: '渊海子平', chapter: '论地支' },
-  { id: 'e:dz-clash-6', from: 'dz:巳', to: 'dz:亥', type: 'clashes', reason: '巳亥冲，水火相战', classicSource: '渊海子平', chapter: '论地支' },
+  { id: 'e:dz-clash-1', from: 'dz:子', to: 'dz:午', type: 'clashes', reason: '子午冲，水火相战', classicSource: '渊海子平', chapter: '论地支',
+    relationWeight: { base: 0.9 }, evidenceCount: 3, classicSupport: { count: 3, classics: ['渊海子平', '三命通会', '滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
+  { id: 'e:dz-clash-2', from: 'dz:丑', to: 'dz:未', type: 'clashes', reason: '丑未冲，湿燥土相战', classicSource: '渊海子平', chapter: '论地支',
+    relationWeight: { base: 0.9 }, evidenceCount: 2, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
+  { id: 'e:dz-clash-3', from: 'dz:寅', to: 'dz:申', type: 'clashes', reason: '寅申冲，金木相战', classicSource: '渊海子平', chapter: '论地支',
+    relationWeight: { base: 0.9 }, evidenceCount: 3, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
+  { id: 'e:dz-clash-4', from: 'dz:卯', to: 'dz:酉', type: 'clashes', reason: '卯酉冲，金木相战', classicSource: '渊海子平', chapter: '论地支',
+    relationWeight: { base: 0.9 }, evidenceCount: 3, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
+  { id: 'e:dz-clash-5', from: 'dz:辰', to: 'dz:戌', type: 'clashes', reason: '辰戌冲，湿燥土相战', classicSource: '渊海子平', chapter: '论地支',
+    relationWeight: { base: 0.9 }, evidenceCount: 2, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
+  { id: 'e:dz-clash-6', from: 'dz:巳', to: 'dz:亥', type: 'clashes', reason: '巳亥冲，水火相战', classicSource: '渊海子平', chapter: '论地支',
+    relationWeight: { base: 0.9 }, evidenceCount: 3, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
 )
 
 // ---------- 地支三合（4条，以将星为枢纽） ----------
 edges.push(
-  { id: 'e:dz-sanhe-1', from: 'dz:申', to: 'dz:子', type: 'combines', reason: '申子辰三合水局', classicSource: '渊海子平', condition: '申子辰三支全见方成水局，子为将星', chapter: '论三合' },
-  { id: 'e:dz-sanhe-2', from: 'dz:亥', to: 'dz:卯', type: 'combines', reason: '亥卯未三合木局', classicSource: '渊海子平', condition: '亥卯未三支全见方成木局，卯为将星', chapter: '论三合' },
-  { id: 'e:dz-sanhe-3', from: 'dz:寅', to: 'dz:午', type: 'combines', reason: '寅午戌三合火局', classicSource: '渊海子平', condition: '寅午戌三支全见方成火局，午为将星', chapter: '论三合' },
-  { id: 'e:dz-sanhe-4', from: 'dz:巳', to: 'dz:酉', type: 'combines', reason: '巳酉丑三合金局', classicSource: '渊海子平', condition: '巳酉丑三支全见方成金局，酉为将星', chapter: '论三合' },
+  { id: 'e:dz-sanhe-1', from: 'dz:申', to: 'dz:子', type: 'combines', reason: '申子辰三合水局', classicSource: '渊海子平', condition: '申子辰三支全见方成水局，子为将星', chapter: '论三合',
+    relationWeight: { base: 0.9 }, evidenceCount: 5, classicSupport: { count: 3, classics: ['渊海子平', '三命通会', '滴天髓'] }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
+  { id: 'e:dz-sanhe-2', from: 'dz:亥', to: 'dz:卯', type: 'combines', reason: '亥卯未三合木局', classicSource: '渊海子平', condition: '亥卯未三支全见方成木局，卯为将星', chapter: '论三合',
+    relationWeight: { base: 0.9 }, evidenceCount: 4, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
+  { id: 'e:dz-sanhe-3', from: 'dz:寅', to: 'dz:午', type: 'combines', reason: '寅午戌三合火局', classicSource: '渊海子平', condition: '寅午戌三支全见方成火局，午为将星', chapter: '论三合',
+    relationWeight: { base: 0.9 }, evidenceCount: 4, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
+  { id: 'e:dz-sanhe-4', from: 'dz:巳', to: 'dz:酉', type: 'combines', reason: '巳酉丑三合金局', classicSource: '渊海子平', condition: '巳酉丑三支全见方成金局，酉为将星', chapter: '论三合',
+    relationWeight: { base: 0.9 }, evidenceCount: 4, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.95 },
 )
 
 // ---------- 地支六合（6条） ----------
 edges.push(
-  { id: 'e:dz-liuhe-1', from: 'dz:子', to: 'dz:丑', type: 'combines', reason: '子丑合土', classicSource: '渊海子平', chapter: '论六合' },
-  { id: 'e:dz-liuhe-2', from: 'dz:寅', to: 'dz:亥', type: 'combines', reason: '寅亥合木', classicSource: '渊海子平', chapter: '论六合' },
-  { id: 'e:dz-liuhe-3', from: 'dz:卯', to: 'dz:戌', type: 'combines', reason: '卯戌合火', classicSource: '渊海子平', chapter: '论六合' },
-  { id: 'e:dz-liuhe-4', from: 'dz:辰', to: 'dz:酉', type: 'combines', reason: '辰酉合金', classicSource: '渊海子平', chapter: '论六合' },
-  { id: 'e:dz-liuhe-5', from: 'dz:巳', to: 'dz:申', type: 'combines', reason: '巳申合水', classicSource: '渊海子平', chapter: '论六合' },
-  { id: 'e:dz-liuhe-6', from: 'dz:午', to: 'dz:未', type: 'combines', reason: '午未合', classicSource: '渊海子平', chapter: '论六合' },
+  { id: 'e:dz-liuhe-1', from: 'dz:子', to: 'dz:丑', type: 'combines', reason: '子丑合土', classicSource: '渊海子平', chapter: '论六合',
+    relationWeight: { base: 0.85 }, evidenceCount: 3, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
+  { id: 'e:dz-liuhe-2', from: 'dz:寅', to: 'dz:亥', type: 'combines', reason: '寅亥合木', classicSource: '渊海子平', chapter: '论六合',
+    relationWeight: { base: 0.85 }, evidenceCount: 3, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
+  { id: 'e:dz-liuhe-3', from: 'dz:卯', to: 'dz:戌', type: 'combines', reason: '卯戌合火', classicSource: '渊海子平', chapter: '论六合',
+    relationWeight: { base: 0.85 }, evidenceCount: 2, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
+  { id: 'e:dz-liuhe-4', from: 'dz:辰', to: 'dz:酉', type: 'combines', reason: '辰酉合金', classicSource: '渊海子平', chapter: '论六合',
+    relationWeight: { base: 0.85 }, evidenceCount: 3, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
+  { id: 'e:dz-liuhe-5', from: 'dz:巳', to: 'dz:申', type: 'combines', reason: '巳申合水', classicSource: '渊海子平', chapter: '论六合',
+    relationWeight: { base: 0.85 }, evidenceCount: 2, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
+  { id: 'e:dz-liuhe-6', from: 'dz:午', to: 'dz:未', type: 'combines', reason: '午未合', classicSource: '渊海子平', chapter: '论六合',
+    relationWeight: { base: 0.85 }, evidenceCount: 2, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.9 },
 )
 
 // ---------- 地支三刑（5条） ----------
 edges.push(
-  { id: 'e:dz-xing-1', from: 'dz:寅', to: 'dz:巳', type: 'punishes', reason: '寅巳申三刑（无恩之刑）', classicSource: '三命通会', condition: '寅巳申全见方成三刑', chapter: '论三刑' },
-  { id: 'e:dz-xing-2', from: 'dz:巳', to: 'dz:申', type: 'punishes', reason: '寅巳申三刑（无恩之刑）', classicSource: '三命通会', condition: '寅巳申全见方成三刑', chapter: '论三刑' },
-  { id: 'e:dz-xing-3', from: 'dz:丑', to: 'dz:戌', type: 'punishes', reason: '丑戌未三刑（恃势之刑）', classicSource: '三命通会', condition: '丑戌未全见方成三刑', chapter: '论三刑' },
-  { id: 'e:dz-xing-4', from: 'dz:戌', to: 'dz:未', type: 'punishes', reason: '丑戌未三刑（恃势之刑）', classicSource: '三命通会', condition: '丑戌未全见方成三刑', chapter: '论三刑' },
-  { id: 'e:dz-xing-5', from: 'dz:子', to: 'dz:卯', type: 'punishes', reason: '子卯相刑（无礼之刑）', classicSource: '三命通会', condition: '子卯见即刑', chapter: '论三刑' },
+  { id: 'e:dz-xing-1', from: 'dz:寅', to: 'dz:巳', type: 'punishes', reason: '寅巳申三刑（无恩之刑）', classicSource: '三命通会', condition: '寅巳申全见方成三刑', chapter: '论三刑',
+    relationWeight: { base: 0.75 }, evidenceCount: 2, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:dz-xing-2', from: 'dz:巳', to: 'dz:申', type: 'punishes', reason: '寅巳申三刑（无恩之刑）', classicSource: '三命通会', condition: '寅巳申全见方成三刑', chapter: '论三刑',
+    relationWeight: { base: 0.75 }, evidenceCount: 2, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:dz-xing-3', from: 'dz:丑', to: 'dz:戌', type: 'punishes', reason: '丑戌未三刑（恃势之刑）', classicSource: '三命通会', condition: '丑戌未全见方成三刑', chapter: '论三刑',
+    relationWeight: { base: 0.75 }, evidenceCount: 1, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:dz-xing-4', from: 'dz:戌', to: 'dz:未', type: 'punishes', reason: '丑戌未三刑（恃势之刑）', classicSource: '三命通会', condition: '丑戌未全见方成三刑', chapter: '论三刑',
+    relationWeight: { base: 0.75 }, evidenceCount: 1, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
+  { id: 'e:dz-xing-5', from: 'dz:子', to: 'dz:卯', type: 'punishes', reason: '子卯相刑（无礼之刑）', classicSource: '三命通会', condition: '子卯见即刑', chapter: '论三刑',
+    relationWeight: { base: 0.75 }, evidenceCount: 3, classicSupport: { count: 2, classics: DIZHI_CLASSICS }, conflictOpinion: { hasConflict: false }, consensusScore: 0.85 },
 )
 
 // ---------- 概念解释边（12条：概念 explains 典籍） ----------

@@ -127,8 +127,37 @@ export interface RuleDefinition<TInput = any, _TResult = any> {
   /** C4: 最后审核日期（ISO 日期字符串） */
   lastReviewDate?: string
 
+  /** C6-2: 古籍引用证据列表（替代单一 classicSource，支持多源引用） */
+  classicEvidence?: ClassicEvidenceRef[]
+
   /** 规则评估函数 */
   evaluate: (input: TInput, ctx?: { traceable?: boolean }) => EvidenceBundle | Promise<EvidenceBundle>
+}
+
+/** C6-2: 古籍引用（精确到句子级别） */
+export interface ClassicEvidenceRef {
+  /** 经典 ID（如 'dts'） */
+  classicId: string
+  /** 经典名称（如 '滴天髓'） */
+  classicName: string
+  /** 章节 ID（如 'dts-c3'） */
+  chapterId?: string
+  /** 章节标题（如 '论格局'） */
+  chapterTitle?: string
+  /** 段落 ID（如 'dts-c3-p4'） */
+  paragraphId?: string
+  /** 句子 ID（如 'dts-c3-p4-s2'，最小引用单位） */
+  sentenceId?: string
+  /** 引用原文 */
+  quotedText: string
+  /** 引用方式：direct=直接引用 / paraphrase=转述 */
+  citation: 'direct' | 'paraphrase'
+  /** 该引用支持的结论 */
+  supports: string
+  /** 是否存在不同流派解释 */
+  hasControversy?: boolean
+  /** 不同流派观点说明 */
+  controversyNote?: string
 }
 
 export interface Confidence {

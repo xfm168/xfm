@@ -72,6 +72,38 @@ export interface KGEdge {
   condition?: string
   /** 权重 0~1 */
   weight?: number
+
+  /** C6-3: 关系权重（细分） */
+  relationWeight?: {
+    /** 基础权重 0~1（来自命理理论） */
+    base: number
+    /** 动态权重 0~1（根据具体命盘上下文调整） */
+    dynamic?: number
+    /** 最终权重 = base * dynamic（若 dynamic 存在） */
+    effective?: number
+  }
+  /** C6-3: 引用次数（该关系被 Evidence 引用的次数） */
+  evidenceCount?: number
+  /** C6-3: 经典支持数量（多少部经典支持此关系） */
+  classicSupport?: {
+    /** 支持的经典数量 */
+    count: number
+    /** 支持的经典名称列表 */
+    classics: string[]
+  }
+  /** C6-3: 不同流派观点 */
+  conflictOpinion?: {
+    /** 是否存在争议 */
+    hasConflict: boolean
+    /** 争议说明 */
+    description?: string
+    /** 持不同意见的经典/流派 */
+    dissentingClassics?: string[]
+    /** 争议焦点 */
+    focus?: string
+  }
+  /** C6-3: 共识度 0~1（1=主流共识，0=非主流） */
+  consensusScore?: number
 }
 
 /** 完整知识图谱 */

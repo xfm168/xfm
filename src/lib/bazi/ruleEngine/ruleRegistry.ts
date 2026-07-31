@@ -1,4 +1,4 @@
-import type { RuleCategory, RuleDefinition, RuleCondition, ConflictStrategy } from './types';
+import type { RuleCategory, RuleDefinition, RuleCondition, ConflictStrategy, ClassicEvidenceRef } from './types';
 import { DEFAULT_RULE_FALLBACKS } from './types';
 
 interface RuleRegistryStore {
@@ -22,6 +22,8 @@ const VERSION_PATTERN = /^\d+\.\d+\.\d+.*$/;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 /** C4: ruleVersion 建议含日期或版本号（如 2024-v1、v2.1、2024-01） */
 const RULE_VERSION_PATTERN = /(\d{4}|v\d+)/i;
+/** C6-2: sentenceId 格式，如 dts-c3-p4-s2、zpzq-c10-p1-s1 */
+const SENTENCE_ID_PATTERN = /^[a-z]+-[a-z]+\d*-p\d+-s\d+$/;
 
 function validateAndNormalizeRule(def: Partial<RuleDefinition> & { id: string; evaluate: RuleDefinition['evaluate'] }): RuleDefinition {
   const ruleId = def.id || 'UNKNOWN-ID';
@@ -113,6 +115,25 @@ function validateAndNormalizeRule(def: Partial<RuleDefinition> & { id: string; e
     }
   }
 
+  // 【C6-2 classicEvidence 校验】支持多源古籍引用
+  if (def.classicEvidence !== undefined) {
+    if (!Array.isArray(def.classicEvidence) || def.classicEvidence.length === 0) {
+      warnings.push(`[C6-2 古籍引用] 规则 ${ruleId} 的 classicEvidence 若提供必须是非空数组（支持多源引用）`);
+    } else {
+      for (let i = 0; i < def.classicEvidence.length; i++) {
+        const ce: ClassicEvidenceRef = def.classicEvidence[i] as ClassicEvidenceRef;
+        if (!ce.classicName || !ce.quotedText || !ce.supports) {
+          warnings.push(`[C6-2 古籍引用] 规则 ${ruleId} 的 classicEvidence[${i}] 缺少必要字段 classicName/quotedText/supports`);
+        }
+        if (ce.sentenceId !== undefined) {
+          if (typeof ce.sentenceId !== 'string' || !SENTENCE_ID_PATTERN.test(ce.sentenceId)) {
+            warnings.push(`[C6-2 古籍引用] 规则 ${ruleId} 的 classicEvidence[${i}].sentenceId '${ce.sentenceId}' 格式不正确，应形如 'dts-c3-p4-s2'`);
+          }
+        }
+      }
+    }
+  }
+
   for (const w of warnings) {
     console.warn(w);
   }
@@ -141,6 +162,8 @@ function validateAndNormalizeRule(def: Partial<RuleDefinition> & { id: string; e
     author: def.author,
     reviewer: def.reviewer,
     lastReviewDate: def.lastReviewDate,
+    // 【C6-2 古籍引用证据】透传可选字段（支持多源引用）
+    classicEvidence: def.classicEvidence as ClassicEvidenceRef[] | undefined,
     evaluate: def.evaluate,
   };
 
