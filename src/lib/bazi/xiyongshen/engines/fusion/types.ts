@@ -55,13 +55,61 @@ export interface YongShenVerdict {
 }
 
 // ============================================================
-// 第二部分：Rule Vote（规则投票）
+// 第二部分：Rule Priority Matrix（规则优先级矩阵）
+// ============================================================
+
+/** 命局特征类型（用于动态计算优先级） */
+export type MingjuPatternType =
+  | 'winter_fire'       // 冬火：调候优先
+  | 'summer_water'      // 夏水：调候优先
+  | 'extreme_strong'    // 身旺极旺：扶抑优先
+  | 'extreme_weak'      // 身弱极弱：扶抑优先
+  | 'medicine_pattern'  // 病药格：病药优先
+  | 'bridge_war'        // 金木大战/两神交战：通关优先
+  | 'special_pattern'   // 特殊格局：格局优先
+  | 'balanced'          // 中和：均衡模式
+
+/** 单引擎的优先级条目 */
+export interface RulePriorityEntry {
+  /** 引擎名 */
+  engineName: string
+  /** 动态优先级（0~1，和为 1） */
+  priority: number
+  /** 原始固定权重（来自 SchoolProfile） */
+  baseWeight: number
+  /** 调整因子（动态倍率） */
+  adjustmentFactor: number
+  /** 优先级依据（如"冬火调候优先"） */
+  reason: string
+  /** 来源的命局特征 */
+  sourcePattern?: MingjuPatternType
+}
+
+/** 规则优先级矩阵（动态，非固定 Weight） */
+export interface RulePriorityMatrix {
+  /** 识别到的命局特征（可能多个） */
+  detectedPatterns: MingjuPatternType[]
+  /** 命局特征摘要 */
+  patternSummary: string
+  /** 各引擎优先级条目（已归一化，priority 和为 1） */
+  entries: RulePriorityEntry[]
+  /** 按引擎名快速索引 */
+  byEngine: Record<string, RulePriorityEntry>
+  /** 生成时间戳 */
+  generatedAt: number
+}
+
+// ============================================================
+// 第三部分：Rule Vote V2（加权投票系统）
 // ============================================================
 
 /** 投票立场 */
 export type VoteStance = 'support' | 'oppose' | 'neutral'
 
-/** 单条规则投票 */
+/** 支持强度等级（1~5，对应 +~+++++） */
+export type SupportLevel = 1 | 2 | 3 | 4 | 5
+
+/** 单条规则投票 V2（Weighted Voting） */
 export interface RuleVote {
   /** 投票的引擎/规则名 */
   voter: string
@@ -69,17 +117,37 @@ export interface RuleVote {
   target: Wuxing
   /** 立场 */
   stance: VoteStance
-  /** 投票权重（来自 SchoolProfile） */
+  /** 支持强度（1~5，仅 support 时有意义） */
+  supportLevel: SupportLevel
+  /** 动态优先级（来自 RulePriorityMatrix） */
+  priority: number
+  /** 投票权重（来自 SchoolProfile 固定权重） */
   weight: number
   /** 投票强度（基于 score 绝对值，0~3） */
   strength: number
+  /** 该引擎的置信度 */
+  confidence: number
+  /** Evidence 权重（Evidence 数量归一化 0~1） */
+  evidenceWeight: number
+  /** 古籍评分（引用数×古籍权重 归一化 0~1） */
+  classicScore: number
+  /** 最终 Vote Score（加权总分：supportLevel×priority×confidence×classicScore×evidenceWeight） */
+  voteScore: number
   /** 投票依据（Evidence 摘要） */
   reason: string
   /** 古籍引用 */
   citation?: string
+  /** 是否通过 Rule Gate（未通过则不计入 Voting） */
+  gated: boolean
+  /** Gate 拒绝原因（如未通过） */
+  gateRejectReason?: string
+  /** 是否被 Rule Kill（被 Kill 则不计入） */
+  killed: boolean
+  /** Kill 原因（如被 Kill） */
+  killReason?: string
 }
 
-/** 某五行的投票汇总 */
+/** 某五行的投票汇总 V2 */
 export interface RuleVoteSummary {
   /** 支持票数 */
   supportCount: number
@@ -87,9 +155,15 @@ export interface RuleVoteSummary {
   opposeCount: number
   /** 中立票数 */
   neutralCount: number
-  /** 加权支持分（support 权重和 - oppose 权重和） */
+  /** 通过 Gate 的有效投票数 */
+  validVoteCount: number
+  /** 被 Gate 拒绝的投票数 */
+  gatedVoteCount: number
+  /** 被 Kill 的投票数 */
+  killedVoteCount: number
+  /** 加权支持分（Σ support.voteScore - Σ oppose.voteScore） */
   weightedScore: number
-  /** 支持率（0~1） */
+  /** 支持率（有效投票中，支持 voteScore / 总 voteScore） */
   supportRate: number
   /** 是否多数共识（supportRate > 0.5） */
   hasConsensus: boolean
@@ -98,7 +172,120 @@ export interface RuleVoteSummary {
 }
 
 // ============================================================
-// 第三部分：Classic Support（古籍支持度）
+// 第四部分：Rule Gate（规则准入机制）
+// ============================================================
+
+/** Gate 检查维度 */
+export interface GateCheckDimension {
+  /** 检查项名 */
+  name: string
+  /** 当前值 */
+  value: number
+  /** 阈值 */
+  threshold: number
+  /** 是否通过 */
+  passed: boolean
+  /** 说明 */
+  description: string
+}
+
+/** 单引擎的 Gate 检查结果 */
+export interface GateResult {
+  /** 引擎名 */
+  engineName: string
+  /** 是否通过 Gate */
+  passed: boolean
+  /** Gate 拒绝原因（如未通过） */
+  rejectReason?: string
+  /** 各维度检查详情 */
+  checks: {
+    applicable: GateCheckDimension
+    confidence: GateCheckDimension
+    evidenceCount: GateCheckDimension
+    classicCount: GateCheckDimension
+    engineHealth: GateCheckDimension
+  }
+  /** 通过前保留的 Trace（即使不参与 Fusion，也保留 Evidence） */
+  traceKept: boolean
+}
+
+/** Rule Gate 准入报告 */
+export interface GateReport {
+  /** 总引擎数 */
+  totalEngines: number
+  /** 通过 Gate 的引擎数 */
+  passedCount: number
+  /** 被 Gate 拒绝的引擎数 */
+  rejectedCount: number
+  /** 通过率 */
+  passRate: number
+  /** 各引擎 Gate 结果 */
+  results: Record<string, GateResult>
+  /** Gate 配置的阈值快照 */
+  thresholds: {
+    minConfidence: number
+    minEvidenceCount: number
+    minClassicCount: number
+    requireApplicable: boolean
+    minEngineHealth: number
+  }
+  /** 摘要 */
+  summary: string
+}
+
+// ============================================================
+// 第五部分：Rule Kill（规则淘汰机制）
+// ============================================================
+
+/** Kill 触发原因类型 */
+export type KillReasonType =
+  | 'conflict_chain'        // 连续冲突（与其他引擎连续冲突≥N次）
+  | 'evidence_insufficient' // Evidence 严重不足
+  | 'confidence_too_low'    // 置信度过低
+  | 'classic_empty'         // 古籍完全无引用
+  | 'contradicts_self'      // 自相矛盾（评分前后不一致）
+  | 'health_degraded'       // 引擎健康度劣化
+
+/** 单引擎的 Kill 记录 */
+export interface KillEntry {
+  /** 引擎名 */
+  engineName: string
+  /** 是否被 Kill */
+  killed: boolean
+  /** Kill 原因（如被 Kill） */
+  killReason?: KillReasonType
+  /** Kill 说明 */
+  killDescription?: string
+  /** 触发 Kill 的证据值 */
+  triggerValue?: number
+  /** Kill 阈值 */
+  killThreshold?: number
+  /** 被 Kill 前的最后评分快照 */
+  lastScoresSnapshot?: Record<Wuxing, number>
+}
+
+/** Rule Kill 报告 */
+export interface KillReport {
+  /** 总引擎数 */
+  totalEngines: number
+  /** 被 Kill 的引擎数 */
+  killedCount: number
+  /** 存活引擎数 */
+  aliveCount: number
+  /** 各引擎 Kill 记录 */
+  entries: Record<string, KillEntry>
+  /** Kill 阈值快照 */
+  thresholds: {
+    maxContinuousConflicts: number
+    minEvidenceBeforeKill: number
+    minConfidenceBeforeKill: number
+  }
+  /** 摘要 */
+  summary: string
+}
+
+// ============================================================
+// 第六部分：Classic Support（古籍支持度）
 // ============================================================
 
 /** 古籍对某五行的支持度 */
@@ -168,22 +355,173 @@ export interface EngineConflict {
   rejectionReason: string
 }
 
-/** 冲突报告 */
+/** 冲突 V2：包含双方 Evidence / Classic / Priority 完整链路 */
+export interface EngineConflictV2 extends EngineConflict {
+  /** 冲突方 A 的完整 Evidence 列表 */
+  evidenceA: Array<{ step: string; text: string; satisfied?: boolean }>
+  /** 冲突方 B 的完整 Evidence 列表 */
+  evidenceB: Array<{ step: string; text: string; satisfied?: boolean }>
+  /** 冲突方 A 的古籍引用 */
+  classicsA: ClassicEvidenceRef[]
+  /** 冲突方 B 的古籍引用 */
+  classicsB: ClassicEvidenceRef[]
+  /** 冲突方 A 在 RulePriorityMatrix 中的优先级 */
+  priorityA: number
+  /** 冲突方 B 在 RulePriorityMatrix 中的优先级 */
+  priorityB: number
+  /** 裁决时使用的优先级依据文本（如"冬火调候优先级高于病药体系"） */
+  priorityBasis: string
+  /** 裁决引用的古籍（如《穷通宝鉴》《滴天髓》） */
+  adjudicatingClassics: string[]
+}
+
+/** 冲突报告 V2：完整链路分析 */
 export interface ConflictReport {
-  /** 所有冲突列表 */
-  conflicts: EngineConflict[]
+  /** 所有冲突列表（V2 兼容） */
+  conflicts: EngineConflictV2[]
   /** 冲突总数 */
   totalConflicts: number
   /** 最大冲突强度 */
   maxIntensity: number
   /** 冲突惩罚分（影响最终 confidence） */
   conflictPenalty: number
+  /** 已裁决的冲突数（有明确 adoptedSide） */
+  adjudicatedCount: number
+  /** 未裁决的冲突数（adoptedSide=neither） */
+  unadjudicatedCount: number
+  /** 按五行分组的冲突统计 */
+  byWuxing: Record<Wuxing, number>
+  /** 按引擎对分组的冲突统计 */
+  byEnginePair: Record<string, number>
   /** 冲突解释摘要 */
   summary: string
 }
 
 // ============================================================
-// 第六部分：Decision Trace（决策回溯）
+// 第七部分：MetaDecision（元决策层 - 玄风门大脑）
+// ============================================================
+
+/** 决策策略类型 */
+export type DecisionStrategy =
+  | 'multi_yongshen'    // 多用神策略
+  | 'single_yongshen'   // 单用神策略
+  | 'climate_first'     // 调候优先策略
+  | 'balance_first'     // 扶抑优先策略
+  | 'pattern_first'     // 格局优先策略
+  | 'medicine_first'    // 病药优先策略
+  | 'bridge_first'      // 通关优先策略
+  | 'season_first'      // 寒暖燥湿优先策略
+  | 'comprehensive'     // 综合权衡策略
+
+/** 多用神策略子类型 */
+export type MultiYongShenMode =
+  | 'combined_use'      // 并用（如木火同用）
+  | 'dual_image'        // 两神成象（如金水两神成象）
+  | 'mutual_generation' // 相生并用（如木火相生）
+  | 'bridge_use'        // 通关并用（如金木交战用水通关）
+  | 'climate_assist'    // 调候+辅助（如冬火用木火）
+
+/** MetaDecision 元决策结果 - 告诉 DecisionEngine 应该采用什么策略 */
+export interface MetaDecision {
+  /** 主决策策略 */
+  primaryStrategy: DecisionStrategy
+  /** 次决策策略（如同时适用多个） */
+  secondaryStrategies: DecisionStrategy[]
+  /** 多用神模式（仅 multi_yongshen 策略时有） */
+  multiYongShenMode?: MultiYongShenMode
+  /** 命局特征判断：是否多用神 */
+  shouldUseMultiYongShen: boolean
+  /** 命局特征判断：是否格局优先 */
+  shouldPrioritizePattern: boolean
+  /** 命局特征判断：是否调候优先 */
+  shouldPrioritizeClimate: boolean
+  /** 命局特征判断：是否扶抑优先 */
+  shouldPrioritizeBalance: boolean
+  /** 命局特征判断：是否病药优先 */
+  shouldPrioritizeMedicine: boolean
+  /** 命局特征判断：是否通关优先 */
+  shouldPrioritizeBridge: boolean
+  /** 用神最大数量（多用神时，最多几个） */
+  maxYongShenCount: number
+  /** 是否允许并用（如木火同用） */
+  allowCombinedUse: boolean
+  /** 策略选择的依据（命局特征列表） */
+  strategyBasis: MingjuPatternType[]
+  /** 策略解释说明 */
+  strategyExplanation: string
+  /** 各策略候选的评分（用于展示策略选择过程） */
+  strategyCandidates: Array<{
+    strategy: DecisionStrategy
+    score: number
+    reason: string
+  }>
+}
+
+// ============================================================
+// 第八部分：Engine Health（引擎健康度）
+// ============================================================
+
+/** 引擎健康状态 */
+export type EngineHealthStatus = 'healthy' | 'warning' | 'unhealthy'
+
+/** 单个引擎的健康度详情 */
+export interface EngineHealthEntry {
+  /** 引擎名 */
+  engineName: string
+  /** 整体健康状态 */
+  status: EngineHealthStatus
+  /** 健康总分（0~100） */
+  healthScore: number
+  /** 适用率（最近 N 次命局中适用的比例） */
+  applicableRate: number
+  /** 冲突率（最近 N 次命局中与其他引擎冲突的比例） */
+  conflictRate: number
+  /** 平均 Evidence 数量 */
+  avgEvidenceCount: number
+  /** 平均满足的 Evidence 数量 */
+  avgSatisfiedEvidenceCount: number
+  /** 平均古籍引用数量 */
+  avgClassicCount: number
+  /** 平均置信度 */
+  avgConfidence: number
+  /** 平均动态优先级 */
+  avgPriority: number
+  /** 被 Rule Gate 拒绝的次数 */
+  gateRejectCount: number
+  /** 被 Rule Kill 淘汰的次数 */
+  killCount: number
+  /** 健康度各维度得分 */
+  dimensionScores: {
+    applicability: number    // 适用性得分
+    evidenceQuality: number  // Evidence 质量得分
+    classicSupport: number   // 古籍支持度得分
+    confidence: number       // 置信度得分
+    stability: number        // 稳定性（低冲突）得分
+  }
+  /** 备注/说明 */
+  notes?: string
+}
+
+/** 引擎健康度总报告 */
+export interface EngineHealthReport {
+  /** 各引擎健康度详情 */
+  engines: Record<string, EngineHealthEntry>
+  /** 整体系统健康度（所有引擎加权平均） */
+  overallHealth: number
+  /** 健康引擎数 */
+  healthyCount: number
+  /** 警告引擎数 */
+  warningCount: number
+  /** 不健康引擎数 */
+  unhealthyCount: number
+  /** 建议（Dashboard 展示用） */
+  recommendations: string[]
+  /** 生成时间戳 */
+  generatedAt: number
+}
+
+// ============================================================
+// 第九部分：Decision Trace（决策回溯）
 // ============================================================
 
 /** 决策回溯的单个步骤 */
@@ -221,10 +559,50 @@ export interface DecisionTrace {
 }
 
 // ============================================================
-// 第七部分：Evidence Tree（证据树）
+// 第十部分：Evidence Tree V2（真正的树结构）
 // ============================================================
 
-/** 证据节点 */
+/** 树节点类型 */
+export type TreeNodeType =
+  | 'decision'       // 根：最终决策
+  | 'engine'         // 层1：子引擎（Strength/Climate/...）
+  | 'rule'           // 层2：规则（引擎内的具体判断规则）
+  | 'evidence'       // 层3：Evidence 条目
+  | 'classic'        // 层3：古籍引用条目
+
+/** 证据树 V2 - 真正的树结构（Decision → Engine → Rule/Evidence/Classic） */
+export interface EvidenceTreeNode {
+  /** 节点唯一 ID（用于前端展开定位） */
+  nodeId: string
+  /** 节点类型 */
+  nodeType: TreeNodeType
+  /** 节点显示名称 */
+  label: string
+  /** 该节点关联的五行（可选） */
+  wuxing?: Wuxing
+  /** 是否可展开 */
+  expandable: boolean
+  /** 是否已展开（前端状态，可选） */
+  expanded?: boolean
+  /** 是否满足/通过（Evidence 和 Rule 用） */
+  satisfied?: boolean
+  /** 置信度/得分（节点级别，0~1） */
+  score?: number
+  /** 关联说明文本 */
+  description?: string
+  /** 关联古籍引用（classic 节点或引用它的节点） */
+  citation?: ClassicEvidenceRef
+  /** 关联 Evidence 步骤（evidence 节点） */
+  evidenceStep?: string
+  /** 子节点（Decision→Engines→Rules→Evidences/Classics） */
+  children?: EvidenceTreeNode[]
+  /** 来源引擎名（engine 节点及以下带） */
+  engineName?: string
+  /** 扩展数据（用于特定节点类型） */
+  metadata?: Record<string, unknown>
+}
+
+/** 证据节点 V1（保留向后兼容的扁平结构） */
 export interface EvidenceNode {
   /** 引擎名 */
   engineName: string
@@ -251,9 +629,20 @@ export interface EvidenceNode {
   summary: string
 }
 
-/** 证据树（结构化的所有 Evidence 集合） */
+/** 证据树（V2 + V1 兼容） */
 export interface EvidenceTree {
-  /** 所有引擎的 Evidence 节点 */
+  // ===== V2 真正的树结构（前端点击直接展开） =====
+  /** 根节点：Decision → 各引擎 → Rule/Evidence/Classic */
+  root: EvidenceTreeNode
+  /** 按引擎名索引的引擎节点（便于快速查找） */
+  engineNodes: Record<string, EvidenceTreeNode>
+  /** 树的最大深度 */
+  maxDepth: number
+  /** 树的总节点数 */
+  totalNodeCount: number
+
+  // ===== V1 扁平结构（向后兼容） =====
+  /** 所有引擎的 Evidence 节点（扁平） */
   nodes: EvidenceNode[]
   /** Evidence 总数 */
   totalEvidence: number
@@ -275,7 +664,7 @@ export interface EvidenceTree {
 export interface FinalDecisionScoreBreakdown {
   /** 五行 */
   wuxing: Wuxing
-  /** 1. 加权评分（score × weight × confidence） */
+  /** 1. 加权评分（score × priority × confidence） */
   weightedScore: number
   /** 2. 投票分（VoteScore × voteWeight） */
   voteScore: number
@@ -285,11 +674,13 @@ export interface FinalDecisionScoreBreakdown {
   evidenceScore: number
   /** 5. 流派共识分 */
   consensusScore: number
-  /** 6. 规则优先级因子 */
+  /** 6. 规则优先级因子（动态 Priority） */
   priorityFactor: number
-  /** 7. 冲突惩罚分（负值） */
+  /** 7. MetaDecision 加持（命中策略的加成因子） */
+  metaBoost: number
+  /** 8. 冲突惩罚分 */
   conflictPenalty: number
-  /** 最终综合分（以上各分加权合成） */
+  /** 最终综合分 = (加权 + 投票 + 古籍 + 证据 + 共识) × Priority × MetaBoost − ConflictPenalty */
   finalScore: number
 }
 
@@ -298,16 +689,16 @@ export interface FinalDecisionScoreBreakdown {
 // ============================================================
 
 /**
- * 统一决策结果
+ * 统一决策结果 V2（玄风门统一命理决策核心输出）
  *
  * 这是所有命理系统（八字/紫微/奇门/六爻/风水）的统一输出。
- * AI 层只读取这份结果，绝不重新推理。
+ * AI 层只读取这份结果，绝不重新推理（AI 仅润色 Explain，不负责计算）。
  */
 export interface DecisionResult {
   // ===== 命理系统标识 =====
-  /** 命理系统类型 */
+  /** 命理系统类型：八字/紫微/奇门/六爻/风水（未来全部复用） */
   system: DivinationSystem
-  /** 使用的流派 */
+  /** 使用的流派（Ziping/Qiongtong/Modern/DiTianSui/...） */
   school: string
   /** 引擎版本 */
   engineVersion: string
@@ -327,11 +718,11 @@ export interface DecisionResult {
   isMultiYongShen: boolean
   /** 多用神模式说明（如"木火同用""金水两神成象"） */
   multiYongShenPattern?: string
-  /** 所有用神裁决详情 */
+  /** 所有用神裁决详情（每个五行一个） */
   verdicts: YongShenVerdict[]
 
   // ===== 评分明细 =====
-  /** 各五行最终决策评分构成 */
+  /** 各五行最终决策评分构成（非简单加权平均） */
   scoreBreakdown: FinalDecisionScoreBreakdown[]
 
   // ===== 可信度 =====
@@ -351,12 +742,26 @@ export interface DecisionResult {
     conflictPenalty: number
   }
 
+  // ===== V2 新增：Unified Decision Core 新模块 =====
+  /** 规则优先级矩阵（动态，非固定 Weight） */
+  priorityMatrix: RulePriorityMatrix
+  /** Rule Gate 准入报告 */
+  gateReport: GateReport
+  /** Rule Kill 淘汰报告 */
+  killReport: KillReport
+  /** MetaDecision 元决策（玄风门大脑 - 决定采用什么策略） */
+  metaDecision: MetaDecision
+  /** Engine Health 引擎健康度 */
+  engineHealth: EngineHealthReport
+  /** Voting Summary（所有五行的加权投票汇总） */
+  votingSummary: Record<Wuxing, RuleVoteSummary>
+
   // ===== 证据与回溯 =====
-  /** 证据树 */
+  /** 证据树 V2（真正的树结构，Decision→Engine→Rule/Evidence/Classic） */
   evidenceTree: EvidenceTree
-  /** 决策回溯（每个用神的完整回溯） */
+  /** 决策回溯（每个用神的完整回溯，可完整回放） */
   decisionTraces: DecisionTrace[]
-  /** 冲突报告 */
+  /** 冲突报告 V2（完整链路：Source→Evidence→Classic→Priority→Decision→Discard/Adopt） */
   conflictReport: ConflictReport
 
   // ===== 流派与古籍 =====
@@ -370,9 +775,9 @@ export interface DecisionResult {
   subEngineResults: SubEngineResult[]
 
   // ===== 说明 =====
-  /** 可解释说明（完整推演过程） */
+  /** ExplainBuilder 生成的可解释说明（AI 仅润色，绝不重新推理） */
   explain: string
-  /** 策略摘要 */
+  /** 策略摘要（来自 MetaDecision 的策略说明） */
   strategy: string
   /** 综合摘要 */
   summary: string

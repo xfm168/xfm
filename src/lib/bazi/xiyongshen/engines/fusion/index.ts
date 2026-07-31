@@ -1,14 +1,16 @@
 /**
- * Evidence Fusion Decision Engine - 模块导出
+ * Evidence Fusion Decision Engine V2 - 玄风门统一命理决策核心
  *
- * 这是玄风门命理核心的大脑，支持：
- * - 多证据融合决策（非简单加权平均）
- * - 多用神（Primary/Secondary/Assistant/Avoid/Idle）
- * - SchoolProfile 流派模式
- * - Rule Voting 规则投票
- * - Conflict Report 冲突解释
- * - Decision Trace 决策回溯
- * - 统一 DecisionResult 输出（为紫微/奇门/六爻预留）
+ * Unified Decision Core 完整链路：
+ * - 7 Evidence Engine
+ *   → RulePriorityResolver（动态优先级 · 非固定Weight）
+ *   → RuleGate（准入 · 5维过滤）
+ *   → RuleKill（淘汰 · 低质量引擎退出Fusion）
+ *   → RuleVoting V2（Weighted Voting · 5维加权）
+ *   → ConflictResolver V2（完整链路裁决：Source→Evidence→Classic→Priority→Decision）
+ *   → MetaDecision（元决策·多用神/调候/扶抑/病药/通关/格局优先）
+ *   → DecisionResult V2（统一输出，紫微/奇门/六爻/风水未来复用）
+ *   → AI（禁止再次推理 · 仅润色 ExplainBuilder）
  */
 
 export * from './types'
@@ -16,4 +18,7 @@ export * from './schoolProfile'
 export * from './ruleVote'
 export * from './conflictReport'
 export * from './decisionTrace'
+export * from './rulePriorityResolver'
+export * from './ruleGateAndMeta'
+export * from './healthTreeExplain'
 export * from './evidenceFusionEngine'

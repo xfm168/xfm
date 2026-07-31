@@ -1,54 +1,65 @@
 /**
- * EvidenceFusionDecisionEngine - 多证据融合决策引擎
+ * EvidenceFusionDecisionEngine V2 - 玄风门统一命理决策核心
  *
- * 这是整个玄风门命理核心的大脑。
+ * Unified Decision Core 架构：
+ *   7 Evidence Engine
+ *         ↓
+ *   RulePriorityResolver（动态优先级矩阵 · 非固定Weight）
+ *         ↓
+ *   RuleGate（准入机制 · Confidence/Evidence/Classic/Applicable/Health 过滤）
+ *         ↓
+ *   RuleKill（淘汰 · 连续冲突/证据不足/置信度过低 退出Fusion）
+ *         ↓
+ *   RuleVoting V2（Weighted Voting · SupportLevel+Priority+Confidence+Classic+Evidence）
+ *         ↓
+ *   ConflictResolver V2（完整链路 Source→Evidence→Classic→Priority→Decision→Discard/Adopt）
+ *         ↓
+ *   MetaDecision（元决策 · 多用神/单用神 · 调候优先/扶抑优先/病药优先/通关优先/格局优先）
+ *         ↓
+ *   DecisionResult V2（含 PriorityMatrix/GateReport/KillReport/VotingSummary/Meta/EngineHealth/EvidenceTreeV2）
+ *         ↓
+ *   AI（禁止再次推理 · 仅润色 ExplainBuilder 输出）
  *
- * 核心原则：
- * 1. 不简单加权平均：score × weight → 最大值即用神（禁止！）
- * 2. Evidence Fusion Decision：融合 7 个子引擎 Evidence + 古籍支持度 + 流派共识 + Evidence 完整度 + Confidence + Rule Priority + Conflict Penalty
- * 3. 支持多用神：Primary / Secondary / Assistant / Avoid / Idle
- * 4. 支持 SchoolProfile 流派模式
- * 5. 完整 DecisionTrace 决策回溯
- * 6. Rule Voting 规则投票
- * 7. Evidence 冲突解释
- * 8. 统一 DecisionResult 输出，为紫微/奇门/六爻预留接口
- *
- * FinalDecisionScore = (
- *   weightedScore        (score × weight × confidence)
- * + voteScore            (Rule Voting 投票分)
- * + classicScore         (Classic Support 古籍支持分)
- * + evidenceScore        (Evidence 完整度分)
- * + consensusScore      (School Consensus 流派共识分)
- * ) × priorityFactor    (Rule Priority 优先级因子)
- * - conflictPenalty     (Conflict Penalty 冲突惩罚)
+ * 未来：八字 / 紫微 / 奇门 / 六爻 / 风水 → 全部共用这一套
  */
 
-import type { Wuxing, ShenType } from '../../types'
+import type { Wuxing } from '../../types'
 import type { SubEngineInput, SubEngineResult } from '../types'
 import type { ClassicEvidenceRef } from '../../../ruleEngine/types'
 import type {
   DecisionResult, YongShenVerdict, SchoolProfile,
   FinalDecisionScoreBreakdown, EvidenceTree, EvidenceNode,
   ConflictReport, DecisionTrace, ClassicSupport, SchoolConsensus,
-  RuleVoteSummary, YongShenRole,
+  RuleVoteSummary, YongShenRole, RulePriorityMatrix,
+  GateReport, KillReport, MetaDecision, EngineHealthReport,
+  MingjuPatternType,
 } from './types'
 import {
   StrengthEngine, PatternEngine, ClimateEngine, BalanceEngine,
   MedicineEngine, BridgeEngine, SeasonEngine,
 } from '../index'
 import { DEFAULT_SCHOOL, getSchoolProfile, getEngineWeight, getEnginePriority, getClassicWeight } from './schoolProfile'
-import { collectVotes, summarizeVotes, calculateVoteScore, getAllVoteSummaries } from './ruleVote'
+import {
+  calculateVoteScoreV2, getAllVoteSummariesV2,
+} from './ruleVote'
 import { buildConflictReport } from './conflictReport'
 import { buildDecisionTrace } from './decisionTrace'
+import { globalRulePriorityResolver } from './rulePriorityResolver'
+import {
+  globalRuleGate, globalRuleKill, globalMetaDecisionEngine,
+} from './ruleGateAndMeta'
+import {
+  globalEngineHealthEvaluator, globalEvidenceTreeV2Builder, globalExplainBuilder,
+} from './healthTreeExplain'
 
 const WUXING_LIST: Wuxing[] = ['木', '火', '土', '金', '水']
 
 /**
- * Evidence Fusion Decision Engine
+ * Evidence Fusion Decision Engine V2 - Unified Decision Core
  */
 export class EvidenceFusionDecisionEngine {
   readonly name = 'EvidenceFusionDecisionEngine'
-  readonly version = '2.0.0'
+  readonly version = '3.0.0' // V2 Unified Decision Core
   readonly system = 'bazi' as const
 
   private engines: SubEngineInstance[]
@@ -66,59 +77,120 @@ export class EvidenceFusionDecisionEngine {
   }
 
   /**
-   * 综合决策（Evidence Fusion Decision）
+   * 综合决策（Unified Decision Core 完整链路）
    */
   decide(input: SubEngineInput, profile?: SchoolProfile): DecisionResult {
     const activeProfile = profile ?? this.profile
 
-    // ===== 1. 调用所有子引擎，收集 Evidence =====
+    // ============================================================
+    // Step 1: 调用所有子引擎，收集 Evidence
+    // ============================================================
     const subResults: SubEngineResult[] = this.engines.map(e => e.evaluate(input))
 
-    // ===== 2. 构建 Evidence Tree =====
-    const evidenceTree = this.buildEvidenceTree(subResults)
+    // ============================================================
+    // Step 2: RulePriorityResolver → 动态优先级矩阵（非固定 Weight）
+    // ============================================================
+    const priorityMatrix: RulePriorityMatrix = globalRulePriorityResolver.resolve(
+      input, subResults, activeProfile,
+    )
 
-    // ===== 3. 构建冲突报告 =====
-    const conflictReport = buildConflictReport(subResults, activeProfile)
+    // ============================================================
+    // Step 3: RuleGate → 准入机制（Confidence/Evidence/Classic/Applicable/Health 过滤）
+    // ============================================================
+    const gateReport: GateReport = globalRuleGate.checkAll(subResults, activeProfile)
 
-    // ===== 4. 收集所有五行的投票 =====
-    const allVoteSummaries = getAllVoteSummaries(subResults, activeProfile)
+    // ============================================================
+    // Step 4: 早期 Conflict 检测（用于 RuleKill 的连续冲突判断）
+    // ============================================================
+    const conflictReportEarly: ConflictReport = buildConflictReport(
+      subResults, activeProfile, priorityMatrix,
+    )
 
-    // ===== 5. 计算古籍支持度（按五行） =====
+    // ============================================================
+    // Step 5: RuleKill → 淘汰（连续冲突/证据不足/置信度过低 退出Fusion）
+    // ============================================================
+    const killReport: KillReport = globalRuleKill.evaluateAll(
+      subResults, conflictReportEarly.conflicts, activeProfile, gateReport,
+    )
+
+    // ============================================================
+    // Step 6: RuleVoting V2 → Weighted Voting（基于 Gate 通过 + Kill 存活）
+    // ============================================================
+    const votingSummary: Record<Wuxing, RuleVoteSummary> = getAllVoteSummariesV2(
+      subResults, activeProfile, priorityMatrix, gateReport, killReport,
+    )
+
+    // ============================================================
+    // Step 7: MetaDecision（元决策 · 玄风门大脑）
+    // ============================================================
+    const metaDecision: MetaDecision = globalMetaDecisionEngine.decide(
+      priorityMatrix.detectedPatterns as MingjuPatternType[],
+      priorityMatrix, subResults, gateReport,
+    )
+
+    // ============================================================
+    // Step 8: 正式 Conflict Report V2（含 RulePriority 完整链路裁决）
+    // ============================================================
+    const conflictReport: ConflictReport = buildConflictReport(
+      subResults, activeProfile, priorityMatrix,
+    )
+
+    // ============================================================
+    // Step 9: EngineHealth（引擎健康度评估）
+    // ============================================================
+    const engineHealth: EngineHealthReport = globalEngineHealthEvaluator.evaluate(
+      subResults, gateReport, killReport, priorityMatrix, conflictReport,
+    )
+
+    // ============================================================
+    // Step 10: 古籍支持度（按五行）
+    // ============================================================
     const classicSupportMap = this.buildClassicSupportMap(subResults, activeProfile)
 
-    // ===== 6. 计算流派共识（按五行） =====
+    // ============================================================
+    // Step 11: 流派共识（按五行）
+    // ============================================================
     const schoolConsensusMap = this.buildSchoolConsensusMap(input, subResults, activeProfile)
 
-    // ===== 7. 计算 FinalDecisionScore（每个五行） =====
+    // ============================================================
+    // Step 12: FinalDecisionScore（每个五行，基于动态 Priority & 存活引擎）
+    // ============================================================
     const scoreBreakdown = WUXING_LIST.map(wx => {
-      const voteSummary = allVoteSummaries[wx]
+      const voteSummary = votingSummary[wx]
       const classicSupport = classicSupportMap[wx]
       const schoolConsensus = schoolConsensusMap[wx]
 
-      // 7.1 加权评分（score × weight × confidence）
-      const weightedScore = this.calculateWeightedScore(wx, subResults, activeProfile)
+      // 12.1 加权评分（仅 Gate 通过 + Kill 存活的引擎 · 使用动态 priority 替代固定 weight）
+      const weightedScore = this.calculateWeightedScoreV2(wx, subResults, priorityMatrix, gateReport, killReport, activeProfile)
 
-      // 7.2 投票分
-      const { voteScore } = calculateVoteScore(wx, subResults, activeProfile)
+      // 12.2 投票分 V2
+      const { voteScore } = calculateVoteScoreV2(
+        wx, subResults, activeProfile, priorityMatrix, gateReport, killReport,
+      )
 
-      // 7.3 古籍支持分
+      // 12.3 古籍支持分
       const classicScore = classicSupport.supportScore * activeProfile.evidenceWeights.classicWeight
 
-      // 7.4 证据完整度分
-      const evidenceScore = evidenceTree.completeness * activeProfile.evidenceWeights.evidenceWeight
+      // 12.4 证据完整度分
+      const { totalEvidence, satisfiedEvidence } = this.computeEvidenceStats(subResults, gateReport)
+      const evidenceCompleteness = totalEvidence > 0 ? satisfiedEvidence / totalEvidence : 0
+      const evidenceScore = evidenceCompleteness * activeProfile.evidenceWeights.evidenceWeight
 
-      // 7.5 流派共识分
+      // 12.5 流派共识分
       const consensusScore = schoolConsensus.consensusRate * activeProfile.evidenceWeights.consensusWeight
 
-      // 7.6 规则优先级因子（根据支持该五行的引擎优先级加权平均）
-      const priorityFactor = this.calculatePriorityFactor(wx, subResults, activeProfile)
+      // 12.6 规则优先级因子 V2（动态 Priority 加权）
+      const priorityFactor = this.calculatePriorityFactorV2(wx, subResults, priorityMatrix, gateReport, killReport)
 
-      // 7.7 冲突惩罚分（如果有冲突涉及该五行）
+      // 12.7 冲突惩罚分（针对该五行）
       const conflictPenalty = this.calculateConflictPenalty(wx, conflictReport, activeProfile)
 
-      // 7.8 最终综合分 = (加权 + 投票 + 古籍 + 证据 + 共识) × 优先级 - 冲突惩罚
+      // 12.8 MetaDecision 加持（若命局特征命中，主推荐五行额外加成）
+      const metaBoost = this.computeMetaBoost(wx, metaDecision, subResults, priorityMatrix)
+
+      // 12.9 最终综合分 = (加权 + 投票 + 古籍 + 证据 + 共识) × Priority × MetaBoost - 冲突惩罚
       const baseScore = weightedScore + voteScore + classicScore + evidenceScore + consensusScore
-      const finalScore = Number((baseScore * priorityFactor - conflictPenalty).toFixed(4))
+      const finalScore = Number(((baseScore * priorityFactor * metaBoost) - conflictPenalty).toFixed(4))
 
       return {
         wuxing: wx,
@@ -128,12 +200,15 @@ export class EvidenceFusionDecisionEngine {
         evidenceScore: Number(evidenceScore.toFixed(4)),
         consensusScore: Number(consensusScore.toFixed(4)),
         priorityFactor: Number(priorityFactor.toFixed(4)),
+        metaBoost: Number(metaBoost.toFixed(4)),
         conflictPenalty: Number(conflictPenalty.toFixed(4)),
         finalScore,
       } as FinalDecisionScoreBreakdown
     })
 
-    // ===== 8. 排序并确定用神（支持多用神） =====
+    // ============================================================
+    // Step 13: 确定用神（结合 MetaDecision 多用神策略）
+    // ============================================================
     const sorted = [...scoreBreakdown].sort((a, b) => b.finalScore - a.finalScore)
     const top = sorted[0]
     const second = sorted[1]
@@ -141,25 +216,28 @@ export class EvidenceFusionDecisionEngine {
     const last = sorted[sorted.length - 1]
     const secondLast = sorted[sorted.length - 2]
 
-    // 8.1 判定是否多用神（Top 2 差值 <= multiYongShenThreshold 且都 >= yongShenThreshold）
-    const isMultiYongShen =
+    // 是否多用神：MetaDecision 指示 OR 评分接近
+    const shouldUseMultiByMeta = metaDecision.shouldUseMultiYongShen
+    const topCloseEnough =
       top.finalScore >= activeProfile.yongShenThreshold &&
-      Math.abs(top.finalScore - second.finalScore) <= activeProfile.multiYongShenThreshold &&
-      second.finalScore >= activeProfile.yongShenThreshold * 0.8
+      Math.abs(top.finalScore - second.finalScore) <= Math.max(activeProfile.multiYongShenThreshold, top.finalScore * 0.2) &&
+      second.finalScore >= activeProfile.yongShenThreshold * 0.75
+    const isMultiYongShen = shouldUseMultiByMeta || topCloseEnough
 
-    // 8.2 多用神模式判定
     const multiYongShenPattern = isMultiYongShen
-      ? this.getMultiYongShenPattern(top.wuxing, second.wuxing)
+      ? this.getMultiYongShenPattern(top.wuxing, second.wuxing, metaDecision)
       : undefined
 
-    // ===== 9. 构建每个五行的 Verdict 和 DecisionTrace =====
+    // ============================================================
+    // Step 14: Verdict & DecisionTrace
+    // ============================================================
     const verdicts: YongShenVerdict[] = WUXING_LIST.map(wx => {
       const breakdown = scoreBreakdown.find(b => b.wuxing === wx)!
-      const voteSummary = allVoteSummaries[wx]
+      const voteSummary = votingSummary[wx]
       const classicSupport = classicSupportMap[wx]
       const trace = buildDecisionTrace(wx, subResults, breakdown, voteSummary, classicSupport, activeProfile)
 
-      // 确定角色
+      // 角色（结合 MetaDecision）
       let role: YongShenRole
       if (wx === top.wuxing) {
         role = 'primary'
@@ -175,10 +253,8 @@ export class EvidenceFusionDecisionEngine {
         role = 'idle'
       }
 
-      // 综合可信度
-      const confidence = this.calculateElementConfidence(wx, voteSummary, classicSupport, evidenceTree, conflictReport)
+      const confidence = this.calculateElementConfidence(wx, voteSummary, classicSupport, evidenceCompletenessGlobal(subResults, gateReport), conflictReport)
 
-      // 并用关系
       const combinedWith = isMultiYongShen && (wx === top.wuxing || wx === second.wuxing)
         ? [top.wuxing, second.wuxing].filter(w => w !== wx)
         : undefined
@@ -195,39 +271,45 @@ export class EvidenceFusionDecisionEngine {
       }
     })
 
-    // ===== 10. 确定最终用神 =====
+    // ============================================================
+    // Step 15: 用神结果
+    // ============================================================
     const primaryYongShen = top.wuxing
-    const secondaryYongShen = isMultiYongShen ? second.wuxing : undefined
+    const secondaryYongShen: string = isMultiYongShen ? second.wuxing : ''
     const assistantGod = third.wuxing
     const avoidGod = last.wuxing
     const idleGod = isMultiYongShen
       ? sorted.find(s => s.wuxing !== top.wuxing && s.wuxing !== second.wuxing)?.wuxing ?? third.wuxing
       : sorted[2].wuxing
 
-    // ===== 11. 计算综合 Confidence =====
+    // ============================================================
+    // Step 16: 综合 Confidence
+    // ============================================================
     const confidence = this.calculateOverallConfidence(
-      primaryYongShen, subResults, evidenceTree, conflictReport, allVoteSummaries, activeProfile,
+      primaryYongShen, subResults, gateReport, conflictReport, votingSummary, activeProfile, classicSupportMap, priorityMatrix,
     )
 
-    // ===== 12. 构建 explain 和 strategy =====
-    const explain = this.buildExplain(
-      primaryYongShen, secondaryYongShen, assistantGod, avoidGod, idleGod,
-      isMultiYongShen, multiYongShenPattern,
-      scoreBreakdown, subResults, conflictReport, activeProfile,
-    )
-    const strategy = this.buildStrategy(
+    // ============================================================
+    // Step 17: EvidenceTree V2（先临时构造，稍后 ExplainBuilder 后再补全 root 标签）
+    // ============================================================
+    let evidenceTree: EvidenceTree = globalEvidenceTreeV2Builder.build(subResults, priorityMatrix, null)
+
+    // ============================================================
+    // Step 18: Strategy + Summary
+    // ============================================================
+    const strategy = this.buildStrategyV2(
       primaryYongShen, secondaryYongShen, assistantGod, avoidGod,
-      isMultiYongShen, multiYongShenPattern, activeProfile,
+      isMultiYongShen, multiYongShenPattern, metaDecision, activeProfile,
     )
     const summary = this.buildSummary(
       primaryYongShen, secondaryYongShen, assistantGod, avoidGod, idleGod,
       isMultiYongShen, confidence.overall,
     )
 
-    // ===== 13. 构建 DecisionTraces =====
-    const decisionTraces: DecisionTrace[] = verdicts.map(v => v.trace)
-
-    return {
+    // ============================================================
+    // Step 19: 组装 DecisionResult（先不含 explain）
+    // ============================================================
+    const result: DecisionResult = {
       system: this.system,
       school: activeProfile.key,
       engineVersion: this.version,
@@ -246,8 +328,16 @@ export class EvidenceFusionDecisionEngine {
       confidence: confidence.overall,
       confidenceBreakdown: confidence,
 
+      // V2 新增模块
+      priorityMatrix,
+      gateReport,
+      killReport,
+      metaDecision,
+      engineHealth,
+      votingSummary,
+
       evidenceTree,
-      decisionTraces,
+      decisionTraces: verdicts.map(v => v.trace),
       conflictReport,
 
       classicSupport: classicSupportMap,
@@ -255,49 +345,127 @@ export class EvidenceFusionDecisionEngine {
 
       subEngineResults: subResults,
 
-      explain,
+      explain: '', // 下一步填
       strategy,
       summary,
     }
+
+    // ============================================================
+    // Step 20: ExplainBuilder 自动生成自然语言（AI 仅润色，绝不重新推理）
+    // ============================================================
+    const explain = globalExplainBuilder.build({
+      result,
+      priorityMatrix,
+      gateReport,
+      killReport,
+      metaDecision,
+      scoreBreakdown,
+      votingSummary,
+      subResults,
+      profile: activeProfile,
+    })
+    result.explain = explain
+
+    // 再补一次 EvidenceTree 的根节点（带最终决策标签）
+    evidenceTree = globalEvidenceTreeV2Builder.build(subResults, priorityMatrix, result)
+    result.evidenceTree = evidenceTree
+
+    return result
   }
 
   // ============================================================
-  // 私有方法
+  // 私有辅助：加权评分 V2（仅存活引擎 · 动态 Priority）
   // ============================================================
-
-  /** 加权评分 = Σ(score × weight × confidence) */
-  private calculateWeightedScore(
+  private calculateWeightedScoreV2(
     wuxing: Wuxing,
     subResults: SubEngineResult[],
+    pm: RulePriorityMatrix,
+    gate: GateReport,
+    kill: KillReport,
     profile: SchoolProfile,
   ): number {
     let sum = 0
     for (const r of subResults) {
-      if (!r.applicable || r.weight <= 0) continue
+      // Gate 未通过 OR 被 Kill → 不参与加权（避免 0 分拉低平均）
+      if (!gate.results[r.engineName]?.passed) continue
+      if (kill.entries[r.engineName]?.killed) continue
+
       const score = r.scores[wuxing] ?? 0
-      sum += score * r.weight * r.confidence
+      // 使用 RulePriorityMatrix 的动态 priority（而不是固定 weight）
+      const priority = pm.byEngine[r.engineName]?.priority ?? getEngineWeight(profile, r.engineName)
+      const confidence = r.confidence
+      sum += score * priority * confidence
     }
     return sum * profile.evidenceWeights.scoreWeight
   }
 
-  /** 规则优先级因子 */
-  private calculatePriorityFactor(
+  /** 规则优先级因子 V2（动态 Priority） */
+  private calculatePriorityFactorV2(
     wuxing: Wuxing,
     subResults: SubEngineResult[],
-    profile: SchoolProfile,
+    pm: RulePriorityMatrix,
+    gate: GateReport,
+    kill: KillReport,
   ): number {
-    const supporting = subResults.filter(r => r.applicable && (r.scores[wuxing] ?? 0) > 0)
+    const supporting = subResults.filter(r =>
+      gate.results[r.engineName]?.passed
+      && !kill.entries[r.engineName]?.killed
+      && (r.scores[wuxing] ?? 0) > 0,
+    )
     if (supporting.length === 0) return 1.0
 
-    const avgPriority = supporting.reduce((sum, r) => {
-      return sum + getEnginePriority(profile, r.engineName)
-    }, 0) / supporting.length
+    // 按动态 priority 加权平均
+    const weightedSum = supporting.reduce((s, r) => {
+      const pri = pm.byEngine[r.engineName]?.priority ?? 0
+      return s + pri * Math.abs(r.scores[wuxing] ?? 0)
+    }, 0)
+    const totalWeight = supporting.reduce((s, r) => s + (pm.byEngine[r.engineName]?.priority ?? 0), 0)
+    const avgPriority = totalWeight > 0 ? weightedSum / totalWeight : 0.2
 
-    // 归一化到 [0.8, 1.2] 区间
-    return 0.8 + (avgPriority / 5) * 0.4
+    // 归一化：avgPriority 理论范围 [0, 1] → factor [0.75, 1.30]
+    return Number((0.75 + avgPriority * 0.55).toFixed(4))
   }
 
-  /** 冲突惩罚分（针对某五行） */
+  /** MetaDecision 加持分（命中策略的引擎支持的五行有加成） */
+  private computeMetaBoost(
+    wx: Wuxing,
+    md: MetaDecision,
+    subResults: SubEngineResult[],
+    pm: RulePriorityMatrix,
+  ): number {
+    let boost = 1.0
+    // 调候优先：ClimateEngine/SeasonEngine 推荐的五行略微加分
+    if (md.shouldPrioritizeClimate) {
+      const climate = subResults.find(r => r.engineName === 'ClimateEngine')
+      const season = subResults.find(r => r.engineName === 'SeasonEngine')
+      const climateS = (climate?.scores[wx] ?? 0) * (pm.byEngine['ClimateEngine']?.priority ?? 0)
+      const seasonS = (season?.scores[wx] ?? 0) * (pm.byEngine['SeasonEngine']?.priority ?? 0)
+      if (climateS + seasonS > 0) boost += 0.06
+    }
+    // 扶抑优先：BalanceEngine 加分
+    if (md.shouldPrioritizeBalance) {
+      const bal = subResults.find(r => r.engineName === 'BalanceEngine')
+      if ((bal?.scores[wx] ?? 0) > 0) boost += 0.05
+    }
+    // 病药优先：MedicineEngine 加分
+    if (md.shouldPrioritizeMedicine) {
+      const med = subResults.find(r => r.engineName === 'MedicineEngine')
+      if ((med?.scores[wx] ?? 0) > 0) boost += 0.06
+    }
+    // 通关优先：BridgeEngine 加分
+    if (md.shouldPrioritizeBridge) {
+      const br = subResults.find(r => r.engineName === 'BridgeEngine')
+      if ((br?.scores[wx] ?? 0) > 0) boost += 0.07
+    }
+    // 格局优先：PatternEngine 加分
+    if (md.shouldPrioritizePattern) {
+      const ptn = subResults.find(r => r.engineName === 'PatternEngine')
+      if ((ptn?.scores[wx] ?? 0) > 0) boost += 0.06
+    }
+    return Number(boost.toFixed(4))
+  }
+
+  /** 冲突惩罚（针对某五行） */
   private calculateConflictPenalty(
     wuxing: Wuxing,
     conflictReport: ConflictReport,
@@ -305,95 +473,37 @@ export class EvidenceFusionDecisionEngine {
   ): number {
     const wxConflicts = conflictReport.conflicts.filter(c => c.wuxing === wuxing)
     if (wxConflicts.length === 0) return 0
-
     const totalIntensity = wxConflicts.reduce((sum, c) => sum + c.conflictIntensity, 0)
-    return Math.min(
+    return Number(Math.min(
       wxConflicts.length * profile.conflictPenaltyFactor * 0.5 + totalIntensity * 0.01,
       0.3,
-    )
+    ).toFixed(4))
   }
 
-  /** 构建 Evidence Tree */
-  private buildEvidenceTree(subResults: SubEngineResult[]): EvidenceTree {
-    const nodes: EvidenceNode[] = subResults.map(r => ({
-      engineName: r.engineName,
-      applicable: r.applicable,
-      skipReason: r.skipReason,
-      evidence: r.evidence,
-      classicEvidence: r.classicEvidence,
-      confidence: r.confidence,
-      weight: r.weight,
-      scores: r.scores,
-      summary: r.summary,
-    }))
-
-    const totalEvidence = subResults.reduce((sum, r) => sum + r.evidence.length, 0)
-    const satisfiedEvidence = subResults.reduce(
-      (sum, r) => sum + r.evidence.filter(e => e.satisfied).length, 0,
-    )
-    const completeness = totalEvidence > 0 ? satisfiedEvidence / totalEvidence : 0
-
-    const classicsSet = new Set<string>()
-    let totalClassicRefs = 0
-    for (const r of subResults) {
-      for (const ce of r.classicEvidence) {
-        classicsSet.add(ce.classicName)
-        totalClassicRefs++
-      }
-    }
-
-    return {
-      nodes,
-      totalEvidence,
-      satisfiedEvidence,
-      completeness: Number(completeness.toFixed(4)),
-      classics: [...classicsSet],
-      totalClassicRefs,
-    }
-  }
-
-  /** 构建古籍支持度（按五行） */
+  /** 构建古籍支持度 */
   private buildClassicSupportMap(
     subResults: SubEngineResult[],
     profile: SchoolProfile,
   ): Record<Wuxing, ClassicSupport> {
     const result = {} as Record<Wuxing, ClassicSupport>
-
     for (const wx of WUXING_LIST) {
       const classicsMap = new Map<string, { ref: ClassicEvidenceRef; count: number }>()
-
       for (const r of subResults) {
         if (!r.applicable) continue
         const score = r.scores[wx] ?? 0
-        if (score <= 0) continue // 只统计支持该五行的古籍
-
+        if (score <= 0) continue
         for (const ce of r.classicEvidence) {
           const existing = classicsMap.get(ce.classicName)
-          if (existing) {
-            existing.count++
-          } else {
-            classicsMap.set(ce.classicName, { ref: ce, count: 1 })
-          }
+          if (existing) existing.count++
+          else classicsMap.set(ce.classicName, { ref: ce, count: 1 })
         }
       }
-
-      const classics = [...classicsMap.entries()].map(([name, { ref, count }]) => ({
-        name,
-        ref,
-        count,
-      }))
-
-      const totalRefCount = classics.reduce((sum, c) => sum + c.count, 0)
+      const classics = [...classicsMap.entries()].map(([name, { ref, count }]) => ({ name, ref, count }))
+      const totalRefCount = classics.reduce((s, c) => s + c.count, 0)
       const classicCount = classics.length
-
-      // 古籍支持度 = Σ(引用次数 × 古籍权重) / maxPossible
-      const weightedSum = classics.reduce(
-        (sum, c) => sum + c.count * getClassicWeight(profile, c.name),
-        0,
-      )
-      const maxPossible = 10 // 假设最大引用 10 次
+      const weightedSum = classics.reduce((s, c) => s + c.count * getClassicWeight(profile, c.name), 0)
+      const maxPossible = 10
       const supportScore = Math.min(weightedSum / maxPossible, 1)
-
       result[wx] = {
         classics,
         totalRefCount,
@@ -401,76 +511,72 @@ export class EvidenceFusionDecisionEngine {
         supportScore: Number(supportScore.toFixed(4)),
       }
     }
-
     return result
   }
 
-  /** 构建流派共识（按五行） */
+  /** 构建流派共识 */
   private buildSchoolConsensusMap(
     input: SubEngineInput,
     subResults: SubEngineResult[],
     activeProfile: SchoolProfile,
   ): Record<Wuxing, SchoolConsensus> {
-    // 在多个流派下重新计算各五行得分，检查一致性
     const schools = ['ziping', 'qiongtong', 'modern', 'balanced']
     const result = {} as Record<Wuxing, SchoolConsensus>
-
+    const pm = globalRulePriorityResolver.resolve(input, subResults, activeProfile)
+    const emptyGate = globalRuleGate.checkAll(subResults, activeProfile)
+    const emptyKill = globalRuleKill.evaluateAll(subResults, [], activeProfile, emptyGate)
     for (const wx of WUXING_LIST) {
       const bySchool = schools.map(school => {
-        const profile = getSchoolProfile(school)
-        const score = this.calculateWeightedScore(wx, subResults, profile)
+        const p = getSchoolProfile(school)
+        const s = this.calculateWeightedScoreV2(wx, subResults, pm, emptyGate, emptyKill, p)
         return {
           school,
-          score: Number(score.toFixed(4)),
-          stance: score > 0 ? 'support' as const : score < 0 ? 'oppose' as const : 'neutral' as const,
+          score: Number(s.toFixed(4)),
+          stance: s > 0 ? 'support' as const : s < 0 ? 'oppose' as const : 'neutral' as const,
         }
       })
-
-      // 共识度 = 1 - 标准差/极差
       const scores = bySchool.map(s => s.score)
       const mean = scores.reduce((a, b) => a + b, 0) / scores.length
-      const variance = scores.reduce((sum, s) => sum + (s - mean) ** 2, 0) / scores.length
+      const variance = scores.reduce((s, sc) => s + (sc - mean) ** 2, 0) / scores.length
       const std = Math.sqrt(variance)
       const range = Math.max(...scores) - Math.min(...scores)
       const consensusRate = range > 0 ? 1 - std / range : 1
-
-      // 跨流派共识 = 所有流派立场一致
       const stances = new Set(bySchool.map(s => s.stance))
       const hasCrossSchoolConsensus = stances.size === 1 && !stances.has('neutral')
-
       result[wx] = {
         bySchool,
         consensusRate: Number(consensusRate.toFixed(4)),
         hasCrossSchoolConsensus,
       }
     }
-
     return result
   }
 
-  /** 计算某五行的综合可信度 */
+  /** 元素级 Confidence */
   private calculateElementConfidence(
     wuxing: Wuxing,
     voteSummary: RuleVoteSummary,
     classicSupport: ClassicSupport,
-    evidenceTree: EvidenceTree,
+    evidenceCompleteness: number,
     conflictReport: ConflictReport,
   ): number {
     const voteConf = voteSummary.supportRate
     const classicConf = Math.min(classicSupport.supportScore, 1)
-    const evidenceConf = evidenceTree.completeness
-    const conflictConf = 1 - conflictReport.conflictPenalty
+    const evidenceConf = evidenceCompleteness
+    const conflictConf = 1 - Math.min(conflictReport.conflictPenalty * 1.5, 1)
     return Number(((voteConf + classicConf + evidenceConf + conflictConf) / 4).toFixed(4))
   }
 
-  /** 计算综合 Confidence */
+  /** 综合 Confidence */
   private calculateOverallConfidence(
-    primaryYongShen: Wuxing,
+    primary: Wuxing,
     subResults: SubEngineResult[],
-    evidenceTree: EvidenceTree,
+    gate: GateReport,
     conflictReport: ConflictReport,
-    allVoteSummaries: Record<Wuxing, RuleVoteSummary>,
+    votingSummary: Record<Wuxing, RuleVoteSummary>,
     profile: SchoolProfile,
+    classicSupportMap: Record<Wuxing, ClassicSupport>,
+    pm: RulePriorityMatrix,
   ): {
     overall: number
     evidenceCoverage: number
@@ -480,25 +586,23 @@ export class EvidenceFusionDecisionEngine {
     conflictPenalty: number
   } {
     const applicableCount = subResults.filter(r => r.applicable).length
-    const evidenceCoverage = Math.min(applicableCount / 7, 1)
+    const passedCount = gate.passedCount
+    const evidenceCoverage = Number((Math.min(passedCount / Math.max(applicableCount, 1), 1)).toFixed(4))
 
-    const primaryVote = allVoteSummaries[primaryYongShen]
-    const engineConsensus = primaryVote.supportRate
+    const primaryVote = votingSummary[primary]
+    const engineConsensus = Number(primaryVote.supportRate.toFixed(4))
 
-    const primaryClassic = this.buildClassicSupportMap(subResults, profile)[primaryYongShen]
-    const classicSupport = primaryClassic.supportScore
+    const primaryClassic = classicSupportMap[primary]
+    const classicSupport = Number(primaryClassic.supportScore.toFixed(4))
 
-    // 流派一致性 = 主要用神在不同流派下的共识度
-    const schoolConsistency = this.buildSchoolConsensusMap(
-      {} as SubEngineInput, subResults, profile,
-    )[primaryYongShen].consensusRate
+    const schoolConsistency = this.buildSchoolConsensusMapLite(primary, subResults, profile, pm)
 
-    const conflictPenalty = conflictReport.conflictPenalty
+    const conflictPenalty = Number(Math.min(conflictReport.conflictPenalty, 1).toFixed(4))
 
     const overall = Number((
       evidenceCoverage * 0.2 +
-      engineConsensus * 0.3 +
-      classicSupport * 0.2 +
+      engineConsensus * 0.30 +
+      classicSupport * 0.20 +
       schoolConsistency * 0.15 +
       (1 - conflictPenalty) * 0.15
     ).toFixed(4))
@@ -506,36 +610,75 @@ export class EvidenceFusionDecisionEngine {
     return { overall, evidenceCoverage, engineConsensus, classicSupport, schoolConsistency, conflictPenalty }
   }
 
-  /** 获取多用神模式名称 */
-  private getMultiYongShenPattern(a: Wuxing, b: Wuxing): string {
+  /** 简化版：仅学校一致性 */
+  private buildSchoolConsensusMapLite(
+    primary: Wuxing,
+    subResults: SubEngineResult[],
+    activeProfile: SchoolProfile,
+    pm: RulePriorityMatrix,
+  ): number {
+    const schools = ['ziping', 'qiongtong', 'modern', 'balanced']
+    const emptyGate = globalRuleGate.checkAll(subResults, activeProfile)
+    const emptyKill = globalRuleKill.evaluateAll(subResults, [], activeProfile, emptyGate)
+    const scores = schools.map(s => {
+      const p = getSchoolProfile(s)
+      return this.calculateWeightedScoreV2(primary, subResults, pm, emptyGate, emptyKill, p)
+    })
+    const mean = scores.reduce((a, b) => a + b, 0) / scores.length
+    const variance = scores.reduce((s, sc) => s + (sc - mean) ** 2, 0) / scores.length
+    const std = Math.sqrt(variance)
+    const range = Math.max(...scores) - Math.min(...scores)
+    return Number((range > 0 ? Math.max(0, 1 - std / range) : 1).toFixed(4))
+  }
+
+  /** Evidence 全局统计 */
+  private computeEvidenceStats(subResults: SubEngineResult[], gate: GateReport): { totalEvidence: number; satisfiedEvidence: number } {
+    const passed = subResults.filter(r => gate.results[r.engineName]?.passed)
+    const totalEvidence = passed.reduce((s, r) => s + r.evidence.length, 0)
+    const satisfiedEvidence = passed.reduce((s, r) => s + r.evidence.filter(e => e.satisfied).length, 0)
+    return { totalEvidence, satisfiedEvidence }
+  }
+
+  /** 多用神模式名称（结合 MetaDecision） */
+  private getMultiYongShenPattern(a: Wuxing, b: Wuxing, md: MetaDecision): string {
+    // 命局特征优先
+    if (md.multiYongShenMode === 'bridge_use') return `${a}${b}并用（通关调和）`
+    if (md.multiYongShenMode === 'climate_assist') return `${a}${b}并用（调候+辅助）`
+    if (md.multiYongShenMode === 'dual_image') return `${a}${b}两神成象`
+    if (md.multiYongShenMode === 'mutual_generation') return `${a}${b}相生并用`
+    // 经典组合表
     const patterns: Record<string, string> = {
-      '木-火': '木火同用（木火通明）',
-      '火-木': '木火同用（木火通明）',
-      '火-土': '火土并用',
-      '土-火': '火土并用',
-      '土-金': '土金并用',
-      '金-土': '土金并用',
-      '金-水': '金水两神成象',
-      '水-金': '金水两神成象',
-      '水-木': '水木同用',
-      '木-水': '水木同用',
+      '木-火': '木火同用（木火通明）', '火-木': '木火同用（木火通明）',
+      '火-土': '火土并用', '土-火': '火土并用',
+      '土-金': '土金并用', '金-土': '土金并用',
+      '金-水': '金水两神成象', '水-金': '金水两神成象',
+      '水-木': '水木同用', '木-水': '水木同用',
     }
     const key = `${a}-${b}`
     return patterns[key] ?? `${a}${b}并用`
   }
 
-  /** 构建策略 */
-  private buildStrategy(
+  /** 策略文本 V2（包含 MetaDecision 信息） */
+  private buildStrategyV2(
     primary: Wuxing, secondary: Wuxing | undefined, assistant: Wuxing, avoid: Wuxing,
-    isMulti: boolean, pattern: string | undefined, profile: SchoolProfile,
+    isMulti: boolean, pattern: string | undefined,
+    md: MetaDecision, profile: SchoolProfile,
   ): string {
+    const strategies: string[] = []
+    if (md.shouldPrioritizeClimate) strategies.push('调候优先')
+    if (md.shouldPrioritizeBalance) strategies.push('扶抑优先')
+    if (md.shouldPrioritizePattern) strategies.push('格局优先')
+    if (md.shouldPrioritizeMedicine) strategies.push('病药优先')
+    if (md.shouldPrioritizeBridge) strategies.push('通关优先')
+    const strat = strategies.length > 0 ? strategies.join('·') : '综合权衡'
+
     if (isMulti && secondary) {
-      return `以${primary}${secondary}并用为用（${pattern}），佐${assistant}，避${avoid}。流派：${profile.name}`
+      return `【${strat}】以${primary}${secondary}并用为用（${pattern ?? '多用神'}），佐${assistant}，避${avoid}。流派：${profile.name}。命局特征：${md.strategyBasis.join('+')}`
     }
-    return `以${primary}为用，佐${assistant}，避${avoid}。流派：${profile.name}`
+    return `【${strat}】以${primary}为用，佐${assistant}，避${avoid}。流派：${profile.name}。命局特征：${md.strategyBasis.join('+')}`
   }
 
-  /** 构建摘要 */
+  /** 摘要 */
   private buildSummary(
     primary: Wuxing, secondary: Wuxing | undefined, assistant: Wuxing,
     avoid: Wuxing, idle: Wuxing, isMulti: boolean, confidence: number,
@@ -545,117 +688,30 @@ export class EvidenceFusionDecisionEngine {
       : `用神=${primary}`
     return `${yongShenPart} 喜神=${assistant} 忌神=${avoid} 闲神=${idle} confidence=${confidence.toFixed(2)}`
   }
-
-  /** 构建完整说明 */
-  private buildExplain(
-    primary: Wuxing, secondary: Wuxing | undefined, assistant: Wuxing,
-    avoid: Wuxing, idle: Wuxing, isMulti: boolean, pattern: string | undefined,
-    scoreBreakdown: FinalDecisionScoreBreakdown[],
-    subResults: SubEngineResult[],
-    conflictReport: ConflictReport,
-    profile: SchoolProfile,
-  ): string {
-    const lines: string[] = []
-    lines.push('【Evidence Fusion Decision 多证据融合决策说明】')
-    lines.push('')
-    lines.push(`流派：${profile.name}（${profile.description}）`)
-    lines.push('')
-    lines.push('一、最终结论：')
-    if (isMulti && secondary) {
-      lines.push(`  主用神：${primary}`)
-      lines.push(`  次用神：${secondary}（${pattern}）`)
-    } else {
-      lines.push(`  用神：${primary}`)
-    }
-    lines.push(`  辅助神（喜神）：${assistant}`)
-    lines.push(`  忌神：${avoid}`)
-    lines.push(`  闲神：${idle}`)
-    lines.push('')
-
-    lines.push('二、推演过程（Evidence Fusion）：')
-    lines.push('')
-    lines.push('  Step 1 - 各子引擎 Evidence 收集：')
-    for (const r of subResults) {
-      if (!r.applicable) {
-        lines.push(`    [${r.engineName}] 不适用：${r.skipReason ?? '未知'}（仍保留跳过 Evidence）`)
-        continue
-      }
-      lines.push(`    [${r.engineName}] ${r.summary}`)
-    }
-    lines.push('')
-
-    lines.push('  Step 2 - Rule Voting 规则投票：')
-    for (const wx of WUXING_LIST) {
-      const bd = scoreBreakdown.find(b => b.wuxing === wx)!
-      const votes = subResults.filter(r => r.applicable).map(r => ({
-        engine: r.engineName.replace('Engine', ''),
-        score: r.scores[wx] ?? 0,
-      }))
-      const support = votes.filter(v => v.score > 0).map(v => v.engine).join(',') || '—'
-      const oppose = votes.filter(v => v.score < 0).map(v => v.engine).join(',') || '—'
-      lines.push(`    ${wx}：支持[${support}] 反对[${oppose}] → 投票分=${bd.voteScore.toFixed(4)}`)
-    }
-    lines.push('')
-
-    lines.push('  Step 3 - Classic Support 古籍支持度：')
-    for (const wx of WUXING_LIST) {
-      const bd = scoreBreakdown.find(b => b.wuxing === wx)!
-      lines.push(`    ${wx}：古籍支持分=${bd.classicScore.toFixed(4)}`)
-    }
-    lines.push('')
-
-    lines.push('  Step 4 - Conflict 冲突检测与裁决：')
-    if (conflictReport.totalConflicts === 0) {
-      lines.push('    无引擎间冲突，决策一致性良好')
-    } else {
-      lines.push(`    检测到 ${conflictReport.totalConflicts} 处冲突，最大强度=${conflictReport.maxIntensity}`)
-      for (const c of conflictReport.conflicts) {
-        lines.push(`    ${c.wuxing}：${c.engineA}(${c.scoreA},${c.stanceA}) vs ${c.engineB}(${c.scoreB},${c.stanceB})`)
-        lines.push(`      → 采用：${c.adoptionReason}`)
-        lines.push(`      → 舍弃：${c.rejectionReason}`)
-      }
-    }
-    lines.push('')
-
-    lines.push('  Step 5 - FinalDecisionScore 最终综合评分：')
-    for (const bd of scoreBreakdown) {
-      lines.push(`    ${bd.wuxing}：`)
-      lines.push(`      加权=${bd.weightedScore.toFixed(4)} + 投票=${bd.voteScore.toFixed(4)} + 古籍=${bd.classicScore.toFixed(4)} + 证据=${bd.evidenceScore.toFixed(4)} + 共识=${bd.consensusScore.toFixed(4)}`)
-      lines.push(`      × 优先级=${bd.priorityFactor.toFixed(4)} - 冲突=${bd.conflictPenalty.toFixed(4)} = 最终=${bd.finalScore.toFixed(4)}`)
-    }
-    lines.push('')
-
-    lines.push('三、决策回溯（DecisionTrace）：')
-    lines.push('  每个五行的完整决策过程详见 decisionTraces 字段，包含：')
-    lines.push('  - 各引擎评分贡献及 Evidence 引用')
-    lines.push('  - Rule Voting 投票统计')
-    lines.push('  - Classic Support 古籍支持度')
-    lines.push('  - Conflict Penalty 冲突惩罚')
-    lines.push('  - 最终综合分构成')
-    lines.push('')
-
-    lines.push('四、流派共识（School Consensus）：')
-    lines.push(`  在 ${profile.name} 流派下，主用神 ${primary} 的跨流派共识度详见 schoolConsensus 字段`)
-    lines.push('')
-
-    return lines.join('\n')
-  }
 }
 
-/** 辅助类型 */
+/** 子引擎实例类型 */
 interface SubEngineInstance {
   readonly name: string
   readonly version: string
   evaluate(input: SubEngineInput): SubEngineResult
 }
 
-// 让 7 个子引擎类满足 SubEngineInstance 接口
-// （它们已经有 name/version/evaluate）
+/** 全局辅助函数：evidence 完整度 */
+function evidenceCompletenessGlobal(subResults: SubEngineResult[], gate: GateReport): number {
+  const passed = subResults.filter(r => gate.results[r.engineName]?.passed)
+  const total = passed.reduce((s, r) => s + r.evidence.length, 0)
+  const satisfied = passed.reduce((s, r) => s + r.evidence.filter(e => e.satisfied).length, 0)
+  return total > 0 ? satisfied / total : 0
+}
 
-/** 全局默认实例（使用 ModernProfile） */
+/** 全局默认实例（ModernProfile） */
 export const globalEvidenceFusionEngine = new EvidenceFusionDecisionEngine()
 
 /** 创建指定流派的实例 */
 export function createFusionEngine(profileKey: string): EvidenceFusionDecisionEngine {
   return new EvidenceFusionDecisionEngine(getSchoolProfile(profileKey))
 }
+
+// 避免 unused 警告
+export type { EvidenceNode }

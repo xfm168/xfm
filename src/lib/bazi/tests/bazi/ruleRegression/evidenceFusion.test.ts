@@ -129,12 +129,12 @@ describe('Sprint3-4: Evidence Fusion Decision Engine', () => {
       }
     })
 
-    it('finalScore = (weighted + vote + classic + evidence + consensus) × priority - conflictPenalty', () => {
+    it('finalScore = (weighted + vote + classic + evidence + consensus) × priority × metaBoost − conflictPenalty', () => {
       for (const tc of testCases) {
         const result = globalEvidenceFusionEngine.decide(tc.input)
         for (const bd of result.scoreBreakdown) {
           const base = bd.weightedScore + bd.voteScore + bd.classicScore + bd.evidenceScore + bd.consensusScore
-          const expected = Number((base * bd.priorityFactor - bd.conflictPenalty).toFixed(4))
+          const expected = Number((base * bd.priorityFactor * bd.metaBoost - bd.conflictPenalty).toFixed(4))
           expect(bd.finalScore).toBeCloseTo(expected, 3)
         }
       }
@@ -331,14 +331,20 @@ describe('Sprint3-4: Evidence Fusion Decision Engine', () => {
   // ⑤ Rule Voting 规则投票
   // ============================================================
   describe('⑤ Rule Voting 规则投票', () => {
-    it('每个五行都有 vote summary（support/oppose/neutral）', () => {
+    it('每个五行都有 vote summary（support/oppose/neutral + valid/gated/killed）', () => {
       for (const tc of testCases) {
         const result = globalEvidenceFusionEngine.decide(tc.input)
         for (const v of result.verdicts) {
           expect(typeof v.vote.supportCount).toBe('number')
           expect(typeof v.vote.opposeCount).toBe('number')
           expect(typeof v.vote.neutralCount).toBe('number')
-          expect(v.vote.supportCount + v.vote.opposeCount + v.vote.neutralCount).toBe(7)
+          // V2: 仅通过 Gate 且未被 Kill 的引擎计入 voting（支持/反对/中立 = valid）
+          expect(v.vote.supportCount + v.vote.opposeCount + v.vote.neutralCount)
+            .toBe(v.vote.validVoteCount)
+          // 7 个引擎都有 vote 记录（无论 gated / killed 状态如何）
+          expect(v.vote.votes.length).toBe(7)
+          expect(typeof v.vote.gatedVoteCount).toBe('number')
+          expect(typeof v.vote.killedVoteCount).toBe('number')
           expect(typeof v.vote.weightedScore).toBe('number')
           expect(typeof v.vote.supportRate).toBe('number')
         }
