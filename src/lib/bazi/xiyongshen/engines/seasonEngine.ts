@@ -5,12 +5,23 @@ import type { ClassicEvidenceRef } from '../../ruleEngine/types'
 const WUXING_LIST: Wuxing[] = ['木', '火', '土', '金', '水']
 function emptyScore(): Record<Wuxing, number> { return { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 } }
 
+function clamp(v: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, v))
+}
+
 /**
- * SeasonEngine（寒暖燥湿体系引擎）
+ * SeasonEngine（寒暖燥湿体系引擎）- Evidence 驱动 + 量化指标
  *
- * 合并寒暖法和燥湿法：
+ * 合并寒暖法和燥湿法，并输出量化指标：
  * - 寒暖：过寒需火暖，过暖需水寒
  * - 燥湿：过燥需水润，过湿需土燥
+ *
+ * 量化指标：
+ * - Temperature Score（温度评分 -10~+10）
+ * - Humidity Score（湿度评分 -10~+10）
+ * - Dryness Score（干燥度 0~1）
+ * - Warmness Score（暖度 0~1）
+ * - Season Balance（季节平衡度 0~1）
  *
  * 经典依据：《穷通宝鉴》寒暖论 + 燥湿论 + 《三命通会》
  */
@@ -23,6 +34,33 @@ export class SeasonEngine implements SubEngine {
     const score = emptyScore()
     const evidence: Array<{ step: string; text: string; satisfied?: boolean; citation?: string }> = []
 
+    // === 量化指标计算 ===
+    // Temperature Score (-10寒冷 ~ +10炎热)：月令 + 火水计数
+    let tempBase = 0
+    if (isSummerBorn) tempBase = 5
+    else if (isWinterBorn) tempBase = -5
+    const tempElement = (count['火'] - count['水']) * 1.0
+    const temperature = clamp(tempBase + tempElement, -10, 10)
+
+    // Humidity Score (-10干燥 ~ +10潮湿)：水土计数
+    let humidBase = 0
+    if (isWetSeason) humidBase = 5
+    else if (isDrySeason) humidBase = -5
+    const humidElement = (count['水'] - count['土']) * 1.0
+    const humidity = clamp(humidBase + humidElement, -10, 10)
+
+    // Dryness Score (0~1)：Temperature 高 + Humidity 低 → Dryness 高
+    const dryness = clamp((temperature - humidity + 20) / 40, 0, 1)
+
+    // Warmness Score (0~1)：Temperature > 0 → Warmness 高
+    const warmness = clamp((temperature + 10) / 20, 0, 1)
+
+    // Season Balance (0~1)：Temperature 和 Humidity 越接近 0，Balance 越高
+    const balance = clamp(1 - (Math.abs(temperature) + Math.abs(humidity)) / 20, 0, 1)
+
+    const tempLabel = temperature > 4 ? '炎热' : temperature > 0 ? '偏暖' : temperature < -4 ? '严寒' : '偏寒'
+    const humidLabel = humidity > 4 ? '潮湿' : humidity > 0 ? '偏湿' : humidity < -4 ? '干燥' : '偏燥'
+
     // === 寒暖法 ===
     evidence.push({
       step: 'S1-判定寒暖',
@@ -31,10 +69,18 @@ export class SeasonEngine implements SubEngine {
       citation: '《穷通宝鉴》寒暖论',
     })
 
+    // 量化：Temperature Score
+    evidence.push({
+      step: 'S2-Temperature Score（温度评分）',
+      text: `Temperature Score=${temperature > 0 ? '+' : ''}${temperature}（${tempLabel}，-10寒冷~+10炎热）`,
+      satisfied: true,
+      citation: '《穷通宝鉴》寒暖论',
+    })
+
     let hanNuanApplied = false
     if (isWinterBorn) {
       evidence.push({
-        step: 'S2-过寒需暖',
+        step: 'S3-过寒需暖',
         text: '生于冬季 水旺火弱 过寒 需火暖之',
         satisfied: true,
         citation: '《穷通宝鉴》寒暖论',
@@ -43,7 +89,7 @@ export class SeasonEngine implements SubEngine {
       hanNuanApplied = true
     } else if (isSummerBorn) {
       evidence.push({
-        step: 'S2-过暖需寒',
+        step: 'S3-过暖需寒',
         text: '生于夏季 火炎水涸 过暖 需水寒之',
         satisfied: true,
         citation: '《穷通宝鉴》寒暖论',
@@ -54,22 +100,30 @@ export class SeasonEngine implements SubEngine {
       const huoCount = count['火']
       const shuiCount = count['水']
       if (huoCount >= 3) {
-        evidence.push({ step: 'S2-火多偏暖', text: `火=${huoCount}个 偏暖 需水寒`, satisfied: true, citation: '《三命通会》' })
+        evidence.push({ step: 'S3-火多偏暖', text: `火=${huoCount}个 偏暖 需水寒`, satisfied: true, citation: '《三命通会》' })
         score['水'] = Math.max(score['水'], 1); score['火'] = Math.min(score['火'], -1)
         hanNuanApplied = true
       } else if (shuiCount >= 3) {
-        evidence.push({ step: 'S2-水多偏寒', text: `水=${shuiCount}个 偏寒 需火暖`, satisfied: true, citation: '《三命通会》' })
+        evidence.push({ step: 'S3-水多偏寒', text: `水=${shuiCount}个 偏寒 需火暖`, satisfied: true, citation: '《三命通会》' })
         score['火'] = Math.max(score['火'], 1); score['水'] = Math.min(score['水'], -1)
         hanNuanApplied = true
       } else {
-        evidence.push({ step: 'S2-寒暖适中', text: '非冬非夏 水火相当 寒暖法无强制', satisfied: false, citation: '《三命通会》' })
+        evidence.push({ step: 'S3-寒暖适中', text: '非冬非夏 水火相当 寒暖法无强制', satisfied: false, citation: '《三命通会》' })
       }
     }
 
     // === 燥湿法 ===
     evidence.push({
-      step: 'S3-判定燥湿',
+      step: 'S4-判定燥湿',
       text: `月令=${monthZhiWuxing} 燥月=${isDrySeason} 湿月=${isWetSeason} 土=${count['土']} 水=${count['水']}`,
+      satisfied: true,
+      citation: '《穷通宝鉴》燥湿论',
+    })
+
+    // 量化：Humidity Score
+    evidence.push({
+      step: 'S5-Humidity Score（湿度评分）',
+      text: `Humidity Score=${humidity > 0 ? '+' : ''}${humidity}（${humidLabel}，-10干燥~+10潮湿）`,
       satisfied: true,
       citation: '《穷通宝鉴》燥湿论',
     })
@@ -77,7 +131,7 @@ export class SeasonEngine implements SubEngine {
     let zaoShiApplied = false
     if (isDrySeason) {
       evidence.push({
-        step: 'S4-过燥需湿',
+        step: 'S6-过燥需湿',
         text: '生于戌未月或火旺土燥 过燥 需水润泽',
         satisfied: true,
         citation: '《穷通宝鉴》燥湿论',
@@ -86,7 +140,7 @@ export class SeasonEngine implements SubEngine {
       zaoShiApplied = true
     } else if (isWetSeason) {
       evidence.push({
-        step: 'S4-过湿需燥',
+        step: 'S6-过湿需燥',
         text: '生于辰丑月或水多土湿 过湿 需燥土暖之',
         satisfied: true,
         citation: '《穷通宝鉴》燥湿论',
@@ -97,20 +151,36 @@ export class SeasonEngine implements SubEngine {
       const tuCount = count['土']
       const shuiCount = count['水']
       if (tuCount >= 3 && shuiCount <= 1) {
-        evidence.push({ step: 'S4-土多偏燥', text: `土=${tuCount}水=${shuiCount} 偏燥 需水`, satisfied: true, citation: '《三命通会》' })
+        evidence.push({ step: 'S6-土多偏燥', text: `土=${tuCount}水=${shuiCount} 偏燥 需水`, satisfied: true, citation: '《三命通会》' })
         score['水'] = Math.max(score['水'], 1); score['土'] = Math.min(score['土'], -1)
         zaoShiApplied = true
       } else if (shuiCount >= 3 && tuCount <= 1) {
-        evidence.push({ step: 'S4-水多偏湿', text: `水=${shuiCount}土=${tuCount} 偏湿 需土`, satisfied: true, citation: '《三命通会》' })
+        evidence.push({ step: 'S6-水多偏湿', text: `水=${shuiCount}土=${tuCount} 偏湿 需土`, satisfied: true, citation: '《三命通会》' })
         score['土'] = Math.max(score['土'], 1); score['水'] = Math.min(score['水'], -1)
         zaoShiApplied = true
       } else {
-        evidence.push({ step: 'S4-燥湿适中', text: '非湿月燥月 水土相当 燥湿法无特殊用神', satisfied: false, citation: '《三命通会》' })
+        evidence.push({ step: 'S6-燥湿适中', text: '非湿月燥月 水土相当 燥湿法无特殊用神', satisfied: false, citation: '《三命通会》' })
       }
     }
 
+    // 量化：Dryness Score / Warmness Score
     evidence.push({
-      step: 'S5-寒暖燥湿综合打分',
+      step: 'S7-Dryness/Warmness Score（干燥度/暖度）',
+      text: `Dryness Score=${dryness.toFixed(2)}（干燥度0~1） Warmness Score=${warmness.toFixed(2)}（暖度0~1）`,
+      satisfied: true,
+      citation: '《穷通宝鉴》',
+    })
+
+    // 量化：Season Balance
+    evidence.push({
+      step: 'S8-Season Balance（季节平衡度）',
+      text: `Season Balance=${balance.toFixed(2)}（季节平衡度0~1，越接近1越平衡）`,
+      satisfied: true,
+      citation: '《三命通会》论寒暖燥湿',
+    })
+
+    evidence.push({
+      step: 'S9-寒暖燥湿综合打分',
       text: `木:${score['木']} 火:${score['火']} 土:${score['土']} 金:${score['金']} 水:${score['水']}`,
       satisfied: true,
       citation: '《穷通宝鉴》',
@@ -148,7 +218,7 @@ export class SeasonEngine implements SubEngine {
       classicEvidence,
       confidence: 0.7,
       weight: 0.2, // 寒暖0.1 + 燥湿0.1 合并
-      summary: `寒暖燥湿：${hanNuanApplied ? '寒暖已调' : '寒暖适中'} ${zaoShiApplied ? '燥湿已调' : '燥湿适中'}`,
+      summary: `寒暖燥湿：${hanNuanApplied ? '寒暖已调' : '寒暖适中'} ${zaoShiApplied ? '燥湿已调' : '燥湿适中'} | Temp=${temperature > 0 ? '+' : ''}${temperature} Humid=${humidity > 0 ? '+' : ''}${humidity} Dry=${dryness.toFixed(2)} Warm=${warmness.toFixed(2)} Balance=${balance.toFixed(2)}`,
     }
   }
 }
