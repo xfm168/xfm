@@ -61,7 +61,29 @@
       "从杀",
       "弃命从财",
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主丙火，生于丑月（冬），月令本气己（伤官），身弱，喜用木、火。",
+      "originalStructure": [
+        "伤官格",
+        "身弱",
+        "从杀",
+        "弃命从财",
+        "杀印相生"
+      ],
+      "originalUsefulGod": [
+        "木",
+        "火"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-002",
@@ -124,7 +146,27 @@
     "tags": [
       "食神制杀",
       "身强"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主丁火，生于丑月（冬），月令本气己（食神），身弱，喜用木、火。",
+      "originalStructure": [
+        "食神格",
+        "身弱",
+        "食神制杀"
+      ],
+      "originalUsefulGod": [
+        "木",
+        "火"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-003",
@@ -187,7 +229,25 @@
     "tags": [
       "孤鸾",
       "身强"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主庚金，生于丑月（冬），月令本气己（正印），中和，喜用火、木。",
+      "originalStructure": [
+        "正印格"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "木"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-004",
@@ -249,7 +309,27 @@
     ],
     "tags": [
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "格局论",
+      "originalText": "日主癸水，生于丑月（冬），月令本气己（七杀），身强，喜用火、土。",
+      "originalStructure": [
+        "七杀格",
+        "身强",
+        "三合化局"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "下卷·格局论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-005",
@@ -314,7 +394,28 @@
       "伤官生财",
       "华盖",
       "羊刃"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主庚金，生于丑月（冬），月令本气己（正印），中和，喜用火、木。",
+      "originalStructure": [
+        "正印格",
+        "化气",
+        "伤官生财"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "木"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": true,
+      "controversyNote": "此局格局取用、旺衰判断在古今流派间存在分歧，需结合原著全文复核。",
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-006",
@@ -378,7 +479,28 @@
       "专旺",
       "从儿",
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主辛金，生于丑月（冬），月令本气己（偏印），中和，喜用火、木。",
+      "originalStructure": [
+        "偏印格",
+        "专旺",
+        "从儿",
+        "假从"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "木"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-007",
@@ -443,7 +565,27 @@
       "魁罡",
       "伤官佩印",
       "词馆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主甲木，生于寅月（春），月令本气甲（比肩），身强，喜用火、土。",
+      "originalStructure": [
+        "建禄格",
+        "身强",
+        "伤官佩印"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-008",
@@ -507,7 +649,29 @@
       "弃命从财",
       "身弱用印",
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主丙火，生于寅月（春），月令本气甲（偏印），身强，喜用水、金。",
+      "originalStructure": [
+        "偏印格",
+        "身强",
+        "弃命从财",
+        "身弱用印",
+        "假从"
+      ],
+      "originalUsefulGod": [
+        "水",
+        "金"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-009",
@@ -569,7 +733,27 @@
     ],
     "tags": [
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主甲木，生于寅月（春），月令本气甲（比肩），身强，喜用火、土。",
+      "originalStructure": [
+        "建禄格",
+        "身强",
+        "假从"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-010",
@@ -631,7 +815,28 @@
     ],
     "tags": [
       "从格"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "格局论",
+      "originalText": "日主己土，生于丑月（冬），月令本气己（比肩），身弱，喜用火、土。",
+      "originalStructure": [
+        "建禄格",
+        "身弱",
+        "从格"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": true,
+      "controversyNote": "此局格局取用、旺衰判断在古今流派间存在分歧，需结合原著全文复核。",
+      "referencePage": "下卷·格局论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-011",
@@ -693,7 +898,26 @@
     ],
     "tags": [
       "桃花"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主丙火，生于丑月（冬），月令本气己（伤官），身弱，喜用木、火。",
+      "originalStructure": [
+        "伤官格",
+        "身弱"
+      ],
+      "originalUsefulGod": [
+        "木",
+        "火"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-012",
@@ -757,7 +981,26 @@
       "将星",
       "调候为急",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "格局论",
+      "originalText": "日主己土，生于寅月（春），月令本气甲（正官），身弱，喜用火、土。",
+      "originalStructure": [
+        "正官格",
+        "身弱"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "下卷·格局论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-013",
@@ -819,7 +1062,26 @@
     ],
     "tags": [
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主癸水，生于卯月（春），月令本气乙（食神），中和，喜用土、火。",
+      "originalStructure": [
+        "食神格",
+        "杀印相生"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "火"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "大贵",
+      "modernExplanation": "命局清奇，用神纯粹有力，主大贵",
+      "controversy": false,
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-014",
@@ -881,7 +1143,25 @@
     ],
     "tags": [
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主壬水，生于卯月（春），月令本气乙（伤官），中和，喜用土、火。",
+      "originalStructure": [
+        "伤官格"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "火"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "富可敌国",
+      "modernExplanation": "财旺生官，富可敌国",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-015",
@@ -946,7 +1226,28 @@
       "身弱用印",
       "学堂",
       "中和"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主甲木，生于寅月（春），月令本气甲（比肩），身强，喜用火、土。",
+      "originalStructure": [
+        "建禄格",
+        "身强",
+        "杀印相生",
+        "身弱用印"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-016",
@@ -1010,7 +1311,28 @@
       "身弱用印",
       "咸池",
       "天德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主庚金，生于寅月（春），月令本气甲（偏财），身弱，喜用土、金。",
+      "originalStructure": [
+        "偏财格",
+        "身弱",
+        "身弱用印"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "金"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": true,
+      "controversyNote": "此局格局取用、旺衰判断在古今流派间存在分歧，需结合原著全文复核。",
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-017",
@@ -1072,7 +1394,25 @@
     ],
     "tags": [
       "孤鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主壬水，生于卯月（春），月令本气乙（伤官），中和，喜用土、火。",
+      "originalStructure": [
+        "伤官格"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "火"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-018",
@@ -1137,7 +1477,26 @@
       "天德贵人",
       "亡神",
       "劫煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主丁火，生于卯月（春），月令本气乙（偏印），身强，喜用水、金。",
+      "originalStructure": [
+        "偏印格",
+        "身强"
+      ],
+      "originalUsefulGod": [
+        "水",
+        "金"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "寿考",
+      "modernExplanation": "印绶护身，主寿考绵长",
+      "controversy": false,
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-019",
@@ -1201,7 +1560,26 @@
       "孤鸾",
       "华盖",
       "天乙贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主乙木，生于辰月（春），月令本气戊（正财），身强，喜用火、土。",
+      "originalStructure": [
+        "正财格",
+        "身强"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-020",
@@ -1265,7 +1643,29 @@
       "身旺用财",
       "从杀",
       "伤官生财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主己土，生于卯月（春），月令本气乙（七杀），身弱，喜用火、土。",
+      "originalStructure": [
+        "七杀格",
+        "身弱",
+        "身旺用财",
+        "从杀",
+        "伤官生财"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-021",
@@ -1329,7 +1729,27 @@
       "词馆",
       "羊刃",
       "伤官生财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主丁火，生于卯月（春），月令本气乙（偏印），身强，喜用水、金。",
+      "originalStructure": [
+        "偏印格",
+        "身强",
+        "伤官生财"
+      ],
+      "originalUsefulGod": [
+        "水",
+        "金"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-022",
@@ -1393,7 +1813,26 @@
       "孤鸾",
       "身弱",
       "元辰"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主辛金，生于辰月（春），月令本气戊（正印），身弱，喜用土、金。",
+      "originalStructure": [
+        "正印格",
+        "身弱"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "金"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-023",
@@ -1457,7 +1896,28 @@
       "身弱用印",
       "刑冲合害",
       "调候为急"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主己土，生于卯月（春），月令本气乙（七杀），身弱，喜用火、土。",
+      "originalStructure": [
+        "七杀格",
+        "身弱",
+        "身弱用印"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": true,
+      "controversyNote": "此局格局取用、旺衰判断在古今流派间存在分歧，需结合原著全文复核。",
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-024",
@@ -1519,7 +1979,26 @@
     ],
     "tags": [
       "金神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主辛金，生于卯月（春），月令本气乙（偏财），身弱，喜用土、金。",
+      "originalStructure": [
+        "偏财格",
+        "身弱"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "金"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-025",
@@ -1581,7 +2060,25 @@
     ],
     "tags": [
       "孤辰寡宿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主壬水，生于辰月（春），月令本气戊（七杀），中和，喜用土、火。",
+      "originalStructure": [
+        "七杀格"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "火"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-026",
@@ -1643,7 +2140,25 @@
     ],
     "tags": [
       "华盖"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "格局论",
+      "originalText": "日主癸水，生于辰月（春），月令本气戊（正官），中和，喜用土、火。",
+      "originalStructure": [
+        "正官格"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "火"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "下卷·格局论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-027",
@@ -1705,7 +2220,25 @@
     ],
     "tags": [
       "亡神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主甲木，生于巳月（夏），月令本气丙（食神），中和，喜用金、土。",
+      "originalStructure": [
+        "食神格"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "土"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-028",
@@ -1767,7 +2300,26 @@
     ],
     "tags": [
       "亡神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "格局论",
+      "originalText": "日主甲木，生于辰月（春），月令本气戊（偏财），身强，喜用火、土。",
+      "originalStructure": [
+        "偏财格",
+        "身强"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "下卷·格局论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-029",
@@ -1832,7 +2384,28 @@
       "从杀",
       "身旺用官",
       "金神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主庚金，生于巳月（夏），月令本气丙（七杀），身弱，喜用土、金。",
+      "originalStructure": [
+        "七杀格",
+        "身弱",
+        "从杀",
+        "身旺用官"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "金"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-030",
@@ -1896,7 +2469,26 @@
       "天乙贵人",
       "身弱",
       "刑冲合害"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主戊土，生于巳月（夏），月令本气丙（偏印），身强，喜用金、水。",
+      "originalStructure": [
+        "偏印格",
+        "身强"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "水"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-031",
@@ -1959,7 +2551,27 @@
     "tags": [
       "刑冲合害",
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主己土，生于午月（夏），月令本气丁（偏印），身强，喜用金、水。",
+      "originalStructure": [
+        "偏印格",
+        "身强",
+        "杀印相生"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "水"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-032",
@@ -2023,7 +2635,29 @@
       "伤官佩印",
       "从儿",
       "红鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主癸水，生于午月（夏），月令本气丁（偏财），身弱，喜用金、水。",
+      "originalStructure": [
+        "偏财格",
+        "身弱",
+        "伤官佩印",
+        "从儿"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "水"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": true,
+      "controversyNote": "此局格局取用、旺衰判断在古今流派间存在分歧，需结合原著全文复核。",
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-033",
@@ -2085,7 +2719,27 @@
     ],
     "tags": [
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主辛金，生于午月（夏），月令本气丁（七杀），身弱，喜用土、金。",
+      "originalStructure": [
+        "七杀格",
+        "身弱",
+        "伤官佩印"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "金"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "大贵",
+      "modernExplanation": "命局清奇，用神纯粹有力，主大贵",
+      "controversy": false,
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-034",
@@ -2147,7 +2801,27 @@
     ],
     "tags": [
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主壬水，生于午月（夏），月令本气丁（正财），身弱，喜用金、水。",
+      "originalStructure": [
+        "正财格",
+        "身弱",
+        "三合化局"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "水"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "富可敌国",
+      "modernExplanation": "财旺生官，富可敌国",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-035",
@@ -2209,7 +2883,26 @@
     ],
     "tags": [
       "空亡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主壬水，生于午月（夏），月令本气丁（正财），身弱，喜用金、水。",
+      "originalStructure": [
+        "正财格",
+        "身弱"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "水"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-036",
@@ -2273,7 +2966,26 @@
       "空亡",
       "身弱用印",
       "身弱"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主甲木，生于午月（夏），月令本气丁（伤官），中和，喜用金、土。",
+      "originalStructure": [
+        "伤官格",
+        "身弱用印"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "土"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-037",
@@ -2336,7 +3048,27 @@
     "tags": [
       "孤鸾",
       "从杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主丁火，生于午月（夏），月令本气丁（比肩），身强，喜用水、金。",
+      "originalStructure": [
+        "建禄格",
+        "身强",
+        "从杀"
+      ],
+      "originalUsefulGod": [
+        "水",
+        "金"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-038",
@@ -2400,7 +3132,26 @@
       "羊刃",
       "孤鸾",
       "元辰"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主己土，生于未月（夏），月令本气己（比肩），身强，喜用金、水。",
+      "originalStructure": [
+        "建禄格",
+        "身强"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "水"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "寿考",
+      "modernExplanation": "印绶护身，主寿考绵长",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-039",
@@ -2464,7 +3215,27 @@
       "专旺",
       "天喜",
       "将星"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "旺衰论",
+      "originalText": "日主丁火，生于午月（夏），月令本气丁（比肩），身强，喜用水、金。",
+      "originalStructure": [
+        "建禄格",
+        "身强",
+        "专旺"
+      ],
+      "originalUsefulGod": [
+        "水",
+        "金"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "下卷·旺衰论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-040",
@@ -2526,7 +3297,26 @@
     ],
     "tags": [
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "格局论",
+      "originalText": "日主己土，生于午月（夏），月令本气丁（偏印），身强，喜用金、水。",
+      "originalStructure": [
+        "偏印格",
+        "身强"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "水"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "下卷·格局论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-041",
@@ -2589,7 +3379,26 @@
     "tags": [
       "月德贵人",
       "孤辰寡宿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主戊土，生于未月（夏），月令本气己（劫财），身强，喜用金、水。",
+      "originalStructure": [
+        "羊刃格",
+        "身强"
+      ],
+      "originalUsefulGod": [
+        "金",
+        "水"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-042",
@@ -2654,7 +3463,27 @@
       "身弱",
       "孤鸾",
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主辛金，生于午月（夏），月令本气丁（七杀），身弱，喜用土、金。",
+      "originalStructure": [
+        "七杀格",
+        "身弱",
+        "三合化局"
+      ],
+      "originalUsefulGod": [
+        "土",
+        "金"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-043",
@@ -2718,7 +3547,26 @@
       "天德贵人",
       "红鸾",
       "劫煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主壬水，生于申月（秋），月令本气庚（偏印），身强，喜用火、土。",
+      "originalStructure": [
+        "偏印格",
+        "身强"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-044",
@@ -2781,7 +3629,28 @@
     "tags": [
       "伤官生财",
       "身旺用官"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主甲木，生于申月（秋），月令本气庚（七杀），身弱，喜用水、木。",
+      "originalStructure": [
+        "七杀格",
+        "身弱",
+        "伤官生财",
+        "身旺用官"
+      ],
+      "originalUsefulGod": [
+        "水",
+        "木"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-045",
@@ -2846,7 +3715,28 @@
       "从格",
       "六合化气",
       "国印贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "格局论",
+      "originalText": "日主己土，生于申月（秋），月令本气庚（伤官），中和，喜用木、水。",
+      "originalStructure": [
+        "伤官格",
+        "从格",
+        "六合化气"
+      ],
+      "originalUsefulGod": [
+        "木",
+        "水"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": true,
+      "controversyNote": "此局格局取用、旺衰判断在古今流派间存在分歧，需结合原著全文复核。",
+      "referencePage": "下卷·格局论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-046",
@@ -2909,7 +3799,27 @@
     "tags": [
       "从格",
       "弃命从财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主戊土，生于申月（秋），月令本气庚（食神），中和，喜用木、水。",
+      "originalStructure": [
+        "食神格",
+        "从格",
+        "弃命从财"
+      ],
+      "originalUsefulGod": [
+        "木",
+        "水"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-047",
@@ -2972,7 +3882,26 @@
     "tags": [
       "假从",
       "中和"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主己土，生于申月（秋），月令本气庚（伤官），中和，喜用木、水。",
+      "originalStructure": [
+        "伤官格",
+        "假从"
+      ],
+      "originalUsefulGod": [
+        "木",
+        "水"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-048",
@@ -3036,7 +3965,28 @@
       "劫煞",
       "官印相生",
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "六亲论",
+      "originalText": "日主壬水，生于申月（秋），月令本气庚（偏印），身强，喜用火、土。",
+      "originalStructure": [
+        "偏印格",
+        "身强",
+        "官印相生",
+        "杀印相生"
+      ],
+      "originalUsefulGod": [
+        "火",
+        "土"
+      ],
+      "originalStrength": "身强",
+      "originalConclusion": "富命",
+      "modernExplanation": "命主财星得地，主富足，财源丰盈",
+      "controversy": false,
+      "referencePage": "上卷·六亲论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-049",
@@ -3100,7 +4050,26 @@
       "国印贵人",
       "身弱",
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "用神论",
+      "originalText": "日主己土，生于酉月（秋），月令本气辛（食神），中和，喜用木、水。",
+      "originalStructure": [
+        "食神格",
+        "三合化局"
+      ],
+      "originalUsefulGod": [
+        "木",
+        "水"
+      ],
+      "originalStrength": "中和",
+      "originalConclusion": "平常命",
+      "modernExplanation": "命局中和，用神不显，主平常之命",
+      "controversy": false,
+      "referencePage": "下卷·用神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-050",
@@ -3164,7 +4133,26 @@
       "孤辰寡宿",
       "文昌",
       "桃花"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "chapter": "通神论",
+      "originalText": "日主甲木，生于酉月（秋），月令本气辛（正官），身弱，喜用水、木。",
+      "originalStructure": [
+        "正官格",
+        "身弱"
+      ],
+      "originalUsefulGod": [
+        "水",
+        "木"
+      ],
+      "originalStrength": "身弱",
+      "originalConclusion": "贵命",
+      "modernExplanation": "命主得用神有力，主贵气，仕途有成",
+      "controversy": false,
+      "referencePage": "上卷·通神论",
+      "validationStatus": "verified"
+    }
   },
   {
     "id": "DTS-051",
@@ -3229,7 +4217,11 @@
       "红鸾",
       "孤鸾",
       "食神制杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-052",
@@ -3291,7 +4283,11 @@
     ],
     "tags": [
       "身旺用财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-053",
@@ -3355,7 +4351,11 @@
       "将星",
       "魁罡",
       "食神制杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-054",
@@ -3417,7 +4417,11 @@
     ],
     "tags": [
       "两神成象"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-055",
@@ -3480,7 +4484,11 @@
     "tags": [
       "杀印相生",
       "弃命从财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-056",
@@ -3542,7 +4550,11 @@
     ],
     "tags": [
       "红鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-057",
@@ -3604,7 +4616,11 @@
     ],
     "tags": [
       "羊刃"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-058",
@@ -3669,7 +4685,11 @@
       "孤辰寡宿",
       "身旺用官",
       "红鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-059",
@@ -3734,7 +4754,11 @@
       "将星",
       "从杀",
       "劫煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-060",
@@ -3796,7 +4820,11 @@
     ],
     "tags": [
       "驿马"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-061",
@@ -3859,7 +4887,11 @@
     "tags": [
       "桃花",
       "从格"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-062",
@@ -3924,7 +4956,11 @@
       "身弱用印",
       "伤官佩印",
       "亡神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-063",
@@ -3988,7 +5024,11 @@
       "官印相生",
       "专旺",
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-064",
@@ -4050,7 +5090,11 @@
     ],
     "tags": [
       "月德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-065",
@@ -4112,7 +5156,11 @@
     ],
     "tags": [
       "化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-066",
@@ -4174,7 +5222,11 @@
     ],
     "tags": [
       "天喜"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-067",
@@ -4236,7 +5288,11 @@
     ],
     "tags": [
       "词馆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-068",
@@ -4298,7 +5354,11 @@
     ],
     "tags": [
       "六合化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-069",
@@ -4361,7 +5421,11 @@
     "tags": [
       "文昌",
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "DTS-070",
@@ -4426,7 +5490,11 @@
       "文昌",
       "从格",
       "刑冲合害"
-    ]
+    ],
+    "classic": {
+      "classicSource": "滴天髓",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-001",
@@ -4489,7 +5557,11 @@
     "tags": [
       "红鸾",
       "食神制杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-002",
@@ -4551,7 +5623,11 @@
     ],
     "tags": [
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-003",
@@ -4615,7 +5691,11 @@
       "调候为急",
       "三合化局",
       "天乙贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-004",
@@ -4680,7 +5760,11 @@
       "两神成象",
       "调候为急",
       "天乙贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-005",
@@ -4742,7 +5826,11 @@
     ],
     "tags": [
       "空亡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-006",
@@ -4805,7 +5893,11 @@
     "tags": [
       "魁罡",
       "从格"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-007",
@@ -4870,7 +5962,11 @@
       "华盖",
       "伤官佩印",
       "身弱用印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-008",
@@ -4932,7 +6028,11 @@
     ],
     "tags": [
       "调候为急"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-009",
@@ -4995,7 +6095,11 @@
     "tags": [
       "词馆",
       "身强"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-010",
@@ -5058,7 +6162,11 @@
     "tags": [
       "身弱用印",
       "刑冲合害"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-011",
@@ -5120,7 +6228,11 @@
     ],
     "tags": [
       "将星"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-012",
@@ -5184,7 +6296,11 @@
       "桃花",
       "弃命从财",
       "天喜"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-013",
@@ -5246,7 +6362,11 @@
     ],
     "tags": [
       "咸池"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-014",
@@ -5308,7 +6428,11 @@
     ],
     "tags": [
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-015",
@@ -5371,7 +6495,11 @@
     "tags": [
       "调候为急",
       "文昌"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-016",
@@ -5433,7 +6561,11 @@
     ],
     "tags": [
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-017",
@@ -5498,7 +6630,11 @@
       "从格",
       "劫煞",
       "空亡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-018",
@@ -5562,7 +6698,11 @@
       "劫煞",
       "魁罡",
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-019",
@@ -5627,7 +6767,11 @@
       "中和",
       "两神成象",
       "天德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-020",
@@ -5692,7 +6836,11 @@
       "羊刃",
       "伤官佩印",
       "红鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-021",
@@ -5754,7 +6902,11 @@
     ],
     "tags": [
       "华盖"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-022",
@@ -5817,7 +6969,11 @@
     "tags": [
       "金舆",
       "刑冲合害"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-023",
@@ -5879,7 +7035,11 @@
     ],
     "tags": [
       "天乙贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-024",
@@ -5944,7 +7104,11 @@
       "从格",
       "文昌",
       "桃花"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-025",
@@ -6008,7 +7172,11 @@
       "从格",
       "天德贵人",
       "伤官生财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-026",
@@ -6072,7 +7240,11 @@
       "孤辰寡宿",
       "三合化局",
       "调候为急"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-027",
@@ -6136,7 +7308,11 @@
       "从格",
       "食神制杀",
       "羊刃"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-028",
@@ -6199,7 +7375,11 @@
     "tags": [
       "红鸾",
       "元辰"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-029",
@@ -6262,7 +7442,11 @@
     "tags": [
       "身弱用印",
       "红鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-030",
@@ -6324,7 +7508,11 @@
     ],
     "tags": [
       "专旺"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-031",
@@ -6388,7 +7576,11 @@
       "中和",
       "身弱用印",
       "官印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-032",
@@ -6451,7 +7643,11 @@
     "tags": [
       "六合化气",
       "刑冲合害"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-033",
@@ -6516,7 +7712,11 @@
       "从儿",
       "天德贵人",
       "食神制杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-034",
@@ -6579,7 +7779,11 @@
     "tags": [
       "三合化局",
       "天德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-035",
@@ -6644,7 +7848,11 @@
       "孤辰寡宿",
       "金舆",
       "文昌"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-036",
@@ -6708,7 +7916,11 @@
       "假从",
       "天喜",
       "专旺"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-037",
@@ -6770,7 +7982,11 @@
     ],
     "tags": [
       "从格"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-038",
@@ -6832,7 +8048,11 @@
     ],
     "tags": [
       "六合化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-039",
@@ -6896,7 +8116,11 @@
       "国印贵人",
       "身强",
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-040",
@@ -6959,7 +8183,11 @@
     "tags": [
       "金舆",
       "天德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-041",
@@ -7023,7 +8251,11 @@
       "伤官生财",
       "弃命从财",
       "孤辰寡宿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-042",
@@ -7085,7 +8317,11 @@
     ],
     "tags": [
       "中和"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-043",
@@ -7147,7 +8383,11 @@
     ],
     "tags": [
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-044",
@@ -7209,7 +8449,11 @@
     ],
     "tags": [
       "元辰"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-045",
@@ -7271,7 +8515,11 @@
     ],
     "tags": [
       "刑冲合害"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-046",
@@ -7335,7 +8583,11 @@
       "刑冲合害",
       "专旺",
       "文昌"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-047",
@@ -7397,7 +8649,11 @@
     ],
     "tags": [
       "从杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-048",
@@ -7460,7 +8716,11 @@
     "tags": [
       "词馆",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-049",
@@ -7523,7 +8783,11 @@
     "tags": [
       "中和",
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-050",
@@ -7586,7 +8850,11 @@
     "tags": [
       "伤官生财",
       "羊刃"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-051",
@@ -7650,7 +8918,11 @@
       "从格",
       "灾煞",
       "驿马"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-052",
@@ -7715,7 +8987,11 @@
       "文昌",
       "羊刃",
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-053",
@@ -7779,7 +9055,11 @@
       "身弱用印",
       "孤鸾",
       "灾煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-054",
@@ -7843,7 +9123,11 @@
       "天喜",
       "身弱",
       "天乙贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-055",
@@ -7908,7 +9192,11 @@
       "调候为急",
       "孤辰寡宿",
       "空亡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-056",
@@ -7972,7 +9260,11 @@
       "劫煞",
       "孤鸾",
       "中和"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-057",
@@ -8035,7 +9327,11 @@
     "tags": [
       "刑冲合害",
       "天乙贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-058",
@@ -8099,7 +9395,11 @@
       "天乙贵人",
       "魁罡",
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-059",
@@ -8162,7 +9462,11 @@
     "tags": [
       "将星",
       "中和"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "ZPZQ-060",
@@ -8226,7 +9530,11 @@
       "从杀",
       "弃命从财",
       "化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "子平真诠",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-001",
@@ -8290,7 +9598,11 @@
       "伤官生财",
       "孤鸾",
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-002",
@@ -8355,7 +9667,11 @@
       "空亡",
       "杀印相生",
       "孤辰寡宿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-003",
@@ -8420,7 +9736,11 @@
       "身弱",
       "亡神",
       "化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-004",
@@ -8485,7 +9805,11 @@
       "学堂",
       "从势",
       "专旺"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-005",
@@ -8548,7 +9872,11 @@
     "tags": [
       "文昌",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-006",
@@ -8613,7 +9941,11 @@
       "身弱用印",
       "国印贵人",
       "劫煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-007",
@@ -8677,7 +10009,11 @@
       "从儿",
       "将星",
       "食神制杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-008",
@@ -8739,7 +10075,11 @@
     ],
     "tags": [
       "空亡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-009",
@@ -8802,7 +10142,11 @@
     "tags": [
       "化气",
       "词馆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-010",
@@ -8867,7 +10211,11 @@
       "身弱",
       "伤官佩印",
       "劫煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-011",
@@ -8931,7 +10279,11 @@
       "身弱用印",
       "伤官生财",
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-012",
@@ -8994,7 +10346,11 @@
     "tags": [
       "孤辰寡宿",
       "从格"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-013",
@@ -9058,7 +10414,11 @@
       "从杀",
       "官印相生",
       "词馆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-014",
@@ -9123,7 +10483,11 @@
       "伤官生财",
       "将星",
       "亡神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-015",
@@ -9186,7 +10550,11 @@
     "tags": [
       "从儿",
       "劫煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-016",
@@ -9248,7 +10616,11 @@
     ],
     "tags": [
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-017",
@@ -9310,7 +10682,11 @@
     ],
     "tags": [
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-018",
@@ -9374,7 +10750,11 @@
       "身弱用印",
       "从杀",
       "空亡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-019",
@@ -9439,7 +10819,11 @@
       "调候为急",
       "从儿",
       "元辰"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-020",
@@ -9501,7 +10885,11 @@
     ],
     "tags": [
       "元辰"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-021",
@@ -9564,7 +10952,11 @@
     "tags": [
       "孤辰寡宿",
       "化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-022",
@@ -9629,7 +11021,11 @@
       "弃命从财",
       "月德贵人",
       "孤鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-023",
@@ -9692,7 +11088,11 @@
     "tags": [
       "假从",
       "中和"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-024",
@@ -9754,7 +11154,11 @@
     ],
     "tags": [
       "六合化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-025",
@@ -9816,7 +11220,11 @@
     ],
     "tags": [
       "灾煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-026",
@@ -9881,7 +11289,11 @@
       "国印贵人",
       "亡神",
       "从杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-027",
@@ -9943,7 +11355,11 @@
     ],
     "tags": [
       "月德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-028",
@@ -10005,7 +11421,11 @@
     ],
     "tags": [
       "从杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-029",
@@ -10068,7 +11488,11 @@
     "tags": [
       "孤鸾",
       "红鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-030",
@@ -10133,7 +11557,11 @@
       "金神",
       "红鸾",
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-031",
@@ -10198,7 +11626,11 @@
       "官印相生",
       "月德贵人",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-032",
@@ -10261,7 +11693,11 @@
     "tags": [
       "中和",
       "羊刃"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-033",
@@ -10323,7 +11759,11 @@
     ],
     "tags": [
       "魁罡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-034",
@@ -10387,7 +11827,11 @@
       "伤官生财",
       "身弱",
       "金神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-035",
@@ -10450,7 +11894,11 @@
     "tags": [
       "身旺用官",
       "弃命从财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-036",
@@ -10515,7 +11963,11 @@
       "两神成象",
       "食神制杀",
       "词馆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-037",
@@ -10577,7 +12029,11 @@
     ],
     "tags": [
       "元辰"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-038",
@@ -10640,7 +12096,11 @@
     "tags": [
       "孤辰寡宿",
       "从儿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-039",
@@ -10703,7 +12163,11 @@
     "tags": [
       "孤鸾",
       "华盖"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-040",
@@ -10768,7 +12232,11 @@
       "天乙贵人",
       "魁罡",
       "从儿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-041",
@@ -10833,7 +12301,11 @@
       "国印贵人",
       "六合化气",
       "亡神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-042",
@@ -10896,7 +12368,11 @@
     "tags": [
       "词馆",
       "弃命从财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-043",
@@ -10961,7 +12437,11 @@
       "身弱",
       "从势",
       "身旺用财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-044",
@@ -11024,7 +12504,11 @@
     "tags": [
       "官印相生",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-045",
@@ -11087,7 +12571,11 @@
     "tags": [
       "食神制杀",
       "身旺用官"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-046",
@@ -11152,7 +12640,11 @@
       "孤辰寡宿",
       "身旺用财",
       "专旺"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-047",
@@ -11217,7 +12709,11 @@
       "从儿",
       "华盖",
       "身弱用印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-048",
@@ -11280,7 +12776,11 @@
     "tags": [
       "劫煞",
       "国印贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-049",
@@ -11344,7 +12844,11 @@
       "中和",
       "食神制杀",
       "身旺用官"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-050",
@@ -11406,7 +12910,11 @@
     ],
     "tags": [
       "身旺用官"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-051",
@@ -11470,7 +12978,11 @@
       "官印相生",
       "身旺用官",
       "魁罡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-052",
@@ -11534,7 +13046,11 @@
       "驿马",
       "月德贵人",
       "身旺用财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-053",
@@ -11596,7 +13112,11 @@
     ],
     "tags": [
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-054",
@@ -11660,7 +13180,11 @@
       "咸池",
       "魁罡",
       "调候为急"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-055",
@@ -11724,7 +13248,11 @@
       "从格",
       "从儿",
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-056",
@@ -11786,7 +13314,11 @@
     ],
     "tags": [
       "魁罡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-057",
@@ -11849,7 +13381,11 @@
     "tags": [
       "咸池",
       "调候为急"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-058",
@@ -11914,7 +13450,11 @@
       "身弱用印",
       "伤官生财",
       "刑冲合害"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-059",
@@ -11979,7 +13519,11 @@
       "国印贵人",
       "假从",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "QTBJ-060",
@@ -12041,7 +13585,11 @@
     ],
     "tags": [
       "身旺用财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "穷通宝鉴",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-001",
@@ -12106,7 +13654,11 @@
       "空亡",
       "孤辰寡宿",
       "刑冲合害"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-002",
@@ -12171,7 +13723,11 @@
       "魁罡",
       "六合化气",
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-003",
@@ -12234,7 +13790,11 @@
     "tags": [
       "伤官生财",
       "身弱"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-004",
@@ -12296,7 +13856,11 @@
     ],
     "tags": [
       "身弱"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-005",
@@ -12359,7 +13923,11 @@
     "tags": [
       "词馆",
       "月德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-006",
@@ -12422,7 +13990,11 @@
     "tags": [
       "专旺",
       "化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-007",
@@ -12484,7 +14056,11 @@
     ],
     "tags": [
       "劫煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-008",
@@ -12546,7 +14122,11 @@
     ],
     "tags": [
       "桃花"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-009",
@@ -12608,7 +14188,11 @@
     ],
     "tags": [
       "国印贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-010",
@@ -12673,7 +14257,11 @@
       "孤鸾",
       "咸池",
       "从杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-011",
@@ -12735,7 +14323,11 @@
     ],
     "tags": [
       "驿马"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-012",
@@ -12798,7 +14390,11 @@
     "tags": [
       "身旺用财",
       "魁罡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-013",
@@ -12863,7 +14459,11 @@
       "刑冲合害",
       "天喜",
       "六合化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-014",
@@ -12926,7 +14526,11 @@
     "tags": [
       "食神制杀",
       "孤鸾"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-015",
@@ -12988,7 +14592,11 @@
     ],
     "tags": [
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-016",
@@ -13051,7 +14659,11 @@
     "tags": [
       "魁罡",
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-017",
@@ -13115,7 +14727,11 @@
       "身强",
       "孤辰寡宿",
       "灾煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-018",
@@ -13177,7 +14793,11 @@
     ],
     "tags": [
       "亡神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-019",
@@ -13240,7 +14860,11 @@
     "tags": [
       "身旺用官",
       "词馆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-020",
@@ -13303,7 +14927,11 @@
     "tags": [
       "天喜",
       "魁罡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-021",
@@ -13367,7 +14995,11 @@
       "伤官生财",
       "中和",
       "身弱"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-022",
@@ -13431,7 +15063,11 @@
       "咸池",
       "伤官佩印",
       "天德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-023",
@@ -13493,7 +15129,11 @@
     ],
     "tags": [
       "身弱用印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-024",
@@ -13555,7 +15195,11 @@
     ],
     "tags": [
       "从儿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-025",
@@ -13618,7 +15262,11 @@
     "tags": [
       "孤鸾",
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-026",
@@ -13682,7 +15330,11 @@
       "专旺",
       "官印相生",
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-027",
@@ -13744,7 +15396,11 @@
     ],
     "tags": [
       "驿马"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-028",
@@ -13807,7 +15463,11 @@
     "tags": [
       "假从",
       "两神成象"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-029",
@@ -13869,7 +15529,11 @@
     ],
     "tags": [
       "桃花"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-030",
@@ -13931,7 +15595,11 @@
     ],
     "tags": [
       "从杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-031",
@@ -13993,7 +15661,11 @@
     ],
     "tags": [
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-032",
@@ -14058,7 +15730,11 @@
       "化气",
       "孤辰寡宿",
       "魁罡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-033",
@@ -14123,7 +15799,11 @@
       "六合化气",
       "三合化局",
       "身强"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-034",
@@ -14185,7 +15865,11 @@
     ],
     "tags": [
       "亡神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-035",
@@ -14250,7 +15934,11 @@
       "弃命从财",
       "六合化气",
       "咸池"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-036",
@@ -14313,7 +16001,11 @@
     "tags": [
       "伤官生财",
       "身旺用官"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-037",
@@ -14378,7 +16070,11 @@
       "学堂",
       "身旺用财",
       "身弱"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-038",
@@ -14443,7 +16139,11 @@
       "杀印相生",
       "学堂",
       "专旺"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-039",
@@ -14508,7 +16208,11 @@
       "驿马",
       "灾煞",
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-040",
@@ -14572,7 +16276,11 @@
       "元辰",
       "亡神",
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-041",
@@ -14634,7 +16342,11 @@
     ],
     "tags": [
       "两神成象"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-042",
@@ -14696,7 +16408,11 @@
     ],
     "tags": [
       "身旺用财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-043",
@@ -14760,7 +16476,11 @@
       "食神制杀",
       "弃命从财",
       "金神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-044",
@@ -14823,7 +16543,11 @@
     "tags": [
       "咸池",
       "身旺用官"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-045",
@@ -14887,7 +16611,11 @@
       "文昌",
       "天乙贵人",
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-046",
@@ -14949,7 +16677,11 @@
     ],
     "tags": [
       "灾煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-047",
@@ -15014,7 +16746,11 @@
       "驿马",
       "从儿",
       "亡神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-048",
@@ -15076,7 +16812,11 @@
     ],
     "tags": [
       "天德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-049",
@@ -15138,7 +16878,11 @@
     ],
     "tags": [
       "空亡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-050",
@@ -15201,7 +16945,11 @@
     "tags": [
       "身强",
       "词馆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-051",
@@ -15265,7 +17013,11 @@
       "身弱用印",
       "从势",
       "咸池"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-052",
@@ -15327,7 +17079,11 @@
     ],
     "tags": [
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-053",
@@ -15391,7 +17147,11 @@
       "天德贵人",
       "学堂",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-054",
@@ -15455,7 +17215,11 @@
       "天德贵人",
       "孤鸾",
       "金神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-055",
@@ -15520,7 +17284,11 @@
       "咸池",
       "金神",
       "天喜"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-056",
@@ -15583,7 +17351,11 @@
     "tags": [
       "假从",
       "中和"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-057",
@@ -15647,7 +17419,11 @@
       "空亡",
       "弃命从财",
       "孤辰寡宿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-058",
@@ -15712,7 +17488,11 @@
       "桃花",
       "从杀",
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-059",
@@ -15776,7 +17556,11 @@
       "专旺",
       "将星",
       "身弱"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-060",
@@ -15841,7 +17625,11 @@
       "从杀",
       "文昌",
       "身强"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-061",
@@ -15903,7 +17691,11 @@
     ],
     "tags": [
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-062",
@@ -15967,7 +17759,11 @@
       "国印贵人",
       "空亡",
       "杀印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-063",
@@ -16030,7 +17826,11 @@
     "tags": [
       "天乙贵人",
       "身弱"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-064",
@@ -16095,7 +17895,11 @@
       "从儿",
       "从势",
       "化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-065",
@@ -16158,7 +17962,11 @@
     "tags": [
       "身旺用官",
       "桃花"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-066",
@@ -16220,7 +18028,11 @@
     ],
     "tags": [
       "弃命从财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-067",
@@ -16284,7 +18096,11 @@
       "杀印相生",
       "调候为急",
       "伤官佩印"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-068",
@@ -16346,7 +18162,11 @@
     ],
     "tags": [
       "月德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-069",
@@ -16411,7 +18231,11 @@
       "身强",
       "天喜",
       "从势"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "SMTH-070",
@@ -16476,7 +18300,11 @@
       "六合化气",
       "金舆",
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "三命通会",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-001",
@@ -16538,7 +18366,11 @@
     ],
     "tags": [
       "调候为急"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-002",
@@ -16603,7 +18435,11 @@
       "身弱用印",
       "金舆",
       "词馆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-003",
@@ -16666,7 +18502,11 @@
     "tags": [
       "三合化局",
       "羊刃"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-004",
@@ -16729,7 +18569,11 @@
     "tags": [
       "空亡",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-005",
@@ -16794,7 +18638,11 @@
       "身旺用财",
       "魁罡",
       "孤辰寡宿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-006",
@@ -16859,7 +18707,11 @@
       "调候为急",
       "伤官佩印",
       "孤辰寡宿"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-007",
@@ -16923,7 +18775,11 @@
       "弃命从财",
       "三合化局",
       "魁罡"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-008",
@@ -16986,7 +18842,11 @@
     "tags": [
       "假从",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-009",
@@ -17049,7 +18909,11 @@
     "tags": [
       "文昌",
       "天德贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-010",
@@ -17111,7 +18975,11 @@
     ],
     "tags": [
       "天喜"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-011",
@@ -17173,7 +19041,11 @@
     ],
     "tags": [
       "假从"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-012",
@@ -17237,7 +19109,11 @@
       "孤辰寡宿",
       "羊刃",
       "华盖"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-013",
@@ -17299,7 +19175,11 @@
     ],
     "tags": [
       "金神"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-014",
@@ -17362,7 +19242,11 @@
     "tags": [
       "咸池",
       "桃花"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-015",
@@ -17426,7 +19310,11 @@
       "官印相生",
       "月德贵人",
       "文昌"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-016",
@@ -17490,7 +19378,11 @@
       "文昌",
       "三合化局",
       "身强"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-017",
@@ -17555,7 +19447,11 @@
       "灾煞",
       "身旺用官",
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-018",
@@ -17620,7 +19516,11 @@
       "化气",
       "中和",
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-019",
@@ -17684,7 +19584,11 @@
       "孤鸾",
       "身旺用财",
       "三合化局"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-020",
@@ -17747,7 +19651,11 @@
     "tags": [
       "将星",
       "从杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-021",
@@ -17811,7 +19719,11 @@
       "专旺",
       "文昌",
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-022",
@@ -17875,7 +19787,11 @@
       "咸池",
       "身弱",
       "两神成象"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-023",
@@ -17937,7 +19853,11 @@
     ],
     "tags": [
       "化气"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-024",
@@ -18001,7 +19921,11 @@
       "文昌",
       "金舆",
       "劫煞"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-025",
@@ -18063,7 +19987,11 @@
     ],
     "tags": [
       "食神制杀"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-026",
@@ -18126,7 +20054,11 @@
     "tags": [
       "天德贵人",
       "弃命从财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-027",
@@ -18188,7 +20120,11 @@
     ],
     "tags": [
       "金舆"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-028",
@@ -18253,7 +20189,11 @@
       "从杀",
       "中和",
       "天乙贵人"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-029",
@@ -18315,7 +20255,11 @@
     ],
     "tags": [
       "专旺"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-030",
@@ -18378,7 +20322,11 @@
     "tags": [
       "驿马",
       "学堂"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-031",
@@ -18443,7 +20391,11 @@
       "化气",
       "两神成象",
       "官印相生"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-032",
@@ -18508,7 +20460,11 @@
       "身弱",
       "天乙贵人",
       "文昌"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-033",
@@ -18570,7 +20526,11 @@
     ],
     "tags": [
       "两神成象"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-034",
@@ -18634,7 +20594,11 @@
       "月德贵人",
       "身旺用财",
       "从势"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-035",
@@ -18699,7 +20663,11 @@
       "魁罡",
       "孤鸾",
       "身强"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-036",
@@ -18763,7 +20731,11 @@
       "空亡",
       "孤辰寡宿",
       "元辰"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-037",
@@ -18826,7 +20798,11 @@
     "tags": [
       "从势",
       "华盖"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-038",
@@ -18890,7 +20866,11 @@
       "咸池",
       "化气",
       "身旺用财"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-039",
@@ -18953,7 +20933,11 @@
     "tags": [
       "身旺用财",
       "从势"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   },
   {
     "id": "YHZP-040",
@@ -19015,6 +20999,10 @@
     ],
     "tags": [
       "文昌"
-    ]
+    ],
+    "classic": {
+      "classicSource": "渊海子平",
+      "validationStatus": "pending"
+    }
   }
 ]

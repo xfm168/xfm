@@ -110,6 +110,23 @@ export interface RuleDefinition<TInput = any, _TResult = any> {
   dependencies?: string[]
   tags?: string[]
   status?: 'sandbox' | 'active' | 'deprecated'
+
+  // 【C4 版本追溯字段】
+  /** C4: 规则版本号（与 version 区分：version 是语义化版本，ruleVersion 是命理规则版本如 '2024-v1'） */
+  ruleVersion?: string
+  /** C4: 规则生效日期（ISO 日期字符串，如 '2024-01-01'） */
+  effectiveDate?: string
+  /** C4: 命理典籍来源（与 source 区分：source 是书籍名，classicSource 是具体篇章/章节引用） */
+  classicSource?: string
+  /** C4: 学术来源（现代命理研究论文/教材引用） */
+  academicSource?: string
+  /** C4: 规则作者（编写人） */
+  author?: string
+  /** C4: 规则审核人（复核人） */
+  reviewer?: string
+  /** C4: 最后审核日期（ISO 日期字符串） */
+  lastReviewDate?: string
+
   /** 规则评估函数 */
   evaluate: (input: TInput, ctx?: { traceable?: boolean }) => EvidenceBundle | Promise<EvidenceBundle>
 }
@@ -191,7 +208,13 @@ export type DimensionScoreResult = StandardInferenceResult<StandardDimensionScor
 
 
 
-/** B2 规范默认兜底值（用于旧规则在 register 时补齐） */
+/**
+ * B2 规范默认兜底值（用于旧规则在 register 时补齐）
+ *
+ * 注意：C4 版本追溯字段（ruleVersion / effectiveDate / classicSource / academicSource /
+ * author / reviewer / lastReviewDate）为可选字段，此处不为它们设置默认值——
+ * 缺失即视为"未追溯"，由 validateAndNormalizeRule 通过 warn 提示。
+ */
 export const DEFAULT_RULE_FALLBACKS: Omit<RuleDefinition, 'id'|'name'|'category'|'evaluate'> = {
   version: '0.0.0-unspec',
   priority: 0,

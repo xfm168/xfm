@@ -18,6 +18,10 @@ export const registry: RuleRegistryStore = {
 
 const ID_PATTERN = /^[A-Z]{2,6}-[A-Z0-9]{2,6}-[0-9]{3,}$/;
 const VERSION_PATTERN = /^\d+\.\d+\.\d+.*$/;
+/** C4: ISO 日期格式 YYYY-MM-DD */
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+/** C4: ruleVersion 建议含日期或版本号（如 2024-v1、v2.1、2024-01） */
+const RULE_VERSION_PATTERN = /(\d{4}|v\d+)/i;
 
 function validateAndNormalizeRule(def: Partial<RuleDefinition> & { id: string; evaluate: RuleDefinition['evaluate'] }): RuleDefinition {
   const ruleId = def.id || 'UNKNOWN-ID';
@@ -79,6 +83,36 @@ function validateAndNormalizeRule(def: Partial<RuleDefinition> & { id: string; e
     }
   }
 
+  // 【C4 版本追溯字段校验】只 warn 不报错
+  // 1. effectiveDate：ISO 日期格式 YYYY-MM-DD
+  if (def.effectiveDate !== undefined) {
+    if (typeof def.effectiveDate !== 'string' || !ISO_DATE_PATTERN.test(def.effectiveDate)) {
+      warnings.push(`[C4 追溯] 规则 ${ruleId} 的 effectiveDate '${def.effectiveDate}' 建议使用 ISO 日期格式 YYYY-MM-DD（如 '2024-01-01'）`);
+    }
+  }
+  // 2. lastReviewDate：同上
+  if (def.lastReviewDate !== undefined) {
+    if (typeof def.lastReviewDate !== 'string' || !ISO_DATE_PATTERN.test(def.lastReviewDate)) {
+      warnings.push(`[C4 追溯] 规则 ${ruleId} 的 lastReviewDate '${def.lastReviewDate}' 建议使用 ISO 日期格式 YYYY-MM-DD（如 '2024-06-15'）`);
+    }
+  }
+  // 3. classicSource：若提供，必须是非空字符串
+  if (def.classicSource !== undefined) {
+    if (typeof def.classicSource !== 'string' || def.classicSource.trim() === '') {
+      warnings.push(`[C4 追溯] 规则 ${ruleId} 的 classicSource 若提供必须是非空字符串（建议填写具体篇章/章节引用，如 '滴天髓·通神论'）`);
+    }
+  }
+  // 4. author 与 reviewer：提供了 author 但没 reviewer，建议复核
+  if (def.author && !def.reviewer) {
+    warnings.push(`[C4 追溯] 规则 ${ruleId} 已指定 author '${def.author}' 但未指定 reviewer，建议指定 reviewer 进行复核`);
+  }
+  // 5. ruleVersion：建议格式含日期或版本号
+  if (def.ruleVersion !== undefined) {
+    if (typeof def.ruleVersion !== 'string' || !RULE_VERSION_PATTERN.test(def.ruleVersion)) {
+      warnings.push(`[C4 追溯] 规则 ${ruleId} 的 ruleVersion '${def.ruleVersion}' 建议含日期或版本号（如 '2024-v1'、'v2.1'）`);
+    }
+  }
+
   for (const w of warnings) {
     console.warn(w);
   }
@@ -99,6 +133,14 @@ function validateAndNormalizeRule(def: Partial<RuleDefinition> & { id: string; e
     dependencies: def.dependencies,
     tags: def.tags,
     status: def.status,
+    // 【C4 版本追溯字段】透传可选字段
+    ruleVersion: def.ruleVersion,
+    effectiveDate: def.effectiveDate,
+    classicSource: def.classicSource,
+    academicSource: def.academicSource,
+    author: def.author,
+    reviewer: def.reviewer,
+    lastReviewDate: def.lastReviewDate,
     evaluate: def.evaluate,
   };
 

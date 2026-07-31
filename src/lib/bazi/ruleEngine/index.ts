@@ -16,6 +16,7 @@ export {
 export * from './evidenceEngine';
 export * from './confidenceEngine';
 export * as TraceEngine from './evidence/traceEngine';
+export * from './evidence/evidenceTree';
 export * from './categories';
 
 // P0-A7 Rule Sandbox
