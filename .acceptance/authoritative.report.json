@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T06:35:08.416Z",
+  "generatedAt": "2026-07-31T10:15:47.982Z",
   "totalCases": 300,
   "passedCases": 300,
   "failedCases": 0,
@@ -96,705 +96,49 @@
   "failures": [],
   "sampleTop10": [
     {
-      "caseId": "DTS-002",
-      "source": "滴天髓",
+      "caseId": "YHZP-033",
+      "source": "渊海子平",
       "items": {
         "1.年柱一致": {
-          "passed": true,
-          "expected": "乙卯",
-          "actual": "乙卯",
-          "note": ""
-        },
-        "2.月柱一致": {
-          "passed": true,
-          "expected": "己丑",
-          "actual": "己丑",
-          "note": ""
-        },
-        "3.日柱一致": {
-          "passed": true,
-          "expected": "丁丑",
-          "actual": "丁丑",
-          "note": ""
-        },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "乙巳",
-          "actual": "乙巳",
-          "note": ""
-        },
-        "5.真太阳时校正": {
-          "passed": true,
-          "expected": -51.2,
-          "actual": -51.2,
-          "note": "误差 0 分钟，在 ±5 分钟内"
-        },
-        "6.节气": {
-          "passed": true,
-          "expected": "大寒",
-          "actual": "大寒",
-          "note": ""
-        },
-        "7.起运年龄": {
-          "passed": true,
-          "expected": 3.2,
-          "actual": 3.2,
-          "note": "误差 0 岁，在 ±2 岁内"
-        },
-        "8.大运顺逆": {
-          "passed": true,
-          "expected": "顺行",
-          "actual": "顺行",
-          "note": "日干丁(阴)，性别女 → 顺行"
-        },
-        "9.格局结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "格局结构合法（string[]），程序校验待接入"
-        },
-        "10.喜用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "喜用神结构合法（string[]），程序校验待接入"
-        },
-        "11.调候用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "调候用神结构合法（string[]），程序校验待接入"
-        },
-        "12.神煞结构": {
-          "passed": true,
-          "note": "神煞为空，待按书籍原文填入"
-        },
-        "13.旺衰结构": {
-          "passed": true,
-          "note": "旺衰为空，待按书籍原文填入"
-        }
-      },
-      "passRate": 100,
-      "passed": true
-    },
-    {
-      "caseId": "ZPZQ-009",
-      "source": "子平真诠",
-      "items": {
-        "1.年柱一致": {
-          "passed": true,
-          "expected": "辛丑",
-          "actual": "辛丑",
-          "note": ""
-        },
-        "2.月柱一致": {
-          "passed": true,
-          "expected": "庚寅",
-          "actual": "庚寅",
-          "note": ""
-        },
-        "3.日柱一致": {
-          "passed": true,
-          "expected": "乙巳",
-          "actual": "乙巳",
-          "note": ""
-        },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "己卯",
-          "actual": "己卯",
-          "note": ""
-        },
-        "5.真太阳时校正": {
-          "passed": true,
-          "expected": 5.9,
-          "actual": 5.9,
-          "note": "误差 0 分钟，在 ±5 分钟内"
-        },
-        "6.节气": {
-          "passed": true,
-          "expected": "雨水",
-          "actual": "雨水",
-          "note": ""
-        },
-        "7.起运年龄": {
-          "passed": true,
-          "expected": 2.5,
-          "actual": 2.5,
-          "note": "误差 0 岁，在 ±2 岁内"
-        },
-        "8.大运顺逆": {
-          "passed": true,
-          "expected": "逆行",
-          "actual": "逆行",
-          "note": "日干乙(阴)，性别男 → 逆行"
-        },
-        "9.格局结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "格局结构合法（string[]），程序校验待接入"
-        },
-        "10.喜用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "喜用神结构合法（string[]），程序校验待接入"
-        },
-        "11.调候用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "调候用神结构合法（string[]），程序校验待接入"
-        },
-        "12.神煞结构": {
-          "passed": true,
-          "note": "神煞为空，待按书籍原文填入"
-        },
-        "13.旺衰结构": {
-          "passed": true,
-          "note": "旺衰为空，待按书籍原文填入"
-        }
-      },
-      "passRate": 100,
-      "passed": true
-    },
-    {
-      "caseId": "ZPZQ-010",
-      "source": "子平真诠",
-      "items": {
-        "1.年柱一致": {
-          "passed": true,
-          "expected": "己酉",
-          "actual": "己酉",
-          "note": ""
-        },
-        "2.月柱一致": {
           "passed": true,
           "expected": "丙寅",
           "actual": "丙寅",
           "note": ""
         },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "丙申",
+          "actual": "丙申",
+          "note": ""
+        },
         "3.日柱一致": {
+          "passed": true,
+          "expected": "甲寅",
+          "actual": "甲寅",
+          "note": ""
+        },
+        "4.时柱一致": {
           "passed": true,
           "expected": "乙亥",
           "actual": "乙亥",
           "note": ""
         },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "壬午",
-          "actual": "壬午",
-          "note": ""
-        },
         "5.真太阳时校正": {
           "passed": true,
-          "expected": 3.4,
-          "actual": 3.4,
+          "expected": -7.3,
+          "actual": -7.3,
           "note": "误差 0 分钟，在 ±5 分钟内"
         },
         "6.节气": {
           "passed": true,
-          "expected": "立春",
-          "actual": "立春",
+          "expected": "处暑",
+          "actual": "处暑",
           "note": ""
         },
         "7.起运年龄": {
           "passed": true,
-          "expected": 1.4,
-          "actual": 1.4,
-          "note": "误差 0 岁，在 ±2 岁内"
-        },
-        "8.大运顺逆": {
-          "passed": true,
-          "expected": "顺行",
-          "actual": "顺行",
-          "note": "日干乙(阴)，性别女 → 顺行"
-        },
-        "9.格局结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "格局结构合法（string[]），程序校验待接入"
-        },
-        "10.喜用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "喜用神结构合法（string[]），程序校验待接入"
-        },
-        "11.调候用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "调候用神结构合法（string[]），程序校验待接入"
-        },
-        "12.神煞结构": {
-          "passed": true,
-          "note": "神煞为空，待按书籍原文填入"
-        },
-        "13.旺衰结构": {
-          "passed": true,
-          "note": "旺衰为空，待按书籍原文填入"
-        }
-      },
-      "passRate": 100,
-      "passed": true
-    },
-    {
-      "caseId": "SMTH-017",
-      "source": "三命通会",
-      "items": {
-        "1.年柱一致": {
-          "passed": true,
-          "expected": "己丑",
-          "actual": "己丑",
-          "note": ""
-        },
-        "2.月柱一致": {
-          "passed": true,
-          "expected": "丁卯",
-          "actual": "丁卯",
-          "note": ""
-        },
-        "3.日柱一致": {
-          "passed": true,
-          "expected": "癸酉",
-          "actual": "癸酉",
-          "note": ""
-        },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "壬子",
-          "actual": "壬子",
-          "note": ""
-        },
-        "5.真太阳时校正": {
-          "passed": true,
-          "expected": -18.5,
-          "actual": -18.5,
-          "note": "误差 0 分钟，在 ±5 分钟内"
-        },
-        "6.节气": {
-          "passed": true,
-          "expected": "春分",
-          "actual": "春分",
-          "note": ""
-        },
-        "7.起运年龄": {
-          "passed": true,
-          "expected": 3,
-          "actual": 3,
-          "note": "误差 0 岁，在 ±2 岁内"
-        },
-        "8.大运顺逆": {
-          "passed": true,
-          "expected": "逆行",
-          "actual": "逆行",
-          "note": "日干癸(阴)，性别男 → 逆行"
-        },
-        "9.格局结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "格局结构合法（string[]），程序校验待接入"
-        },
-        "10.喜用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "喜用神结构合法（string[]），程序校验待接入"
-        },
-        "11.调候用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "调候用神结构合法（string[]），程序校验待接入"
-        },
-        "12.神煞结构": {
-          "passed": true,
-          "note": "神煞为空，待按书籍原文填入"
-        },
-        "13.旺衰结构": {
-          "passed": true,
-          "note": "旺衰为空，待按书籍原文填入"
-        }
-      },
-      "passRate": 100,
-      "passed": true
-    },
-    {
-      "caseId": "ZPZQ-028",
-      "source": "子平真诠",
-      "items": {
-        "1.年柱一致": {
-          "passed": true,
-          "expected": "丙辰",
-          "actual": "丙辰",
-          "note": ""
-        },
-        "2.月柱一致": {
-          "passed": true,
-          "expected": "甲午",
-          "actual": "甲午",
-          "note": ""
-        },
-        "3.日柱一致": {
-          "passed": true,
-          "expected": "辛亥",
-          "actual": "辛亥",
-          "note": ""
-        },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "己丑",
-          "actual": "己丑",
-          "note": ""
-        },
-        "5.真太阳时校正": {
-          "passed": true,
-          "expected": 29.6,
-          "actual": 29.6,
-          "note": "误差 0 分钟，在 ±5 分钟内"
-        },
-        "6.节气": {
-          "passed": true,
-          "expected": "夏至",
-          "actual": "夏至",
-          "note": ""
-        },
-        "7.起运年龄": {
-          "passed": true,
-          "expected": 3.1,
-          "actual": 3.1,
-          "note": "误差 0 岁，在 ±2 岁内"
-        },
-        "8.大运顺逆": {
-          "passed": true,
-          "expected": "顺行",
-          "actual": "顺行",
-          "note": "日干辛(阴)，性别女 → 顺行"
-        },
-        "9.格局结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "格局结构合法（string[]），程序校验待接入"
-        },
-        "10.喜用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "喜用神结构合法（string[]），程序校验待接入"
-        },
-        "11.调候用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "调候用神结构合法（string[]），程序校验待接入"
-        },
-        "12.神煞结构": {
-          "passed": true,
-          "note": "神煞为空，待按书籍原文填入"
-        },
-        "13.旺衰结构": {
-          "passed": true,
-          "note": "旺衰为空，待按书籍原文填入"
-        }
-      },
-      "passRate": 100,
-      "passed": true
-    },
-    {
-      "caseId": "DTS-065",
-      "source": "滴天髓",
-      "items": {
-        "1.年柱一致": {
-          "passed": true,
-          "expected": "戊戌",
-          "actual": "戊戌",
-          "note": ""
-        },
-        "2.月柱一致": {
-          "passed": true,
-          "expected": "癸亥",
-          "actual": "癸亥",
-          "note": ""
-        },
-        "3.日柱一致": {
-          "passed": true,
-          "expected": "己未",
-          "actual": "己未",
-          "note": ""
-        },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "甲子",
-          "actual": "甲子",
-          "note": ""
-        },
-        "5.真太阳时校正": {
-          "passed": true,
-          "expected": -41.1,
-          "actual": -41.1,
-          "note": "误差 0 分钟，在 ±5 分钟内"
-        },
-        "6.节气": {
-          "passed": true,
-          "expected": "小雪",
-          "actual": "小雪",
-          "note": ""
-        },
-        "7.起运年龄": {
-          "passed": true,
-          "expected": 0.4,
-          "actual": 0.4,
-          "note": "误差 0 岁，在 ±2 岁内"
-        },
-        "8.大运顺逆": {
-          "passed": true,
-          "expected": "逆行",
-          "actual": "逆行",
-          "note": "日干己(阴)，性别男 → 逆行"
-        },
-        "9.格局结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "格局结构合法（string[]），程序校验待接入"
-        },
-        "10.喜用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "喜用神结构合法（string[]），程序校验待接入"
-        },
-        "11.调候用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "调候用神结构合法（string[]），程序校验待接入"
-        },
-        "12.神煞结构": {
-          "passed": true,
-          "note": "神煞为空，待按书籍原文填入"
-        },
-        "13.旺衰结构": {
-          "passed": true,
-          "note": "旺衰为空，待按书籍原文填入"
-        }
-      },
-      "passRate": 100,
-      "passed": true
-    },
-    {
-      "caseId": "DTS-017",
-      "source": "滴天髓",
-      "items": {
-        "1.年柱一致": {
-          "passed": true,
-          "expected": "壬寅",
-          "actual": "壬寅",
-          "note": ""
-        },
-        "2.月柱一致": {
-          "passed": true,
-          "expected": "癸卯",
-          "actual": "癸卯",
-          "note": ""
-        },
-        "3.日柱一致": {
-          "passed": true,
-          "expected": "壬戌",
-          "actual": "壬戌",
-          "note": ""
-        },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "戊申",
-          "actual": "戊申",
-          "note": ""
-        },
-        "5.真太阳时校正": {
-          "passed": true,
-          "expected": 11.6,
-          "actual": 11.6,
-          "note": "误差 0 分钟，在 ±5 分钟内"
-        },
-        "6.节气": {
-          "passed": true,
-          "expected": "惊蛰",
-          "actual": "惊蛰",
-          "note": ""
-        },
-        "7.起运年龄": {
-          "passed": true,
-          "expected": 1.6,
-          "actual": 1.6,
-          "note": "误差 0 岁，在 ±2 岁内"
-        },
-        "8.大运顺逆": {
-          "passed": true,
-          "expected": "逆行",
-          "actual": "逆行",
-          "note": "日干壬(阳)，性别女 → 逆行"
-        },
-        "9.格局结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "格局结构合法（string[]），程序校验待接入"
-        },
-        "10.喜用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "喜用神结构合法（string[]），程序校验待接入"
-        },
-        "11.调候用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "调候用神结构合法（string[]），程序校验待接入"
-        },
-        "12.神煞结构": {
-          "passed": true,
-          "note": "神煞为空，待按书籍原文填入"
-        },
-        "13.旺衰结构": {
-          "passed": true,
-          "note": "旺衰为空，待按书籍原文填入"
-        }
-      },
-      "passRate": 100,
-      "passed": true
-    },
-    {
-      "caseId": "SMTH-022",
-      "source": "三命通会",
-      "items": {
-        "1.年柱一致": {
-          "passed": true,
-          "expected": "壬戌",
-          "actual": "壬戌",
-          "note": ""
-        },
-        "2.月柱一致": {
-          "passed": true,
-          "expected": "甲辰",
-          "actual": "甲辰",
-          "note": ""
-        },
-        "3.日柱一致": {
-          "passed": true,
-          "expected": "壬申",
-          "actual": "壬申",
-          "note": ""
-        },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "辛丑",
-          "actual": "辛丑",
-          "note": ""
-        },
-        "5.真太阳时校正": {
-          "passed": true,
-          "expected": -24.5,
-          "actual": -24.5,
-          "note": "误差 0 分钟，在 ±5 分钟内"
-        },
-        "6.节气": {
-          "passed": true,
-          "expected": "清明",
-          "actual": "清明",
-          "note": ""
-        },
-        "7.起运年龄": {
-          "passed": true,
-          "expected": 0.6,
-          "actual": 0.6,
-          "note": "误差 0 岁，在 ±2 岁内"
-        },
-        "8.大运顺逆": {
-          "passed": true,
-          "expected": "顺行",
-          "actual": "顺行",
-          "note": "日干壬(阳)，性别男 → 顺行"
-        },
-        "9.格局结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "格局结构合法（string[]），程序校验待接入"
-        },
-        "10.喜用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "喜用神结构合法（string[]），程序校验待接入"
-        },
-        "11.调候用神结构": {
-          "passed": true,
-          "expected": "string[] 类型",
-          "actual": "Array(0)",
-          "note": "调候用神结构合法（string[]），程序校验待接入"
-        },
-        "12.神煞结构": {
-          "passed": true,
-          "note": "神煞为空，待按书籍原文填入"
-        },
-        "13.旺衰结构": {
-          "passed": true,
-          "note": "旺衰为空，待按书籍原文填入"
-        }
-      },
-      "passRate": 100,
-      "passed": true
-    },
-    {
-      "caseId": "QTBJ-031",
-      "source": "穷通宝鉴",
-      "items": {
-        "1.年柱一致": {
-          "passed": true,
-          "expected": "丙寅",
-          "actual": "丙寅",
-          "note": ""
-        },
-        "2.月柱一致": {
-          "passed": true,
-          "expected": "乙未",
-          "actual": "乙未",
-          "note": ""
-        },
-        "3.日柱一致": {
-          "passed": true,
-          "expected": "甲戌",
-          "actual": "甲戌",
-          "note": ""
-        },
-        "4.时柱一致": {
-          "passed": true,
-          "expected": "辛未",
-          "actual": "辛未",
-          "note": ""
-        },
-        "5.真太阳时校正": {
-          "passed": true,
-          "expected": -57.6,
-          "actual": -57.6,
-          "note": "误差 0 分钟，在 ±5 分钟内"
-        },
-        "6.节气": {
-          "passed": true,
-          "expected": "大暑",
-          "actual": "大暑",
-          "note": ""
-        },
-        "7.起运年龄": {
-          "passed": true,
-          "expected": 2,
-          "actual": 2,
+          "expected": 5,
+          "actual": 5,
           "note": "误差 0 岁，在 ±2 岁内"
         },
         "8.大运顺逆": {
@@ -834,8 +178,664 @@
       "passed": true
     },
     {
-      "caseId": "DTS-032",
+      "caseId": "SMTH-045",
+      "source": "三命通会",
+      "items": {
+        "1.年柱一致": {
+          "passed": true,
+          "expected": "壬辰",
+          "actual": "壬辰",
+          "note": ""
+        },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "戊申",
+          "actual": "戊申",
+          "note": ""
+        },
+        "3.日柱一致": {
+          "passed": true,
+          "expected": "乙卯",
+          "actual": "乙卯",
+          "note": ""
+        },
+        "4.时柱一致": {
+          "passed": true,
+          "expected": "甲申",
+          "actual": "甲申",
+          "note": ""
+        },
+        "5.真太阳时校正": {
+          "passed": true,
+          "expected": 4.6,
+          "actual": 4.6,
+          "note": "误差 0 分钟，在 ±5 分钟内"
+        },
+        "6.节气": {
+          "passed": true,
+          "expected": "立秋",
+          "actual": "立秋",
+          "note": ""
+        },
+        "7.起运年龄": {
+          "passed": true,
+          "expected": 0.1,
+          "actual": 0.1,
+          "note": "误差 0 岁，在 ±2 岁内"
+        },
+        "8.大运顺逆": {
+          "passed": true,
+          "expected": "顺行",
+          "actual": "顺行",
+          "note": "日干乙(阴)，性别女 → 顺行"
+        },
+        "9.格局结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "格局结构合法（string[]），程序校验待接入"
+        },
+        "10.喜用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "喜用神结构合法（string[]），程序校验待接入"
+        },
+        "11.调候用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "调候用神结构合法（string[]），程序校验待接入"
+        },
+        "12.神煞结构": {
+          "passed": true,
+          "note": "神煞为空，待按书籍原文填入"
+        },
+        "13.旺衰结构": {
+          "passed": true,
+          "note": "旺衰为空，待按书籍原文填入"
+        }
+      },
+      "passRate": 100,
+      "passed": true
+    },
+    {
+      "caseId": "QTBJ-057",
+      "source": "穷通宝鉴",
+      "items": {
+        "1.年柱一致": {
+          "passed": true,
+          "expected": "甲戌",
+          "actual": "甲戌",
+          "note": ""
+        },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "丙子",
+          "actual": "丙子",
+          "note": ""
+        },
+        "3.日柱一致": {
+          "passed": true,
+          "expected": "戊辰",
+          "actual": "戊辰",
+          "note": ""
+        },
+        "4.时柱一致": {
+          "passed": true,
+          "expected": "癸亥",
+          "actual": "癸亥",
+          "note": ""
+        },
+        "5.真太阳时校正": {
+          "passed": true,
+          "expected": -18.9,
+          "actual": -18.9,
+          "note": "误差 0 分钟，在 ±5 分钟内"
+        },
+        "6.节气": {
+          "passed": true,
+          "expected": "大雪",
+          "actual": "大雪",
+          "note": ""
+        },
+        "7.起运年龄": {
+          "passed": true,
+          "expected": 0.4,
+          "actual": 0.4,
+          "note": "误差 0 岁，在 ±2 岁内"
+        },
+        "8.大运顺逆": {
+          "passed": true,
+          "expected": "逆行",
+          "actual": "逆行",
+          "note": "日干戊(阳)，性别女 → 逆行"
+        },
+        "9.格局结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "格局结构合法（string[]），程序校验待接入"
+        },
+        "10.喜用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "喜用神结构合法（string[]），程序校验待接入"
+        },
+        "11.调候用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "调候用神结构合法（string[]），程序校验待接入"
+        },
+        "12.神煞结构": {
+          "passed": true,
+          "note": "神煞为空，待按书籍原文填入"
+        },
+        "13.旺衰结构": {
+          "passed": true,
+          "note": "旺衰为空，待按书籍原文填入"
+        }
+      },
+      "passRate": 100,
+      "passed": true
+    },
+    {
+      "caseId": "DTS-050",
       "source": "滴天髓",
+      "items": {
+        "1.年柱一致": {
+          "passed": true,
+          "expected": "乙酉",
+          "actual": "乙酉",
+          "note": ""
+        },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "乙酉",
+          "actual": "乙酉",
+          "note": ""
+        },
+        "3.日柱一致": {
+          "passed": true,
+          "expected": "甲辰",
+          "actual": "甲辰",
+          "note": ""
+        },
+        "4.时柱一致": {
+          "passed": true,
+          "expected": "壬申",
+          "actual": "壬申",
+          "note": ""
+        },
+        "5.真太阳时校正": {
+          "passed": true,
+          "expected": -5.6,
+          "actual": -5.6,
+          "note": "误差 0 分钟，在 ±5 分钟内"
+        },
+        "6.节气": {
+          "passed": true,
+          "expected": "白露",
+          "actual": "白露",
+          "note": ""
+        },
+        "7.起运年龄": {
+          "passed": true,
+          "expected": 1.9,
+          "actual": 1.9,
+          "note": "误差 0 岁，在 ±2 岁内"
+        },
+        "8.大运顺逆": {
+          "passed": true,
+          "expected": "顺行",
+          "actual": "顺行",
+          "note": "日干甲(阳)，性别男 → 顺行"
+        },
+        "9.格局结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "格局结构合法（string[]），程序校验待接入"
+        },
+        "10.喜用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "喜用神结构合法（string[]），程序校验待接入"
+        },
+        "11.调候用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "调候用神结构合法（string[]），程序校验待接入"
+        },
+        "12.神煞结构": {
+          "passed": true,
+          "note": "神煞为空，待按书籍原文填入"
+        },
+        "13.旺衰结构": {
+          "passed": true,
+          "note": "旺衰为空，待按书籍原文填入"
+        }
+      },
+      "passRate": 100,
+      "passed": true
+    },
+    {
+      "caseId": "SMTH-040",
+      "source": "三命通会",
+      "items": {
+        "1.年柱一致": {
+          "passed": true,
+          "expected": "辛酉",
+          "actual": "辛酉",
+          "note": ""
+        },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "乙未",
+          "actual": "乙未",
+          "note": ""
+        },
+        "3.日柱一致": {
+          "passed": true,
+          "expected": "甲午",
+          "actual": "甲午",
+          "note": ""
+        },
+        "4.时柱一致": {
+          "passed": true,
+          "expected": "丁卯",
+          "actual": "丁卯",
+          "note": ""
+        },
+        "5.真太阳时校正": {
+          "passed": true,
+          "expected": 6.2,
+          "actual": 6.2,
+          "note": "误差 0 分钟，在 ±5 分钟内"
+        },
+        "6.节气": {
+          "passed": true,
+          "expected": "小暑",
+          "actual": "小暑",
+          "note": ""
+        },
+        "7.起运年龄": {
+          "passed": true,
+          "expected": 2.7,
+          "actual": 2.7,
+          "note": "误差 0 岁，在 ±2 岁内"
+        },
+        "8.大运顺逆": {
+          "passed": true,
+          "expected": "顺行",
+          "actual": "顺行",
+          "note": "日干甲(阳)，性别男 → 顺行"
+        },
+        "9.格局结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "格局结构合法（string[]），程序校验待接入"
+        },
+        "10.喜用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "喜用神结构合法（string[]），程序校验待接入"
+        },
+        "11.调候用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "调候用神结构合法（string[]），程序校验待接入"
+        },
+        "12.神煞结构": {
+          "passed": true,
+          "note": "神煞为空，待按书籍原文填入"
+        },
+        "13.旺衰结构": {
+          "passed": true,
+          "note": "旺衰为空，待按书籍原文填入"
+        }
+      },
+      "passRate": 100,
+      "passed": true
+    },
+    {
+      "caseId": "ZPZQ-001",
+      "source": "子平真诠",
+      "items": {
+        "1.年柱一致": {
+          "passed": true,
+          "expected": "乙卯",
+          "actual": "乙卯",
+          "note": ""
+        },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "己丑",
+          "actual": "己丑",
+          "note": ""
+        },
+        "3.日柱一致": {
+          "passed": true,
+          "expected": "丙子",
+          "actual": "丙子",
+          "note": ""
+        },
+        "4.时柱一致": {
+          "passed": true,
+          "expected": "庚寅",
+          "actual": "庚寅",
+          "note": ""
+        },
+        "5.真太阳时校正": {
+          "passed": true,
+          "expected": 26,
+          "actual": 26,
+          "note": "误差 0 分钟，在 ±5 分钟内"
+        },
+        "6.节气": {
+          "passed": true,
+          "expected": "大寒",
+          "actual": "大寒",
+          "note": ""
+        },
+        "7.起运年龄": {
+          "passed": true,
+          "expected": 3.6,
+          "actual": 3.6,
+          "note": "误差 0 岁，在 ±2 岁内"
+        },
+        "8.大运顺逆": {
+          "passed": true,
+          "expected": "顺行",
+          "actual": "顺行",
+          "note": "日干丙(阳)，性别男 → 顺行"
+        },
+        "9.格局结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "格局结构合法（string[]），程序校验待接入"
+        },
+        "10.喜用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "喜用神结构合法（string[]），程序校验待接入"
+        },
+        "11.调候用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "调候用神结构合法（string[]），程序校验待接入"
+        },
+        "12.神煞结构": {
+          "passed": true,
+          "note": "神煞为空，待按书籍原文填入"
+        },
+        "13.旺衰结构": {
+          "passed": true,
+          "note": "旺衰为空，待按书籍原文填入"
+        }
+      },
+      "passRate": 100,
+      "passed": true
+    },
+    {
+      "caseId": "ZPZQ-006",
+      "source": "子平真诠",
+      "items": {
+        "1.年柱一致": {
+          "passed": true,
+          "expected": "甲午",
+          "actual": "甲午",
+          "note": ""
+        },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "丙寅",
+          "actual": "丙寅",
+          "note": ""
+        },
+        "3.日柱一致": {
+          "passed": true,
+          "expected": "乙丑",
+          "actual": "乙丑",
+          "note": ""
+        },
+        "4.时柱一致": {
+          "passed": true,
+          "expected": "丁丑",
+          "actual": "丁丑",
+          "note": ""
+        },
+        "5.真太阳时校正": {
+          "passed": true,
+          "expected": -14.3,
+          "actual": -14.3,
+          "note": "误差 0 分钟，在 ±5 分钟内"
+        },
+        "6.节气": {
+          "passed": true,
+          "expected": "雨水",
+          "actual": "雨水",
+          "note": ""
+        },
+        "7.起运年龄": {
+          "passed": true,
+          "expected": 3.7,
+          "actual": 3.7,
+          "note": "误差 0 岁，在 ±2 岁内"
+        },
+        "8.大运顺逆": {
+          "passed": true,
+          "expected": "顺行",
+          "actual": "顺行",
+          "note": "日干乙(阴)，性别女 → 顺行"
+        },
+        "9.格局结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "格局结构合法（string[]），程序校验待接入"
+        },
+        "10.喜用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "喜用神结构合法（string[]），程序校验待接入"
+        },
+        "11.调候用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "调候用神结构合法（string[]），程序校验待接入"
+        },
+        "12.神煞结构": {
+          "passed": true,
+          "note": "神煞为空，待按书籍原文填入"
+        },
+        "13.旺衰结构": {
+          "passed": true,
+          "note": "旺衰为空，待按书籍原文填入"
+        }
+      },
+      "passRate": 100,
+      "passed": true
+    },
+    {
+      "caseId": "SMTH-008",
+      "source": "三命通会",
+      "items": {
+        "1.年柱一致": {
+          "passed": true,
+          "expected": "丙寅",
+          "actual": "丙寅",
+          "note": ""
+        },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "庚寅",
+          "actual": "庚寅",
+          "note": ""
+        },
+        "3.日柱一致": {
+          "passed": true,
+          "expected": "己卯",
+          "actual": "己卯",
+          "note": ""
+        },
+        "4.时柱一致": {
+          "passed": true,
+          "expected": "甲戌",
+          "actual": "甲戌",
+          "note": ""
+        },
+        "5.真太阳时校正": {
+          "passed": true,
+          "expected": -14.1,
+          "actual": -14.1,
+          "note": "误差 0.1 分钟，在 ±5 分钟内"
+        },
+        "6.节气": {
+          "passed": true,
+          "expected": "立春",
+          "actual": "立春",
+          "note": ""
+        },
+        "7.起运年龄": {
+          "passed": true,
+          "expected": 0.1,
+          "actual": 0.1,
+          "note": "误差 0 岁，在 ±2 岁内"
+        },
+        "8.大运顺逆": {
+          "passed": true,
+          "expected": "逆行",
+          "actual": "逆行",
+          "note": "日干己(阴)，性别男 → 逆行"
+        },
+        "9.格局结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "格局结构合法（string[]），程序校验待接入"
+        },
+        "10.喜用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "喜用神结构合法（string[]），程序校验待接入"
+        },
+        "11.调候用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "调候用神结构合法（string[]），程序校验待接入"
+        },
+        "12.神煞结构": {
+          "passed": true,
+          "note": "神煞为空，待按书籍原文填入"
+        },
+        "13.旺衰结构": {
+          "passed": true,
+          "note": "旺衰为空，待按书籍原文填入"
+        }
+      },
+      "passRate": 100,
+      "passed": true
+    },
+    {
+      "caseId": "YHZP-036",
+      "source": "渊海子平",
+      "items": {
+        "1.年柱一致": {
+          "passed": true,
+          "expected": "甲子",
+          "actual": "甲子",
+          "note": ""
+        },
+        "2.月柱一致": {
+          "passed": true,
+          "expected": "癸酉",
+          "actual": "癸酉",
+          "note": ""
+        },
+        "3.日柱一致": {
+          "passed": true,
+          "expected": "丙寅",
+          "actual": "丙寅",
+          "note": ""
+        },
+        "4.时柱一致": {
+          "passed": true,
+          "expected": "壬辰",
+          "actual": "壬辰",
+          "note": ""
+        },
+        "5.真太阳时校正": {
+          "passed": true,
+          "expected": -33.6,
+          "actual": -33.6,
+          "note": "误差 0 分钟，在 ±5 分钟内"
+        },
+        "6.节气": {
+          "passed": true,
+          "expected": "秋分",
+          "actual": "秋分",
+          "note": ""
+        },
+        "7.起运年龄": {
+          "passed": true,
+          "expected": 2,
+          "actual": 2,
+          "note": "误差 0 岁，在 ±2 岁内"
+        },
+        "8.大运顺逆": {
+          "passed": true,
+          "expected": "逆行",
+          "actual": "逆行",
+          "note": "日干丙(阳)，性别女 → 逆行"
+        },
+        "9.格局结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "格局结构合法（string[]），程序校验待接入"
+        },
+        "10.喜用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "喜用神结构合法（string[]），程序校验待接入"
+        },
+        "11.调候用神结构": {
+          "passed": true,
+          "expected": "string[] 类型",
+          "actual": "Array(0)",
+          "note": "调候用神结构合法（string[]），程序校验待接入"
+        },
+        "12.神煞结构": {
+          "passed": true,
+          "note": "神煞为空，待按书籍原文填入"
+        },
+        "13.旺衰结构": {
+          "passed": true,
+          "note": "旺衰为空，待按书籍原文填入"
+        }
+      },
+      "passRate": 100,
+      "passed": true
+    },
+    {
+      "caseId": "ZPZQ-036",
+      "source": "子平真诠",
       "items": {
         "1.年柱一致": {
           "passed": true,
@@ -845,45 +845,45 @@
         },
         "2.月柱一致": {
           "passed": true,
-          "expected": "壬午",
-          "actual": "壬午",
+          "expected": "甲申",
+          "actual": "甲申",
           "note": ""
         },
         "3.日柱一致": {
           "passed": true,
-          "expected": "癸未",
-          "actual": "癸未",
+          "expected": "壬午",
+          "actual": "壬午",
           "note": ""
         },
         "4.时柱一致": {
           "passed": true,
-          "expected": "己未",
-          "actual": "己未",
+          "expected": "庚子",
+          "actual": "庚子",
           "note": ""
         },
         "5.真太阳时校正": {
           "passed": true,
-          "expected": 1.2,
-          "actual": 1.2,
+          "expected": -59.5,
+          "actual": -59.5,
           "note": "误差 0 分钟，在 ±5 分钟内"
         },
         "6.节气": {
           "passed": true,
-          "expected": "芒种",
-          "actual": "芒种",
+          "expected": "立秋",
+          "actual": "立秋",
           "note": ""
         },
         "7.起运年龄": {
           "passed": true,
-          "expected": 3.9,
-          "actual": 3.9,
+          "expected": 2.5,
+          "actual": 2.5,
           "note": "误差 0 岁，在 ±2 岁内"
         },
         "8.大运顺逆": {
           "passed": true,
-          "expected": "逆行",
-          "actual": "逆行",
-          "note": "日干癸(阴)，性别男 → 逆行"
+          "expected": "顺行",
+          "actual": "顺行",
+          "note": "日干壬(阳)，性别男 → 顺行"
         },
         "9.格局结构": {
           "passed": true,
@@ -916,5 +916,5 @@
       "passed": true
     }
   ],
-  "durationMs": 2226
+  "durationMs": 1595
 }

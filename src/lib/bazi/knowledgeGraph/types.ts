@@ -104,6 +104,18 @@ export interface KGEdge {
   }
   /** C6-3: 共识度 0~1（1=主流共识，0=非主流） */
   consensusScore?: number
+
+  /** C7-2: 适用范围 */
+  applicability?: {
+    /** 适用范围描述 */
+    scope: string
+    /** 适用条件（该关系成立的前提条件列表） */
+    conditions: string[]
+    /** 不适用场景 */
+    exclusions?: string[]
+  }
+  /** C7-2: 例外条件（什么情况下该关系不成立） */
+  exceptionCondition?: string[]
 }
 
 /** 完整知识图谱 */

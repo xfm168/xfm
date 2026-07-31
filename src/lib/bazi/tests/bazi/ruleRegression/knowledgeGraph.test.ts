@@ -78,4 +78,36 @@ describe('C5 命理知识图谱（Knowledge Graph）', () => {
     expect(maxSupport).toBeLessThanOrEqual(7) // 7部经典
     expect(maxSupport).toBeGreaterThanOrEqual(5) // 至少有一条被5部经典支持
   })
+
+  it('C7-2: 至少 30 条边有 applicability 和 exceptionCondition', () => {
+    const graph = globalKG.exportGraph()
+    const enriched = graph.edges.filter(e =>
+      e.applicability !== undefined &&
+      e.exceptionCondition !== undefined
+    )
+    expect(enriched.length).toBeGreaterThanOrEqual(30)
+  })
+
+  it('C7-2: 五行相生边 applicability.scope 为通用', () => {
+    const mu = globalKG.getNodeByName('木', 'wuxing')!
+    const genRels = globalKG.queryRelations(mu.id, 'generates')
+    const fireEdge = genRels.relations.find(r => r.target.name === '火')!
+    expect(fireEdge.edge.applicability).toBeDefined()
+    expect(fireEdge.edge.applicability!.scope).toBe('通用')
+    expect(fireEdge.edge.exceptionCondition).toBeDefined()
+    expect(fireEdge.edge.exceptionCondition!.length).toBeGreaterThan(0)
+  })
+
+  it('C7-2: 天干五合边有 exceptionCondition 包含冲不合条件', () => {
+    const graph = globalKG.exportGraph()
+    const combines = graph.edges.filter(e => e.type === 'combines')
+    for (const e of combines) {
+      if (e.exceptionCondition) {
+        const hasCondition = e.exceptionCondition.some(c =>
+          c.includes('冲') || c.includes('化气') || c.includes('不成')
+        )
+        expect(hasCondition).toBe(true)
+      }
+    }
+  })
 })

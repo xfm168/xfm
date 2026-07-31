@@ -76,6 +76,17 @@ export interface ClassicSentence {
   hasControversy?: boolean
   /** 不同流派观点 */
   controversyNotes?: string[]
+
+  /** C7: 关键词列表（用于搜索和索引） */
+  keywords?: string[]
+  /** C7: 关联的证据节点 ID 列表（EvidenceTree 节点） */
+  evidenceNodes?: string[]
+  /** C7: 关联的知识图谱节点 ID 列表 */
+  knowledgeNodes?: string[]
+  /** C7: 经典版本（如 '明刻本' '清校本' '通行本'） */
+  classicVersion?: string
+  /** C7: 版权状态（古籍均为 public_domain） */
+  copyrightStatus?: 'public_domain' | 'restricted'
 }
 
 /** 精确引用定位器（Rule / Evidence / KG 使用） */
@@ -116,4 +127,80 @@ export interface ClassicalKnowledgeEngine {
   listClassics(): Classic[]
   /** 统计信息 */
   getStats(): { totalClassics: number; totalChapters: number; totalParagraphs: number; totalSentences: number }
+}
+
+/** C7: Corpus 管理器接口（支持动态注册新经典） */
+export interface ClassicalCorpusManager {
+  readonly name: string
+  readonly version: string
+
+  /** 注册新经典（支持后续动态扩展） */
+  registerClassic(classic: Classic): void
+
+  /** 注销经典 */
+  unregisterClassic(classicId: string): boolean
+
+  /** 按 ID 查找经典 */
+  getClassic(id: string): Classic | undefined
+
+  /** 按名称查找经典 */
+  getClassicByName(name: string): Classic | undefined
+
+  /** 按 ID 查找句子 */
+  getSentence(id: string): ClassicSentence | undefined
+
+  /** 按 ID 查找章节 */
+  getChapter(id: string): ClassicChapter | undefined
+
+  /** 按 ID 查找段落 */
+  getParagraph(id: string): ClassicParagraph | undefined
+
+  /** 按经典名称+章节标题查找 */
+  findChapter(classicName: string, chapterTitle: string): ClassicChapter | undefined
+
+  /** 全文搜索句子 */
+  searchSentences(keyword: string, classicName?: string): ClassicSentence[]
+
+  /** 按关键词搜索（使用 keywords[] 字段） */
+  searchByKeywords(keyword: string): ClassicSentence[]
+
+  /** 按概念查找 */
+  findByConcept(concept: string): ClassicSentence[]
+
+  /** 按规则 ID 反查 */
+  findByRuleId(ruleId: string): ClassicSentence[]
+
+  /** 按证据节点 ID 反查 */
+  findByEvidenceNode(nodeId: string): ClassicSentence[]
+
+  /** 按知识图谱节点 ID 反查 */
+  findByKnowledgeNode(nodeId: string): ClassicSentence[]
+
+  /** 列出所有已注册经典 */
+  listClassics(): Classic[]
+
+  /** 检查经典是否已注册 */
+  hasClassic(classicId: string): boolean
+
+  /** 统计信息 */
+  getStats(): CorpusStats
+}
+
+/** C7: Corpus 统计信息 */
+export interface CorpusStats {
+  totalClassics: number
+  totalChapters: number
+  totalParagraphs: number
+  totalSentences: number
+  /** 按经典统计 */
+  byClassic: Array<{
+    id: string
+    name: string
+    chapters: number
+    paragraphs: number
+    sentences: number
+    version?: string
+  }>
+  /** 版权状态分布 */
+  copyrightDistribution: Record<string, number>
 }
