@@ -31,7 +31,12 @@ try {
   _regressionExports.defaultTenGodRegressionRunner = new _regressionExports.TenGodRegressionRunner()
 }
 
-export const { TenGodRegressionRunner, defaultTenGodRegressionRunner } = _regressionExports
+export const {
+  TenGodRegressionRunner,
+  defaultTenGodRegressionRunner,
+  TenGodCaseDB,
+  defaultTenGodCaseDB,
+} = _regressionExports
 export { _regressionLoaded as __regressionModuleLoaded }
 
 import { TenGodPlugin } from './plugin'
