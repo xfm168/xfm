@@ -21,3 +21,6 @@ export * from './cache'
 
 // Scheduler
 export * from './scheduler'
+
+// 服务容器 —— 统一注册 Core 所有服务，禁止 new XXX()
+export * from './container'

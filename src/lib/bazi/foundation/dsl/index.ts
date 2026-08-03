@@ -30,6 +30,7 @@ export * from './compiler/compiler'
 export * from './runtime/runtime'
 export * from './formatter/formatter'
 export * from './optimizer/optimizer'
+export * from './linter/linter'
 
 // ============================================================
 // 向后兼容：旧版 parser（parseDSLRule / serializeToDSL / loadDSLRules /

@@ -550,4 +550,7 @@ export class ConfigCenter {
 /** 全局配置中心单例 */
 export const globalConfig = new ConfigCenter()
 
+// 别名：服务容器统一以 globalConfigCenter 名称注册
+export { globalConfig as globalConfigCenter }
+
 export default globalConfig

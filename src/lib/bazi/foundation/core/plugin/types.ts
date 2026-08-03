@@ -8,6 +8,7 @@
  */
 
 import type { Plugin } from '../../shared'
+import { globalCapabilityRegistry } from './capability'
 
 // ============================================================
 // 生命周期与健康状态
@@ -268,6 +269,15 @@ export class BaZiPlugin extends DivinationPluginImpl {
     supportsFeatures: ['排盘', '格局', '旺衰', '喜用神', '大运', '流年'],
     icon: '☯',
   }
+
+  // 注册八字插件能力
+  async initialize(): Promise<void> {
+    await super.initialize()
+    globalCapabilityRegistry.register({
+      pluginId: this.id,
+      capabilities: ['bazi', 'knowledge', 'quality', 'rule', 'decision', 'case-db', 'classic-db', 'explain'],
+    })
+  }
 }
 
 /**
@@ -287,6 +297,15 @@ export class ZiWeiPlugin extends DivinationPluginImpl {
     supportsFeatures: ['命盘', '格局', '大限', '流年'],
     icon: '✦',
   }
+
+  // 注册紫微插件能力
+  async initialize(): Promise<void> {
+    await super.initialize()
+    globalCapabilityRegistry.register({
+      pluginId: this.id,
+      capabilities: ['ziwei', 'knowledge', 'rule'],
+    })
+  }
 }
 
 /**
@@ -303,6 +322,15 @@ export class QiMenPlugin extends DivinationPluginImpl {
     divinationDescription: '奇门遁甲排盘与占断',
     supportsFeatures: ['排盘', '格局', '占断'],
     icon: '🛡',
+  }
+
+  // 注册奇门插件能力
+  async initialize(): Promise<void> {
+    await super.initialize()
+    globalCapabilityRegistry.register({
+      pluginId: this.id,
+      capabilities: ['qimen', 'knowledge'],
+    })
   }
 }
 
@@ -321,6 +349,15 @@ export class LiuYaoPlugin extends DivinationPluginImpl {
     supportsFeatures: ['起卦', '装卦', '断卦'],
     icon: '☲',
   }
+
+  // 注册六爻插件能力
+  async initialize(): Promise<void> {
+    await super.initialize()
+    globalCapabilityRegistry.register({
+      pluginId: this.id,
+      capabilities: ['liuyao', 'knowledge'],
+    })
+  }
 }
 
 /**
@@ -337,5 +374,14 @@ export class FengShuiPlugin extends DivinationPluginImpl {
     divinationDescription: '玄空飞星、八宅明镜等风水流派分析',
     supportsFeatures: ['飞星排盘', '八宅分析', '方位吉凶'],
     icon: '⛰',
+  }
+
+  // 注册风水插件能力
+  async initialize(): Promise<void> {
+    await super.initialize()
+    globalCapabilityRegistry.register({
+      pluginId: this.id,
+      capabilities: ['fengshui', 'knowledge'],
+    })
   }
 }

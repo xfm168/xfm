@@ -12,3 +12,6 @@ export * from './contracts'
 export * from './internal/endpoints'
 export * from './public/endpoints'
 export * from './plugin/endpoints'
+
+// API 版本管理 —— v1/v2/v3/v4/v5 多版本共存与兼容
+export * from './versioning'

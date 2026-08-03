@@ -75,5 +75,8 @@ export {
 } from './architecture'
 export type { ArchitectureStatus } from './architecture'
 
+// ===== Security：安全层（预留） =====
+export * from './security'
+
 // ===== 统一类型 =====
 export * from './types'
