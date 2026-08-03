@@ -33,6 +33,18 @@ export * from './dsl'
 // ===== Knowledge：概念知识图谱 =====
 export * from './knowledge'
 
+// ===== Performance：性能监控中心 =====
+export * from './performance'
+
+// ===== Decision：决策 + 策略引擎 =====
+export * from './decision'
+
+// ===== Quality：质量体系 =====
+export * from './quality'
+
+// ===== Migration：版本迁移 =====
+export * from './migration'
+
 // ===== Rule：规则运行时 + 依赖图 + 注册表 =====
 export * from './rule'
 

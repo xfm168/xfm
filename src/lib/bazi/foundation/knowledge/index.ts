@@ -1,3 +1,5 @@
+export * from './semantic'
+
 // 新版概念知识图谱
 export * from './ontology/ontology'
 export * from './concept/concept'

@@ -28,6 +28,8 @@ export * from './parser/parser'
 export * from './validator/validator'
 export * from './compiler/compiler'
 export * from './runtime/runtime'
+export * from './formatter/formatter'
+export * from './optimizer/optimizer'
 
 // ============================================================
 // 向后兼容：旧版 parser（parseDSLRule / serializeToDSL / loadDSLRules /

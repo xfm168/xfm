@@ -12,3 +12,12 @@ export * from './eventbus/eventBus'
 export * from './lifecycle/lifecycle'
 export * from './plugin/pluginManager'
 export * from './config/configCenter'
+
+// DI container
+export * from './di'
+
+// Cache
+export * from './cache'
+
+// Scheduler
+export * from './scheduler'

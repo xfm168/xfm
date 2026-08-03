@@ -10,6 +10,9 @@
  * 六层架构：Core → Knowledge → Engine → Decision → Quality → AI → Application
  */
 
+// Kernel 核心抽象（Result / Option / Either / Observable 等）
+export * from './kernel'
+
 // 标准错误类型
 export * from './errors'
 
