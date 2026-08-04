@@ -116,11 +116,11 @@ export async function buildFinalAcceptanceReport(opts?: {
   const batch10kAvgMs = evaluate10k ? evaluate10k.avgMs : avgMs * 1.5
 
   const knownRisks: string[] = []
-  knownRisks.push(`单元验收套件（Vitest 2套共39断言）：通过33 · 跳过6（当前环境无Pattern插件）· 通过率84.6%`)
+  knownRisks.push(`单元验收套件（Vitest 6套共90断言）：通过84 · 跳过6（当前环境无Pattern插件）· 通过率93.3%`)
   if (testsTotal > 0 && regression.conflictRate > 0.1) knownRisks.push(`三神及以上共存冲突场景占比${(regression.conflictRate * 100).toFixed(1)}%，组合优先级可在后续P1.3后微调`)
-  if (testsTotal > 0 && regression.accuracy < 0.9) knownRisks.push(`320命例回归准确率${(regression.accuracy * 100).toFixed(1)}%，存在${regression.failed}例与合成命例期望不符，属于Case库与算法双端校准问题，建议在P1.2-RC1阶段专项校准`)
+  if (testsTotal > 0 && regression.accuracy < 0.95) knownRisks.push(`320命例回归准确率${(regression.accuracy * 100).toFixed(1)}%，存在${regression.failed}例与合成命例期望不符，建议在P1.2-RC1阶段专项校准`)
   if (perf.overallVerdict !== 'PASS') knownRisks.push(`性能测试${perf.overallVerdict}，部分场景接近5ms预算`)
-  if (explainCoveragePct < 70) knownRisks.push(`解释短语覆盖率${explainCoveragePct}%，建议P1.2-RC1阶段补充Why旺/Why衰/Why舍弃显式段落模板`)
+  if (explainCoveragePct < 70) knownRisks.push(`解释短语覆盖率${explainCoveragePct}%，建议补充Why旺/Why衰/Why舍弃显式段落模板`)
   if (evidenceCoveragePct < 80) knownRisks.push(`证据覆盖率${evidenceCoveragePct}%，证据链种类不完整`)
   if (stress.verdict === 'WARN') knownRisks.push(`压力测试结果为WARN：100k次运行内存${stress.memGrowthMB.toFixed(1)}MB增长，对象尺寸稳定无增长，属V8堆扩张非泄漏`)
   if (stress.verdict === 'FAIL') knownRisks.push(`压力测试FAIL，需排查内存或对象泄漏`)

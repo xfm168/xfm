@@ -126,18 +126,24 @@ export class TenGodClassifier {
       if (!pillar) continue
       const { gan, zhi } = pillar
       const ganWx = pillar.ganWx ?? ganToWuxing(gan)
+      // P1.2.1-D 校准：日干为命主“我”本身，不应作为十神出现计入分布。
+      // 之前日柱(i=2)天干被当作“比肩”统计，导致每个命例比肩虚增 +1，
+      // 在 150/320 回归命例中使“比肩”误判为旺神。命理上“我”非十神。
+      const isDayMaster = i === 2 && gan === input.dayGan
       const ganTG = getTenGodOf(input.dayGan, ganWx, gan)
-      const ganWeight = GAN_WEIGHT
-      perGod[ganTG]++
-      perGodW[ganTG] += ganWeight
-      tianGanFlags[ganTG] = true
+      if (!isDayMaster) {
+        const ganWeight = GAN_WEIGHT
+        perGod[ganTG]++
+        perGodW[ganTG] += ganWeight
+        tianGanFlags[ganTG] = true
+      }
       perColumn.push({
         pillar: i,
-        position: PILLAR_POS[i],
+        position: isDayMaster ? '日干' : PILLAR_POS[i],
         ganOrZhi: gan,
-        tenGod: ganTG,
+        tenGod: isDayMaster ? ('日主' as any) : ganTG,
         wx: ganWx,
-        weight: ganWeight,
+        weight: isDayMaster ? 0 : GAN_WEIGHT,
       })
       const cangList = cangGanTable[zhi] || []
       for (let j = 0; j < cangList.length; j++) {
@@ -170,7 +176,13 @@ export class TenGodClassifier {
     const totalCount = Object.values(perGod).reduce((s, n) => s + n, 0)
     const sortedByW = [...ALL_TEN_GODS].sort((a, b) => perGodW[b] - perGodW[a])
     const threshold = Math.max(2, totalCount > 0 ? Math.ceil(totalCount / 6) : 2)
-    const dominantGods = sortedByW.filter(g => perGod[g] >= threshold).slice(0, 5)
+    let dominantGods = sortedByW.filter(g => perGod[g] >= threshold).slice(0, 5)
+    // P1.2.1-D 命理校准：月令本气十神为“当令之神”，命理上必为旺神，
+    // 即使计数未达阈值也应纳入 dominantGods（置于首位，体现当令权重）。
+    const monthBenQiGod = Object.keys(hasMonthBenQi).find(k => (hasMonthBenQi as any)[k]) as TenGodName | undefined
+    if (monthBenQiGod && !dominantGods.includes(monthBenQiGod)) {
+      dominantGods = [monthBenQiGod, ...dominantGods].slice(0, 5)
+    }
     const weakGods = sortedByW.filter(g => perGod[g] <= 1).slice(-5)
 
     return {

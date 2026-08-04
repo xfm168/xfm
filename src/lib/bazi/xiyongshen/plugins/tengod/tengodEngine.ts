@@ -9,9 +9,17 @@ import type {
 import { defaultTenGodClassifier, type TenGodClassifier } from './tengodClassifier'
 import { defaultTenGodPriorityMatrix, type TenGodPriorityMatrix } from './priority/matrix'
 import { defaultTenGodCombinationEngine } from './combinations/engine'
-import { defaultTenGodCitationsDB } from './citations/citationsDB'
+import { defaultTenGodCitationsDB, CLASSIC_INFO_8, type ClassicCode8 } from './citations/citationsDB'
+import { formatCitation } from './evidence/citationFormat'
+import { defaultTenGodScorer } from './score/tenGodScore'
+import { defaultTenGodEvidenceBuilder } from './evidence/builder'
 
 const ALL_TEN_GODS: TenGodName[] = ['比肩', '劫财', '食神', '伤官', '偏财', '正财', '七杀', '正官', '偏印', '正印']
+
+/** 古籍代码 → 古籍名映射（用于 rule.references 中 classicCode 翻译） */
+const CLASSIC_CODE_TO_NAME: Record<string, string> = Object.fromEntries(
+  (Object.entries(CLASSIC_INFO_8) as Array<[ClassicCode8, { name: string }]>).map(([k, v]) => [k, v.name])
+)
 
 export interface TenGodPerGodScores {
   god: TenGodName
@@ -77,7 +85,18 @@ function buildFallbackScore(
   const favorable = verdicts.filter(v => v.satisfied && v.favorable).length
   const unfavorable = verdicts.filter(v => v.satisfied && !v.favorable).length
   overall = Math.max(-100, Math.min(100, overall + (favorable - unfavorable) * 15))
-  return { perGod, perCombination, overall, breakdown: { favorableCount: favorable, unfavorableCount: unfavorable, totalCount: dist?.totalCount || 0 } }
+  return {
+    perGod,
+    perCombination,
+    overall,
+    breakdown: {
+      favorableCount: favorable,
+      unfavorableCount: unfavorable,
+      totalCount: dist?.totalCount || 0,
+      // P1.2.1-A3: fallback 评分同样写入 breakdown.perGod 规范路径
+      perGod,
+    } as any,
+  }
 }
 
 type EvidenceStepOut = { step: string; text: string; satisfied: boolean; citation?: string; weight?: number }
@@ -143,11 +162,13 @@ function buildFallbackEvidence(
   for (const v of formedN) {
     const arr = defaultTenGodCitationsDB.byCombination(v.id as string)
     if (arr && arr.length > 0) {
-      refs.push(`${v.name}引${arr[0].classicCode}：${arr[0].originalText}`)
+      refs.push(formatCitation(arr[0].classicName, `${arr[0].chapter}§${arr[0].paragraph}`, arr[0].originalText))
     } else {
       const rule = defaultTenGodCombinationEngine.getRule(v.id)
       if (rule && rule.references && rule.references.length > 0) {
-        refs.push(`${v.name}引${rule.references[0].classicCode}：${rule.references[0].quote}`)
+        const ref = rule.references[0]
+        const classicName = CLASSIC_CODE_TO_NAME[ref.classicCode] ?? ref.classicCode
+        refs.push(formatCitation(classicName, `§${ref.paragraph ?? 0}`, ref.quote))
       }
     }
   }
@@ -161,8 +182,8 @@ function buildFallbackEvidence(
     { step: '十神旺衰', text: `旺神${top3.join('、') || '无'}共占${topN}/${total}=${(topRatio * 100).toFixed(0)}%，${sat1 ? '旺衰格局清晰' : '旺衰不明显，偏平衡'}`, satisfied: sat1, weight: w1 },
     { step: '旺神统计', text: `TOP旺神：${lines2.join('；') || '无'}。${monthHit ? '得月令提纲之力' : ''}`, satisfied: wang.length > 0, weight: w2 },
     { step: '衰神统计', text: `衰神：${weak.join('、') || '无'}。缺神：${missing.join('、') || '无'}。`, satisfied: sat3, weight: w3 },
-    { step: '组合吉', text: `命中吉格${fav.length}项：${linesFav.join('；') || '（无）'}。吉格总权重${wFav.toFixed(2)}`, satisfied: sat4, citation: sat4 ? '《子平真诠》：吉格成则富贵可期，凶格破则贫贱可忧。' : undefined, weight: wFav },
-    { step: '组合凶', text: `命中凶格${unfav.length}项：${linesUnf.join('；') || '（无）'}。凶格总权重${wUnf.toFixed(2)}`, satisfied: sat5, citation: !sat5 ? '《渊海子平》：凶格成则为祸百端，看其有无制化。' : undefined, weight: wUnf },
+    { step: '组合吉', text: `命中吉格${fav.length}项：${linesFav.join('；') || '（无）'}。吉格总权重${wFav.toFixed(2)}`, satisfied: sat4, citation: sat4 ? formatCitation('子平真诠', '论十神配合', '吉格成则富贵可期，凶格破则贫贱可忧。') : undefined, weight: wFav },
+    { step: '组合凶', text: `命中凶格${unfav.length}项：${linesUnf.join('；') || '（无）'}。凶格总权重${wUnf.toFixed(2)}`, satisfied: sat5, citation: !sat5 ? formatCitation('渊海子平', '论凶格', '凶格成则为祸百端，看其有无制化。') : undefined, weight: wUnf },
     { step: '优先级裁决', text: text6, satisfied: sat6, weight: w6 },
     { step: '古籍佐证', text: refs.join(' '), satisfied: sat7, weight: w7 },
   ]
@@ -451,4 +472,9 @@ export class TenGodEngine {
   }
 }
 
-export const defaultTenGodEngine = new TenGodEngine()
+export const defaultTenGodEngine = new TenGodEngine(
+  defaultTenGodClassifier,
+  defaultTenGodScorer,
+  defaultTenGodEvidenceBuilder,
+  defaultTenGodPriorityMatrix,
+)

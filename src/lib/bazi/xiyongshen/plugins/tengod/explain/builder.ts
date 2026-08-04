@@ -7,6 +7,7 @@ import type {
   TenGodEvidenceReport,
 } from '../types'
 import { defaultTenGodCombinationEngine } from '../combinations/engine'
+import { getScorePerGod } from '../score/tenGodScore'
 
 export interface TenGodExplainResult {
   whyWangGods: Array<{ god: TenGodName; reasons: string[] }>
@@ -223,8 +224,10 @@ export class TenGodExplainBuilder {
       }
     }
 
+    // P1.2.1-A3: 统一从 score.breakdown.perGod 读取（通过 getScorePerGod 访问器）
+    const perGodMap = getScorePerGod(score)
     const goodGods = ALL_TEN_GODS
-      .map(g => ({ god: g, s: score.perGod[g] || 0 }))
+      .map(g => ({ god: g, s: perGodMap[g] || 0 }))
       .filter(x => x.s > 0)
       .sort((a, b) => b.s - a.s)
       .slice(0, 3)
@@ -270,8 +273,10 @@ export class TenGodExplainBuilder {
       }
     }
 
+    // P1.2.1-A3: 统一从 score.breakdown.perGod 读取（通过 getScorePerGod 访问器）
+    const perGodMap = getScorePerGod(score)
     const badGods = ALL_TEN_GODS
-      .map(g => ({ god: g, s: score.perGod[g] || 0 }))
+      .map(g => ({ god: g, s: perGodMap[g] || 0 }))
       .filter(x => x.s < 0)
       .sort((a, b) => a.s - b.s)
       .slice(0, 3)

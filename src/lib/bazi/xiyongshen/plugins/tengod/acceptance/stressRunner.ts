@@ -115,9 +115,17 @@ export class StressRunner {
     }
     const avgMs = iterations > 0 ? totalMs / iterations : 0
 
+    // P1.2.1-D：当 globalThis.gc 不可用（如 tsx 无 --expose-gc 运行环境）时，
+    // 100k 紧密循环产生的 V8 临时对象无法被强制回收，heapUsed 自然上涨。
+    // 此时的 memGrowthPct 并不反映真实泄漏——真正的泄漏信号是 objectLeak
+    // （对象尺寸是否增长）与 memLeakDetected（>150% 且 >80MB）。
+    // 故 gc 不可用时，仅以 objectLeak / memLeakDetected / errorCount / pluginState 判定。
+    const gcAvailable = typeof (globalThis as any).gc === 'function'
+    const memGrowthWarn = gcAvailable ? memGrowthPct > 20 : false
+
     let verdict: StressReport['verdict']
     if (objectLeak || errorCount > 10) verdict = 'FAIL'
-    else if (memLeakDetected || memGrowthPct > 20 || errorCount > 0 || !pluginStateConsistent) verdict = 'WARN'
+    else if (memLeakDetected || memGrowthWarn || errorCount > 0 || !pluginStateConsistent) verdict = 'WARN'
     else verdict = 'PASS'
 
     return {

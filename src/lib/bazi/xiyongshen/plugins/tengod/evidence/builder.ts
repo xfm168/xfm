@@ -8,6 +8,7 @@ import type {
   TenGodEvidenceReport,
 } from '../types'
 import { defaultTenGodCitationsDB, type TenGodCitationEntry } from '../citations/citationsDB'
+import { formatCitation } from './citationFormat'
 
 export type TenGodEvidenceKind =
   | 'tianGan' | 'diZhi' | 'cangGan' | 'tongGen'
@@ -399,7 +400,7 @@ export class TenGodEvidenceBuilder {
           tenGodNames: cit.tenGodNames,
           classicCode: cit.classicCode,
           citationId: cit.citationId,
-          citation: `${cit.classicName}·${cit.chapter}§${cit.paragraph}`,
+          citation: formatCitation(cit.classicName, `${cit.chapter}§${cit.paragraph}`, cit.originalText),
         })
         gujiCount++
         break
@@ -423,7 +424,7 @@ export class TenGodEvidenceBuilder {
           tenGodNames: cit.tenGodNames,
           classicCode: cit.classicCode,
           citationId: cit.citationId,
-          citation: `${cit.classicName}·${cit.chapter}§${cit.paragraph}`,
+          citation: formatCitation(cit.classicName, `${cit.chapter}§${cit.paragraph}`, cit.originalText),
         })
         gujiCount++
         break
@@ -444,7 +445,7 @@ export class TenGodEvidenceBuilder {
           weight: 2,
           classicCode: cit.classicCode,
           citationId: cit.citationId,
-          citation: `${cit.classicName}·${cit.chapter}§${cit.paragraph}`,
+          citation: formatCitation(cit.classicName, `${cit.chapter}§${cit.paragraph}`, cit.originalText),
         })
         gujiCount++
       }

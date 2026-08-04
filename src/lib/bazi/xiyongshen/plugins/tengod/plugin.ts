@@ -33,7 +33,7 @@ try {
   _regressionModule.defaultTenGodRegressionRunner = stubRunner
 }
 
-const { defaultTenGodRegressionRunner, TenGodRegressionRunner } = _regressionModule
+const { defaultTenGodRegressionRunner } = _regressionModule
 
 export class TenGodPlugin extends DivinationPluginImpl {
   readonly id = 'bazi-tengod'
@@ -65,7 +65,12 @@ export class TenGodPlugin extends DivinationPluginImpl {
   public scorer = defaultTenGodScorer
   public evidence = defaultTenGodEvidenceBuilder
   public explain = defaultTenGodExplainBuilder
-  public regression = defaultTenGodRegressionRunner
+  /**
+   * P1.2.1-A4: Regression 接口统一入口。
+   * 禁止外部直接调用 `plugin.regression.run()`，统一走 `defaultTenGodRegressionRunner.run()`。
+   * 历史的 public regression 字段已移除；plugin.runRegression() 仅作为代理，
+   * 实际调用统一入口 defaultTenGodRegressionRunner.run()。
+   */
   public batch = defaultTenGodBatchEngine
 
   async initialize(): Promise<void> {
@@ -108,7 +113,14 @@ export class TenGodPlugin extends DivinationPluginImpl {
   graphReport() { return this.graph.report() }
   citationsByGod(name: any) { return this.citations.byTenGod(name) }
   citationsByCombination(id: any) { return this.citations.byCombination(id) }
-  async runRegression(opts?: any) { return this.regression?.run?.(opts) ?? { skipped: true } }
+  /**
+   * P1.2.1-A4: Regression 统一入口代理。
+   * 外部应优先直接调用 `defaultTenGodRegressionRunner.run(opts)`（统一入口）；
+   * 通过 plugin 调用时，本方法代理到同一统一入口，禁止绕过 runner 直接访问 `plugin.regression`。
+   */
+  async runRegression(opts?: any) {
+    return defaultTenGodRegressionRunner?.run?.(opts) ?? { skipped: true, note: 'regression runner unavailable' }
+  }
   classifyBatch(inputs: any[]) { return this.batch.classifyBatch(inputs) }
   evaluateBatch(inputs: any[]) { return this.batch.evaluateBatch(inputs) }
   benchmark(n=100): any { return this.batch.benchmark(n) }

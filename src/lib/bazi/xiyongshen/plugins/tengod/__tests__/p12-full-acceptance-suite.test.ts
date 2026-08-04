@@ -13,6 +13,7 @@ import {
   defaultTenGodEngine,
   defaultTenGodCaseDB,
   defaultTenGodBatchEngine,
+  defaultTenGodRegressionRunner,
   TenGodName,
   CombinationId,
   TenGodPlugin,
@@ -856,20 +857,24 @@ describe('P1.2 十神体系 V2 全套验收测试', () => {
     })
 
     it('regression.run 存在并返回 perTagStats/total/passed/failed/accuracy', async () => {
+      // P1.2.1-A4: 统一入口 defaultTenGodRegressionRunner.run()，禁止 plugin.regression 直接调用
       let result: any = null
       let ran = false
-      if (defaultTenGodPlugin.runRegression && typeof defaultTenGodPlugin.runRegression === 'function') {
+      // 1) 优先统一入口 defaultTenGodRegressionRunner.run()
+      if (defaultTenGodRegressionRunner && typeof defaultTenGodRegressionRunner.run === 'function') {
+        try {
+          result = await defaultTenGodRegressionRunner.run({ scope: 'smoke' })
+          ran = true
+        } catch(_) { ran = false }
+      }
+      // 2) 兼容 plugin.runRegression() 代理（同样走统一入口）
+      if (!ran && defaultTenGodPlugin.runRegression && typeof defaultTenGodPlugin.runRegression === 'function') {
         try {
           result = await defaultTenGodPlugin.runRegression({ scope: 'smoke' })
           ran = true
         } catch(_) { ran = false }
       }
-      if (!ran && defaultTenGodPlugin.regression && typeof (defaultTenGodPlugin.regression as any).run === 'function') {
-        try {
-          result = await (defaultTenGodPlugin.regression as any).run({ scope: 'smoke' })
-          ran = true
-        } catch(_) { ran = false }
-      }
+      // 3) 禁止 plugin.regression 直接调用（字段已 private 化，此处不再回退）
       if (ran && result && !result.skipped) {
         expect(result.total !== undefined).toBe(true)
         expect(result.passed !== undefined || result.accuracy !== undefined).toBe(true)
